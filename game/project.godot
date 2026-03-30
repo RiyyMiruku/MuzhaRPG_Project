@@ -1,0 +1,39 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are pretty complex.
+; Syntax reference: https://docs.godotengine.org/en/stable/tutorials/parsing_csv_files.html
+
+config_version=5
+
+[application]
+
+config/name="Muzha RPG"
+config/description="台灣木柵在地 RPG 遊戲 - AI 驅動對話系統"
+config/version="0.1.0"
+config/author="Muzha RPG Team"
+run/main_scene="res://src/maps/main_world.tscn"
+
+[autoload]
+
+GameManager="*res://src/autoload/GameManager.gd"
+StoryManager="*res://src/autoload/StoryManager.gd"
+AIClient="*res://src/autoload/AIClient.gd"
+
+[debug]
+
+gdscript/warnings/unused_variable=1
+gdscript/warnings/unused_argument=1
+gdscript/warnings/unused_signal=1
+gdscript/warnings/shadowed_variable=1
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1440
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_size"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+textures/canvas_textures/default_texture_repeat=0
