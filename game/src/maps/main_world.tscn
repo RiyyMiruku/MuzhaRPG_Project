@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://muzha_main_world"]
+
+[ext_resource type="PackedScene" path="res://src/maps/zones/zone_nccu.tscn" id="1_zone_nccu"]
+[ext_resource type="PackedScene" path="res://src/ui/dialogue/DialogueUI.tscn" id="2_dialogue_ui"]
+
+[node name="MainWorld" type="Node2D"]
+
+[node name="ZoneContainer" type="Node2D" parent="."]
+
+[node name="ZoneNCCU" parent="ZoneContainer" instance=ExtResource("1_zone_nccu")]
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="DialogueUI" parent="UILayer" instance=ExtResource("2_dialogue_ui")]

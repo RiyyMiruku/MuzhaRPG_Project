@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://muzha_player"]
+
+[ext_resource type="Script" path="res://src/entities/player/Player.gd" id="1_player"]
+
+[sub_resource type="CapsuleShape2D" id="body_shape"]
+radius = 6.0
+height = 10.0
+
+[sub_resource type="CircleShape2D" id="interact_shape"]
+radius = 28.0
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_player")
+collision_layer = 1
+collision_mask = 2
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("body_shape")
+
+[node name="InteractArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
+shape = SubResource("interact_shape")

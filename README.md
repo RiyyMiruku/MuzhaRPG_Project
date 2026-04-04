@@ -21,7 +21,7 @@
 | --------------- | --------------------------------------- |
 | **遊戲引擎**    | Godot 4.x (GDScript)                    |
 | **AI 推論後端** | `llama.cpp` (Sidecar Server 模式)       |
-| **語言模型**    | Qwen-3.5-0.9B-Chat (4-bit 量化 GGUF)    |
+| **語言模型**    | Qwen-3.5-0.8B-Chat (4-bit 量化 GGUF)    |
 | **美術工具**    | Aseprite (像素繪製), VS Code (程式開發) |
 | **版本控制**    | Git + Git LFS (管理 .gguf 模型)         |
 | **平台支援**    | Windows / Linux / macOS                 |
@@ -69,10 +69,11 @@ git lfs pull  # 確保下載龐大的 .gguf 模型檔
 
 ### 2. 配置 AI 引擎
 
-- 確認 `ai_engine/models/` 目錄下有正確的 GGUF 模型檔：
+- 確認 `ai_engine/models/` 目錄下有正確的 GGUF 模型檔（路徑設定於 `ai_engine/config.json`）：
   ```
-  ai_engine/models/qwen3.5-0_9b-chat-q4_k_m.gguf
+  ai_engine/models/llama-b8583-bin-win-cuda-13.1-x64/Qwen3.5-0.8B-Q4_K_M.gguf
   ```
+- 若需調整伺服器 Port、GPU 層數或模型路徑，編輯 `ai_engine/config.json` 即可，無需修改程式碼。
 - Godot 啟動時，`GameManager.gd` 會自動在背景喚醒 `llama-server.exe` (Windows) 或 `llama-server` (Linux/macOS)。
 
 ### 3. 下載工具與依賴
@@ -94,7 +95,15 @@ git lfs pull  # 確保下載龐大的 .gguf 模型檔
 # 下載或編譯 llama.cpp
 ```
 
-### 4. 在 Godot 編輯器中開啟
+### 4. 下載 CJK 字型（必要）
+
+Godot 4 的預設字型不支援中文，需手動安裝。
+
+1. 下載 [Noto Sans CJK TC](https://fonts.google.com/noto/specimen/Noto+Sans+TC)（繁體中文，OFL 授權）
+2. 將 `NotoSansCJKtc-Regular.otf` 放置於 `game/assets/fonts/`
+3. 在 Godot 編輯器中建立 `game/assets/theme/game_theme.tres`，設定全域預設字型
+
+### 5. 在 Godot 編輯器中開啟
 
 - 使用 Godot 4 匯入 `game/project.godot`。
 - 建議配置 VS Code 作為外部編輯器，以獲得最佳的 GDScript 與 AI API 聯調體驗。
@@ -106,13 +115,15 @@ git lfs pull  # 確保下載龐大的 .gguf 模型檔
 ```powershell
 # Windows - 啟動 llama.cpp 伺服器
 cd ai_engine
-.\llama-server.exe -m models/qwen3.5-0_9b-chat-q4_k_m.gguf -p 8000
+.\models\llama-b8583-bin-win-cuda-13.1-x64\llama-server.exe `
+  -m models\llama-b8583-bin-win-cuda-13.1-x64\Qwen3.5-0.8B-Q4_K_M.gguf `
+  --port 8000 -ngl 20
 ```
 
 ```bash
 # Linux/macOS - 啟動 llama.cpp 伺服器
 cd ai_engine
-./llama-server -m models/qwen3.5-0_9b-chat-q4_k_m.gguf -p 8000
+./llama-server -m models/Qwen3.5-0.8B-Q4_K_M.gguf --port 8000
 ```
 
 測試連線：

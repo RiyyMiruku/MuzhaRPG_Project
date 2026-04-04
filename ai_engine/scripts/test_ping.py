@@ -32,25 +32,28 @@ def test_health(host: str = "localhost", port: int = 8000) -> bool:
 
 
 def test_completion(host: str = "localhost", port: int = 8000) -> bool:
-    """測試文本補全 API"""
+    """測試 Chat Completions API"""
     try:
-        url = f"http://{host}:{port}/v1/completions"
+        url = f"http://{host}:{port}/v1/chat/completions"
         payload = {
             "model": "default",
-            "prompt": "你好，我的名字是",
-            "max_tokens": 50,
+            "messages": [
+                {"role": "system", "content": "你是木柵市場賣菜的陳阿姨，講話帶台灣國語。回答限制在50字以內。"},
+                {"role": "user", "content": "你好，菜怎麼賣？"},
+            ],
+            "max_tokens": 100,
             "temperature": 0.7,
         }
-        
-        print("\n測試補全請求...")
-        response = requests.post(url, json=payload, timeout=10)
-        
+
+        print("\n測試 Chat Completions 請求...")
+        response = requests.post(url, json=payload, timeout=30)
+
         if response.status_code == 200:
             result = response.json()
-            print(f"✓ 補全成功")
+            print(f"✓ Chat 補全成功")
             if "choices" in result and len(result["choices"]) > 0:
-                completion = result["choices"][0].get("text", "")
-                print(f"  回應: {completion[:100]}...")
+                content = result["choices"][0].get("message", {}).get("content", "")
+                print(f"  陳阿姨回應: {content}")
             return True
         else:
             print(f"✗ API 回應異常 (HTTP {response.status_code})")
@@ -66,7 +69,7 @@ def main():
         description="測試 Llama.cpp 伺服器連線"
     )
     parser.add_argument("--host", default="localhost", help="伺服器主機名 (預設: localhost)")
-    parser.add_argument("--port", type=int, default=8080, help="伺服器埠號 (預設: 8080)")
+    parser.add_argument("--port", type=int, default=8000, help="伺服器埠號 (預設: 8000)")
     parser.add_argument("--full", action="store_true", help="執行完整測試")
     
     args = parser.parse_args()

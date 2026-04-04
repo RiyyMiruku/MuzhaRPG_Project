@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://muzha_dialogue_ui"]
+
+[ext_resource type="Script" path="res://src/ui/dialogue/DialogueUI.gd" id="1_dialogue_ui"]
+
+[node name="DialogueUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_dialogue_ui")
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -260.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBoxOuter" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="Panel/VBoxOuter"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 180)
+
+[node name="Portrait" type="TextureRect" parent="Panel/VBoxOuter/HBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 96)
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBox" type="VBoxContainer" parent="Panel/VBoxOuter/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NameLabel" type="Label" parent="Panel/VBoxOuter/HBox/VBox"]
+layout_mode = 2
+text = "NPC 名稱"
+theme_override_font_sizes/font_size = 18
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/VBoxOuter/HBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DialogueText" type="RichTextLabel" parent="Panel/VBoxOuter/HBox/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 16
+autowrap_mode = 3
+
+[node name="ThinkingDots" type="Control" parent="Panel/VBoxOuter/HBox/VBox"]
+layout_mode = 2
+visible = false
+
+[node name="DotsLabel" type="Label" parent="Panel/VBoxOuter/HBox/VBox/ThinkingDots"]
+layout_mode = 2
+text = "..."
+theme_override_font_sizes/font_size = 20
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Panel/VBoxOuter/HBox/VBox/ThinkingDots"]
+
+[node name="InputRow" type="HBoxContainer" parent="Panel/VBoxOuter"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 48)
+
+[node name="LineEdit" type="LineEdit" parent="Panel/VBoxOuter/InputRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "輸入訊息後按 Enter..."
+theme_override_font_sizes/font_size = 16
+
+[node name="SendButton" type="Button" parent="Panel/VBoxOuter/InputRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(80, 0)
+text = "發送"
+theme_override_font_sizes/font_size = 16

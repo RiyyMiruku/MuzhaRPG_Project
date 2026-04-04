@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://muzha_base_npc"]
+
+[ext_resource type="Script" path="res://src/entities/npcs/BaseNPC.gd" id="1_base_npc"]
+
+[sub_resource type="CapsuleShape2D" id="body_shape"]
+radius = 6.0
+height = 10.0
+
+[sub_resource type="CircleShape2D" id="detect_shape"]
+radius = 36.0
+
+[node name="BaseNPC" type="CharacterBody2D"]
+script = ExtResource("1_base_npc")
+collision_layer = 2
+collision_mask = 1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("body_shape")
+
+[node name="InteractionPrompt" type="Label" parent="."]
+position = Vector2(-24, -48)
+text = "按 [E] 對話"
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 0.4, 1)
+
+[node name="DetectArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectArea"]
+shape = SubResource("detect_shape")
