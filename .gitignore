@@ -5,7 +5,8 @@ game/.godot/
 game/*.tmp
 game/*.remap
 game/*.translation
-game/*.import
+*.import
+*.uid
 game/export_presets.cfg
 game/build/
 game/dist/

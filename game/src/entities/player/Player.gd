@@ -13,14 +13,19 @@ signal interaction_requested(interactable: Node)
 # ── State ────────────────────────────────────────────────────────────────────
 var _nearby_interactable: Node = null
 
+const PLAYER_SHEET: String = "res://assets/textures/characters/player.png"
+
 func _ready() -> void:
 	sprite = _sprite
 	add_to_group("player")
-	# 若沒有美術資源，自動產生藍色佔位精靈
+	# 載入 spritesheet，若不存在則用佔位精靈
 	if _sprite.sprite_frames == null:
-		_sprite.sprite_frames = PlaceholderSprite.generate_sprite_frames(
-			Color.CORNFLOWER_BLUE, Color.WHITE, Vector2i(16, 24)
-		)
+		if ResourceLoader.exists(PLAYER_SHEET):
+			_sprite.sprite_frames = SpriteSheetLoader.load_character_sheet(PLAYER_SHEET)
+		else:
+			_sprite.sprite_frames = PlaceholderSprite.generate_sprite_frames(
+				Color.CORNFLOWER_BLUE, Color.WHITE, Vector2i(16, 24)
+			)
 		_sprite.play("idle_down")
 	_interact_area.body_entered.connect(_on_body_entered)
 	_interact_area.body_exited.connect(_on_body_exited)
