@@ -15,6 +15,7 @@ var _nearby_interactable: Node = null
 
 func _ready() -> void:
 	sprite = _sprite
+	add_to_group("player")
 	# 若沒有美術資源，自動產生藍色佔位精靈
 	if _sprite.sprite_frames == null:
 		_sprite.sprite_frames = PlaceholderSprite.generate_sprite_frames(

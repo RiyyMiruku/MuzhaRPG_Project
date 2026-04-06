@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=2 format=3 uid="uid://muzha_quest_temple"]
+
+[ext_resource type="Script" path="res://src/core/classes/QuestData.gd" id="1_quest_data"]
+
+[resource]
+script = ExtResource("1_quest_data")
+quest_id = "temple_mystery"
+title = "指南宮的傳說"
+description = "廣師父提到了指南宮的一個古老傳說，去找他聊聊。"
+giver_npc_id = "chen_ayi"
+target_zone = "zone_zhinan"
+target_npc_id = "master_guang"
+required_events = ["visited_market"]
+completion_events = ["talked_to_master_guang"]
+reward_relationship = { "master_guang": 15 }
+reward_event = "temple_legend_heard"

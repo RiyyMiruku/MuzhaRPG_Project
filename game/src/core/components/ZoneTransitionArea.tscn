@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://muzha_zone_transition"]
+
+[ext_resource type="Script" path="res://src/core/components/ZoneTransitionArea.gd" id="1_zone_transition"]
+
+[sub_resource type="RectangleShape2D" id="trigger_shape"]
+size = Vector2(40, 20)
+
+[node name="ZoneTransitionArea" type="Area2D"]
+script = ExtResource("1_zone_transition")
+collision_layer = 0
+collision_mask = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("trigger_shape")
+
+[node name="Label" type="Label" parent="."]
+position = Vector2(-30, -24)
+text = "→ ???"
+theme_override_font_sizes/font_size = 10
+modulate = Color(0.5, 1.0, 0.5, 0.7)

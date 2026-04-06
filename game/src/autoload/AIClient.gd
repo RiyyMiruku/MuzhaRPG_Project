@@ -74,8 +74,6 @@ func query(npc_config: Resource, user_input: String, context: Dictionary) -> voi
 	var body: String = JSON.stringify(payload)
 	var headers: PackedStringArray = ["Content-Type: application/json"]
 
-	print("AIClient: 送出查詢給 ", npc_config.display_name)
-
 	var err: int = _http.request(
 		server_url + "/v1/chat/completions",
 		headers,
@@ -105,26 +103,24 @@ func _on_query_completed(result: int, response_code: int, _headers: PackedString
 	var content: String = ""
 	var choices: Array = data.get("choices", [])
 
-	# DEBUG: 印出原始回應結構
-	print("AIClient DEBUG: raw response = ", body.get_string_from_utf8().substr(0, 500))
-
 	if not choices.is_empty():
 		var message: Dictionary = choices[0].get("message", {})
 		content = str(message.get("content", ""))
 
-	# 清除 <think>...</think> 標籤（若有）
-	if content.contains("<think>"):
+	# 清除所有 <think>...</think> 標籤
+	while content.contains("<think>"):
+		var think_start: int = content.find("<think>")
 		var think_end: int = content.find("</think>")
 		if think_end != -1:
-			content = content.substr(think_end + 8).strip_edges()
+			content = content.substr(0, think_start) + content.substr(think_end + 8)
 		else:
-			content = ""
+			# </think> 不存在 = 思考被截斷，移除從 <think> 開始的所有內容
+			content = content.substr(0, think_start)
+		content = content.strip_edges()
 
 	if content.is_empty() or content == "null":
-		request_failed.emit("AI 回應為空，請確認伺服器以 --chat-template chatml 啟動")
+		request_failed.emit("AI 回應為空，請重試")
 		return
-
-	print("AIClient: 收到回應 (", content.length(), " chars)")
 
 	# Save to conversation history
 	StoryManager.add_conversation_turn(_current_npc_id, "assistant", content)
@@ -150,13 +146,15 @@ func _build_chat_payload(npc_config: Resource, user_input: String, context: Dict
 	messages.append({"role": "user", "content": user_input})
 	StoryManager.add_conversation_turn(npc_config.npc_id, "user", user_input)
 
+	# 預填空思考區塊，阻止模型進入 thinking 模式
+	messages.append({"role": "assistant", "content": "<think>\n</think>\n", "prefix": true})
+
 	return {
 		"model": "default",
 		"messages": messages,
 		"max_tokens": npc_config.max_response_tokens if "max_response_tokens" in npc_config else default_max_tokens,
 		"temperature": npc_config.base_temperature if "base_temperature" in npc_config else default_temperature,
 		"stream": false,
-		"enable_thinking": false,
 	}
 
 func _build_context_string(context: Dictionary) -> String:

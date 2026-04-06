@@ -22,6 +22,12 @@ signal hud_message_requested(text: String, duration: float)
 signal screen_transition_started()
 signal screen_transition_finished()
 
+# ── UI 面板協調 ────────────────────────────────────────────────────────────
+## 任何面板開啟時發射，其他面板收到後自動關閉
+signal ui_panel_opened(panel_name: String)
+## 所有面板關閉時發射，恢復遊戲操作
+signal ui_panel_closed()
+
 # ── AI 伺服器 ──────────────────────────────────────────────────────────────
 signal ai_server_online()
 signal ai_server_offline()

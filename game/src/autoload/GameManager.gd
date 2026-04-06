@@ -12,6 +12,8 @@ enum GameState { MAIN_MENU, EXPLORING, DIALOGUE, PAUSED, LOADING }
 var current_state: GameState = GameState.MAIN_MENU
 var _server_pid: int = -1
 var _ai_config: Dictionary = {}
+var _time_played_sec: float = 0.0
+var _pending_load_position: Vector2 = Vector2.INF  # INF = 無待載入位置
 
 # ── Constants ──────────────────────────────────────────────────────────────
 const CONFIG_PATH: String = "../../ai_engine/config.json"
@@ -19,6 +21,16 @@ const CONFIG_PATH: String = "../../ai_engine/config.json"
 # ── Lifecycle ──────────────────────────────────────────────────────────────
 func _ready() -> void:
 	_load_ai_config()
+
+func _process(delta: float) -> void:
+	if current_state == GameState.EXPLORING:
+		_time_played_sec += delta
+	# 載入存檔後定位玩家
+	if _pending_load_position != Vector2.INF:
+		var players: Array[Node] = get_tree().get_nodes_in_group("player")
+		if not players.is_empty():
+			players[0].global_position = _pending_load_position
+			_pending_load_position = Vector2.INF
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -123,9 +135,92 @@ func change_state(new_state: GameState) -> void:
 	current_state = new_state
 	game_state_changed.emit(new_state)
 
-# ── Save / Load (Phase 3) ──────────────────────────────────────────────────
+# ── Save / Load ────────────────────────────────────────────────────────────
+const SAVE_DIR: String = "user://saves/"
+const SAVE_VERSION: String = "0.1.0"
+
 func save_game(slot: int = 1) -> void:
-	pass  # TODO: Phase 3
+	# 確保目錄存在
+	DirAccess.make_dir_recursive_absolute(SAVE_DIR)
+
+	# 收集玩家位置
+	var player_pos: Vector2 = Vector2.ZERO
+	var players: Array[Node] = get_tree().get_nodes_in_group("player")
+	if not players.is_empty():
+		player_pos = players[0].global_position
+
+	var save_data: Dictionary = {
+		"version": SAVE_VERSION,
+		"timestamp": int(Time.get_unix_time_from_system()),
+		"player": {
+			"zone": StoryManager.current_zone,
+			"position_x": player_pos.x,
+			"position_y": player_pos.y,
+		},
+		"story": StoryManager.serialize(),
+		"quests": QuestManager.serialize(),
+		"time_played_sec": _time_played_sec,
+	}
+
+	var path: String = SAVE_DIR + "save_%d.json" % slot
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	if file == null:
+		push_error("GameManager: Cannot write save file: " + path)
+		return
+	file.store_string(JSON.stringify(save_data, "\t"))
+	file.close()
+	print("GameManager: Game saved to slot %d" % slot)
+	EventBus.hud_message_requested.emit("遊戲已儲存", 2.0)
 
 func load_game(slot: int = 1) -> void:
-	pass  # TODO: Phase 3
+	var path: String = SAVE_DIR + "save_%d.json" % slot
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_warning("GameManager: Save file not found: " + path)
+		return
+
+	var json: JSON = JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		push_error("GameManager: Failed to parse save file")
+		file.close()
+		return
+	file.close()
+
+	var data: Dictionary = json.data
+
+	# 還原 StoryManager 與 QuestManager 狀態
+	if data.has("story"):
+		StoryManager.deserialize(data["story"])
+	if data.has("quests"):
+		QuestManager.deserialize(data["quests"])
+
+	# 還原遊戲時間
+	if data.has("time_played_sec"):
+		_time_played_sec = data["time_played_sec"]
+
+	# 切換到存檔中的區域
+	if data.has("player"):
+		var player_data: Dictionary = data["player"]
+		var zone_id: String = player_data.get("zone", "zone_nccu")
+		var pos_x: float = player_data.get("position_x", 0.0)
+		var pos_y: float = player_data.get("position_y", 0.0)
+		_pending_load_position = Vector2(pos_x, pos_y)
+		EventBus.zone_transition_requested.emit(zone_id, "default")
+
+	print("GameManager: Game loaded from slot %d" % slot)
+	EventBus.hud_message_requested.emit("遊戲已載入", 2.0)
+
+func has_save(slot: int = 1) -> bool:
+	return FileAccess.file_exists(SAVE_DIR + "save_%d.json" % slot)
+
+func get_save_info(slot: int = 1) -> Dictionary:
+	var path: String = SAVE_DIR + "save_%d.json" % slot
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var json: JSON = JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		file.close()
+		return {}
+	file.close()
+	return json.data

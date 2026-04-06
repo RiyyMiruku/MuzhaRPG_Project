@@ -1,20 +1,22 @@
-[gd_scene load_steps=3 format=3 uid="uid://muzha_zone_nccu"]
+[gd_scene load_steps=5 format=3 uid="uid://muzha_zone_zhinan"]
 
 [ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="1_player"]
-[ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="4_transition"]
+[ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="2_transition"]
+[ext_resource type="PackedScene" path="res://src/entities/npcs/BaseNPC.tscn" id="3_npc"]
+[ext_resource type="Resource" path="res://src/entities/npcs/resources/master_guang.tres" id="4_master_guang"]
 
-[node name="ZoneNCCU" type="Node2D"]
+[node name="ZoneZhinan" type="Node2D"]
 
 [node name="Ground" type="ColorRect" parent="."]
 offset_left = -500.0
 offset_top = -400.0
 offset_right = 500.0
 offset_bottom = 400.0
-color = Color(0.22, 0.28, 0.18, 1)
+color = Color(0.2, 0.3, 0.2, 1)
 
 [node name="ZoneLabel" type="Label" parent="."]
 position = Vector2(-60, -180)
-text = "政大正門"
+text = "指南宮"
 theme_override_font_sizes/font_size = 14
 modulate = Color(1, 1, 1, 0.5)
 
@@ -24,29 +26,22 @@ y_sort_enabled = true
 [node name="Player" parent="YSortRoot" instance=ExtResource("1_player")]
 position = Vector2(0, 50)
 
+[node name="MasterGuang" parent="YSortRoot" instance=ExtResource("3_npc")]
+position = Vector2(0, -40)
+npc_config = ExtResource("4_master_guang")
+
 [node name="Camera2D" type="Camera2D" parent="YSortRoot/Player"]
 zoom = Vector2(3, 3)
 
 [node name="Transitions" type="Node2D" parent="."]
 
-[node name="ToMarket" parent="Transitions" instance=ExtResource("4_transition")]
-position = Vector2(-250, 0)
+[node name="ToMarket" parent="Transitions" instance=ExtResource("2_transition")]
+position = Vector2(0, 200)
 target_zone = "zone_market"
-entry_point = "from_nccu"
+entry_point = "from_zhinan"
 
 [node name="ToMarketLabel" type="Label" parent="Transitions/ToMarket"]
 position = Vector2(-40, -24)
-text = "← 木柵市場"
-theme_override_font_sizes/font_size = 10
-modulate = Color(0.5, 1.0, 0.5, 0.7)
-
-[node name="ToRiverside" parent="Transitions" instance=ExtResource("4_transition")]
-position = Vector2(250, 0)
-target_zone = "zone_riverside"
-entry_point = "from_nccu"
-
-[node name="ToRiversideLabel" type="Label" parent="Transitions/ToRiverside"]
-position = Vector2(-40, -24)
-text = "道南河濱 →"
+text = "↓ 木柵市場"
 theme_override_font_sizes/font_size = 10
 modulate = Color(0.5, 1.0, 0.5, 0.7)

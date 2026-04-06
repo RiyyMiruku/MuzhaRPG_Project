@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="QuestData" load_steps=2 format=3 uid="uid://muzha_quest_visit_market"]
+
+[ext_resource type="Script" path="res://src/core/classes/QuestData.gd" id="1_quest_data"]
+
+[resource]
+script = ExtResource("1_quest_data")
+quest_id = "visit_market"
+title = "逛逛木柵市場"
+description = "聽說木柵市場有很多有趣的人，去看看吧。"
+giver_npc_id = ""
+target_zone = "zone_market"
+completion_events = ["visited_market"]
+reward_relationship = { "chen_ayi": 10 }

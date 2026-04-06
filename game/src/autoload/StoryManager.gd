@@ -1,5 +1,8 @@
 extends Node
 
+# ── Signals ────────────────────────────────────────────────────────────────
+signal event_recorded(event_id: String)
+
 # ── State ──────────────────────────────────────────────────────────────────
 var unlocked_zones: Array[String] = ["zone_nccu"]
 var completed_events: Array[String] = []
@@ -8,6 +11,10 @@ var npc_relationships: Dictionary = {}          # npc_id -> int (-100 to 100)
 var conversation_histories: Dictionary = {}     # npc_id -> Array[Dictionary]
 var current_zone: String = "zone_nccu"
 var game_time_hours: float = 14.0               # 0.0 - 24.0 (in-game clock)
+
+## 遊戲內時間流速：1 秒真實時間 = N 分鐘遊戲時間
+## 預設 1.0 = 1 秒真實時間推進 1 分鐘遊戲時間（24 分鐘真實時間 = 遊戲內一天）
+const TIME_SCALE: float = 1.0  # minutes per real second
 
 # ── Zone Display Names ─────────────────────────────────────────────────────
 const ZONE_DISPLAY: Dictionary = {
@@ -19,6 +26,12 @@ const ZONE_DISPLAY: Dictionary = {
 
 func _ready() -> void:
 	pass
+
+func _process(delta: float) -> void:
+	if GameManager.current_state == GameManager.GameState.EXPLORING:
+		game_time_hours += (delta * TIME_SCALE) / 60.0
+		if game_time_hours >= 24.0:
+			game_time_hours -= 24.0
 
 # ── Context Builder (核心方法) ────────────────────────────────────────────
 func build_ai_context(npc_id: String) -> Dictionary:
@@ -63,6 +76,7 @@ func _get_recent_events(count: int) -> Array[String]:
 func record_event(event_id: String) -> void:
 	if not completed_events.has(event_id):
 		completed_events.append(event_id)
+		event_recorded.emit(event_id)
 
 func set_flag(key: String, value: Variant) -> void:
 	player_flags[key] = value
@@ -95,8 +109,9 @@ func serialize() -> Dictionary:
 	}
 
 func deserialize(data: Dictionary) -> void:
-	unlocked_zones = data.get("unlocked_zones", ["zone_nccu"])
-	completed_events = data.get("completed_events", [])
+	# JSON 反序列化回來是無型別 Array，需手動轉型
+	unlocked_zones.assign(data.get("unlocked_zones", ["zone_nccu"]))
+	completed_events.assign(data.get("completed_events", []))
 	player_flags = data.get("player_flags", {})
 	npc_relationships = data.get("npc_relationships", {})
 	current_zone = data.get("current_zone", "zone_nccu")

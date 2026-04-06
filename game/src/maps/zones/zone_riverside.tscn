@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://muzha_zone_riverside"]
+
+[ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="2_transition"]
+[ext_resource type="PackedScene" path="res://src/entities/npcs/BaseNPC.tscn" id="3_npc"]
+[ext_resource type="Resource" path="res://src/entities/npcs/resources/old_fisher.tres" id="4_old_fisher"]
+
+[node name="ZoneRiverside" type="Node2D"]
+
+[node name="Ground" type="ColorRect" parent="."]
+offset_left = -500.0
+offset_top = -400.0
+offset_right = 500.0
+offset_bottom = 400.0
+color = Color(0.18, 0.28, 0.32, 1)
+
+[node name="ZoneLabel" type="Label" parent="."]
+position = Vector2(-70, -180)
+text = "道南河濱公園"
+theme_override_font_sizes/font_size = 14
+modulate = Color(1, 1, 1, 0.5)
+
+[node name="YSortRoot" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Player" parent="YSortRoot" instance=ExtResource("1_player")]
+position = Vector2(0, 50)
+
+[node name="OldFisher" parent="YSortRoot" instance=ExtResource("3_npc")]
+position = Vector2(60, -10)
+npc_config = ExtResource("4_old_fisher")
+
+[node name="Camera2D" type="Camera2D" parent="YSortRoot/Player"]
+zoom = Vector2(3, 3)
+
+[node name="Transitions" type="Node2D" parent="."]
+
+[node name="ToNCCU" parent="Transitions" instance=ExtResource("2_transition")]
+position = Vector2(-250, 0)
+target_zone = "zone_nccu"
+entry_point = "from_riverside"
+
+[node name="ToNCCULabel" type="Label" parent="Transitions/ToNCCU"]
+position = Vector2(-40, -24)
+text = "← 政大正門"
+theme_override_font_sizes/font_size = 10
+modulate = Color(0.5, 1.0, 0.5, 0.7)

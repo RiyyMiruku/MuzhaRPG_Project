@@ -41,7 +41,8 @@ func _ready() -> void:
 
 # ── Public API ─────────────────────────────────────────────────────────────
 func open_dialogue(npc_config: NPCConfig) -> void:
-	print("DialogueUI: open_dialogue called for ", npc_config.display_name)
+	# 對話框開啟時關閉所有 UI 面板
+	UIManager.pop_all()
 	_name_label.text = npc_config.display_name
 	_portrait.texture = npc_config.portrait_texture
 	_dialogue_text.text = "（與 %s 對話中，輸入訊息後按 Enter 發送）" % npc_config.display_name
@@ -51,7 +52,6 @@ func open_dialogue(npc_config: NPCConfig) -> void:
 	hide_thinking_indicator()
 	visible = true
 	_panel.visible = true
-	print("DialogueUI: visible=", visible, " panel.visible=", _panel.visible, " size=", size)
 	_input_line.grab_focus()
 	GameManager.change_state(GameManager.GameState.DIALOGUE)
 

@@ -1,0 +1,89 @@
+[gd_scene format=3 uid="uid://muzha_pause_menu"]
+
+[ext_resource type="Script" path="res://src/ui/menus/PauseMenu.gd" id="1_pause_menu"]
+
+[node name="PauseMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+process_mode = 3
+script = ExtResource("1_pause_menu")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -140.0
+offset_right = 120.0
+offset_bottom = 140.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "PAUSED"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="Separator1" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="ZoneLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "Location: ---"
+theme_override_font_sizes/font_size = 12
+
+[node name="TimeLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "Time: ---"
+theme_override_font_sizes/font_size = 12
+
+[node name="Separator2" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Resume"
+theme_override_font_sizes/font_size = 14
+
+[node name="SaveButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Save"
+theme_override_font_sizes/font_size = 14
+
+[node name="LoadButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Load"
+theme_override_font_sizes/font_size = 14
+
+[node name="SettingsButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Settings"
+theme_override_font_sizes/font_size = 14
+
+[node name="StatusLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 12
+modulate = Color(0.5, 1.0, 0.5, 1)

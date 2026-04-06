@@ -1,0 +1,101 @@
+[gd_scene load_steps=3 format=3 uid="uid://muzha_hud"]
+
+[ext_resource type="Script" path="res://src/ui/menus/HUD.gd" id="1_hud"]
+[ext_resource type="Script" path="res://src/ui/menus/LiveMinimap.gd" id="2_live_minimap"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hud")
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 28.0
+grow_horizontal = 2
+
+[node name="ZoneLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "---"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.9, 0.7, 0.8)
+
+[node name="TimeLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "---"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.9, 0.7, 0.8)
+
+[node name="QuestPanel" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 36.0
+offset_right = -8.0
+offset_bottom = 120.0
+grow_horizontal = 0
+
+[node name="QuestTitle" type="Label" parent="QuestPanel"]
+layout_mode = 1
+offset_right = 192.0
+offset_bottom = 18.0
+text = "Quest"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(1.0, 0.85, 0.4, 0.9)
+
+[node name="QuestLabel" type="Label" parent="QuestPanel"]
+layout_mode = 1
+offset_top = 20.0
+offset_right = 192.0
+offset_bottom = 80.0
+text = "- ..."
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 0.8)
+
+[node name="LiveMinimap" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+process_mode = 3
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -116.0
+offset_top = -136.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("2_live_minimap")
+world_range = 300.0
+map_size = 108.0
+
+[node name="MessageLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.8
+anchor_right = 0.5
+anchor_bottom = 0.8
+offset_left = -150.0
+offset_right = 150.0
+offset_bottom = 24.0
+grow_horizontal = 2
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.5, 1.0, 0.5, 1.0)
+
+[node name="MessageTimer" type="Timer" parent="."]
+one_shot = true

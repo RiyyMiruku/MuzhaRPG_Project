@@ -62,6 +62,8 @@ func interact(_player: Node) -> void:
 func _on_player_input(text: String) -> void:
 	var context: Dictionary = StoryManager.build_ai_context(npc_config.npc_id)
 	AIClient.query(npc_config, text, context)
+	# 記錄「已與此 NPC 對話」事件
+	StoryManager.record_event("talked_to_" + npc_config.npc_id)
 
 func _on_dialogue_closed() -> void:
 	_conversation_active = false
