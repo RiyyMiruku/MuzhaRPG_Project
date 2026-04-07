@@ -36,32 +36,117 @@ git clone <repository_url>
 git lfs pull
 ```
 
-### 2. 啟動 AI 伺服器
+### 2. 下載 llama.cpp 推論引擎
+
+本專案使用 [llama.cpp](https://github.com/ggml-org/llama.cpp) 作為本地 AI 推論後端，執行檔與模型不包含在 Git 倉庫中，需手動下載。
+
+#### 2a. 下載 llama-server 執行檔
+
+前往 [llama.cpp Releases](https://github.com/ggml-org/llama.cpp/releases) 頁面，根據你的系統下載對應版本：
+
+| 系統 | 建議下載檔案 | 備註 |
+|------|-------------|------|
+| **Windows + NVIDIA GPU** | `llama-<版本號>-bin-win-cuda-cu12.x-x64.zip` | 需安裝 [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) |
+| **Windows (無獨顯)** | `llama-<版本號>-bin-win-cpu-x64.zip` | 純 CPU 推論，速度較慢但免額外驅動 |
+| **macOS (Apple Silicon)** | `llama-<版本號>-bin-macos-arm64.zip` | M1/M2/M3/M4 原生支援 Metal GPU 加速 |
+| **macOS (Intel)** | `llama-<版本號>-bin-macos-x64.zip` | — |
+| **Linux** | `llama-<版本號>-bin-ubuntu-x64.zip` | 亦可自行編譯 |
+
+> **目前專案預設路徑**對應版本 `b8583`，但更新版本通常向下相容。
+
+下載後解壓，將整個資料夾放入 `ai_engine/models/` 目錄下，確保 `llama-server`（或 `llama-server.exe`）可被找到。
+
+#### 2b. 下載語言模型（GGUF 格式）
+
+本專案使用 **Qwen3.5-0.8B-Chat** 的 Q4_K_M 量化版（約 531MB）：
+
+1. 前往 Hugging Face 模型頁面：[Qwen/Qwen3.5-0.8B-GGUF](https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF)
+2. 下載 `Qwen3.5-0.8B-Q4_K_M.gguf`
+3. 將模型檔案放入與 llama-server 同一資料夾
+
+#### 2c. 確認目錄結構
+
+完成後，`ai_engine/models/` 下應有如下結構：
+
+```
+ai_engine/models/
+└── llama-b8583-bin-win-cuda-13.1-x64/   ← 資料夾名稱可自訂
+    ├── llama-server.exe                  ← 推論引擎執行檔
+    ├── Qwen3.5-0.8B-Q4_K_M.gguf         ← 語言模型
+    └── (其他 .dll / .so 檔案)
+```
+
+> **重要**：如果你的資料夾名稱與預設不同，請修改 `ai_engine/config.json` 中的 `binaries` 和 `model_path` 路徑使其對應。
+
+#### 2d. 調整設定（視需要）
+
+編輯 `ai_engine/config.json`：
+
+```jsonc
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8000,
+    "context_size": 2048,
+    "gpu_layers": 20,       // ← 無 GPU 請改為 0
+    "chat_template": "chatml"
+  },
+  "binaries": {
+    "windows": "models/<你的資料夾名稱>/llama-server.exe",
+    "macos": "models/<你的資料夾名稱>/llama-server"
+  },
+  "model_path": "models/<你的資料夾名稱>/Qwen3.5-0.8B-Q4_K_M.gguf"
+}
+```
+
+### 3. 啟動 AI 伺服器
+
+**Windows（PowerShell）：**
 
 ```powershell
 cd ai_engine
 .\start_server.ps1
 ```
 
-看到 `server is listening on http://127.0.0.1:8000` 即成功。
+**macOS / Linux（手動啟動）：**
 
-> 若遇到 CUDA 錯誤，編輯 `start_server.ps1` 將 `$GpuLayers` 改為 `0`（CPU 模式）。
-> 伺服器設定集中於 `ai_engine/config.json`。
+```bash
+cd ai_engine
+./models/<你的資料夾名稱>/llama-server \
+  -m ./models/<你的資料夾名稱>/Qwen3.5-0.8B-Q4_K_M.gguf \
+  --port 8000 \
+  -ngl 20 \
+  -c 2048 \
+  --chat-template chatml
+```
 
-### 3. 測試 AI 連線（可選）
+> macOS Apple Silicon 使用 Metal 加速，`-ngl` 設為 `99` 即可將所有層卸載至 GPU。
+> 若無 GPU 則將 `-ngl` 設為 `0`。
 
-```powershell
+看到 `server is listening on http://127.0.0.1:8000` 即啟動成功。
+
+### 4. 測試 AI 連線（可選）
+
+```bash
+# 安裝 Python 測試依賴（首次執行）
+pip install requests
+
+# 執行測試
 python ai_engine/scripts/test_ping.py --full
 ```
 
-### 4. 安裝 CJK 字型
+### 5. 安裝 CJK 字型
 
 1. 下載 [Noto Sans TC](https://fonts.google.com/noto/specimen/Noto+Sans+TC)
 2. 將 `.otf` 放入 `game/assets/fonts/`
 
-### 5. 開啟 Godot 專案
+### 6. 開啟 Godot 專案
 
-用 Godot 4 匯入 `game/project.godot`，按 F5 執行。
+1. 下載並安裝 [Godot 4.x](https://godotengine.org/download/)
+2. 開啟 Godot，點選「匯入」→ 選擇 `game/project.godot`
+3. 按 **F5** 執行遊戲
+
+> 確保 AI 伺服器已在背景運行，否則 NPC 對話功能將無法使用。
 
 ## 🎮 操作說明
 
