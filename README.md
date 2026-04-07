@@ -135,10 +135,9 @@ pip install requests
 python ai_engine/scripts/test_ping.py --full
 ```
 
-### 5. 安裝 CJK 字型
+### 5. CJK 字型
 
-1. 下載 [Noto Sans TC](https://fonts.google.com/noto/specimen/Noto+Sans+TC)
-2. 將 `.otf` 放入 `game/assets/fonts/`
+字型檔 `NotoSansCJKtc-Regular.otf` 已透過 Git LFS 包含在專案中，`git lfs pull` 後會自動下載至 `game/assets/fonts/`，無需手動安裝。
 
 ### 6. 開啟 Godot 專案
 
