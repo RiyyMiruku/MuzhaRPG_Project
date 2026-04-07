@@ -5,26 +5,23 @@
 
 set -euo pipefail
 
-# 切換到腳本所在目錄
+# Change to script directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# ---- 設定 ----
+# ---- Load config ----
 CONFIG_FILE="config.json"
 
-# 從 config.json 讀取設定（需要系統內建的 python3）
 if [[ ! -f "$CONFIG_FILE" ]]; then
-    echo "[ERROR] 找不到設定檔: $CONFIG_FILE"
+    echo "[ERROR] Config file not found: $CONFIG_FILE"
     exit 1
 fi
 
 read_config() {
     python3 -c "
-import json, sys
+import json, platform
 with open('$CONFIG_FILE') as f:
     cfg = json.load(f)
-# 依平台選擇 binary 路徑
-import platform
 os_key = 'macos' if platform.system() == 'Darwin' else 'linux'
 binary = cfg['binaries'].get(os_key, 'llama-server')
 print(binary)
@@ -56,36 +53,36 @@ echo "Context:  $CTX_SIZE"
 echo "Template: $CHAT_TEMPLATE"
 echo ""
 
-# ---- 檢查檔案是否存在 ----
+# ---- Check files ----
 if [[ ! -f "$SERVER" ]]; then
-    echo "[ERROR] 找不到 llama-server 執行檔: $SERVER"
+    echo "[ERROR] llama-server not found: $SERVER"
     echo ""
-    echo "請依照以下步驟安裝："
-    echo "  1. 前往 https://github.com/ggml-org/llama.cpp/releases"
-    echo "  2. 下載對應平台的版本 (macOS: llama-*-bin-macos-arm64.zip)"
-    echo "  3. 解壓後放入 ai_engine/engines/ 目錄"
-    echo "  4. 修改 config.json 中的 binaries 路徑"
+    echo "Setup steps:"
+    echo "  1. Go to https://github.com/ggml-org/llama.cpp/releases"
+    echo "  2. Download the build for your platform (macOS: llama-*-bin-macos-arm64.zip)"
+    echo "  3. Extract into ai_engine/engines/"
+    echo "  4. Update the binaries path in config.json"
     echo ""
-    echo "或使用 Homebrew 安裝："
+    echo "Or install via Homebrew:"
     echo "  brew install llama.cpp"
-    echo "  然後將 config.json 中的 macos binary 改為: $(which llama-server 2>/dev/null || echo 'llama-server')"
+    echo "  Then set binaries.macos in config.json to: $(which llama-server 2>/dev/null || echo 'llama-server')"
     exit 1
 fi
 
 if [[ ! -f "$MODEL" ]]; then
-    echo "[ERROR] 找不到模型檔案: $MODEL"
+    echo "[ERROR] Model file not found: $MODEL"
     echo ""
-    echo "請依照以下步驟下載："
-    echo "  1. 前往 https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF"
-    echo "  2. 下載 Qwen3.5-0.8B-Q4_K_M.gguf"
-    echo "  3. 放入與 llama-server 同一資料夾"
+    echo "Setup steps:"
+    echo "  1. Go to https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF"
+    echo "  2. Download Qwen3.5-0.8B-Q4_K_M.gguf"
+    echo "  3. Place it in ai_engine/models/"
     exit 1
 fi
 
-# ---- 確保執行權限 ----
+# ---- Ensure executable permission ----
 chmod +x "$SERVER"
 
-# ---- 啟動伺服器 ----
+# ---- Launch server ----
 echo "Starting..."
 echo "============================================"
 
