@@ -238,9 +238,12 @@ Godot Frontend                    AI Backend
 - [ ] 全域 CJK 字型 Theme
 
 ### 🔜 Phase 5: 打包與發佈
-- [ ] 打包腳本（Godot 匯出 + llama.cpp + 模型 → 單一目錄）
+- [ ] 打包腳本（Godot 匯出 + llama.cpp + 模型 → 單一 zip）
 - [ ] CPU-only 備用二進位
-- [ ] 跨平台測試
+- [ ] 跨平台測試（Windows CUDA/CPU、macOS ARM/Intel、Linux）
+- [ ] 首次啟動自動偵測與下載系統
+  - 偵測 OS 與 GPU → 自動選擇對應的 llama-server 版本
+  - 模型/引擎不存在時自動提示下載（含進度 UI）
 - [ ] Steam 發佈準備
 
 ## 📋 協作規範

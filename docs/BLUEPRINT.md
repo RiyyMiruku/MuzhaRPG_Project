@@ -219,9 +219,17 @@ Assistant prefill (suppress thinking):
 - [ ] Phase 4: TileMap zones (replace ColorRect backgrounds)
 - [ ] Phase 4: Ambient audio per zone
 - [ ] Phase 4: CJK font global theme
-- [ ] Phase 5: Build/export script (Godot + llama.cpp + model → single package)
+- [ ] Phase 5: Build/export script (Godot + llama.cpp + model → single zip)
 - [ ] Phase 5: CPU-only fallback binary
-- [ ] Phase 5: Cross-platform testing
+- [ ] Phase 5: Cross-platform testing (Windows CUDA/CPU, macOS ARM/Intel, Linux)
+- [ ] Phase 5: Auto-setup system — first launch auto-detection & download
+  - Detect OS via `OS.get_name()` → choose correct llama-server build
+  - Detect GPU via `RenderingServer.get_video_adapter_vendor()` → CUDA / Metal / CPU-only
+  - Auto-set `config.json` gpu_layers (NVIDIA/Apple Silicon → 99, others → 0)
+  - If `models/*.gguf` missing → prompt user & download from Hugging Face (~531MB)
+  - If `engines/llama-server` missing → download from llama.cpp GitHub Releases
+  - Download progress UI with cancel/retry support
+  - File hosting: GitHub Releases (engine) + Hugging Face (model)
 - [ ] Stretch: Streaming HTTP responses (StreamPeerTCP)
 - [ ] Stretch: NPC schedule system (different NPCs at different times)
 - [ ] Stretch: Dynamic side quest generation via AI

@@ -36,6 +36,9 @@ func _ready() -> void:
 	_detect_area.body_entered.connect(_on_player_entered)
 	_detect_area.body_exited.connect(_on_player_exited)
 
+	# 快取 DialogueUI 參照，避免每次互動都遍歷場景樹
+	_dialogue_ui = _find_dialogue_ui()
+
 ## 外部呼叫（通常由 Player 觸發）— 開啟對話
 func interact(_player: Node) -> void:
 	if _conversation_active or npc_config == null:
@@ -43,8 +46,8 @@ func interact(_player: Node) -> void:
 	_conversation_active = true
 	_prompt_label.hide()
 
-	# 尋找場景中的 DialogueUI
-	_dialogue_ui = _find_dialogue_ui()
+	if _dialogue_ui == null:
+		_dialogue_ui = _find_dialogue_ui()
 	if _dialogue_ui == null:
 		push_error("BaseNPC: 找不到 DialogueUI 節點")
 		_conversation_active = false

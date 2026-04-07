@@ -29,17 +29,19 @@ func _ready() -> void:
 		_sprite.play("idle_down")
 	_interact_area.body_entered.connect(_on_body_entered)
 	_interact_area.body_exited.connect(_on_body_exited)
+	GameManager.game_state_changed.connect(_on_state_changed)
 
 func _physics_process(_delta: float) -> void:
-	# 對話中不允許移動
-	if GameManager.current_state == GameManager.GameState.DIALOGUE:
+	var input_vec: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	move_with_input(input_vec)
+
+func _on_state_changed(new_state: GameManager.GameState) -> void:
+	var can_move: bool = new_state == GameManager.GameState.EXPLORING
+	set_physics_process(can_move)
+	if not can_move:
 		velocity = Vector2.ZERO
 		is_moving = false
 		_update_animation()
-		return
-
-	var input_vec: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	move_with_input(input_vec)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if GameManager.current_state == GameManager.GameState.DIALOGUE:

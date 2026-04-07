@@ -27,9 +27,15 @@ const ZONE_DISPLAY: Dictionary = {
 func _ready() -> void:
 	pass
 
+var _time_accumulator: float = 0.0
+
 func _process(delta: float) -> void:
-	if GameManager.current_state == GameManager.GameState.EXPLORING:
-		game_time_hours += (delta * TIME_SCALE) / 60.0
+	if GameManager.current_state != GameManager.GameState.EXPLORING:
+		return
+	_time_accumulator += delta
+	if _time_accumulator >= 1.0:
+		game_time_hours += (_time_accumulator * TIME_SCALE) / 60.0
+		_time_accumulator = 0.0
 		if game_time_hours >= 24.0:
 			game_time_hours -= 24.0
 
@@ -92,10 +98,14 @@ func update_relationship(npc_id: String, delta: int) -> void:
 	var current: int = npc_relationships.get(npc_id, 0)
 	npc_relationships[npc_id] = clamp(current + delta, -100, 100)
 
+const MAX_HISTORY_PER_NPC: int = 20
+
 func add_conversation_turn(npc_id: String, role: String, content: String) -> void:
 	if not conversation_histories.has(npc_id):
 		conversation_histories[npc_id] = []
 	conversation_histories[npc_id].append({"role": role, "content": content})
+	if conversation_histories[npc_id].size() > MAX_HISTORY_PER_NPC:
+		conversation_histories[npc_id] = conversation_histories[npc_id].slice(-MAX_HISTORY_PER_NPC)
 
 # ── Persistence (Phase 3) ──────────────────────────────────────────────────
 func serialize() -> Dictionary:

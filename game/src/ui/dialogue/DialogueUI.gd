@@ -21,6 +21,7 @@ signal dialogue_closed()
 var _typewriter_timer: Timer
 var _full_text: String = ""
 var _displayed_chars: int = 0
+var _current_npc_id: String = ""
 const TYPEWRITER_SPEED: float = 0.025   # seconds per character
 
 # ── Lifecycle ──────────────────────────────────────────────────────────────
@@ -43,6 +44,7 @@ func _ready() -> void:
 func open_dialogue(npc_config: NPCConfig) -> void:
 	# 對話框開啟時關閉所有 UI 面板
 	UIManager.pop_all()
+	_current_npc_id = npc_config.npc_id
 	_name_label.text = npc_config.display_name
 	_portrait.texture = npc_config.portrait_texture
 	_dialogue_text.text = "（與 %s 對話中，輸入訊息後按 Enter 發送）" % npc_config.display_name
@@ -116,7 +118,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 # ── AI Response Handlers ───────────────────────────────────────────────────
-func _on_ai_response_complete(text: String, _npc_id: String) -> void:
+func _on_ai_response_complete(text: String, npc_id: String) -> void:
+	if npc_id != _current_npc_id:
+		return
 	hide_thinking_indicator()
 	display_npc_response(text)
 
