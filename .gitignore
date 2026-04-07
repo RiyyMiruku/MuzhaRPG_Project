@@ -18,13 +18,9 @@ game/logs/
 # =================================================================
 # 2. AI 引擎與模型檔案 (防止倉庫爆炸)
 # =================================================================
-# 排除所有平台推論引擎執行檔與 DLL (llama-server 相關)
-ai_engine/**/*.exe
-ai_engine/**/*.dll
-ai_engine/**/*.so
-ai_engine/**/*.dylib
-ai_engine/**/*.lib
-ai_engine/**/*.pdb
+# 排除推論引擎執行檔與 DLL (llama-server 相關)
+ai_engine/engines/
+!ai_engine/engines/.gitkeep
 
 # 排除大型模型檔案 (GGUF, Safetensors 等)
 *.gguf

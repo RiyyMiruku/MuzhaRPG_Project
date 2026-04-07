@@ -54,7 +54,7 @@ git lfs pull
 
 > **目前專案預設路徑**對應版本 `b8583`，但更新版本通常向下相容。
 
-下載後解壓，將整個資料夾放入 `ai_engine/models/` 目錄下，確保 `llama-server`（或 `llama-server.exe`）可被找到。
+下載後解壓，將整個資料夾放入 `ai_engine/engines/` 目錄下。
 
 #### 2b. 下載語言模型（GGUF 格式）
 
@@ -62,21 +62,25 @@ git lfs pull
 
 1. 前往 Hugging Face 模型頁面：[Qwen/Qwen3.5-0.8B-GGUF](https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF)
 2. 下載 `Qwen3.5-0.8B-Q4_K_M.gguf`
-3. 將模型檔案放入與 llama-server 同一資料夾
+3. 將模型檔案放入 `ai_engine/models/` 目錄
 
 #### 2c. 確認目錄結構
 
-完成後，`ai_engine/models/` 下應有如下結構：
+完成後應有如下結構（引擎與模型分開管理）：
 
 ```
-ai_engine/models/
-└── llama-b8583-bin-win-cuda-13.1-x64/   ← 資料夾名稱可自訂
-    ├── llama-server.exe                  ← 推論引擎執行檔
-    ├── Qwen3.5-0.8B-Q4_K_M.gguf         ← 語言模型
-    └── (其他 .dll / .so 檔案)
+ai_engine/
+├── engines/                                  ← 推論引擎執行檔
+│   └── llama-b8583-bin-win-cuda-13.1-x64/
+│       ├── llama-server.exe
+│       └── (*.dll 等相依檔案)
+├── models/                                   ← 模型檔案，可放多個方便切換
+│   └── Qwen3.5-0.8B-Q4_K_M.gguf
+└── config.json
 ```
 
 > **重要**：如果你的資料夾名稱與預設不同，請修改 `ai_engine/config.json` 中的 `binaries` 和 `model_path` 路徑使其對應。
+> 詳細參數說明請參考 [CONFIG_GUIDE.md](ai_engine/CONFIG_GUIDE.md)。
 
 #### 2d. 調整設定（視需要）
 
@@ -92,10 +96,10 @@ ai_engine/models/
     "chat_template": "chatml"
   },
   "binaries": {
-    "windows": "models/<你的資料夾名稱>/llama-server.exe",
-    "macos": "models/<你的資料夾名稱>/llama-server"
+    "windows": "engines/<你的資料夾名稱>/llama-server.exe",
+    "macos": "engines/<你的資料夾名稱>/llama-server"
   },
-  "model_path": "models/<你的資料夾名稱>/Qwen3.5-0.8B-Q4_K_M.gguf"
+  "model_path": "models/Qwen3.5-0.8B-Q4_K_M.gguf"
 }
 ```
 
@@ -108,20 +112,16 @@ cd ai_engine
 .\start_server.ps1
 ```
 
-**macOS / Linux（手動啟動）：**
+**macOS / Linux：**
 
 ```bash
 cd ai_engine
-./models/<你的資料夾名稱>/llama-server \
-  -m ./models/<你的資料夾名稱>/Qwen3.5-0.8B-Q4_K_M.gguf \
-  --port 8000 \
-  -ngl 20 \
-  -c 2048 \
-  --chat-template chatml
+./start_server.sh
 ```
 
-> macOS Apple Silicon 使用 Metal 加速，`-ngl` 設為 `99` 即可將所有層卸載至 GPU。
-> 若無 GPU 則將 `-ngl` 設為 `0`。
+> 腳本會自動從 `config.json` 讀取所有設定。
+> macOS Apple Silicon 使用 Metal 加速，建議將 `config.json` 中 `gpu_layers` 設為 `99`（全部層卸載至 GPU）。
+> 若無 GPU 則將 `gpu_layers` 設為 `0`。
 
 看到 `server is listening on http://127.0.0.1:8000` 即啟動成功。
 
