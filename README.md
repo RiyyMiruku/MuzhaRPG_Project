@@ -60,7 +60,7 @@ git lfs pull
 
 本專案使用 **Qwen3.5-0.8B-Chat** 的 Q4_K_M 量化版（約 531MB）：
 
-1. 前往 Hugging Face 模型頁面：[Qwen/Qwen3.5-0.8B-GGUF](https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF)
+1. 前往 Hugging Face 模型頁面：[Qwen/Qwen3.5-0.8B-GGUF](https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF)](https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF)
 2. 下載 `Qwen3.5-0.8B-Q4_K_M.gguf`
 3. 將模型檔案放入 `ai_engine/models/` 目錄
 
