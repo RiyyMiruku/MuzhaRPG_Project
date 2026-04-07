@@ -42,58 +42,91 @@ W1~W5 = Walk cycle（走路循環，5 幀）
 - Shadow optional (if included, must be consistent across all frames)
 - **Idle 幀必須是完全靜止的站姿**，不能有走路動作
 
+### 通用 Spritesheet Prompt（貼給 AI 用的結構描述）
+
+以下為結構描述區塊，直接貼在角色描述之前即可。AI 生圖工具較能理解自然語言而非 ASCII 圖表。
+
+```
+Generate a single PNG sprite sheet for a top-down 2.5D pixel art RPG character.
+
+LAYOUT — strict 6-column × 4-row uniform grid, 24 cells total, no gaps, no borders between cells:
+  • Row 1 (top):    character facing DOWN  (toward the viewer)
+  • Row 2:          character facing RIGHT
+  • Row 3:          character facing LEFT
+  • Row 4 (bottom): character facing UP    (away from the viewer)
+
+ANIMATION per row — read left to right:
+  • Cell 1:     IDLE pose — standing completely still, arms relaxed at sides, feet together, weight centered
+  • Cells 2-6:  WALK CYCLE — 5 frames of a smooth looping walk animation for that direction
+
+CRITICAL RULES:
+  1. Every cell must be the exact same pixel width and height (uniform grid)
+  2. The character must be centered in every cell, same vertical baseline
+  3. The idle pose (cell 1) must look clearly different from the walk frames — no mid-step legs
+  4. Background must be fully transparent (alpha channel), not a checkerboard pattern
+  5. Consistent lighting, proportions, and color palette across all 24 frames
+  6. Pixel art style, no anti-aliasing, clean sharp pixels
+```
+
 ### Player Character
 
 ```
-pixel art character sprite sheet, top-down RPG, 4 directions (front/back/left/right),
-6 frames per direction: 1 standing idle + 5 walk cycle,
-first frame each row is standing still (arms down, feet together),
-young male college student, brown hair, blue casual shirt, dark pants, sneakers,
-transparent background, consistent pixel size, equal frame grid, game-ready spritesheet
+[貼上「通用 Spritesheet Prompt」]
+
+CHARACTER DESCRIPTION:
+Young male Taiwanese college student, early 20s.
+Brown short hair, blue casual button shirt, dark navy pants, white sneakers.
+Slim average build, neutral relaxed expression.
+Style: 16-bit pixel art, top-down 2.5D RPG, warm color palette.
 ```
 
 ### 陳阿姨 (Chen Ayi - Market Vendor)
 
 ```
-pixel art character sprite sheet, top-down RPG, 4 directions,
-6 frames per direction: 1 standing idle + 5 walk cycle,
-first frame each row is standing still,
-middle-aged Taiwanese woman, short permed hair, market apron over floral blouse,
-warm friendly expression, slight stout build,
-transparent background, equal frame grid, spritesheet layout
+[貼上「通用 Spritesheet Prompt」]
+
+CHARACTER DESCRIPTION:
+Middle-aged Taiwanese woman, late 40s, market vendor.
+Short permed black hair, floral blouse under a beige market apron.
+Slightly stout friendly build, warm smile.
+Style: 16-bit pixel art, top-down 2.5D RPG, warm color palette.
 ```
 
 ### 王伯伯 (Wang Bobo - Noodle Shop Owner)
 
 ```
-pixel art character sprite sheet, top-down RPG, 4 directions,
-6 frames per direction: 1 standing idle + 5 walk cycle,
-first frame each row is standing still,
-elderly Taiwanese man, thin build, white undershirt with towel on shoulder,
-calm expression, slightly hunched posture,
-transparent background, equal frame grid, spritesheet layout
+[貼上「通用 Spritesheet Prompt」]
+
+CHARACTER DESCRIPTION:
+Elderly Taiwanese man, late 60s, noodle shop owner.
+Thin build, white sleeveless undershirt, grey towel draped over right shoulder.
+Calm expression, slightly hunched posture.
+Style: 16-bit pixel art, top-down 2.5D RPG, warm color palette.
 ```
 
 ### 廣師父 (Master Guang - Temple Keeper)
 
 ```
-pixel art character sprite sheet, top-down RPG, 4 directions,
-6 frames per direction: 1 standing idle + 5 walk cycle,
-first frame each row is standing still,
-elderly monk/temple keeper, shaved head, grey traditional Chinese robe,
-serene mysterious expression, prayer beads around neck,
-transparent background, equal frame grid, spritesheet layout
+[貼上「通用 Spritesheet Prompt」]
+
+CHARACTER DESCRIPTION:
+Elderly temple keeper / monk figure, age 70+.
+Shaved head, long grey traditional Chinese robe, wooden prayer beads around neck.
+Serene mysterious expression, upright dignified posture.
+Style: 16-bit pixel art, top-down 2.5D RPG, green and warm tones.
 ```
 
 ### 釣魚老人 (Old Fisherman)
 
 ```
-pixel art character sprite sheet, top-down RPG, 4 directions,
-6 frames per direction: 1 standing idle + 5 walk cycle,
-first frame each row is standing still,
-old fisherman, straw hat, loose shirt, rolled-up pants, holding fishing rod,
-relaxed cheerful expression, tanned skin,
-transparent background, equal frame grid, spritesheet layout
+[貼上「通用 Spritesheet Prompt」]
+
+CHARACTER DESCRIPTION:
+Old riverside fisherman, age 60+.
+Woven straw sun hat, loose beige linen shirt, dark pants rolled up to calves.
+Holding a bamboo fishing rod in right hand.
+Relaxed cheerful grin, tanned weathered skin.
+Style: 16-bit pixel art, top-down 2.5D RPG, warm golden-hour tones.
 ```
 
 ---
