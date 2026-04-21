@@ -17,6 +17,12 @@ signal zone_loaded(zone_id: String)
 signal player_zone_entered(zone_id: String)
 signal player_interacted_with(target: Node)
 
+# ── Prop 互動 ──────────────────────────────────────────────────────────────
+## 玩家進入 prop 互動範圍，顯示提示文字（例：「[E] 閱讀公告」）
+signal prop_interact_available(prop: Node, prompt: String)
+## 玩家離開 prop 互動範圍，隱藏提示
+signal prop_interact_unavailable(prop: Node)
+
 # ── UI ─────────────────────────────────────────────────────────────────────
 signal hud_message_requested(text: String, duration: float)
 signal screen_transition_started()
