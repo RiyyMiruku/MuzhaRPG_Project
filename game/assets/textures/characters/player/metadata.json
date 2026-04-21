@@ -1,0 +1,87 @@
+{
+  "character": {
+    "id": "66edf283-9e3b-43f3-929d-158ad52ab968",
+    "name": "player",
+    "prompt": "pixel art, top-down RPG, 2.5D perspective, 16-bit style,\nwarm color palette, Taiwanese urban setting\n\nBackground must be fully transparent (alpha channel), not a checkerboard pattern\nConsistent lighting, proportions, and color palette\nPixel art style, no anti-aliasing, clean sharp pixels\n\nCHARACTER DESCRIPTION:\nYoung male Taiwanese college student, early 20s.\nBrown short hair, blue casual button shirt, dark navy pants, white sneakers.\nSlim average build, neutral relaxed expression.\nStyle: 16-bit pixel art, top-down 2.5D RPG, warm color palette.",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "template_id": "mannequin",
+    "directions": 4,
+    "view": "low top-down",
+    "created_at": "2026-04-08T06:14:38.173685+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "west": "rotations/west.png",
+      "east": "rotations/east.png",
+      "north": "rotations/north.png"
+    },
+    "animations": {
+      "Breathing_Idle_Background_must_be_fully_transparen-43e14a66": {
+        "north": [
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/north/frame_000.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/north/frame_001.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/north/frame_002.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/north/frame_003.png"
+        ],
+        "west": [
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/west/frame_000.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/west/frame_001.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/west/frame_002.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/west/frame_003.png"
+        ],
+        "east": [
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/east/frame_000.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/east/frame_001.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/east/frame_002.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/east/frame_003.png"
+        ],
+        "south": [
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/south/frame_000.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/south/frame_001.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/south/frame_002.png",
+          "animations/Breathing_Idle_Background_must_be_fully_transparen-43e14a66/south/frame_003.png"
+        ]
+      },
+      "Walk_the_animation_should_be_smooth_Background_mus-97ac3384": {
+        "south": [
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/south/frame_000.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/south/frame_001.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/south/frame_002.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/south/frame_003.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/south/frame_004.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/south/frame_005.png"
+        ],
+        "east": [
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/east/frame_000.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/east/frame_001.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/east/frame_002.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/east/frame_003.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/east/frame_004.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/east/frame_005.png"
+        ],
+        "north": [
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/north/frame_000.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/north/frame_001.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/north/frame_002.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/north/frame_003.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/north/frame_004.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/north/frame_005.png"
+        ],
+        "west": [
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/west/frame_000.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/west/frame_001.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/west/frame_002.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/west/frame_003.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/west/frame_004.png",
+          "animations/Walk_the_animation_should_be_smooth_Background_mus-97ac3384/west/frame_005.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-08T06:50:54.638294"
+}

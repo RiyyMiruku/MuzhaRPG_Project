@@ -14,18 +14,22 @@ signal interaction_requested(interactable: Node)
 var _nearby_interactable: Node = null
 
 const PLAYER_SHEET: String = "res://assets/textures/characters/player.png"
+const PLAYER_RESOURCE_DIR: String = "res://assets/textures/characters/player"
 
 func _ready() -> void:
 	sprite = _sprite
 	add_to_group("player")
-	# 載入 spritesheet，若不存在則用佔位精靈
+	# 智能加載：優先預編譯 Spritesheet，備選動態生成
 	if _sprite.sprite_frames == null:
-		if ResourceLoader.exists(PLAYER_SHEET):
-			_sprite.sprite_frames = SpriteSheetLoader.load_character_sheet(PLAYER_SHEET)
-		else:
-			_sprite.sprite_frames = PlaceholderSprite.generate_sprite_frames(
-				Color.CORNFLOWER_BLUE, Color.WHITE, Vector2i(16, 24)
-			)
+		_sprite.sprite_frames = SpriteSheetLoader.smart_load(PLAYER_RESOURCE_DIR)
+		if _sprite.sprite_frames == null:
+			# 備選：使用舊方法（開發用）
+			if ResourceLoader.exists(PLAYER_SHEET):
+				_sprite.sprite_frames = SpriteSheetLoader.load_character_sheet(PLAYER_SHEET)
+			else:
+				_sprite.sprite_frames = PlaceholderSprite.generate_sprite_frames(
+					Color.CORNFLOWER_BLUE, Color.WHITE, Vector2i(16, 24)
+				)
 		_sprite.play("idle_down")
 	_interact_area.body_entered.connect(_on_body_entered)
 	_interact_area.body_exited.connect(_on_body_exited)

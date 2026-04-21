@@ -1,0 +1,334 @@
+{
+  "version": "1.0",
+  "characters": {
+    "Chen_Ayi_-_Market_Vendor": {
+      "character_name": "Chen_Ayi_-_Market_Vendor",
+      "frame_size": [
+        92,
+        92
+      ],
+      "animations": {
+        "idle_north": {
+          "row": 0,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_south": {
+          "row": 1,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_west": {
+          "row": 2,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_east": {
+          "row": 3,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_south": {
+          "row": 4,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_west": {
+          "row": 5,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_east": {
+          "row": 6,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_north": {
+          "row": 7,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        }
+      }
+    },
+    "Master_Guang_-_Temple_Keeper": {
+      "character_name": "Master_Guang_-_Temple_Keeper",
+      "frame_size": [
+        92,
+        92
+      ],
+      "animations": {
+        "idle_south": {
+          "row": 0,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_east": {
+          "row": 1,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_north": {
+          "row": 2,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_west": {
+          "row": 3,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_west": {
+          "row": 4,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_south": {
+          "row": 5,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_north": {
+          "row": 6,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_east": {
+          "row": 7,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        }
+      }
+    },
+    "Old_Fisherman": {
+      "character_name": "Old_Fisherman",
+      "frame_size": [
+        92,
+        92
+      ],
+      "animations": {
+        "idle_east": {
+          "row": 0,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_south": {
+          "row": 1,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_north": {
+          "row": 2,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_west": {
+          "row": 3,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_south": {
+          "row": 4,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_east": {
+          "row": 5,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_west": {
+          "row": 6,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_north": {
+          "row": 7,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        }
+      }
+    },
+    "player": {
+      "character_name": "player",
+      "frame_size": [
+        92,
+        92
+      ],
+      "animations": {
+        "idle_north": {
+          "row": 0,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_west": {
+          "row": 1,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_east": {
+          "row": 2,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_south": {
+          "row": 3,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_south": {
+          "row": 4,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_east": {
+          "row": 5,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_north": {
+          "row": 6,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_west": {
+          "row": 7,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        }
+      }
+    },
+    "Wang_Bobo_-_Noodle_Shop_Owner": {
+      "character_name": "Wang_Bobo_-_Noodle_Shop_Owner",
+      "frame_size": [
+        92,
+        92
+      ],
+      "animations": {
+        "idle_south": {
+          "row": 0,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_north": {
+          "row": 1,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_east": {
+          "row": 2,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "idle_west": {
+          "row": 3,
+          "start": 0,
+          "end": 4,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_west": {
+          "row": 4,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_south": {
+          "row": 5,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_north": {
+          "row": 6,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        },
+        "walk_east": {
+          "row": 7,
+          "start": 0,
+          "end": 6,
+          "fps": 6.0,
+          "loop": true
+        }
+      }
+    }
+  },
+  "summary": {
+    "successful": 5,
+    "failed": 0
+  }
+}

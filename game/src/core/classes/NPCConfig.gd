@@ -20,6 +20,7 @@ extends Resource
 
 # ── 視覺 ───────────────────────────────────────────────────────────────────
 @export var portrait_texture: Texture2D          # 對話框中的頭像（建議 96x96）
+@export var character_resource_path: String = "" # 角色資源夾路徑（如 "res://assets/textures/characters/Chen_Ayi_-_Market_Vendor"）
 
 # ── AI 推論參數 ────────────────────────────────────────────────────────────
 ## temperature: 越高越有創意，越低越穩定。NPC 個性越跳脫可設越高。
