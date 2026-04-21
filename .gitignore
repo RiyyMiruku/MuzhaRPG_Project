@@ -15,6 +15,11 @@ game/dist/
 game/saves/
 game/logs/
 
+# 美術組拆圖暫存區（不進版控，保留結構即可）
+game/assets/textures/temp/*
+!game/assets/textures/temp/.gitkeep
+!game/assets/textures/temp/README.md
+
 # =================================================================
 # 2. AI 引擎與模型檔案 (防止倉庫爆炸)
 # =================================================================
