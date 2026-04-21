@@ -23,10 +23,11 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		if UIManager.current_panel == "PauseMenu":
 			UIManager.pop()
+			get_viewport().set_input_as_handled()
 		elif not UIManager.is_any_open:
 			_update_info()
 			UIManager.push("PauseMenu")
-		get_viewport().set_input_as_handled()
+			get_viewport().set_input_as_handled()
 
 func _update_info() -> void:
 	_zone_label.text = "Location: " + StoryManager.ZONE_DISPLAY.get(StoryManager.current_zone, StoryManager.current_zone)

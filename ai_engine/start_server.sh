@@ -9,19 +9,33 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# ---- Load config ----
-CONFIG_FILE="config.json"
+# ---- Load config (default + personal override) ----
+DEFAULT_CONFIG="config.default.json"
+USER_CONFIG="config.json"
 
-if [[ ! -f "$CONFIG_FILE" ]]; then
-    echo "[ERROR] Config file not found: $CONFIG_FILE"
+if [[ ! -f "$DEFAULT_CONFIG" ]]; then
+    echo "[ERROR] Default config not found: $DEFAULT_CONFIG"
     exit 1
 fi
 
 read_config() {
     python3 -c "
-import json, platform
-with open('$CONFIG_FILE') as f:
+import json, os, platform
+
+def deep_merge(base, override):
+    if not isinstance(base, dict) or not isinstance(override, dict):
+        return override
+    for k, v in override.items():
+        base[k] = deep_merge(base.get(k), v) if k in base else v
+    return base
+
+with open('$DEFAULT_CONFIG') as f:
     cfg = json.load(f)
+
+if os.path.exists('$USER_CONFIG'):
+    with open('$USER_CONFIG') as f:
+        cfg = deep_merge(cfg, json.load(f))
+
 os_key = 'macos' if platform.system() == 'Darwin' else 'linux'
 binary = cfg['binaries'].get(os_key, 'llama-server')
 print(binary)
@@ -45,6 +59,11 @@ echo "============================================"
 echo "  Muzha RPG - AI Server Launcher"
 echo "============================================"
 echo ""
+if [[ -f "$USER_CONFIG" ]]; then
+    echo "Config:   $DEFAULT_CONFIG + $USER_CONFIG (personal overrides)"
+else
+    echo "Config:   $DEFAULT_CONFIG (no personal override; copy to $USER_CONFIG to customize)"
+fi
 echo "Server:   $SERVER"
 echo "Model:    $MODEL"
 echo "Port:     $PORT"
@@ -61,7 +80,7 @@ if [[ ! -f "$SERVER" ]]; then
     echo "  1. Go to https://github.com/ggml-org/llama.cpp/releases"
     echo "  2. Download the build for your platform (macOS: llama-*-bin-macos-arm64.zip)"
     echo "  3. Extract into ai_engine/engines/"
-    echo "  4. Update the binaries path in config.json"
+    echo "  4. Override the binaries path in config.json (personal override)"
     echo ""
     echo "Or install via Homebrew:"
     echo "  brew install llama.cpp"

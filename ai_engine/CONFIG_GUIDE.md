@@ -1,10 +1,31 @@
 # config.json 參數說明
 
+## 設定檔分離機制（預設值 vs 個人值）
+
+為避免每位開發者把自己的硬體設定（GPU 層數、引擎路徑等）推到 git，設定檔拆成兩層：
+
+| 檔案 | 用途 | 是否追蹤 |
+|------|------|---------|
+| `config.default.json` | 團隊共用預設值（CPU 安全基線） | ✅ 追蹤 |
+| `config.json` | 個人覆寫值（只需放你要改的鍵） | ❌ `.gitignore` |
+
+**啟動腳本邏輯**：先讀 `config.default.json`，若 `config.json` 存在則深度合併覆寫。玩家/開發者只編輯 `config.json`，團隊預設永遠乾淨。
+
+**範例**：Windows + NVIDIA GPU 的個人 `config.json` 只需寫：
+```json
+{
+  "server": { "gpu_layers": 99 },
+  "binaries": { "windows": "engines/llama-b8583-bin-win-cuda-13.1-x64/llama-server.exe" }
+}
+```
+其餘欄位自動沿用 `config.default.json`。
+
 ## 目錄結構
 
 ```
 ai_engine/
-├── config.json          ← 所有設定集中於此
+├── config.default.json  ← 團隊預設（追蹤，勿放個人硬體設定）
+├── config.json          ← 個人覆寫（gitignored，只放差異）
 ├── engines/             ← 推論引擎執行檔（llama-server 等）
 │   └── llama-b8583-bin-win-cuda-13.1-x64/
 │       ├── llama-server.exe
@@ -15,7 +36,7 @@ ai_engine/
 └── scripts/
 ```
 
-> `engines/` 與 `models/` 分開管理，切換模型只需改 `config.json` 的 `model_path`，不用動引擎資料夾。
+> `engines/` 與 `models/` 分開管理，切換模型只需在 `config.json` 覆寫 `model_path`，不用動引擎資料夾。
 
 ## server
 

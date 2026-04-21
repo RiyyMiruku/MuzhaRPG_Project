@@ -3,13 +3,13 @@
     "host": "127.0.0.1",
     "port": 8000,
     "context_size": 2048,
-    "gpu_layers": 5,
+    "gpu_layers": 0,
     "chat_template": "chatml",
     "startup_timeout_sec": 30,
     "health_check_interval_sec": 5
   },
   "binaries": {
-    "windows": "engines/llama-b8583-bin-win-cuda-13.1-xllama-b8583-bin-win-cuda-13.1-x/llama-server.exe",
+    "windows": "engines/llama-b8685-bin-win-cpu-x64/llama-server.exe",
     "linux": "llama-server",
     "macos": "llama-server"
   },

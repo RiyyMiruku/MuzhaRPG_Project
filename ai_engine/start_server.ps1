@@ -7,16 +7,42 @@ Write-Host ""
 
 Set-Location $PSScriptRoot
 
-# ---- Load config.json ----
-$ConfigFile = "config.json"
+# ---- Load config (default + personal override) ----
+$DefaultConfigFile = "config.default.json"
+$UserConfigFile    = "config.json"
 
-if (-not (Test-Path $ConfigFile)) {
-    Write-Host "[ERROR] Config file not found: $ConfigFile" -ForegroundColor Red
+if (-not (Test-Path $DefaultConfigFile)) {
+    Write-Host "[ERROR] Default config not found: $DefaultConfigFile" -ForegroundColor Red
     Read-Host "Press Enter to exit"
     exit 1
 }
 
-$Config = Get-Content $ConfigFile -Raw -Encoding UTF8 | ConvertFrom-Json
+function Merge-Config {
+    param($Base, $Override)
+    if ($null -eq $Override) { return $Base }
+    if (-not ($Override -is [PSCustomObject]) -or -not ($Base -is [PSCustomObject])) {
+        return $Override
+    }
+    foreach ($prop in $Override.PSObject.Properties) {
+        $name = $prop.Name
+        if ($null -ne $Base.PSObject.Properties[$name]) {
+            $Base.$name = Merge-Config $Base.$name $prop.Value
+        } else {
+            $Base | Add-Member -NotePropertyName $name -NotePropertyValue $prop.Value
+        }
+    }
+    return $Base
+}
+
+$Config = Get-Content $DefaultConfigFile -Raw -Encoding UTF8 | ConvertFrom-Json
+
+if (Test-Path $UserConfigFile) {
+    $UserConfig = Get-Content $UserConfigFile -Raw -Encoding UTF8 | ConvertFrom-Json
+    $Config = Merge-Config $Config $UserConfig
+    Write-Host "Config:   $DefaultConfigFile + $UserConfigFile (personal overrides)"
+} else {
+    Write-Host "Config:   $DefaultConfigFile (no personal override; copy to $UserConfigFile to customize)"
+}
 
 $Server    = $Config.binaries.windows
 $Model     = $Config.model_path
@@ -33,7 +59,7 @@ if (-not (Test-Path $Server)) {
     Write-Host "  1. Go to https://github.com/ggml-org/llama.cpp/releases"
     Write-Host "  2. Download the Windows CUDA or CPU build"
     Write-Host "  3. Extract into ai_engine/engines/"
-    Write-Host "  4. Update binaries.windows in config.json"
+    Write-Host "  4. Override binaries.windows in config.json (personal override)"
     Read-Host "Press Enter to exit"
     exit 1
 }

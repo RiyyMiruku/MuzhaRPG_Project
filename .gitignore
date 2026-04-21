@@ -22,6 +22,9 @@ game/logs/
 ai_engine/engines/*
 !ai_engine/engines/.gitkeep
 
+# 個人化設定（保留 config.default.json 作為模板；config.json 為使用者本地覆寫值）
+ai_engine/config.json
+
 # 排除大型模型檔案 (GGUF, Safetensors 等)
 *.gguf
 *.bin
