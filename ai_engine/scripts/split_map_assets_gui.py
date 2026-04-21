@@ -19,21 +19,19 @@
 
 import hashlib
 import re
-import sys
 import tkinter as tk
+from collections import deque
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from typing import Optional
 
 from PIL import Image, ImageTk
 
-# 共用 blob 偵測邏輯（從 CLI 版匯入）
-sys.path.insert(0, str(Path(__file__).parent))
-from split_map_assets import (  # noqa: E402
-    DEFAULT_MIN_AREA,
-    find_blobs,
-    sort_reading_order,
-)
+# ── Blob 偵測演算法常數 ──────────────────────────────────────────
+# 預設 alpha 門檻：低於此值視為透明背景（可在 UI 覆寫）
+DEFAULT_ALPHA_THRESHOLD: int = 16
+# 忽略過小的雜訊斑點（< 64 px²）
+DEFAULT_MIN_AREA: int = 64
 
 # 合法檔名（不含副檔名）: 僅限 ASCII 英數 + 底線 + 連字號 + 點
 # 檔名必須純 ASCII，原因：
@@ -173,6 +171,83 @@ def save_alpha_preview(img: Image.Image, output_path: Path) -> None:
     """
     alpha: Image.Image = img.convert("RGBA").split()[3]
     alpha.save(output_path)
+
+
+# ── Blob 偵測（4-connected Connected Component Labeling via BFS flood-fill） ──
+
+def find_blobs(
+    img: Image.Image,
+    min_area: int,
+    alpha_threshold: int = DEFAULT_ALPHA_THRESHOLD,
+) -> list[tuple[int, int, int, int]]:
+    """找出圖中所有連通的非透明區域（blob），回傳每個 blob 的 bbox。
+
+    Args:
+        img: RGBA Image
+        min_area: 小於此面積的 blob 會被忽略（雜訊過濾）
+        alpha_threshold: 低於此 alpha 值視為背景（透明）
+
+    Returns:
+        list of (x1, y1, x2, y2) 其中 x2/y2 為 exclusive
+    """
+    w, h = img.size
+    alpha: bytes = img.split()[3].tobytes()
+    visited: bytearray = bytearray(w * h)
+
+    bboxes: list[tuple[int, int, int, int]] = []
+
+    for start_y in range(h):
+        for start_x in range(w):
+            start_idx: int = start_y * w + start_x
+            if visited[start_idx]:
+                continue
+            if alpha[start_idx] < alpha_threshold:
+                visited[start_idx] = 1
+                continue
+
+            # BFS flood-fill
+            queue: deque[tuple[int, int]] = deque()
+            queue.append((start_x, start_y))
+            visited[start_idx] = 1
+            min_x: int = start_x
+            min_y: int = start_y
+            max_x: int = start_x
+            max_y: int = start_y
+            pixel_count: int = 0
+
+            while queue:
+                cx, cy = queue.popleft()
+                pixel_count += 1
+                if cx < min_x:
+                    min_x = cx
+                elif cx > max_x:
+                    max_x = cx
+                if cy < min_y:
+                    min_y = cy
+                elif cy > max_y:
+                    max_y = cy
+
+                for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                    nx: int = cx + dx
+                    ny: int = cy + dy
+                    if 0 <= nx < w and 0 <= ny < h:
+                        nidx: int = ny * w + nx
+                        if not visited[nidx] and alpha[nidx] >= alpha_threshold:
+                            visited[nidx] = 1
+                            queue.append((nx, ny))
+
+            if pixel_count >= min_area:
+                bboxes.append((min_x, min_y, max_x + 1, max_y + 1))
+
+    return bboxes
+
+
+def sort_reading_order(
+    bboxes: list[tuple[int, int, int, int]],
+    row_tolerance: int = 50,
+) -> list[tuple[int, int, int, int]]:
+    """依閱讀順序（由上到下、由左到右）排序 bbox。同列容忍度為 row_tolerance 像素。"""
+    return sorted(bboxes, key=lambda b: (b[1] // row_tolerance, b[0]))
 
 
 def validate_filename(name: str) -> Optional[str]:
@@ -651,12 +726,9 @@ class SplitterApp:
 
         try:
             self.mega_image = Image.open(input_path).convert("RGBA")
-            # 動態改 alpha 門檻
-            import split_map_assets
-
-            split_map_assets.ALPHA_THRESHOLD = alpha_thresh
-
-            bboxes: list[tuple[int, int, int, int]] = find_blobs(self.mega_image, min_area)
+            bboxes: list[tuple[int, int, int, int]] = find_blobs(
+                self.mega_image, min_area, alpha_threshold=alpha_thresh
+            )
             bboxes = sort_reading_order(bboxes)
         except Exception as e:
             progress.destroy()
