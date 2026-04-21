@@ -25,13 +25,21 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from typing import Optional
 
-from PIL import Image, ImageTk
+from PIL import Image, ImageChops, ImageTk
 
 # ── Blob 偵測演算法常數 ──────────────────────────────────────────
 # 預設 alpha 門檻：低於此值視為透明背景（可在 UI 覆寫）
 DEFAULT_ALPHA_THRESHOLD: int = 16
 # 忽略過小的雜訊斑點（< 64 px²）
 DEFAULT_MIN_AREA: int = 64
+
+# ── 背景色偵測常數 ──────────────────────────────────────────────
+# 縮圖尺寸：加速背景色偵測，夠用不失真
+BG_DETECT_SAMPLE_SIZE: int = 256
+# 最低占比門檻：占比 > 此值的單一顏色才視為背景色
+BG_DETECT_MIN_RATIO: float = 0.25
+# 去背容差：RGB 各通道差距 ≤ 此值即視為同色
+DEFAULT_BG_TOLERANCE: int = 8
 
 # 合法檔名（不含副檔名）: 僅限 ASCII 英數 + 底線 + 連字號 + 點
 # 檔名必須純 ASCII，原因：
@@ -173,6 +181,81 @@ def save_alpha_preview(img: Image.Image, output_path: Path) -> None:
     alpha.save(output_path)
 
 
+# ── 背景色偵測與去背（for 沒勾透明匯出的大圖） ───────────────────
+
+def detect_background_color(
+    img: Image.Image,
+    sample_size: int = BG_DETECT_SAMPLE_SIZE,
+    min_ratio: float = BG_DETECT_MIN_RATIO,
+    alpha_min: int = 32,
+) -> Optional[tuple[tuple[int, int, int], float]]:
+    """偵測圖片中占比最高的單一顏色，判斷是否為背景色。
+
+    演算法：
+    1. 縮圖到 sample_size × sample_size（加速，保留色彩分布）
+    2. 用 getcolors 精確計數每種顏色（僅計算 alpha ≥ alpha_min 的不透明像素）
+    3. 若最常見顏色 > min_ratio 占比 → 判定為背景色
+
+    Returns:
+        ((r, g, b), ratio) — 若偵測到背景色
+        None — 若沒有單一顏色占主導地位
+    """
+    rgba: Image.Image = img.convert("RGBA")
+    thumb: Image.Image = rgba.copy()
+    thumb.thumbnail((sample_size, sample_size), Image.Resampling.NEAREST)
+
+    max_colors: int = thumb.width * thumb.height
+    colors: Optional[list[tuple[int, tuple[int, int, int, int]]]] = thumb.getcolors(maxcolors=max_colors)
+    if not colors:
+        return None
+
+    # 只看不透明像素（避免已透明的 alpha=0 佔分母）
+    opaque: list[tuple[int, tuple[int, int, int, int]]] = [
+        (cnt, rgba_tuple) for cnt, rgba_tuple in colors if rgba_tuple[3] >= alpha_min
+    ]
+    if not opaque:
+        return None
+
+    total_opaque: int = sum(cnt for cnt, _ in opaque)
+    top_cnt, top_rgba = max(opaque, key=lambda x: x[0])
+    ratio: float = top_cnt / total_opaque
+
+    if ratio >= min_ratio:
+        return ((top_rgba[0], top_rgba[1], top_rgba[2]), ratio)
+    return None
+
+
+def remove_color_background(
+    img: Image.Image,
+    bg_color: tuple[int, int, int],
+    tolerance: int = DEFAULT_BG_TOLERANCE,
+) -> Image.Image:
+    """將接近 bg_color 的像素設為透明，回傳新的 RGBA 圖。
+
+    實作：用 Pillow ImageChops 向量化操作（C 實作），比純 Python pixel loop 快 100×。
+    對 4.2M 像素圖 < 1 秒。
+
+    Args:
+        bg_color: 要去除的 RGB 色
+        tolerance: 各通道容差（<= 此值視為同色）。0 = 嚴格相同，8 = 小量抗鋸齒，32 = 寬鬆
+    """
+    rgba: Image.Image = img.convert("RGBA")
+    r, g, b, a = rgba.split()
+    solid: Image.Image = Image.new("RGB", rgba.size, bg_color)
+    rgb: Image.Image = Image.merge("RGB", (r, g, b))
+
+    # 逐通道差異
+    diff: Image.Image = ImageChops.difference(rgb, solid)
+    dr, dg, db = diff.split()
+    # 三通道差異取 max（只要任一通道超過容差就算不同色）
+    max_diff: Image.Image = ImageChops.lighter(ImageChops.lighter(dr, dg), db)
+    # 建立保留遮罩：diff > tolerance → 255（保留），否則 0（去除）
+    keep_mask: Image.Image = max_diff.point(lambda v: 255 if v > tolerance else 0)
+    # 新 alpha = min(原 alpha, keep_mask)：原本透明保持透明，匹配背景色的變透明
+    new_alpha: Image.Image = ImageChops.darker(a, keep_mask)
+    return Image.merge("RGBA", (r, g, b, new_alpha))
+
+
 # ── Blob 偵測（4-connected Connected Component Labeling via BFS flood-fill） ──
 
 def find_blobs(
@@ -305,7 +388,10 @@ class SplitterApp:
         self.input_listbox: Optional[tk.Listbox] = None  # 在 _build_setup_ui 建立
         self.dest_var: tk.StringVar = tk.StringVar()
         self.min_area_var: tk.StringVar = tk.StringVar(value=str(DEFAULT_MIN_AREA))
-        self.alpha_thresh_var: tk.StringVar = tk.StringVar(value="16")
+        self.alpha_thresh_var: tk.StringVar = tk.StringVar(value=str(DEFAULT_ALPHA_THRESHOLD))
+        # 背景色自動去除（救援沒勾透明匯出的大圖）
+        self.auto_remove_bg_var: tk.BooleanVar = tk.BooleanVar(value=True)
+        self.bg_tolerance_var: tk.StringVar = tk.StringVar(value=str(DEFAULT_BG_TOLERANCE))
 
         # 框架容器
         self.main_frame: ttk.Frame = ttk.Frame(root)
@@ -392,6 +478,23 @@ class SplitterApp:
         ttk.Label(grid, text="（低於此值視為背景）", foreground="#666").grid(
             row=1, column=2, sticky=tk.W, padx=(8, 0)
         )
+
+        # 自動去除背景色（美術忘了勾透明時的救援）
+        ttk.Separator(adv, orient=tk.HORIZONTAL).pack(fill=tk.X, pady=8)
+        bg_row: ttk.Frame = ttk.Frame(adv)
+        bg_row.pack(fill=tk.X)
+        ttk.Checkbutton(
+            bg_row,
+            text="自動偵測並去除主要背景色（美術忘了勾透明匯出時用）",
+            variable=self.auto_remove_bg_var,
+        ).pack(side=tk.LEFT)
+        ttk.Label(bg_row, text="容差：", foreground="#666").pack(side=tk.LEFT, padx=(12, 0))
+        ttk.Entry(bg_row, textvariable=self.bg_tolerance_var, width=6).pack(side=tk.LEFT)
+        ttk.Label(
+            bg_row,
+            text="（0=嚴格同色、8=抗鋸齒容忍、32=寬鬆）",
+            foreground="#666",
+        ).pack(side=tk.LEFT, padx=(4, 0))
 
         # 偵測按鈕
         bottom: ttk.Frame = ttk.Frame(frame)
@@ -571,6 +674,43 @@ class SplitterApp:
             for sug in diag["suggestions"]:
                 ttk.Label(sug_frame, text=f"  • {sug}", foreground="#555").pack(anchor=tk.W)
 
+        # 背景色偵測（若透明度不足時特別有用）
+        if diag["transparent_pct"] < 20:
+            bg_result: Optional[tuple[tuple[int, int, int], float]] = detect_background_color(raw_img)
+            bg_frame: ttk.Frame = ttk.Frame(block)
+            bg_frame.pack(fill=tk.X, pady=(6, 0))
+            if bg_result is not None:
+                (br, bgc, bb), ratio = bg_result
+                hex_color: str = f"#{br:02x}{bgc:02x}{bb:02x}"
+                info_row: ttk.Frame = ttk.Frame(bg_frame)
+                info_row.pack(fill=tk.X)
+                ttk.Label(
+                    info_row,
+                    text="🎨 偵測到主要顏色（可視為背景去除）：",
+                    font=("TkDefaultFont", 9, "bold"),
+                ).pack(side=tk.LEFT)
+                # 顏色色塊預覽
+                swatch: tk.Label = tk.Label(
+                    info_row, bg=hex_color, width=4, height=1, bd=1, relief=tk.SOLID
+                )
+                swatch.pack(side=tk.LEFT, padx=(4, 4))
+                ttk.Label(
+                    info_row,
+                    text=f"RGB({br}, {bgc}, {bb})   占比 {ratio * 100:.1f}%",
+                    foreground="#555",
+                ).pack(side=tk.LEFT)
+                ttk.Label(
+                    bg_frame,
+                    text="→ Setup 勾「自動去除主要背景色」後偵測，會自動把此色轉透明",
+                    foreground="#2980b9",
+                ).pack(anchor=tk.W, pady=(2, 0))
+            else:
+                ttk.Label(
+                    bg_frame,
+                    text="🎨 沒偵測到單一主色（可能是漸層/雜色背景，自動去背無法救援）",
+                    foreground="#666",
+                ).pack(anchor=tk.W)
+
         # 匯出 alpha 預覽按鈕
         action_frame: ttk.Frame = ttk.Frame(block)
         action_frame.pack(fill=tk.X, pady=(6, 0))
@@ -686,20 +826,46 @@ class SplitterApp:
         try:
             min_area: int = int(self.min_area_var.get())
             alpha_thresh: int = int(self.alpha_thresh_var.get())
+            bg_tolerance: int = int(self.bg_tolerance_var.get())
         except ValueError:
-            messagebox.showerror("錯誤", "最小面積與 alpha 門檻必須是整數")
+            messagebox.showerror("錯誤", "最小面積、alpha 門檻與容差必須是整數")
             self._build_setup_ui()
             return
 
         # 預檢透明度（快速，不用跑整個 BFS）
         try:
-            raw_img: Image.Image = Image.open(input_path)
+            raw_img: Image.Image = Image.open(input_path).convert("RGBA")
             diag: dict = diagnose_transparency(raw_img)
         except Exception as e:
             messagebox.showerror("讀取失敗", f"{input_path.name}：{e}")
             self._advance_or_finish()
             return
 
+        # 準備實際要送去偵測的圖（可能經過去背處理）
+        working_img: Image.Image = raw_img
+        bg_removed_info: Optional[str] = None  # 記錄去背摘要顯示給使用者
+
+        # 若透明度不足且啟用自動去背 → 嘗試找主要背景色並去除
+        needs_rescue: bool = diag["severity"] == "error" and diag["transparent_pct"] < 20
+        if needs_rescue and self.auto_remove_bg_var.get():
+            bg_result: Optional[tuple[tuple[int, int, int], float]] = detect_background_color(raw_img)
+            if bg_result is not None:
+                (br, bgc, bb), ratio = bg_result
+                confirm: bool = messagebox.askyesno(
+                    "偵測到背景色",
+                    f"{input_path.name} 透明背景只有 {diag['transparent_pct']:.1f}%\n\n"
+                    f"偵測到主要顏色：RGB({br}, {bgc}, {bb})  占 {ratio * 100:.1f}%\n\n"
+                    f"要將此色視為背景並去背（alpha 設 0）再偵測嗎？\n"
+                    f"（容差 = {bg_tolerance}）",
+                )
+                if confirm:
+                    working_img = remove_color_background(raw_img, (br, bgc, bb), bg_tolerance)
+                    bg_removed_info = f"已將 RGB({br},{bgc},{bb}) 視為背景去除"
+                    # 去背後重跑診斷，確認問題解除
+                    diag = diagnose_transparency(working_img)
+                    needs_rescue = diag["severity"] == "error" and diag["transparent_pct"] < 20
+
+        # 若仍有透明度問題（未啟用去背、未偵測到主色、或去背後仍不夠）→ 警告
         if diag["severity"] == "error":
             msg: str = (
                 f"{input_path.name} 透明度檢查未通過\n\n"
@@ -713,19 +879,23 @@ class SplitterApp:
                 return
 
         # Progress 視窗
+        progress_msg: str = (
+            f"正在偵測 prop…\n"
+            f"第 {self.current_index + 1}/{len(self.input_paths)} 張：{input_path.name}\n"
+            f"（大圖約需 10-30 秒）"
+        )
+        if bg_removed_info:
+            progress_msg += f"\n{bg_removed_info}"
+
         progress: tk.Toplevel = tk.Toplevel(self.root)
         progress.title("處理中")
-        progress.geometry("360x100")
+        progress.geometry("420x120")
         progress.transient(self.root)
-        ttk.Label(
-            progress,
-            text=f"正在偵測 prop…\n第 {self.current_index + 1}/{len(self.input_paths)} 張：{input_path.name}\n（大圖約需 10-30 秒）",
-            padding=10,
-        ).pack(pady=10)
+        ttk.Label(progress, text=progress_msg, padding=10).pack(pady=10)
         progress.update()
 
         try:
-            self.mega_image = Image.open(input_path).convert("RGBA")
+            self.mega_image = working_img
             bboxes: list[tuple[int, int, int, int]] = find_blobs(
                 self.mega_image, min_area, alpha_threshold=alpha_thresh
             )
