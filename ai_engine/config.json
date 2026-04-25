@@ -9,7 +9,7 @@
     "health_check_interval_sec": 5
   },
   "binaries": {
-    "windows": "engines/llama-b8583-bin-win-cuda-13.1-xllama-b8583-bin-win-cuda-13.1-x/llama-server.exe",
+    "windows": "engines/llama-b 8685-bin-win-cpu-x64/llama-server.exe",
     "linux": "llama-server",
     "macos": "llama-server"
   },

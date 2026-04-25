@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(python ai_engine/scripts/check_asset_names.py)",
-      "Bash(python -c ' *)"
-    ]
-  }
-}
