@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="2_transition"]
 [ext_resource type="PackedScene" path="res://src/entities/npcs/BaseNPC.tscn" id="3_npc"]
-[ext_resource type="Resource" path="res://src/entities/npcs/resources/chen_ayi.tres" id="4_chen_ayi"]
-[ext_resource type="Resource" path="res://src/entities/npcs/resources/wang_bobo.tres" id="5_wang_bobo"]
+[ext_resource type="Resource" path="res://src/entities/npcs/definitions/chen_ayi.tres" id="4_chen_ayi"]
+[ext_resource type="Resource" path="res://src/entities/npcs/definitions/wang_bobo.tres" id="5_wang_bobo"]
 
 [node name="ZoneMarket" type="Node2D"]
 

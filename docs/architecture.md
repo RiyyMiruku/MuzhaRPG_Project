@@ -1,6 +1,6 @@
 # Project Muzha — Architecture Blueprint
 
-> Last updated: 2026-04-06
+> Last updated: 2026-04-27
 
 ## System Architecture
 
@@ -12,17 +12,18 @@
 │  ┌─────────────┐ ┌──────────────┐ ┌──────────────┐     │
 │  │ GameManager  │ │ StoryManager │ │  AIClient    │     │
 │  │ state machine│ │ zone/events  │ │ HTTP + parse │     │
-│  │ save/load    │ │ time system  │ │ context build│     │
-│  └─────────────┘ └──────────────┘ └──────┬───────┘     │
-│  ┌─────────────┐ ┌──────────────┐        │             │
-│  │ QuestManager│ │  UIManager   │        │ HTTP POST   │
-│  │ quest track │ │  UI stack    │        │ /v1/chat/    │
+│  │ save/load    │ │ time system  │ │ + chapter    │     │
+│  └─────────────┘ └──────────────┘ │ overlay inject│     │
+│  ┌─────────────┐ ┌──────────────┐ └──────┬───────┘     │
+│  │ QuestManager│ │ChapterManager│        │             │
+│  │ quest track │ │ chapter +    │        │ HTTP POST   │
+│  │             │ │ NPC overlays │        │ /v1/chat/    │
 │  └─────────────┘ └──────────────┘        │ completions │
-│  ┌─────────────┐                         │             │
-│  │  EventBus   │                         │             │
-│  │ decoupled   │                         │             │
-│  │ signals     │                         │             │
-│  └─────────────┘                         │             │
+│  ┌─────────────┐ ┌──────────────┐        │             │
+│  │  UIManager  │ │  EventBus    │        │             │
+│  │  UI stack   │ │  decoupled   │        │             │
+│  │             │ │  signals     │        │             │
+│  └─────────────┘ └──────────────┘        │             │
 │                                          ▼             │
 │  Scene Tree                    ┌─────────────────┐     │
 │  ┌─ MainWorld                  │  llama-server   │     │
@@ -51,23 +52,41 @@ MuzhaRPG_Project/
 ├── ai_engine/
 │   ├── config.json                    # Server config (port, paths, GPU layers)
 │   ├── start_server.ps1               # One-click server launcher
-│   ├── scripts/
-│   │   └── test_ping.py               # Python health check + chat test
-│   └── models/
-│       └── llama-b8583-bin-win-cuda-13.1-x64/
-│           ├── llama-server.exe        # Inference server binary
-│           └── Qwen3.5-0.8B-Q4_K_M.gguf  # Quantized LLM (531MB)
+│   └── models/                        # GGUF models (gitignored)
+│
+├── art_source/                        # Build-time character source (not Godot-imported)
+│   └── characters/
+│       ├── 1-asset-creation.md        # Art prompt + spec
+│       ├── 2-spritesheet-workflow.md  # Compile pipeline
+│       ├── 3-asset-usage.md           # Runtime usage + 5-stage flow
+│       └── <id>/                      # Per character: chen_ayi, master_guang, ...
+│           ├── metadata.json
+│           ├── rotations/
+│           └── animations/{idle,walk}/
+│
+├── scripts/
+│   ├── generate_spritesheet.py        # art_source/ → spritesheet_cache/ compiler
+│   └── test_ping.py                   # llama-server health check
 │
 ├── game/                              # Godot 4 project root
-│   ├── project.godot                  # Engine config + input map
+│   ├── project.godot                  # Engine config + input map + autoloads
 │   ├── assets/
-│   │   └── fonts/                     # CJK fonts (Noto Sans TC)
+│   │   ├── fonts/                     # CJK fonts (Noto Sans TC)
+│   │   ├── spritesheet_cache/         # Compiled per-character spritesheets (runtime)
+│   │   │   ├── atlas_config.json      # Animation row/col mapping
+│   │   │   └── <id>.png               # chen_ayi.png, master_guang.png, ...
+│   │   └── textures/
+│   │       ├── portraits/<id>.png     # Dialogue portraits (96×96)
+│   │       └── environment/
+│   │           ├── tilesets/<zone>/   # autotile + handpainted tilesets
+│   │           └── props/{nature,urban}/  # Per-prop PNGs
 │   │
 │   └── src/
 │       ├── autoload/                  # Global singletons
 │       │   ├── GameManager.gd         # State machine, save/load, server lifecycle
-│       │   ├── StoryManager.gd        # Zone/event tracking, time system, AI context
-│       │   ├── AIClient.gd            # HTTP client to llama-server
+│       │   ├── StoryManager.gd        # Zone/event tracking, time, AI context
+│       │   ├── ChapterManager.gd      # Chapter switching + NPC overlay injection
+│       │   ├── AIClient.gd            # HTTP client (auto-injects chapter overlay)
 │       │   ├── QuestManager.gd        # Quest tracking, auto-completion
 │       │   ├── UIManager.gd           # UI stack (panel coordination)
 │       │   └── EventBus.gd            # Decoupled signal bus
@@ -75,10 +94,12 @@ MuzhaRPG_Project/
 │       ├── core/
 │       │   ├── classes/
 │       │   │   ├── BaseCharacter.gd   # Shared movement + animation
-│       │   │   ├── NPCConfig.gd       # NPC persona resource class
-│       │   │   ├── QuestData.gd       # Quest definition resource class
+│       │   │   ├── NPCConfig.gd       # NPC persona resource (npc_id is master key)
+│       │   │   ├── ChapterConfig.gd   # Chapter resource (overlays + flags + events)
+│       │   │   ├── SpriteSheetLoader.gd  # Runtime spritesheet loader
+│       │   │   ├── QuestData.gd       # Quest definition resource
 │       │   │   ├── ZoneManager.gd     # Async zone loading + transitions
-│       │   │   └── PlaceholderSprite.gd  # Runtime placeholder sprite generator
+│       │   │   └── PlaceholderSprite.gd  # Runtime placeholder generator
 │       │   └── components/
 │       │       └── ZoneTransitionArea.gd/.tscn  # Zone boundary trigger
 │       │
@@ -86,15 +107,32 @@ MuzhaRPG_Project/
 │       │   ├── player/
 │       │   │   └── Player.gd/.tscn    # WASD movement, interaction
 │       │   └── npcs/
-│       │       ├── BaseNPC.gd/.tscn   # NPC base class, dialogue trigger
-│       │       └── resources/         # NPC persona .tres files
-│       │           ├── chen_ayi.tres      # Market vendor
-│       │           ├── wang_bobo.tres     # Noodle shop owner
-│       │           ├── master_guang.tres  # Temple keeper
-│       │           └── old_fisher.tres    # Riverside fisherman
+│       │       ├── BaseNPC.gd/.tscn   # NPC base, dialogue trigger
+│       │       └── definitions/       # NPC base persona .tres
+│       │           ├── chen_ayi.tres
+│       │           ├── wang_bobo.tres
+│       │           ├── master_guang.tres
+│       │           └── old_fisher.tres
+│       │
+│       ├── chapters/                  # Chapter-scoped story content
+│       │   ├── chapter_template/      # Copy this to create new chapters
+│       │   │   ├── chapter.tres
+│       │   │   ├── events.gd
+│       │   │   └── README.md
+│       │   └── chapter_01_arrival/    # Sample chapter
+│       │       ├── chapter.tres
+│       │       ├── events.gd
+│       │       └── README.md
 │       │
 │       ├── maps/
 │       │   ├── main_world.tscn        # Root scene (ZoneContainer + UI)
+│       │   ├── README.md              # Map system overview
+│       │   ├── tilesets/              # TileSet .tres resources
+│       │   ├── props/                 # Prop scenes
+│       │   │   ├── Prop.gd            # Base class (foot anchor, collision, interact)
+│       │   │   ├── PropTemplate.tscn
+│       │   │   ├── README.md
+│       │   │   └── {nature,urban}/    # Per-prop .tscn (paired with PNG)
 │       │   └── zones/
 │       │       ├── zone_nccu.tscn     # NCCU campus (hub)
 │       │       ├── zone_market.tscn   # Muzha Market (2 NPCs)
@@ -124,7 +162,8 @@ MuzhaRPG_Project/
 |----------|---------------|-------------|
 | **GameManager** | Game state machine, save/load, server process lifecycle | `change_state()`, `save_game()`, `load_game()` |
 | **StoryManager** | Zone tracking, event history, NPC relationships, game time, AI context building | `build_ai_context()`, `record_event()`, `serialize()` |
-| **AIClient** | HTTP communication with llama-server, payload construction, response parsing | `query()`, `check_server_health()` |
+| **ChapterManager** | Chapter loading, switching, NPC overlay lookup, chapter-event registration | `start_chapter()`, `current()`, `get_npc_overlay()`, `complete_current()` |
+| **AIClient** | HTTP comm with llama-server, payload construction (auto-injects chapter overlay), response parsing | `query()`, `check_server_health()` |
 | **QuestManager** | Quest lifecycle (start/complete), prerequisite checking, reward distribution | `start_quest()`, `complete_quest()` |
 | **UIManager** | UI panel stack management, input isolation, pause coordination | `push()`, `pop()`, `pop_all()`, `toggle()` |
 | **EventBus** | Decoupled inter-system signals | Signals only, no methods |
@@ -138,7 +177,11 @@ StoryManager.build_ai_context(npc_id)
     → { zone, time_of_day, relationship, recent_events, conversation_history }
     ↓
 AIClient._build_chat_payload(npc_config, user_input, context)
-    → System prompt (English instructions) + Context (key=value) + History + User message
+    → System prompt = npc_config.system_prompt
+        + ChapterManager.get_npc_overlay(npc_id)   ← Chapter-specific delta
+        + Context string (zone, time, relationship, recent events)
+    → + Conversation history (capped to memory_turns)
+    → + User message
     → Append assistant prefill: "<think>\n</think>\n" (suppress thinking mode)
     ↓
 HTTP POST → http://127.0.0.1:8000/v1/chat/completions
@@ -189,20 +232,55 @@ NCCU (zone_nccu)  ←→  Muzha Market (zone_market)
 
 ## NPC Prompt Structure
 
+Three layers compose the system prompt at runtime:
+
 ```
-System prompt (English, ~200 chars):
+[1. Base persona] — NPCConfig.system_prompt (English, ~200 chars; per-character, never changes)
   "You are [name], [role] at [location]. Reply in Traditional Chinese only.
    [personality]. Keep reply under 50 chars. [examples]"
 
-Runtime context injection (English, key=value):
-  "[Context] time=下午2點, zone=政大正門, rel=stranger"
+[2. Chapter overlay] — ChapterManager.get_npc_overlay(npc_id) (per-chapter delta)
+  "[章節背景] （玩家剛搬來木柵第一天，你不認識他...）"
 
-Conversation history (Chinese, capped to 6 turns):
-  user: "你好" → assistant: "欸，你來啦！"
-
-Assistant prefill (suppress thinking):
-  "<think>\n</think>\n"
+[3. Runtime context] — StoryManager.build_ai_context(npc_id) (per-call dynamic)
+  "[Context] time=下午2點, zone=政大正門, rel=stranger, recent_events=[...]"
 ```
+
+Plus conversation history (Chinese, capped to memory_turns) and assistant prefill `<think>\n</think>\n`.
+
+**Single source of truth per layer**:
+- Base persona: `entities/npcs/definitions/<id>.tres` (one file per character)
+- Chapter overlay: `chapters/<id>/chapter.tres` `npc_overlays` dict
+- Runtime state: StoryManager (relationships, flags, events)
+
+## Chapter System
+
+```
+ChapterManager (autoload)
+  ├── _scan_chapters() on _ready()    → load all chapters/<id>/chapter.tres
+  ├── current() → ChapterConfig       → for AIClient + UI queries
+  ├── start_chapter(id)               → register events.gd, emit signals
+  ├── complete_current()              → unregister, advance to next by order
+  ├── get_npc_overlay(npc_id)         → AIClient calls per dialogue
+  └── is_npc_active(npc_id)           → optional NPC visibility filter
+
+ChapterConfig fields:
+  chapter_id, display_name, order, prerequisites
+  zones_used, npcs_present
+  npc_overlays = { npc_id: "delta string" }
+  events_script (RefCounted with register/unregister)
+  quests, completion_flags
+
+Lifecycle:
+  start_chapter("ch01_arrival")
+    → events_script.new().register(manager)
+    → emit chapter_started
+    → (gameplay)
+    → events.gd watches for completion_flags
+    → complete_current() → emit chapter_completed → start next
+```
+
+See [chapter-development.md](chapter-development.md) for the full author workflow.
 
 ## Development Progress
 
@@ -213,6 +291,8 @@ Assistant prefill (suppress thinking):
 - [x] Phase 3: Quest system, save/load, game time, pause menu
 - [x] UI: MainMenu, HUD, LiveMinimap (3-layer), QuestJournal, KeybindSettings
 - [x] UIManager stack for panel coordination + input isolation
+- [x] Spritesheet pipeline (art_source/ → spritesheet_cache/, single-ID convention)
+- [x] Chapter system skeleton (ChapterManager, ChapterConfig, AIClient overlay injection)
 
 ### Next Steps
 - [ ] Phase 4: Pixel art sprites (replace placeholder rectangles)

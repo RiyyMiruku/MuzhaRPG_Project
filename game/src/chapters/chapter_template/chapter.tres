@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ChapterConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/ChapterConfig.gd" id="1_chapter_config"]
+
+[resource]
+script = ExtResource("1_chapter_config")
+chapter_id = ""
+display_name = ""
+order = 0
+prerequisites = []
+zones_used = []
+npcs_present = []
+npc_overlays = {}
+events_script = null
+quests = []
+completion_flags = []
+synopsis = ""

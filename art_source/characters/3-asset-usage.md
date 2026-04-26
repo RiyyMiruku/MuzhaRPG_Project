@@ -40,7 +40,7 @@ game/                                    ← 運行資產
 └──────────┬──────────────┘
            ▼
 ┌─────────────────────────┐
-│ Stage 3：建 NPCConfig   │  game/src/entities/npcs/resources/lin_laoshi.tres
+│ Stage 3：建 NPCConfig   │  game/src/entities/npcs/definitions/lin_laoshi.tres
 └──────────┬──────────────┘
            ▼
 ┌─────────────────────────┐
@@ -89,7 +89,7 @@ python scripts/generate_spritesheet.py
 
 **Who**：程式組
 
-複製 `game/src/entities/npcs/resources/chen_ayi.tres` 為 `lin_laoshi.tres`，編輯：
+複製 `game/src/entities/npcs/definitions/chen_ayi.tres` 為 `lin_laoshi.tres`，編輯：
 
 ```text
 [gd_resource type="Resource" script_class="NPCConfig" load_steps=2 format=3]
@@ -162,7 +162,23 @@ initial_relationship = 0
 
 ---
 
-## 4. 程式端 API 速查
+## 4. NPC 對話：與章節系統的關係
+
+NPCConfig 是「**NPC 基底人設**」，永遠不變。要讓 NPC 在不同章節呈現不同態度（如：第 1 章不認識玩家、第 5 章已是熟人），用**章節 overlay** 機制：
+
+```
+AIClient 組合 system_prompt 時自動把三層串起：
+
+  npc_config.system_prompt              ← 基底（這份 .tres）
+  + ChapterManager.get_npc_overlay(id)  ← 章節差異片段（chapters/<id>/chapter.tres）
+  + StoryManager.build_ai_context(id)   ← 動態狀態（時間、好感度、近期事件）
+```
+
+不要為了章節差異複製多份 NPCConfig — 同一份 `.tres` 走章節 overlay 就好。詳細設計見 [docs/chapter-development.md](../../docs/chapter-development.md)。
+
+---
+
+## 5. 程式端 API 速查
 
 ```gdscript
 # 載入角色 SpriteFrames
@@ -170,10 +186,15 @@ var frames: SpriteFrames = SpriteSheetLoader.load_character("chen_ayi")
 
 # 載入對話立繪
 var portrait: Texture2D = npc_config.get_portrait()  # 自動讀 portraits/<npc_id>.png
+
+# 取得當前章節對該 NPC 的對話差異片段
+var overlay: String = ChapterManager.get_npc_overlay("chen_ayi")
 ```
 
 實作細節：
 - [SpriteSheetLoader.gd](../../game/src/core/classes/SpriteSheetLoader.gd) — atlas_config 解析 + AtlasTexture 切片
 - [NPCConfig.gd](../../game/src/core/classes/NPCConfig.gd) — `get_portrait()` 從 npc_id 推路徑
+- [ChapterConfig.gd](../../game/src/core/classes/ChapterConfig.gd) — 章節資源類別（含 npc_overlays）
+- [ChapterManager.gd](../../game/src/autoload/ChapterManager.gd) — 章節切換 + overlay 提供
 - [BaseNPC.gd](../../game/src/entities/npcs/BaseNPC.gd) — 在 `_ready()` 自動載 spritesheet
 - [Player.gd](../../game/src/entities/player/Player.gd) — 同上，PLAYER_ID = "player"

@@ -25,6 +25,7 @@ AIClient="*res://src/autoload/AIClient.gd"
 QuestManager="*res://src/autoload/QuestManager.gd"
 EventBus="*res://src/autoload/EventBus.gd"
 UIManager="*res://src/autoload/UIManager.gd"
+ChapterManager="*res://src/autoload/ChapterManager.gd"
 
 [debug]
 

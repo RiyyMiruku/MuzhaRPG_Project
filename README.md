@@ -180,12 +180,14 @@ Godot Frontend                    AI Backend
 |------|------|
 | **GameManager** | 遊戲狀態機、存讀檔、伺服器生命週期 |
 | **StoryManager** | 區域/事件追蹤、NPC 關係值、遊戲時間、AI context 建構 |
+| **ChapterManager** | 章節切換、NPC 章節差異 overlay 注入、章節事件腳本 |
 | **AIClient** | HTTP 通訊、payload 組合、回應解析 |
 | **QuestManager** | 任務接取/完成判定、前置條件、獎勵發放 |
 | **UIManager** | UI 面板堆疊、輸入隔離、暫停協調 |
 | **EventBus** | 系統間解耦信號 |
 
 > 詳細架構圖、目錄結構、技術決策請參考 [architecture.md](docs/architecture.md)。
+> 章節制開發見 [chapter-development.md](docs/chapter-development.md)。
 
 ## 🗺️ 遊戲世界
 
@@ -221,6 +223,13 @@ Godot Frontend                    AI Backend
 - [x] 存讀檔系統（JSON, user://saves/）
 - [x] 遊戲內時間自動推進
 - [x] 事件驅動任務自動完成
+
+### 🚧 章節系統 — 骨架已建
+- [x] ChapterConfig + ChapterManager autoload
+- [x] NPC 章節差異 overlay 注入機制（已接到 AIClient）
+- [x] 範本 `chapter_template/` + 範例 `chapter_01_arrival/`
+- [ ] QuestConfig 整合進章節
+- [ ] 章節切換 UI + Cutscene 系統
 
 ### ✅ UI 系統 — 完成
 - [x] MainMenu（開始/讀檔/離開）

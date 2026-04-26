@@ -131,7 +131,11 @@ func _on_query_completed(result: int, response_code: int, _headers: PackedString
 
 # ── Payload Builder ─────────────────────────────────────────────────────────
 func _build_chat_payload(npc_config: Resource, user_input: String, context: Dictionary) -> Dictionary:
-	var system_content: String = npc_config.system_prompt + "\n\n" + _build_context_string(context)
+	var chapter_overlay: String = ChapterManager.get_npc_overlay(npc_config.npc_id)
+	var system_content: String = npc_config.system_prompt
+	if not chapter_overlay.is_empty():
+		system_content += "\n\n[章節背景] " + chapter_overlay
+	system_content += "\n\n" + _build_context_string(context)
 
 	var messages: Array[Dictionary] = [{"role": "system", "content": system_content}]
 

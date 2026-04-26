@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ChapterConfig" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/ChapterConfig.gd" id="1_chapter_config"]
+[ext_resource type="Script" path="res://src/chapters/chapter_01_arrival/events.gd" id="2_events"]
+
+[resource]
+script = ExtResource("1_chapter_config")
+chapter_id = "ch01_arrival"
+display_name = "初到木柵"
+order = 1
+prerequisites = []
+zones_used = ["zone_nccu", "zone_market"]
+npcs_present = ["chen_ayi", "wang_bobo"]
+npc_overlays = {
+"chen_ayi": "（玩家剛搬來木柵第一天，你不認識他，當他是新來的學生，親切但保持距離）",
+"wang_bobo": "（你不認識玩家，他路過時頂多點頭，不主動搭話）"
+}
+events_script = ExtResource("2_events")
+quests = []
+completion_flags = ["talked_to_chen_ayi"]
+synopsis = "玩家初到木柵，從政大走到市場，認識陳阿姨。"
