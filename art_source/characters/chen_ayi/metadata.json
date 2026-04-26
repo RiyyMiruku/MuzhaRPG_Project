@@ -1,0 +1,87 @@
+{
+  "character": {
+    "id": "5e8832bd-6948-4d57-8036-48345c70abae",
+    "name": "陳阿姨 (Chen Ayi - Market Vendor)",
+    "prompt": "pixel art, top-down RPG, 2.5D perspective, 16-bit style, warm color palette, Taiwanese urban setting CHARACTER DESCRIPTION: Middle-aged Taiwanese woman, late 40s, market vendor. Short permed black hair, floral blouse under a beige market apron. Slightly stout friendly build, warm smile. Style: 16-bit pixel art, top-down 2.5D RPG, warm color palette.",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "template_id": "mannequin",
+    "directions": 4,
+    "view": "low top-down",
+    "created_at": "2026-04-08T04:25:04.690639+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "west": "rotations/west.png",
+      "east": "rotations/east.png",
+      "north": "rotations/north.png"
+    },
+    "animations": {
+      "idle": {
+        "north": [
+          "animations/idle/north/frame_000.png",
+          "animations/idle/north/frame_001.png",
+          "animations/idle/north/frame_002.png",
+          "animations/idle/north/frame_003.png"
+        ],
+        "south": [
+          "animations/idle/south/frame_000.png",
+          "animations/idle/south/frame_001.png",
+          "animations/idle/south/frame_002.png",
+          "animations/idle/south/frame_003.png"
+        ],
+        "west": [
+          "animations/idle/west/frame_000.png",
+          "animations/idle/west/frame_001.png",
+          "animations/idle/west/frame_002.png",
+          "animations/idle/west/frame_003.png"
+        ],
+        "east": [
+          "animations/idle/east/frame_000.png",
+          "animations/idle/east/frame_001.png",
+          "animations/idle/east/frame_002.png",
+          "animations/idle/east/frame_003.png"
+        ]
+      },
+      "walk": {
+        "south": [
+          "animations/walk/south/frame_000.png",
+          "animations/walk/south/frame_001.png",
+          "animations/walk/south/frame_002.png",
+          "animations/walk/south/frame_003.png",
+          "animations/walk/south/frame_004.png",
+          "animations/walk/south/frame_005.png"
+        ],
+        "west": [
+          "animations/walk/west/frame_000.png",
+          "animations/walk/west/frame_001.png",
+          "animations/walk/west/frame_002.png",
+          "animations/walk/west/frame_003.png",
+          "animations/walk/west/frame_004.png",
+          "animations/walk/west/frame_005.png"
+        ],
+        "east": [
+          "animations/walk/east/frame_000.png",
+          "animations/walk/east/frame_001.png",
+          "animations/walk/east/frame_002.png",
+          "animations/walk/east/frame_003.png",
+          "animations/walk/east/frame_004.png",
+          "animations/walk/east/frame_005.png"
+        ],
+        "north": [
+          "animations/walk/north/frame_000.png",
+          "animations/walk/north/frame_001.png",
+          "animations/walk/north/frame_002.png",
+          "animations/walk/north/frame_003.png",
+          "animations/walk/north/frame_004.png",
+          "animations/walk/north/frame_005.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-08T06:52:17.246605"
+}

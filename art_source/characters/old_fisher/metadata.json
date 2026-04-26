@@ -1,0 +1,87 @@
+{
+  "character": {
+    "id": "5349f9ba-3995-4050-a673-edb390a98eca",
+    "name": "釣魚老人 (Old Fisherman)",
+    "prompt": "CHARACTER DESCRIPTION:\nOld riverside fisherman, age 60+.\nWoven straw sun hat, loose beige linen shirt, dark pants rolled up to calves.\nHolding a bamboo fishing rod in right hand.\nRelaxed cheerful grin, tanned weathered skin.\nStyle: 16-bit pixel art, top-down 2.5D RPG, warm golden-hour tones.\n\npixel art, top-down RPG, 2.5D perspective, 16-bit style,\nwarm color palette, Taiwanese urban setting\n\nBackground must be fully transparent (alpha channel), not a checkerboard pattern Consistent lighting, proportions, and color palette Pixel art style, no anti-aliasing, clean sharp pixels",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "template_id": "mannequin",
+    "directions": 4,
+    "view": "low top-down",
+    "created_at": "2026-04-08T05:34:52.513165+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "west": "rotations/west.png",
+      "east": "rotations/east.png",
+      "north": "rotations/north.png"
+    },
+    "animations": {
+      "idle": {
+        "east": [
+          "animations/idle/east/frame_000.png",
+          "animations/idle/east/frame_001.png",
+          "animations/idle/east/frame_002.png",
+          "animations/idle/east/frame_003.png"
+        ],
+        "south": [
+          "animations/idle/south/frame_000.png",
+          "animations/idle/south/frame_001.png",
+          "animations/idle/south/frame_002.png",
+          "animations/idle/south/frame_003.png"
+        ],
+        "north": [
+          "animations/idle/north/frame_000.png",
+          "animations/idle/north/frame_001.png",
+          "animations/idle/north/frame_002.png",
+          "animations/idle/north/frame_003.png"
+        ],
+        "west": [
+          "animations/idle/west/frame_000.png",
+          "animations/idle/west/frame_001.png",
+          "animations/idle/west/frame_002.png",
+          "animations/idle/west/frame_003.png"
+        ]
+      },
+      "walk": {
+        "south": [
+          "animations/walk/south/frame_000.png",
+          "animations/walk/south/frame_001.png",
+          "animations/walk/south/frame_002.png",
+          "animations/walk/south/frame_003.png",
+          "animations/walk/south/frame_004.png",
+          "animations/walk/south/frame_005.png"
+        ],
+        "east": [
+          "animations/walk/east/frame_000.png",
+          "animations/walk/east/frame_001.png",
+          "animations/walk/east/frame_002.png",
+          "animations/walk/east/frame_003.png",
+          "animations/walk/east/frame_004.png",
+          "animations/walk/east/frame_005.png"
+        ],
+        "west": [
+          "animations/walk/west/frame_000.png",
+          "animations/walk/west/frame_001.png",
+          "animations/walk/west/frame_002.png",
+          "animations/walk/west/frame_003.png",
+          "animations/walk/west/frame_004.png",
+          "animations/walk/west/frame_005.png"
+        ],
+        "north": [
+          "animations/walk/north/frame_000.png",
+          "animations/walk/north/frame_001.png",
+          "animations/walk/north/frame_002.png",
+          "animations/walk/north/frame_003.png",
+          "animations/walk/north/frame_004.png",
+          "animations/walk/north/frame_005.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-08T06:50:55.855655"
+}

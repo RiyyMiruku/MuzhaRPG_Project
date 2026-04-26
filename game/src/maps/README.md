@@ -1,71 +1,103 @@
 # Maps — 場景地圖系統
 
-混合式架構：地形用 TileMap 拼貼、大型裝飾物用獨立 Prop 場景。
+混合式架構：**地形用 autotile + TileMap**（Terrain Set 自動處理邊緣），**裝飾物用獨立 Prop 場景**（Y-sort + collision）。
 
 ## 目錄結構
 
 ```
 game/
 ├── assets/textures/environment/
-│   ├── tilesets/              # 源圖：tileset PNG（可重複拼貼的地面/牆）
-│   │   ├── nccu/              #   政大
-│   │   ├── market/            #   木柵市場
-│   │   ├── riverside/         #   道南河濱
-│   │   └── zhinan/            #   指南山
-│   └── props/                 # 源圖：獨立裝飾物 PNG
-│       ├── nature/            #   樹、灌木、花圃
-│       └── urban/             #   長椅、路燈、公告欄、垃圾桶
+│   ├── 1-asset-creation.md      # 給生圖人：素材製作與歸檔
+│   ├── 2-scene-design.md        # 給地圖設計人：在 Godot 中組場景
+│   ├── 3-ai-prompt.md           # 給 AI：自動補 Godot 結構的 prompt
+│   ├── tilesets/                # 源圖：autotile + 一般 tileset PNG
+│   │   ├── nccu/                #   autotile_grass_asphalt.png …
+│   │   ├── market/
+│   │   ├── riverside/           #   autotile_water_concrete.png
+│   │   └── zhinan/              #   autotile_dirt_stone.png, autotile_stone_path.png
+│   └── props/                   # 源圖：獨立裝飾物 PNG（一物件一張）
+│       ├── nature/              #   tree_*, bush_*, rock_* …
+│       └── urban/                #   bench_*, lamp_*, lantern_* …
 │
 └── src/maps/
-    ├── main_world.tscn        # 主世界容器（已存在）
-    ├── tilesets/              # TileSet .tres 資源（地形素材定義）
-    │   └── <zone>_tileset.tres
-    ├── props/                 # 可重用的 Prop 場景
-    │   ├── nature/            #   Tree.tscn, Bush.tscn 等
-    │   └── urban/             #   Bench.tscn, LampPost.tscn 等
-    └── zones/                 # 各場景的實例（已存在）
+    ├── main_world.tscn          # 主世界容器
+    ├── tilesets/                # TileSet .tres 資源
+    │   ├── <zone>_terrain.tres  #   autotile + 地形（Terrain Set，16×16）
+    │   └── <zone>_props.tres    #   （未來：手繪 atlas，若需要）
+    ├── props/                   # 可重用的 Prop 場景
+    │   ├── Prop.gd              #   基底類別（含腳底錨點、collision、互動）
+    │   ├── PropTemplate.tscn    #   範本 — 新建 prop 從此繼承
+    │   ├── nature/              #   tree_oak.tscn, bush_flower.tscn …
+    │   └── urban/                #   bench_wood.tscn, lamp_street.tscn …
+    └── zones/                   # 各場景實例
         ├── zone_nccu.tscn
         ├── zone_market.tscn
         ├── zone_riverside.tscn
         └── zone_zhinan.tscn
 ```
 
+---
+
 ## 工作流程
 
-### 1. 新增 tile 素材（地形）
+### A. 新增地形（autotile）
 
-1. 將 tileset PNG 放到 `assets/textures/environment/tilesets/<zone>/`
-2. Godot 編輯器中建立 TileSet 資源存到 `src/maps/tilesets/<zone>_tileset.tres`
-3. 在 Zone 場景中加入 `TileMapLayer` 節點、掛上該 TileSet
+1. **美術產出**：依 [1-asset-creation.md](../../assets/textures/environment/1-asset-creation.md) 用 Pixellab 生成 `autotile_<lower>_<upper>.png`（16×16 tile，4-tile grid 64×64）
+2. **歸檔**：丟到 `assets/textures/environment/tilesets/<zone>/`
+3. **建 TileSet**（Godot 編輯器）：
+   - 建 `src/maps/tilesets/<zone>_terrain.tres`
+   - Texture Region Size = `16×16`
+   - Atlas 加入該 PNG
+   - Terrain Sets → New Terrain Set → 設 mode = Match Sides 或 Match Corners
+   - 為 4 格分別設 bitmask（哪邊是上層、哪邊是下層）
+4. **掛進 Zone**：在 `zone_<name>.tscn` 加 `TileMapLayer_Ground` 節點，掛上 `<zone>_terrain.tres`
+5. **繪圖**：用 Terrain 筆刷塗，Godot 自動算邊緣轉角
 
-### 2. 新增 Prop（裝飾物）
+### B. 新增 Prop（裝飾物）
 
-1. 將 PNG 放到 `assets/textures/environment/props/<category>/`
-2. 在 `src/maps/props/<category>/` 建立場景（Node2D + Sprite2D，必要時加 StaticBody2D）
-3. 在 Zone 場景中用拖拉的方式實例化該 Prop
+1. **美術產出**：依 [1-asset-creation.md](../../assets/textures/environment/1-asset-creation.md) 一物件一 PNG（背景透明、底部中央 = 腳底）
+2. **歸檔**：丟到 `assets/textures/environment/props/{nature|urban}/`
+3. **建 Prop 場景**（Godot 編輯器）：
+   - 開 [PropTemplate.tscn](props/PropTemplate.tscn)，**Save As** 到 `src/maps/props/<category>/<name>.tscn`
+   - Sprite2D.texture 指到該 PNG（`offset` 不用手調，[Prop.gd](props/Prop.gd) 會在 `_ready()` 自動依 `foot_anchor` 設）
+   - StaticBody2D/CollisionShape2D 設好碰撞範圍（樹幹底部矩形、長椅整體矩形等）；不需碰撞的 Prop（草叢、花圃）把 `has_collision = false`
+   - 互動類（公告欄、攤位）設 `is_interactable = true` + `interact_prompt`
+4. **擺進 Zone**：把 `.tscn` 拖入 `zone_<name>.tscn` 的 `YSortRoot` 底下
+
+---
 
 ## Zone 場景標準結構
 
 ```
 ZoneNCCU (Node2D)
-├── TileMapLayer_Ground         # 地磚、草地（無碰撞）
-├── TileMapLayer_Walls          # 牆、柵欄（含碰撞）
-├── YSortRoot (Node2D, y_sort)  # Y 排序層 — 解決 NPC 與裝飾物前後遮擋
-│   ├── Props                   #   實例化的樹、長椅、路燈
-│   ├── NPCs                    #   NPC
-│   └── Player                  #   玩家
-└── Transitions                 # 換場區域
+├── TileMapLayer_Ground          # 地磚、草地（無碰撞）— 用 autotile
+├── TileMapLayer_Walls           # 牆、欄杆（layer 4 collision）— 一般 tileset
+├── YSortRoot (Node2D, y_sort)   # Y 排序層
+│   ├── Props (Node2D)           #   實例化的樹、長椅、路燈
+│   ├── NPCs (Node2D)            #   NPC spawn
+│   └── Player                   #   玩家（由 ZoneManager 注入）
+└── Transitions (Node2D)         # 換場 Area2D
 ```
+
+**關鍵**：地形 TileMapLayer 在 `YSortRoot` **之外**（地面不參與 Y-sort），確保渲染順序：Ground → Walls → YSortRoot 內物件依 y 排序。
+
+---
 
 ## 設計原則
 
-- **地形用 TileMap**：磚牆、草地、地磚、柵欄 — 任何需要重複拼貼的內容
-- **裝飾物用獨立場景**：樹、路燈、公告欄 — 尺寸不規則、可能需要互動、需要 Y-sort
-- **Y-sort 放在 `YSortRoot` 層**：所有會被 NPC/Player 遮擋或遮擋 NPC/Player 的東西都要在此層下
-- **碰撞分層**：牆/裝飾物的碰撞統一用 `StaticBody2D`，層號依 `game/src/core/` 定義的規範
+- **地形用 autotile**：地面、河堤、道路 — 用 Pixellab 生成、Terrain 筆刷塗
+- **手繪 tileset 只給「重複的牆/欄杆」**：若需要的話，仍用同 zone 資料夾、單獨 .tres
+- **裝飾物用獨立場景**：樹、路燈、公告欄 — 尺寸不規則、Y-sort、可能互動
+- **腳底錨點**：Prop 的 `position` 代表角色站立的位置，[Prop.gd](props/Prop.gd) 自動處理 Sprite2D offset
+- **碰撞分層**：玩家=1、NPC=2、Prop/牆=4
 
-## 相關資源
+---
 
-- **美術組提交素材指南**：`game/assets/textures/environment/如何提交地圖素材說明書.md`
-- 角色 Spritesheet 流程：`game/assets/textures/characters/如何使用角色素材(Skins)說明書.md`
-- Zone 換場機制：`game/src/core/classes/ZoneManager.gd`
+## 相關文件
+
+- 給生圖人 — 素材製作：[1-asset-creation.md](../../assets/textures/environment/1-asset-creation.md)
+- 給地圖設計人 — 場景組合：[2-scene-design.md](../../assets/textures/environment/2-scene-design.md)
+- 給 AI 的 prompt 範本：[3-ai-prompt.md](../../assets/textures/environment/3-ai-prompt.md)
+- 角色實裝流程：[art_source/characters/3-asset-usage.md](../../../art_source/characters/3-asset-usage.md)
+- Zone 換場機制：[ZoneManager.gd](../core/classes/ZoneManager.gd)
+- Prop 基底：[Prop.gd](props/Prop.gd)

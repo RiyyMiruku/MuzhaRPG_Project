@@ -1,15 +1,25 @@
 # Props — 獨立裝飾物場景
 
-## 建立新 Prop 的步驟
+本資料夾放各類 Prop 的 `.tscn` 場景。**操作流程**（如何從 PNG 建出 .tscn、如何擺進 zone）見 [2-scene-design.md](../../../assets/textures/environment/2-scene-design.md)。
 
-1. 在 Godot 編輯器中開啟 `PropTemplate.tscn`
-2. 「另存新檔」為對應類別資料夾下的具體 Prop（例如 `nature/Tree.tscn`）
-3. 指定 `Sprite2D` 的 texture（指向 `assets/textures/environment/props/<category>/` 下的 PNG）
-4. 調整 `StaticBody2D/CollisionShape2D` 的形狀（通常只擋下半部腳底，讓 Y-sort 看起來正確）
-5. 視需求設定 Prop 腳本的 export 參數：
-   - `has_collision`：是否阻擋玩家（樹 true、草叢 false）
-   - `is_interactable`：是否可按 E 互動（公告欄 true、路燈 false）
-   - `interact_prompt`：互動提示文字（如「閱讀公告」）
+本文僅記錄程式端契約（給程式組或客製化 Prop 行為時參考）。
+
+---
+
+## 基底類別：[Prop.gd](Prop.gd)
+
+所有 Prop 場景都繼承 `Prop.gd`，提供以下 export 屬性：
+
+| 屬性 | 預設 | 說明 |
+| --- | --- | --- |
+| `has_collision` | `true` | 是否阻擋玩家（樹/桿 true、草叢/花圃 false） |
+| `is_interactable` | `false` | 是否可按 E 互動 |
+| `interact_prompt` | `""` | 互動提示文字（例：「閱讀公告」） |
+| `foot_anchor` | `true` | 自動將 Sprite2D offset 設成圖片底部中央 = 腳底（Y-sort 用） |
+
+`foot_anchor = true` 時，[Prop.gd](Prop.gd) 會在 `_ready()` 自動把 `Sprite2D.offset.y` 設成 `-texture.height / 2`。**美術產出符合「腳底對齊圖片底部中央」規格的 PNG 即可，不需手動調 offset。**
+
+---
 
 ## 碰撞層規範
 
@@ -19,20 +29,35 @@
 | 2 | NPC |
 | 4 | Prop 靜態碰撞 |
 
-`StaticBody2D.collision_layer = 4`, `collision_mask = 0`（prop 不主動偵測任何東西）
-`InteractArea.collision_layer = 0`, `collision_mask = 1`（只偵測 Player）
+PropTemplate 已預設：
 
-## 可互動 Prop 範例
+- `StaticBody2D.collision_layer = 4`、`collision_mask = 0`（prop 不主動偵測任何東西）
+- `InteractArea.collision_layer = 0`、`collision_mask = 1`（只偵測 Player）
+
+---
+
+## 互動 Prop 範例
+
+互動類 Prop 需建立子類別覆寫 `_on_interact()`：
 
 ```gdscript
 ## BulletinBoard.gd
 extends Prop
 
 func _on_interact() -> void:
-	EventBus.hud_message_requested.emit("今日公告：...", 3.0)
+    EventBus.hud_message_requested.emit("今日公告：...", 3.0)
 ```
 
-## Y-sort 對位
+並在場景中設 `is_interactable = true`、`interact_prompt = "閱讀公告"`。
 
-Sprite2D 的 `offset.y` 應設為「負的 sprite 高度的一半」，讓 Prop 的 y 座標代表腳底位置。
-這樣 Y-sort 才能正確判斷前後順序。
+---
+
+## 高/長 Prop 的 collision 建議
+
+| PNG 高度 | 建議 collision shape |
+| --- | --- |
+| ≤ 16 px（小物：花圃） | `has_collision = false`（可走過） |
+| 17–48 px（中物：椅、燈） | 整體矩形 |
+| > 48 px（高物：樹、電線桿） | 只設「**底部 16×16**」矩形，讓角色可走到上半部後方 |
+
+讓玩家「能繞到電線桿後方」很重要 — 高 Prop 的 collision 不應與整張 sprite 同高。

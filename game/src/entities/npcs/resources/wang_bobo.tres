@@ -22,4 +22,3 @@ base_temperature = 0.7
 max_response_tokens = 150
 conversation_memory_turns = 6
 initial_relationship = 0
-character_resource_path = "res://assets/textures/characters/Wang_Bobo_-_Noodle_Shop_Owner"

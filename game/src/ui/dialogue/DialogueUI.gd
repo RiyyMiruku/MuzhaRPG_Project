@@ -46,7 +46,7 @@ func open_dialogue(npc_config: NPCConfig) -> void:
 	UIManager.pop_all()
 	_current_npc_id = npc_config.npc_id
 	_name_label.text = npc_config.display_name
-	_portrait.texture = npc_config.portrait_texture
+	_portrait.texture = npc_config.get_portrait()
 	_dialogue_text.text = "（與 %s 對話中，輸入訊息後按 Enter 發送）" % npc_config.display_name
 	_input_line.text = ""
 	_input_line.editable = true

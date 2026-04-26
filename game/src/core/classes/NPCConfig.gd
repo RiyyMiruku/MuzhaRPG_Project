@@ -5,7 +5,12 @@ class_name NPCConfig
 extends Resource
 
 # ── 識別 ──────────────────────────────────────────────────────────────────
-@export var npc_id: String = ""                  # 唯一識別碼，如 "chen_ayi"
+## 唯一識別碼，貫穿整個系統 — 同時是：
+##   - art_source/characters/<id>/ 資料夾名
+##   - spritesheet_cache/<id>.png 檔名 + atlas_config 的 key
+##   - assets/textures/portraits/<id>.png 立繪檔名
+##   - .tres 檔名（建議）
+@export var npc_id: String = ""
 @export var display_name: String = ""            # 顯示名稱（繁體中文），如 "陳阿姨"
 @export var display_name_en: String = ""         # 英文名稱（可選）
 
@@ -18,10 +23,6 @@ extends Resource
 @export_multiline var system_prompt: String = ""
 @export var personality_tags: Array[String] = [] # 如 ["親切", "碎念", "在地知識"]
 
-# ── 視覺 ───────────────────────────────────────────────────────────────────
-@export var portrait_texture: Texture2D          # 對話框中的頭像（建議 96x96）
-@export var character_resource_path: String = "" # 角色資源夾路徑（如 "res://assets/textures/characters/Chen_Ayi_-_Market_Vendor"）
-
 # ── AI 推論參數 ────────────────────────────────────────────────────────────
 ## temperature: 越高越有創意，越低越穩定。NPC 個性越跳脫可設越高。
 @export_range(0.0, 2.0, 0.05) var base_temperature: float = 0.7
@@ -33,3 +34,13 @@ extends Resource
 # ── 關係系統 (Phase 3) ────────────────────────────────────────────────────
 ## 初始好感度（-100 到 100）。0 = 陌生人。
 @export_range(-100, 100, 5) var initial_relationship: int = 0
+
+
+# ── 自動推導路徑（不用手填）────────────────────────────────────────────────
+## 載入對話立繪。檔案位於 res://assets/textures/portraits/<npc_id>.png
+func get_portrait() -> Texture2D:
+	var path: String = "res://assets/textures/portraits/%s.png" % npc_id
+	if not ResourceLoader.exists(path):
+		push_warning("NPCConfig: Portrait not found for '%s'" % npc_id)
+		return null
+	return load(path)

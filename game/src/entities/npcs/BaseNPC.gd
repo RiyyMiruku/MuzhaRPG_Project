@@ -19,12 +19,10 @@ func _ready() -> void:
 	sprite = _sprite
 	move_speed = 0.0   # NPC 預設靜止
 
-	# 優先從 NPCConfig 的 character_resource_path 載入
-	if _sprite.sprite_frames == null and npc_config != null:
-		if not npc_config.character_resource_path.is_empty():
-			_sprite.sprite_frames = SpriteSheetLoader.smart_load(npc_config.character_resource_path)
+	# 從預編譯 spritesheet 載入；找不到則退回橘色佔位
+	if _sprite.sprite_frames == null and npc_config != null and not npc_config.npc_id.is_empty():
+		_sprite.sprite_frames = SpriteSheetLoader.load_character(npc_config.npc_id)
 
-	# 若沒有美術資源，自動產生橘色佔位精靈
 	if _sprite.sprite_frames == null:
 		_sprite.sprite_frames = PlaceholderSprite.generate_sprite_frames(
 			Color.ORANGE_RED, Color.YELLOW, Vector2i(16, 24)

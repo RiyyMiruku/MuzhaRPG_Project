@@ -1,8 +1,8 @@
 {
   "version": "1.0",
   "characters": {
-    "Chen_Ayi_-_Market_Vendor": {
-      "character_name": "Chen_Ayi_-_Market_Vendor",
+    "chen_ayi": {
+      "character_name": "chen_ayi",
       "frame_size": [
         92,
         92
@@ -66,8 +66,8 @@
         }
       }
     },
-    "Master_Guang_-_Temple_Keeper": {
-      "character_name": "Master_Guang_-_Temple_Keeper",
+    "master_guang": {
+      "character_name": "master_guang",
       "frame_size": [
         92,
         92
@@ -131,8 +131,8 @@
         }
       }
     },
-    "Old_Fisherman": {
-      "character_name": "Old_Fisherman",
+    "old_fisher": {
+      "character_name": "old_fisher",
       "frame_size": [
         92,
         92
@@ -261,8 +261,8 @@
         }
       }
     },
-    "Wang_Bobo_-_Noodle_Shop_Owner": {
-      "character_name": "Wang_Bobo_-_Noodle_Shop_Owner",
+    "wang_bobo": {
+      "character_name": "wang_bobo",
       "frame_size": [
         92,
         92

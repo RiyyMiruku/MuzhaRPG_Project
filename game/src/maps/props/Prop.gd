@@ -10,12 +10,18 @@ extends Node2D
 @export var is_interactable: bool = false
 ## 互動提示文字（例：「閱讀公告」）
 @export var interact_prompt: String = ""
+## 自動將 Sprite2D 的軸心對齊到圖片底部中央（Y-sort 用）。
+## 美術依規格：圖片底部中央 = 腳底位置 → Prop.position 即代表角色站立的點。
+@export var foot_anchor: bool = true
 
 @onready var sprite: Sprite2D = $Sprite2D if has_node("Sprite2D") else null
 @onready var collision_body: StaticBody2D = $StaticBody2D if has_node("StaticBody2D") else null
 @onready var interact_area: Area2D = $InteractArea if has_node("InteractArea") else null
 
 func _ready() -> void:
+	if foot_anchor and sprite != null and sprite.texture != null:
+		var tex_size: Vector2 = sprite.texture.get_size()
+		sprite.offset = Vector2(0, -tex_size.y / 2.0)
 	if collision_body != null:
 		collision_body.visible = has_collision
 		collision_body.process_mode = Node.PROCESS_MODE_INHERIT if has_collision else Node.PROCESS_MODE_DISABLED

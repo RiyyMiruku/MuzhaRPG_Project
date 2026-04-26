@@ -80,7 +80,7 @@ ai_engine/
 ```
 
 > **重要**：如果你的資料夾名稱與預設不同，請修改 `ai_engine/config.json` 中的 `binaries` 和 `model_path` 路徑使其對應。
-> 詳細參數說明請參考 [CONFIG_GUIDE.md](ai_engine/CONFIG_GUIDE.md)。
+> 詳細參數說明請參考 [config-guide.md](ai_engine/config-guide.md)。
 
 #### 2d. 調整設定（視需要）
 
@@ -132,7 +132,7 @@ cd ai_engine
 pip install requests
 
 # 執行測試
-python ai_engine/scripts/test_ping.py --full
+python scripts/test_ping.py --full
 ```
 
 ### 5. CJK 字型
@@ -185,7 +185,7 @@ Godot Frontend                    AI Backend
 | **UIManager** | UI 面板堆疊、輸入隔離、暫停協調 |
 | **EventBus** | 系統間解耦信號 |
 
-> 詳細架構圖、目錄結構、技術決策請參考 [BLUEPRINT.md](docs/BLUEPRINT.md)。
+> 詳細架構圖、目錄結構、技術決策請參考 [architecture.md](docs/architecture.md)。
 
 ## 🗺️ 遊戲世界
 

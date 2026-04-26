@@ -61,3 +61,13 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# =================================================================
+# 5. Claude Code 相關
+# =================================================================
+.claude/
+CLAUDE.md
+.claude.json
+.claude.local.json
+.claude/settings.json
+

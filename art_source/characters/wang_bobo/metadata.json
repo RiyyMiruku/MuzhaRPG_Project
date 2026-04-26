@@ -1,0 +1,87 @@
+{
+  "character": {
+    "id": "97c230e3-ad3f-43d2-b880-9bf3fd36e999",
+    "name": "王伯伯 (Wang Bobo - Noodle Shop Owner)",
+    "prompt": "\n Background must be fully transparent (alpha channel), not a checkerboard pattern\n Consistent lighting, proportions, and color pallette\n Pixel art style, no anti-aliasing, clean sharp pixels\n\nCHARACTER DESCRIPTION:\nElderly Taiwanese man, late 60s, noodle shop owner.\nThin build, white sleeveless undershirt, grey towel draped over right shoulder.\nCalm expression, slightly hunched posture.\nStyle: 16-bit pixel art, top-down 2.5D RPG, warm color palette.",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "template_id": "mannequin",
+    "directions": 4,
+    "view": "low top-down",
+    "created_at": "2026-04-08T05:12:19.552683+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "west": "rotations/west.png",
+      "east": "rotations/east.png",
+      "north": "rotations/north.png"
+    },
+    "animations": {
+      "idle": {
+        "south": [
+          "animations/idle/south/frame_000.png",
+          "animations/idle/south/frame_001.png",
+          "animations/idle/south/frame_002.png",
+          "animations/idle/south/frame_003.png"
+        ],
+        "north": [
+          "animations/idle/north/frame_000.png",
+          "animations/idle/north/frame_001.png",
+          "animations/idle/north/frame_002.png",
+          "animations/idle/north/frame_003.png"
+        ],
+        "east": [
+          "animations/idle/east/frame_000.png",
+          "animations/idle/east/frame_001.png",
+          "animations/idle/east/frame_002.png",
+          "animations/idle/east/frame_003.png"
+        ],
+        "west": [
+          "animations/idle/west/frame_000.png",
+          "animations/idle/west/frame_001.png",
+          "animations/idle/west/frame_002.png",
+          "animations/idle/west/frame_003.png"
+        ]
+      },
+      "walk": {
+        "west": [
+          "animations/walk/west/frame_000.png",
+          "animations/walk/west/frame_001.png",
+          "animations/walk/west/frame_002.png",
+          "animations/walk/west/frame_003.png",
+          "animations/walk/west/frame_004.png",
+          "animations/walk/west/frame_005.png"
+        ],
+        "south": [
+          "animations/walk/south/frame_000.png",
+          "animations/walk/south/frame_001.png",
+          "animations/walk/south/frame_002.png",
+          "animations/walk/south/frame_003.png",
+          "animations/walk/south/frame_004.png",
+          "animations/walk/south/frame_005.png"
+        ],
+        "north": [
+          "animations/walk/north/frame_000.png",
+          "animations/walk/north/frame_001.png",
+          "animations/walk/north/frame_002.png",
+          "animations/walk/north/frame_003.png",
+          "animations/walk/north/frame_004.png",
+          "animations/walk/north/frame_005.png"
+        ],
+        "east": [
+          "animations/walk/east/frame_000.png",
+          "animations/walk/east/frame_001.png",
+          "animations/walk/east/frame_002.png",
+          "animations/walk/east/frame_003.png",
+          "animations/walk/east/frame_004.png",
+          "animations/walk/east/frame_005.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-08T06:52:14.551061"
+}
