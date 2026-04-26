@@ -240,9 +240,12 @@ Godot Frontend                    AI Backend
 - [x] KeybindSettings（可自訂按鍵綁定）
 - [x] UIManager 堆疊式面板協調
 
-### 🔜 Phase 4: 美術與音效
+### 🚧 Phase 4: 美術與音效 — 進行中
+- [x] 場景素材匯入流水線（`scripts/import_assets.py` + `scripts/scaffold_zone.py`）
+- [x] Prop 場景批次生成（自動 .tscn + collision）
+- [x] zone scene TileMapLayer 自動掛載
 - [ ] 像素角色精靈（取代佔位方塊）
-- [ ] TileMap 區域美術（取代 ColorRect 背景）
+- [ ] TileMap 區域地形實際塗繪（Terrain Set 設定 + 美術產地圖）
 - [ ] 環境音效
 - [ ] 全域 CJK 字型 Theme
 
@@ -256,6 +259,27 @@ Godot Frontend                    AI Backend
 - [ ] Steam 發佈準備
 
 ## 📋 協作規範
+
+### 角色分工入口
+
+| 角色 | 入口文件 | 一句話描述 |
+|---|---|---|
+| **場景設計人**（不寫程式也能做） | [docs/SCENE_DESIGN_WORKFLOW.md](docs/SCENE_DESIGN_WORKFLOW.md) | 跟 AI 說「我加了素材」，AI 跑腳本，你拖 prop 塗地圖 |
+| **美術 / 生圖人** | [game/assets/textures/environment/1-asset-creation.md](game/assets/textures/environment/1-asset-creation.md) | Pixellab 設定、檔名規範、像素規格 |
+| **角色美術**（NPC 動畫） | [art_source/characters/1-asset-creation.md](art_source/characters/1-asset-creation.md) | NPC 序列圖製作、spritesheet 編譯 |
+| **章節作者** | [docs/chapter-development.md](docs/chapter-development.md) | 章節資源 + events.gd + 對話 overlay |
+| **程式 / 系統** | [docs/architecture.md](docs/architecture.md) | Autoload、AI pipeline、UI stack、目錄結構 |
+
+### 自動化腳本（給 AI 代為執行）
+
+| 腳本 | 用途 |
+|---|---|
+| `scripts/import_assets.py` | 大量 prop PNG → .tscn 場景（TOML manifest 驅動） |
+| `scripts/scaffold_zone.py` | autotile PNG → TileSet .tres + zone scene 加 TileMapLayer 節點 |
+| `scripts/generate_spritesheet.py` | NPC 序列圖 → spritesheet 預編譯 |
+| `scripts/test_ping.py` | llama-server 健康檢查 |
+
+詳見 [docs/architecture.md § Asset Import Pipeline](docs/architecture.md#asset-import-pipeline)。
 
 ### Git 工作流程
 

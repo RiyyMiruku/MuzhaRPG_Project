@@ -1,63 +1,135 @@
-[gd_scene load_steps=6 format=3 uid="uid://muzha_zone_market"]
+[gd_scene format=3 uid="uid://jfi6mlbrsuse"]
 
+[ext_resource type="Texture2D" uid="uid://dyluggup2mbj8" path="res://assets/textures/environment/tilesets/market/autotile_dirt_stone.png" id="1_dpri0"]
 [ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="1_player"]
+[ext_resource type="Texture2D" uid="uid://clu35dpv0xec4" path="res://assets/textures/environment/tilesets/market/autotile_grass_asphalt.png" id="2_nrqi7"]
 [ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="2_transition"]
 [ext_resource type="PackedScene" path="res://src/entities/npcs/BaseNPC.tscn" id="3_npc"]
 [ext_resource type="Resource" path="res://src/entities/npcs/definitions/chen_ayi.tres" id="4_chen_ayi"]
 [ext_resource type="Resource" path="res://src/entities/npcs/definitions/wang_bobo.tres" id="5_wang_bobo"]
+[ext_resource type="Texture2D" uid="uid://dhwmkliofugm0" path="res://assets/textures/environment/props/nature/bamboo_04.png" id="6_hvw2f"]
 
-[node name="ZoneMarket" type="Node2D"]
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_4ahql"]
 
-[node name="Ground" type="ColorRect" parent="."]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7unor"]
+texture = ExtResource("1_dpri0")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xqtq1"]
+texture = ExtResource("2_nrqi7")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_1lytw"]
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "grass"
+terrain_set_0/terrain_0/color = Color(0.2509804, 1, 0.28627452, 1)
+terrain_set_0/terrain_1/name = "asphalt"
+terrain_set_0/terrain_1/color = Color(0.47058824, 0.45490196, 0.43529412, 1)
+sources/0 = SubResource("TileSetScenesCollectionSource_4ahql")
+sources/1 = SubResource("TileSetAtlasSource_7unor")
+sources/2 = SubResource("TileSetAtlasSource_xqtq1")
+
+[node name="ZoneMarket" type="Node2D" unique_id=711972119]
+
+[node name="Ground" type="ColorRect" parent="." unique_id=1447380591]
 offset_left = -500.0
 offset_top = -400.0
 offset_right = 500.0
 offset_bottom = 400.0
 color = Color(0.3, 0.22, 0.15, 1)
 
-[node name="ZoneLabel" type="Label" parent="."]
-position = Vector2(-60, -180)
-text = "木柵市場"
-theme_override_font_sizes/font_size = 14
+[node name="ZoneLabel" type="Label" parent="." unique_id=485329355]
 modulate = Color(1, 1, 1, 0.5)
+offset_left = -60.0
+offset_top = -180.0
+offset_right = -60.0
+offset_bottom = -180.0
+theme_override_font_sizes/font_size = 14
+text = "木柵市場"
 
-[node name="YSortRoot" type="Node2D" parent="."]
+[node name="TileMapLayer_Ground" type="TileMapLayer" parent="." unique_id=633395028]
+position = Vector2(-72, 84)
+scale = Vector2(0.6458333, 0.6458333)
+tile_set = SubResource("TileSet_1lytw")
+
+[node name="YSortRoot" type="Node2D" parent="." unique_id=768726623]
 y_sort_enabled = true
 
-[node name="Player" parent="YSortRoot" instance=ExtResource("1_player")]
+[node name="Player" parent="YSortRoot" unique_id=749486154 instance=ExtResource("1_player")]
 position = Vector2(0, 50)
 
-[node name="ChenAyi" parent="YSortRoot" instance=ExtResource("3_npc")]
-position = Vector2(-60, -20)
+[node name="Camera2D" type="Camera2D" parent="YSortRoot/Player" unique_id=2111505911]
+zoom = Vector2(3, 3)
+
+[node name="ChenAyi" parent="YSortRoot" unique_id=135687722 instance=ExtResource("3_npc")]
+position = Vector2(-64, 3)
 npc_config = ExtResource("4_chen_ayi")
 
-[node name="WangBobo" parent="YSortRoot" instance=ExtResource("3_npc")]
+[node name="WangBobo" parent="YSortRoot" unique_id=1139420638 instance=ExtResource("3_npc")]
 position = Vector2(80, 10)
 npc_config = ExtResource("5_wang_bobo")
 
-[node name="Camera2D" type="Camera2D" parent="YSortRoot/Player"]
-zoom = Vector2(3, 3)
+[node name="Bamboo04" type="Sprite2D" parent="YSortRoot" unique_id=531474368]
+position = Vector2(-72, 84)
+scale = Vector2(0.6458333, 0.6458333)
+texture = ExtResource("6_hvw2f")
 
-[node name="Transitions" type="Node2D" parent="."]
+[node name="Transitions" type="Node2D" parent="." unique_id=1170286618]
 
-[node name="ToNCCU" parent="Transitions" instance=ExtResource("2_transition")]
+[node name="ToNCCU" parent="Transitions" unique_id=1186175279 instance=ExtResource("2_transition")]
 position = Vector2(250, 0)
 target_zone = "zone_nccu"
 entry_point = "from_market"
 
-[node name="ToNCCULabel" type="Label" parent="Transitions/ToNCCU"]
-position = Vector2(-40, -24)
-text = "政大正門 →"
+[node name="ToNCCULabel" type="Label" parent="Transitions/ToNCCU" unique_id=1596984201]
+modulate = Color(0.5, 1, 0.5, 0.7)
+offset_left = -40.0
+offset_top = -24.0
+offset_right = -40.0
+offset_bottom = -24.0
 theme_override_font_sizes/font_size = 10
-modulate = Color(0.5, 1.0, 0.5, 0.7)
+text = "政大正門 →"
 
-[node name="ToZhinan" parent="Transitions" instance=ExtResource("2_transition")]
+[node name="ToZhinan" parent="Transitions" unique_id=445007055 instance=ExtResource("2_transition")]
 position = Vector2(0, -200)
 target_zone = "zone_zhinan"
 entry_point = "from_market"
 
-[node name="ToZhinanLabel" type="Label" parent="Transitions/ToZhinan"]
-position = Vector2(-40, -24)
-text = "↑ 指南宮"
+[node name="ToZhinanLabel" type="Label" parent="Transitions/ToZhinan" unique_id=184345352]
+modulate = Color(0.5, 1, 0.5, 0.7)
+offset_left = -40.0
+offset_top = -24.0
+offset_right = -40.0
+offset_bottom = -24.0
 theme_override_font_sizes/font_size = 10
-modulate = Color(0.5, 1.0, 0.5, 0.7)
+text = "↑ 指南宮"

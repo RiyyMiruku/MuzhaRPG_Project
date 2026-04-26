@@ -66,6 +66,9 @@ MuzhaRPG_Project/
 │
 ├── scripts/
 │   ├── generate_spritesheet.py        # art_source/ → spritesheet_cache/ compiler
+│   ├── import_assets.py               # temp/<bulk PNG> → props/{nature,urban}/ + .tscn (TOML manifest)
+│   ├── scaffold_zone.py               # autotile PNG → <zone>_terrain.tres + TileMapLayer node
+│   ├── IMPORT_ASSETS_README.md        # Asset import workflow doc
 │   └── test_ping.py                   # llama-server health check
 │
 ├── game/                              # Godot 4 project root
@@ -223,6 +226,34 @@ NCCU (zone_nccu)  ←→  Muzha Market (zone_market)
         Daonan Riverside (zone_riverside)
         [Old Fisherman]
 ```
+
+## Asset Import Pipeline
+
+Bulk-asset workflow for scene designers — automated via `scripts/`. Designed for AI-assisted execution: artist drops PNGs into `temp/`, AI runs scripts.
+
+```
+[Artist]                          [AI runs]                                 [Result]
+
+temp/tilesets/<zone>/<item>/      →  scripts/import_assets.py --init     →  temp/import.toml (manifest scaffold)
+  tile1.png ... tile16.png           (artist + AI fill in: category /
+                                     has_collision / collision shape)
+                                  →  scripts/import_assets.py             →  game/assets/textures/environment/props/<cat>/<name>_NN.png
+                                     temp/import.toml                       game/src/maps/props/<cat>/<name>_NN.tscn  (extends PropTemplate)
+
+assets/textures/environment/      →  scripts/scaffold_zone.py             →  game/src/maps/tilesets/<zone>_terrain.tres
+  tilesets/<zone>/                                                          game/src/maps/zones/zone_<zone>.tscn  (TileMapLayer_Ground inserted)
+  autotile_*.png
+
+[Artist in Godot editor]
+  - Sets Terrain Set + peering bits in TileSet editor (left to visual tool — too fragile for script)
+  - Paints terrain via TileMap → Terrains tab
+  - Drags prop .tscn into YSortRoot
+```
+
+Entry doc for designers: [SCENE_DESIGN_WORKFLOW.md](SCENE_DESIGN_WORKFLOW.md).
+Manifest format + safety mechanisms: [scripts/IMPORT_ASSETS_README.md](../scripts/IMPORT_ASSETS_README.md).
+
+Both scripts are idempotent and have `--dry-run`. `import_assets.py` warns loudly on `temp/` folders not listed in the manifest (no silent skipping).
 
 ## Save System
 

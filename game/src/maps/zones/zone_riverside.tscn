@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://muzha_zone_riverside"]
+[gd_scene load_steps=6 format=3 uid="uid://muzha_zone_riverside"]
 
 [ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="2_transition"]
 [ext_resource type="PackedScene" path="res://src/entities/npcs/BaseNPC.tscn" id="3_npc"]
 [ext_resource type="Resource" path="res://src/entities/npcs/definitions/old_fisher.tres" id="4_old_fisher"]
+[ext_resource type="TileSet" path="res://src/maps/tilesets/riverside_terrain.tres" id="ts_riverside_ground"]
 
 [node name="ZoneRiverside" type="Node2D"]
 
@@ -19,6 +20,9 @@ position = Vector2(-70, -180)
 text = "道南河濱公園"
 theme_override_font_sizes/font_size = 14
 modulate = Color(1, 1, 1, 0.5)
+
+[node name="TileMapLayer_Ground" type="TileMapLayer" parent="."]
+tile_set = ExtResource("ts_riverside_ground")
 
 [node name="YSortRoot" type="Node2D" parent="."]
 y_sort_enabled = true

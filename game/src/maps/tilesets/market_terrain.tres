@@ -1,0 +1,25 @@
+[gd_resource type="TileSet" load_steps=5 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/environment/tilesets/market/autotile_dirt_stone.png" id="1_tex"]
+[ext_resource type="Texture2D" path="res://assets/textures/environment/tilesets/market/autotile_grass_asphalt.png" id="2_tex"]
+
+[sub_resource type="TileSetAtlasSource" id="atlas_1"]
+texture = ExtResource("1_tex")
+texture_region_size = Vector2i(16, 16)
+0:0/0 = 0
+0:1/0 = 0
+1:0/0 = 0
+1:1/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="atlas_2"]
+texture = ExtResource("2_tex")
+texture_region_size = Vector2i(16, 16)
+0:0/0 = 0
+0:1/0 = 0
+1:0/0 = 0
+1:1/0 = 0
+
+[resource]
+tile_size = Vector2i(16, 16)
+sources/0 = SubResource("atlas_1")
+sources/1 = SubResource("atlas_2")

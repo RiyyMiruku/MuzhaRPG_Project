@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://muzha_zone_nccu"]
+[gd_scene load_steps=4 format=3 uid="uid://muzha_zone_nccu"]
 
 [ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="4_transition"]
+[ext_resource type="TileSet" path="res://src/maps/tilesets/nccu_terrain.tres" id="ts_nccu_ground"]
 
 [node name="ZoneNCCU" type="Node2D"]
 
@@ -17,6 +18,9 @@ position = Vector2(-60, -180)
 text = "政大正門"
 theme_override_font_sizes/font_size = 14
 modulate = Color(1, 1, 1, 0.5)
+
+[node name="TileMapLayer_Ground" type="TileMapLayer" parent="."]
+tile_set = ExtResource("ts_nccu_ground")
 
 [node name="YSortRoot" type="Node2D" parent="."]
 y_sort_enabled = true

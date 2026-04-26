@@ -14,6 +14,23 @@
 
 ---
 
+## 大量批次匯入（推薦）
+
+如果你是把整批素材丟到 `temp/` 下面（每個物件一個資料夾，內含 `tile1.png` ~ `tileN.png`），**優先用半自動匯入腳本**，不要手動讓 AI 一張一張處理：
+
+跟 AI 說：「我在 temp/ 加了新素材，幫我跑 `scripts/import_assets.py`」
+
+AI 會：
+1. 跑 `--init` 掃描 temp/ 產生 manifest 草稿
+2. 看每個資料夾的代表圖片，填入 category / collision 等判斷欄位
+3. `--dry-run` 確認後正式匯入
+
+詳細流程見 [scripts/IMPORT_ASSETS_README.md](../../../scripts/IMPORT_ASSETS_README.md)。
+
+匯入完成後若還需要建 autotile 的 `.tres` 或在 zone scene 加 TileMapLayer 節點，再用下方的整段 prompt。
+
+---
+
 ## 整段 prompt（複製貼上即可）
 
 ```text

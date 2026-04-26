@@ -2,7 +2,11 @@
 
 本文涵蓋《MuzhaRPG》場景所需素材的**製作規格與歸檔流程**。完成後丟進對應資料夾即可，**不需要操作 Godot**。
 
-> 後續流程（如何用這些素材組成場景）見 [② 場景製作流程](2-scene-design.md)。
+> **大批匯入捷徑**：如果你一次有十幾張同類 prop（例如 16 種燈籠變體），不用一張張歸檔。直接全部丟到 `temp/<物件名>/` 下面，跟 AI 說「我在 temp/ 加了新素材，幫我跑 import_assets.py」。AI 會自動重命名、搬位、生成對應 Godot 場景。詳見 [docs/SCENE_DESIGN_WORKFLOW.md](../../../../docs/SCENE_DESIGN_WORKFLOW.md)。
+>
+> 本文是「規格」說明（PNG 怎麼產出才合格），那邊是「流程」說明（產出後怎麼進專案）。
+>
+> 後續流程（在 Godot 中組成場景）見 [② 場景製作流程](2-scene-design.md)。
 
 ---
 

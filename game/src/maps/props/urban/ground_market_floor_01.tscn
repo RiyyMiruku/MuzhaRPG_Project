@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://dynq66pj88cv8"]
+
+[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
+[ext_resource type="Texture2D" path="res://assets/textures/environment/props/urban/ground_market_floor_01.png" id="3_tex"]
+
+[sub_resource type="RectangleShape2D" id="1_rect"]
+size = Vector2(48.0, 48.0)
+
+[sub_resource type="RectangleShape2D" id="2_irect"]
+size = Vector2(48.0, 16.0)
+
+[node name="ground_market_floor_01" instance=ExtResource("4_tmpl")]
+has_collision = false
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("3_tex")
+
+[node name="CollisionShape2D" parent="StaticBody2D" index="0"]
+position = Vector2(0.0, -24.0)
+shape = SubResource("1_rect")
+
+[node name="CollisionShape2D" parent="InteractArea" index="0"]
+position = Vector2(0.0, -8.0)
+shape = SubResource("2_irect")

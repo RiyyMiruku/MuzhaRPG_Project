@@ -1,6 +1,11 @@
 # Props — 獨立裝飾物場景
 
-本資料夾放各類 Prop 的 `.tscn` 場景。**操作流程**（如何從 PNG 建出 .tscn、如何擺進 zone）見 [2-scene-design.md](../../../assets/textures/environment/2-scene-design.md)。
+本資料夾放各類 Prop 的 `.tscn` 場景。
+
+**操作流程**：
+- 大批匯入（一次十幾個變體）：[scripts/IMPORT_ASSETS_README.md](../../../../scripts/IMPORT_ASSETS_README.md)（場景設計人入口：[docs/SCENE_DESIGN_WORKFLOW.md](../../../../docs/SCENE_DESIGN_WORKFLOW.md)）
+- 單張手動建：[2-scene-design.md](../../../assets/textures/environment/2-scene-design.md)
+- 擺進 zone：[2-scene-design.md](../../../assets/textures/environment/2-scene-design.md) Step 4
 
 本文僅記錄程式端契約（給程式組或客製化 Prop 行為時參考）。
 
