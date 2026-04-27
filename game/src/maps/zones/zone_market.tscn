@@ -6,7 +6,6 @@
 [ext_resource type="Resource" uid="uid://ci7j2bawy6jq2" path="res://src/entities/npcs/definitions/chen_ayi.tres" id="4_chen_ayi"]
 [ext_resource type="Resource" uid="uid://c4hykjrk2iwkn" path="res://src/entities/npcs/definitions/wang_bobo.tres" id="5_wang_bobo"]
 [ext_resource type="PackedScene" uid="uid://ceorm617r8nj1" path="res://src/maps/props/nature/bamboo_04.tscn" id="6_bamboo04"]
-[ext_resource type="PackedScene" uid="uid://wa65e8ms02cm" path="res://src/maps/props/nature/bamboo_10.tscn" id="8_dpri0"]
 [ext_resource type="TileSet" uid="uid://f4u7no8wtj8p" path="res://src/maps/tilesets/market_terrain.tres" id="ts_market_ground"]
 
 [node name="ZoneMarket" type="Node2D" unique_id=1135263814]
@@ -81,6 +80,3 @@ offset_right = -40.0
 offset_bottom = -24.0
 theme_override_font_sizes/font_size = 10
 text = "↑ 指南宮"
-
-[node name="bamboo_10" parent="." unique_id=862464907 instance=ExtResource("8_dpri0")]
-position = Vector2(24, 52)
