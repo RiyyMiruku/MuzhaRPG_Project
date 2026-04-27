@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="NPCConfig" load_steps=2 format=3 uid="uid://muzha_old_fisher"]
+[gd_resource type="Resource" script_class="NPCConfig" format=3 uid="uid://bsfbl24noo6xd"]
 
-[ext_resource type="Script" path="res://src/core/classes/NPCConfig.gd" id="1_npc_config"]
+[ext_resource type="Script" uid="uid://e1k64nfcwwrw" path="res://src/core/classes/NPCConfig.gd" id="1_npc_config"]
 
 [resource]
 script = ExtResource("1_npc_config")
@@ -17,8 +17,5 @@ Examples:
 - 「今天魚都不咬餌，大概要下雨了。」
 - 「聽說河對岸那棟房子鬧鬼喔。」
 - 「釣魚最重要的就是耐心，跟考試一樣。」"
-personality_tags = ["悠閒", "幽默", "都市傳說", "釣魚"]
+personality_tags = Array[String](["悠閒", "幽默", "都市傳說", "釣魚"])
 base_temperature = 0.8
-max_response_tokens = 200
-conversation_memory_turns = 6
-initial_relationship = 0

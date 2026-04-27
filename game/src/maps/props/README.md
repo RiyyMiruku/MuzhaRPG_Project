@@ -66,3 +66,39 @@ func _on_interact() -> void:
 | > 48 px（高物：樹、電線桿） | 只設「**底部 16×16**」矩形，讓角色可走到上半部後方 |
 
 讓玩家「能繞到電線桿後方」很重要 — 高 Prop 的 collision 不應與整張 sprite 同高。
+
+---
+
+## 修改碰撞範圍（操作手順）
+
+### 套用到所有同類 prop（改主 .tscn）
+1. 雙擊 `src/maps/props/<category>/<name>.tscn`
+2. 場景樹點 `StaticBody2D` → `CollisionShape2D`
+3. Inspector 的 `Shape` → 改 size（例：`Vector2(16, 16)`）
+4. 改 `CollisionShape2D.position`（通常 y = `-8` 對齊圖片底部）
+5. `Ctrl+S`
+
+→ 該 .tscn 在所有 zone 場景中的實例都會跟著變。
+
+### 只改某 zone 中的單一個體
+1. 開 zone 場景（例 `zone_market.tscn`）
+2. 場景樹找到該 prop 實例 → 點開 → `StaticBody2D` → `CollisionShape2D`
+3. 同上改 size/position
+4. `Ctrl+S`
+
+→ 只影響該 zone 的這一個，其他不變。
+
+### 完全關掉某 prop 的碰撞
+- 場景樹點 prop 主節點 → Inspector 找 `has_collision` → 取消勾選
+
+→ Prop.gd `_ready()` 會自動把 `StaticBody2D.process_mode` 設成 `DISABLED`，等同沒有碰撞。
+
+---
+
+## 物理層號（除錯用）
+
+如果 Player 穿過 Prop：
+
+1. 確認 zone 場景中該 prop 是**實例**（場景樹有 ▶️ 展開箭頭、能看到 `StaticBody2D` 子節點），不是純 `Sprite2D`
+2. 確認 Player.tscn 的 `collision_mask` 包含 layer 4（值至少要含 4，目前預設 7 = 1|2|4）
+3. 確認該 prop 的 `has_collision = true`

@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="NPCConfig" load_steps=2 format=3 uid="uid://muzha_chen_ayi"]
+[gd_resource type="Resource" script_class="NPCConfig" format=3 uid="uid://ci7j2bawy6jq2"]
 
-[ext_resource type="Script" path="res://src/core/classes/NPCConfig.gd" id="1_npc_config"]
+[ext_resource type="Script" uid="uid://e1k64nfcwwrw" path="res://src/core/classes/NPCConfig.gd" id="1_npc_config"]
 
 [resource]
 script = ExtResource("1_npc_config")
@@ -17,8 +17,6 @@ Examples:
 - 「今天菜價又漲了！」
 - 「你是政大的學生嗎？」
 - 「吃飽沒？要不要帶把青菜回去？」"
-personality_tags = ["親切", "碎念", "八卦", "在地知識", "台灣國語"]
+personality_tags = Array[String](["親切", "碎念", "八卦", "在地知識", "台灣國語"])
 base_temperature = 0.85
 max_response_tokens = 250
-conversation_memory_turns = 6
-initial_relationship = 0

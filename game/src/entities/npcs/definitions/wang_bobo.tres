@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="NPCConfig" load_steps=2 format=3 uid="uid://muzha_wang_bobo"]
+[gd_resource type="Resource" script_class="NPCConfig" format=3 uid="uid://c4hykjrk2iwkn"]
 
-[ext_resource type="Script" path="res://src/core/classes/NPCConfig.gd" id="1_npc_config"]
+[ext_resource type="Script" uid="uid://e1k64nfcwwrw" path="res://src/core/classes/NPCConfig.gd" id="1_npc_config"]
 
 [resource]
 script = ExtResource("1_npc_config")
@@ -17,8 +17,5 @@ Examples:
 - 「麵線要趁熱吃，涼了就不好吃了。」
 - 「以前這條街啊，都是田。」
 - 「年輕人，慢慢來就好。」"
-personality_tags = ["沉穩", "智慧", "老店"]
-base_temperature = 0.7
+personality_tags = Array[String](["沉穩", "智慧", "老店"])
 max_response_tokens = 150
-conversation_memory_turns = 6
-initial_relationship = 0
