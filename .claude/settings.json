@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from PIL import Image; import os; base='d:/大學/政大 課程/大一下/人工智慧實務專題_吳致勳/MuzhaRPG_Project/game/assets/textures/environment'; files=['autotile/autotile_grass_asphalt.png','autotile/autotile_dirt_stone.png','autotile/autotile_stone_path.png','autotile/autotile_water_concrete.png','tilesets/nccu/ground_grass/tile1.png','tilesets/nccu/ground_asphalt_road/tile1.png','tilesets/nccu/iron_gate_pillar/tile1.png']; [print\\(f, Image.open\\(os.path.join\\(base,f\\)\\).size\\) for f in files]\")"
+    ]
+  }
+}

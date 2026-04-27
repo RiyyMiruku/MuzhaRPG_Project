@@ -1,8 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://muzha_main_world"]
+[gd_scene format=3 uid="uid://dyiikyv0r5a0o"]
 
 [ext_resource type="PackedScene" path="res://src/maps/zones/zone_nccu.tscn" id="1_zone_nccu"]
 [ext_resource type="PackedScene" path="res://src/ui/dialogue/DialogueUI.tscn" id="2_dialogue_ui"]
-[ext_resource type="Script" path="res://src/core/classes/ZoneManager.gd" id="3_zone_manager"]
+[ext_resource type="Script" uid="uid://bdnh4tthqcw83" path="res://src/core/classes/ZoneManager.gd" id="3_zone_manager"]
 [ext_resource type="PackedScene" path="res://src/ui/ScreenTransition.tscn" id="4_screen_transition"]
 [ext_resource type="PackedScene" path="res://src/ui/menus/PauseMenu.tscn" id="5_pause_menu"]
 [ext_resource type="PackedScene" path="res://src/ui/menus/HUD.tscn" id="6_hud"]
@@ -10,28 +10,28 @@
 [ext_resource type="PackedScene" path="res://src/ui/menus/QuestJournal.tscn" id="9_quest_journal"]
 [ext_resource type="PackedScene" path="res://src/ui/menus/KeybindSettings.tscn" id="10_keybind"]
 
-[node name="MainWorld" type="Node2D"]
+[node name="MainWorld" type="Node2D" unique_id=1008868188]
 
-[node name="ZoneContainer" type="Node2D" parent="."]
+[node name="ZoneContainer" type="Node2D" parent="." unique_id=782322642]
 
-[node name="ZoneNCCU" parent="ZoneContainer" instance=ExtResource("1_zone_nccu")]
+[node name="ZoneNCCU" parent="ZoneContainer" unique_id=1413060768 instance=ExtResource("1_zone_nccu")]
 
-[node name="ZoneManager" type="Node" parent="."]
+[node name="ZoneManager" type="Node" parent="." unique_id=681667856]
 script = ExtResource("3_zone_manager")
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=575527177]
 layer = 20
 
-[node name="HUD" parent="UILayer" instance=ExtResource("6_hud")]
+[node name="HUD" parent="UILayer" unique_id=320452980 instance=ExtResource("6_hud")]
 
-[node name="DialogueUI" parent="UILayer" instance=ExtResource("2_dialogue_ui")]
+[node name="DialogueUI" parent="UILayer" unique_id=2121224916 instance=ExtResource("2_dialogue_ui")]
 
-[node name="QuestJournal" parent="UILayer" instance=ExtResource("9_quest_journal")]
+[node name="QuestJournal" parent="UILayer" unique_id=853052751 instance=ExtResource("9_quest_journal")]
 
-[node name="PauseMenu" parent="UILayer" instance=ExtResource("5_pause_menu")]
+[node name="PauseMenu" parent="UILayer" unique_id=961984949 instance=ExtResource("5_pause_menu")]
 
-[node name="KeybindSettings" parent="UILayer" instance=ExtResource("10_keybind")]
+[node name="KeybindSettings" parent="UILayer" unique_id=2021324610 instance=ExtResource("10_keybind")]
 
-[node name="MainMenu" parent="UILayer" instance=ExtResource("7_main_menu")]
+[node name="MainMenu" parent="UILayer" unique_id=1562923114 instance=ExtResource("7_main_menu")]
 
-[node name="ScreenTransition" parent="." instance=ExtResource("4_screen_transition")]
+[node name="ScreenTransition" parent="." unique_id=1423410911 instance=ExtResource("4_screen_transition")]

@@ -1,0 +1,17 @@
+[gd_resource type="TileSet" format=3 uid="uid://btp2ysnhcl2ic"]
+
+[ext_resource type="Texture2D" uid="uid://bq2fefkjnqk2l" path="res://assets/textures/environment/tilesets/nccu/brick_wall_segment/tile1.png" id="1_xcskm"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_elhri"]
+resource_name = "wall_brick_1"
+texture = ExtResource("1_xcskm")
+texture_region_size = Vector2i(48, 48)
+0:0/next_alternative_id = 2
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-24, -24, 24, -24, 24, 24, -24, 24)
+
+[resource]
+tile_size = Vector2i(48, 48)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_elhri")
