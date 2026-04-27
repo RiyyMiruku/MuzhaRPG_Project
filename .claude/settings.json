@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -c \"from PIL import Image; import os; base='d:/大學/政大 課程/大一下/人工智慧實務專題_吳致勳/MuzhaRPG_Project/game/assets/textures/environment'; files=['autotile/autotile_grass_asphalt.png','autotile/autotile_dirt_stone.png','autotile/autotile_stone_path.png','autotile/autotile_water_concrete.png','tilesets/nccu/ground_grass/tile1.png','tilesets/nccu/ground_asphalt_road/tile1.png','tilesets/nccu/iron_gate_pillar/tile1.png']; [print\\(f, Image.open\\(os.path.join\\(base,f\\)\\).size\\) for f in files]\")"
+      "Bash(python -c \"from PIL import Image; import os; base='d:/大學/政大 課程/大一下/人工智慧實務專題_吳致勳/MuzhaRPG_Project/game/assets/textures/environment'; files=['autotile/autotile_grass_asphalt.png','autotile/autotile_dirt_stone.png','autotile/autotile_stone_path.png','autotile/autotile_water_concrete.png','tilesets/nccu/ground_grass/tile1.png','tilesets/nccu/ground_asphalt_road/tile1.png','tilesets/nccu/iron_gate_pillar/tile1.png']; [print\\(f, Image.open\\(os.path.join\\(base,f\\)\\).size\\) for f in files]\")",
+      "PowerShell(Get-ChildItem \"d:\\\\大學\\\\政大 課程\\\\大一下\\\\人工智慧實務專題_吳致勳\\\\MuzhaRPG_Project\\\\game\\\\assets\\\\textures\\\\environment\\\\tilesets\\\\nccu\\\\campus_tree\\\\tile1.png\", \"d:\\\\大學\\\\政大 課程\\\\大一下\\\\人工智慧實務專題_吳致勳\\\\MuzhaRPG_Project\\\\game\\\\assets\\\\textures\\\\environment\\\\tilesets\\\\nccu\\\\stone_bench\\\\tile1.png\", \"d:\\\\大學\\\\政大 課程\\\\大一下\\\\人工智慧實務專題_吳致勳\\\\MuzhaRPG_Project\\\\game\\\\assets\\\\textures\\\\environment\\\\tilesets\\\\nccu\\\\ground_grass\\\\tile1.png\" -ErrorAction SilentlyContinue | ForEach-Object { Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\($_.FullName\\); \"$\\($_.FullName.Substring\\($_.FullName.IndexOf\\('nccu'\\)\\)\\): $\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\) })",
+      "Bash(awk '/^ D/{d++} /^\\\\?\\\\?/{q++} END {print \"Deleted \\(old paths\\):\", d, \"\\\\nUntracked \\(new paths\\):\", q}')",
+      "Bash(mv tilesets/market/concrete_utility_pole props/urban/)",
+      "Bash(mv tilesets/market/fruit_crate props/urban/)",
+      "Bash(mv tilesets/market/hanging_wooden_sign props/urban/)",
+      "Bash(mv tilesets/market/metal_roller_shutter_door props/urban/)",
+      "Bash(mv tilesets/market/old_brick_wall props/urban/)",
+      "Bash(mkdir -p nature/nccu nature/market nature/riverside nature/zhinan urban/nccu urban/market urban/riverside urban/zhinan)",
+      "Bash(mv nature/campus_tree nature/flower_bush nature/nccu/)",
+      "Bash(mv nature/reeds nature/short_bush nature/willow_tree_canopy nature/willow_tree_trunk nature/riverside/)",
+      "Bash(mv nature/bamboo nature/mossy_stone nature/mountain_tree nature/zhinan/)",
+      "Bash(mv urban/brick_wall_segment urban/iron_gate_pillar urban/metal_trash_can urban/park_street_lamp urban/stone_bench urban/wooden_bulletin_board urban/nccu/)"
     ]
   }
 }

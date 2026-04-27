@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" format=3 uid="uid://btp2ysnhcl2ic"]
 
-[ext_resource type="Texture2D" uid="uid://bq2fefkjnqk2l" path="res://assets/textures/environment/tilesets/nccu/brick_wall_segment/tile1.png" id="1_xcskm"]
+[ext_resource type="Texture2D" uid="uid://bq2fefkjnqk2l" path="res://assets/textures/environment/props/urban/nccu/brick_wall_segment/tile1.png" id="1_xcskm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_elhri"]
 resource_name = "wall_brick_1"
