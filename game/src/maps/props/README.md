@@ -1,9 +1,11 @@
 # Props — 獨立裝飾物場景
 
+> 文檔導覽：[../../../../docs/INDEX.md](../../../../docs/INDEX.md) — **對象**：程式。**用途**：Prop.gd 契約、collision layer、修改碰撞範圍。
+
 本資料夾放各類 Prop 的 `.tscn` 場景。
 
 **操作流程**：
-- 大批匯入（一次十幾個變體）：[scripts/IMPORT_ASSETS_README.md](../../../../scripts/IMPORT_ASSETS_README.md)（場景設計人入口：[docs/SCENE_DESIGN_WORKFLOW.md](../../../../docs/SCENE_DESIGN_WORKFLOW.md)）
+- 大批匯入（一次十幾個變體）：[scripts/import-assets-guide.md](../../../../scripts/import-assets-guide.md)（場景設計人入口：[docs/scene-design-workflow.md](../../../../docs/scene-design-workflow.md)）
 - 單張手動建：[2-scene-design.md](../../../assets/textures/environment/2-scene-design.md)
 - 擺進 zone：[2-scene-design.md](../../../assets/textures/environment/2-scene-design.md) Step 4
 

@@ -181,13 +181,16 @@ Godot Frontend                    AI Backend
 | **GameManager** | 遊戲狀態機、存讀檔、伺服器生命週期 |
 | **StoryManager** | 區域/事件追蹤、NPC 關係值、遊戲時間、AI context 建構 |
 | **ChapterManager** | 章節切換、NPC 章節差異 overlay 注入、章節事件腳本 |
-| **AIClient** | HTTP 通訊、payload 組合、回應解析 |
+| **BeatRunner** | Authored 對話 beat 派發（Phase 1 新增） |
+| **EraManager** | 時空切換狀態（modern ↔ 1983）（Phase 2 新增） |
+| **AIClient** | HTTP 通訊、TrustGate 約束 prompt 組合、回應解析 |
 | **QuestManager** | 任務接取/完成判定、前置條件、獎勵發放 |
 | **UIManager** | UI 面板堆疊、輸入隔離、暫停協調 |
 | **EventBus** | 系統間解耦信號 |
 
 > 詳細架構圖、目錄結構、技術決策請參考 [architecture.md](docs/architecture.md)。
 > 章節制開發見 [chapter-development.md](docs/chapter-development.md)。
+> 對話系統（Authored Beat + AI 混合架構）見 [dialogue-architecture.md](docs/dialogue-architecture.md)。
 
 ## 🗺️ 遊戲世界
 
@@ -224,12 +227,18 @@ Godot Frontend                    AI Backend
 - [x] 遊戲內時間自動推進
 - [x] 事件驅動任務自動完成
 
-### 🚧 章節系統 — 骨架已建
+### 🚧 章節 + 對話混合系統 — 進行中（Phase 1）
 - [x] ChapterConfig + ChapterManager autoload
 - [x] NPC 章節差異 overlay 注入機制（已接到 AIClient）
 - [x] 範本 `chapter_template/` + 範例 `chapter_01_arrival/`
+- [x] 對話混合架構決策（D 方案，見 [dialogue-architecture.md](docs/dialogue-architecture.md)）
+- [ ] `NPCProfile.gd` resource class（trust_revelations + forbidden_until_flag）
+- [ ] `TrustGate.gd` 約束 prompt 組裝器
+- [ ] `StoryBeat.gd` resource class
+- [ ] `BeatRunner.gd` autoload（authored beats 派發）
+- [ ] `DialogueUI` 加 `ChoiceButtonsContainer`（beat / AI mode 切換）
+- [ ] `EraManager.gd` autoload（時空切換）
 - [ ] QuestConfig 整合進章節
-- [ ] 章節切換 UI + Cutscene 系統
 
 ### ✅ UI 系統 — 完成
 - [x] MainMenu（開始/讀檔/離開）
@@ -241,11 +250,11 @@ Godot Frontend                    AI Backend
 - [x] UIManager 堆疊式面板協調
 
 ### 🚧 Phase 4: 美術與音效 — 進行中
-- [x] 場景素材匯入流水線（`scripts/import_assets.py` + `scripts/scaffold_zone.py`）
+- [x] 場景素材匯入流水線（`scripts/import_assets.py`）
 - [x] Prop 場景批次生成（自動 .tscn + collision）
-- [x] zone scene TileMapLayer 自動掛載
+- [x] TileMapDual addon 整合（取代手動 Terrain Set + peering bits）
 - [ ] 像素角色精靈（取代佔位方塊）
-- [ ] TileMap 區域地形實際塗繪（Terrain Set 設定 + 美術產地圖）
+- [ ] TileMap 區域地形實際塗繪（在各 zone 完成 TileMapDual 配置 + 美術產地圖）
 - [ ] 環境音效
 - [ ] 全域 CJK 字型 Theme
 
@@ -260,14 +269,17 @@ Godot Frontend                    AI Backend
 
 ## 📋 協作規範
 
+> 📚 **完整文檔導覽見 [docs/INDEX.md](docs/INDEX.md)** — 所有文檔的位置、用途、目標讀者一覽表。
+
 ### 角色分工入口
 
 | 角色 | 入口文件 | 一句話描述 |
 |---|---|---|
-| **場景設計人**（不寫程式也能做） | [docs/SCENE_DESIGN_WORKFLOW.md](docs/SCENE_DESIGN_WORKFLOW.md) | 跟 AI 說「我加了素材」，AI 跑腳本，你拖 prop 塗地圖 |
+| **場景設計人**（不寫程式也能做） | [docs/scene-design-workflow.md](docs/scene-design-workflow.md) | 跟 AI 說「我加了素材」，AI 跑腳本，你拖 prop 塗地圖 |
 | **美術 / 生圖人** | [game/assets/textures/environment/1-asset-creation.md](game/assets/textures/environment/1-asset-creation.md) | Pixellab 設定、檔名規範、像素規格 |
 | **角色美術**（NPC 動畫） | [art_source/characters/1-asset-creation.md](art_source/characters/1-asset-creation.md) | NPC 序列圖製作、spritesheet 編譯 |
-| **章節作者** | [docs/chapter-development.md](docs/chapter-development.md) | 章節資源 + events.gd + 對話 overlay |
+| **章節作者** | [docs/chapter-development.md](docs/chapter-development.md) | 章節資源 + events.gd + 對話 beats |
+| **對話系統工程師** | [docs/dialogue-architecture.md](docs/dialogue-architecture.md) | StoryBeat / NPCProfile / TrustGate / BeatRunner |
 | **程式 / 系統** | [docs/architecture.md](docs/architecture.md) | Autoload、AI pipeline、UI stack、目錄結構 |
 
 ### 自動化腳本（給 AI 代為執行）
@@ -275,9 +287,13 @@ Godot Frontend                    AI Backend
 | 腳本 | 用途 |
 |---|---|
 | `scripts/import_assets.py` | 大量 prop PNG → .tscn 場景（TOML manifest 驅動） |
-| `scripts/scaffold_zone.py` | autotile PNG → TileSet .tres + zone scene 加 TileMapLayer 節點 |
 | `scripts/generate_spritesheet.py` | NPC 序列圖 → spritesheet 預編譯 |
 | `scripts/test_ping.py` | llama-server 健康檢查 |
+
+### 已採用 Addons
+
+- **[TileMapDual](docs/tilemapdual-guide.md)** — 雙網格 autotile，取代原生 Terrain Set
+- 完整評估記錄見 [docs/addons.md](docs/addons.md)
 
 詳見 [docs/architecture.md § Asset Import Pipeline](docs/architecture.md#asset-import-pipeline)。
 

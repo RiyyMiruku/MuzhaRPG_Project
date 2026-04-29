@@ -4,9 +4,10 @@
 
 設計成「美術 + AI」協作：美術只說「我有什麼東西要進專案」，AI 寫 manifest 跑腳本。
 
-> 這是 prop 匯入的詳細說明。如果你是場景設計人，看 [docs/SCENE_DESIGN_WORKFLOW.md](../docs/SCENE_DESIGN_WORKFLOW.md) 即可（內含跟 AI 講的一句話清單）。
+> 文檔導覽：[../docs/INDEX.md](../docs/INDEX.md) — **對象**：程式 / 美術。
+> 場景設計人不用看本文，看 [docs/scene-design-workflow.md](../docs/scene-design-workflow.md) 即可。
 >
-> autotile（地形）相關的腳本是 `scripts/scaffold_zone.py`，用法見該腳本內 docstring 或 SCENE_DESIGN_WORKFLOW.md。
+> autotile（地形）改用 [TileMapDual addon](../docs/tilemapdual-guide.md)，不再有對應的 scaffold 腳本。
 
 ---
 

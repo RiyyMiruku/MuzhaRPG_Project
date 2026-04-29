@@ -17,6 +17,9 @@ func _ready() -> void:
 
 func _on_start() -> void:
 	UIManager.pop_all()
+	# 新遊戲：啟動第一章（章節已 scan，這裡切到 active 狀態）
+	if ChapterManager.current() == null:
+		ChapterManager.start_chapter("ch01_arrival")
 
 func _on_load() -> void:
 	UIManager.pop_all()

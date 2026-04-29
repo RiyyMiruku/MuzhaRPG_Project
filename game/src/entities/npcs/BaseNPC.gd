@@ -57,8 +57,19 @@ func interact(_player: Node) -> void:
 		return
 
 	face_toward(_player.global_position)
+
+	# 優先檢查當前是否有 active beat（authored 預寫對話）
+	var beat: StoryBeat = ChapterManager.find_active_beat(npc_config.npc_id)
+	if beat != null:
+		ChapterManager.run_beat(beat, _dialogue_ui)
+		# Beat 結束會呼叫 dialogue_closed → _on_dialogue_closed 收尾
+		if not _dialogue_ui.dialogue_closed.is_connected(_on_dialogue_closed):
+			_dialogue_ui.dialogue_closed.connect(_on_dialogue_closed, CONNECT_ONE_SHOT)
+		EventBus.npc_interaction_started.emit(self)
+		return
+
+	# 沒 beat → AI mode
 	_dialogue_ui.open_dialogue(npc_config)
-	# 安全連接（避免重複連接錯誤）
 	if not _dialogue_ui.player_submitted_input.is_connected(_on_player_input):
 		_dialogue_ui.player_submitted_input.connect(_on_player_input)
 	if not _dialogue_ui.dialogue_closed.is_connected(_on_dialogue_closed):

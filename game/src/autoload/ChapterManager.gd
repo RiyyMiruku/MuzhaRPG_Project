@@ -21,8 +21,12 @@ const CHAPTERS_DIR: String = "res://src/chapters"
 var _all_chapters: Dictionary = {}             # chapter_id -> ChapterConfig
 var _current: ChapterConfig = null
 var _events_handler: RefCounted = null         # 當前章節 events 腳本實例
+var _beat_runner: BeatRunner = null            # 內部子節點，跑 authored beats
 
 func _ready() -> void:
+	_beat_runner = BeatRunner.new()
+	_beat_runner.name = "BeatRunner"
+	add_child(_beat_runner)
 	_scan_chapters()
 
 # ── 章節掃描 ───────────────────────────────────────────────────────────────
@@ -46,6 +50,13 @@ func _scan_chapters() -> void:
 	print("ChapterManager: loaded %d chapters: %s" % [
 		_all_chapters.size(), _all_chapters.keys()
 	])
+	# 掃所有章節的 beats/ 子資料夾
+	var beat_count: int = 0
+	for chapter_id: String in _all_chapters:
+		var beats_dir: String = "%s/%s/beats" % [CHAPTERS_DIR, chapter_id]
+		beat_count += _beat_runner.scan_dir(beats_dir)
+	if beat_count > 0:
+		print("ChapterManager: registered %d story beats" % beat_count)
 
 # ── 公開 API ───────────────────────────────────────────────────────────────
 ## 取得當前章節（可能是 null，遊戲剛啟動或自由模式）
@@ -63,6 +74,22 @@ func is_npc_active(npc_id: String) -> bool:
 	if _current == null:
 		return true   # 沒章節 = 全部活躍（自由模式）
 	return _current.includes_npc(npc_id)
+
+## 找出當前可觸發的 authored beat（給 BaseNPC 互動時呼叫）
+## 回傳 null = 沒有 active beat → 走 AI mode
+func find_active_beat(npc_id: String) -> StoryBeat:
+	if _beat_runner == null:
+		return null
+	return _beat_runner.find_active_beat(npc_id)
+
+## 跑指定 beat（由 BaseNPC 在 find_active_beat 命中時呼叫）
+func run_beat(beat: StoryBeat, dialogue_ui: DialogueUI) -> void:
+	if _beat_runner == null:
+		return
+	_beat_runner.run(beat, dialogue_ui)
+
+func is_beat_active() -> bool:
+	return _beat_runner != null and _beat_runner.is_active()
 
 ## 切換到指定章節
 func start_chapter(chapter_id: String) -> bool:
@@ -95,11 +122,16 @@ func start_chapter(chapter_id: String) -> bool:
 func complete_current() -> void:
 	if _current == null:
 		return
-	chapter_completed.emit(_current)
+	var completed: ChapterConfig = _current
+	chapter_completed.emit(completed)
 	# 自動找下一章（order 為 current+1）
-	var next: ChapterConfig = _find_next_in_order(_current.order)
+	var next: ChapterConfig = _find_next_in_order(completed.order)
 	if next != null:
 		start_chapter(next.chapter_id)
+	else:
+		# 沒有下一章：卸下事件 handler 避免 signal leak
+		_unregister_events()
+		_current = null
 
 ## 列出所有已載入章節（編輯器/測試用）
 func list_all() -> Array:
@@ -137,3 +169,27 @@ func _find_next_in_order(current_order: int) -> ChapterConfig:
 			if best == null or cfg.order < best.order:
 				best = cfg
 	return best
+
+# ── Persistence ────────────────────────────────────────────────────────────
+func serialize() -> Dictionary:
+	return {
+		"current_chapter_id": _current.chapter_id if _current != null else "",
+	}
+
+func deserialize(data: Dictionary) -> void:
+	var saved_id: String = data.get("current_chapter_id", "")
+	if saved_id.is_empty():
+		# 沒有存檔的章節 → 卸載當前章節（如果有）
+		if _current != null:
+			_unregister_events()
+			_current = null
+		return
+	if not _all_chapters.has(saved_id):
+		push_warning("ChapterManager: saved chapter '%s' not found, ignoring" % saved_id)
+		return
+	# 直接切到存檔章節（跳過 prerequisites 檢查 — 玩家已經達成過了）
+	if _current != null:
+		_unregister_events()
+	_current = _all_chapters[saved_id]
+	_register_events()
+	chapter_started.emit(_current)

@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="StoryBeat" load_steps=2 format=3 uid="uid://btest1chenayiintro"]
+
+[ext_resource type="Script" path="res://src/core/classes/StoryBeat.gd" id="1_storybeat"]
+
+[resource]
+script = ExtResource("1_storybeat")
+beat_id = "test_chen_ayi_intro"
+trigger_flags = {}
+trigger_event = ""
+trigger_npc_id = "chen_ayi"
+trigger_zone = ""
+dialogue_lines = [
+{
+"speaker": "narrator",
+"text": "陳阿姨從攤位後抬起頭，瞇起眼打量你。"
+},
+{
+"speaker": "陳阿姨",
+"text": "欸？沒看過的面孔。是新搬來的吧？"
+},
+{
+"speaker": "陳阿姨",
+"text": "怎麼樣，買菜還是順便認識一下？"
+}
+]
+choices = [
+{
+"text": "我剛搬來木柵，想認識一下街坊",
+"set_flags": {"met_chen_ayi_friendly": true}
+},
+{
+"text": "我只是路過看看",
+"set_flags": {"met_chen_ayi_brief": true}
+}
+]
+on_complete_flags = {
+"met_chen_ayi": true
+}
+on_complete_event = "talked_to_chen_ayi"
+blocks_input = true

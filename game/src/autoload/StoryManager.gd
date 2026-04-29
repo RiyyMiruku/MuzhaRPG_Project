@@ -4,25 +4,17 @@ extends Node
 signal event_recorded(event_id: String)
 
 # ── State ──────────────────────────────────────────────────────────────────
-var unlocked_zones: Array[String] = ["zone_nccu"]
+var unlocked_zones: Array[String] = [Zones.STARTING]
 var completed_events: Array[String] = []
 var player_flags: Dictionary = {}
 var npc_relationships: Dictionary = {}          # npc_id -> int (-100 to 100)
 var conversation_histories: Dictionary = {}     # npc_id -> Array[Dictionary]
-var current_zone: String = "zone_nccu"
+var current_zone: String = Zones.STARTING
 var game_time_hours: float = 14.0               # 0.0 - 24.0 (in-game clock)
 
 ## 遊戲內時間流速：1 秒真實時間 = N 分鐘遊戲時間
 ## 預設 1.0 = 1 秒真實時間推進 1 分鐘遊戲時間（24 分鐘真實時間 = 遊戲內一天）
 const TIME_SCALE: float = 1.0  # minutes per real second
-
-# ── Zone Display Names ─────────────────────────────────────────────────────
-const ZONE_DISPLAY: Dictionary = {
-	"zone_nccu":      "政大正門",
-	"zone_market":    "木柵市場",
-	"zone_zhinan":    "指南宮",
-	"zone_riverside": "道南河濱公園",
-}
 
 func _ready() -> void:
 	pass
@@ -40,16 +32,19 @@ func _process(delta: float) -> void:
 			game_time_hours -= 24.0
 
 # ── Context Builder (核心方法) ────────────────────────────────────────────
+## 給 AI 用的完整對話 context。包含章節 overlay，以解除 AIClient 對 ChapterManager 的直接依賴。
 func build_ai_context(npc_id: String) -> Dictionary:
 	return {
 		"zone": current_zone,
-		"zone_display": ZONE_DISPLAY.get(current_zone, current_zone),
+		"zone_display": Zones.display_name(current_zone),
 		"time_of_day": _get_time_string(),
 		"time_period": _get_time_period(),
 		"relationship": npc_relationships.get(npc_id, 0),
 		"recent_events": _get_recent_events(5),
 		"player_visited_zones": unlocked_zones.duplicate(),
 		"conversation_history": conversation_histories.get(npc_id, []).duplicate(),
+		"chapter_overlay": ChapterManager.get_npc_overlay(npc_id),
+		"player_flags": player_flags.duplicate(),
 	}
 
 # ── Time Helpers ───────────────────────────────────────────────────────────
@@ -107,23 +102,24 @@ func add_conversation_turn(npc_id: String, role: String, content: String) -> voi
 	if conversation_histories[npc_id].size() > MAX_HISTORY_PER_NPC:
 		conversation_histories[npc_id] = conversation_histories[npc_id].slice(-MAX_HISTORY_PER_NPC)
 
-# ── Persistence (Phase 3) ──────────────────────────────────────────────────
+# ── Persistence ────────────────────────────────────────────────────────────
 func serialize() -> Dictionary:
 	return {
 		"unlocked_zones": unlocked_zones,
 		"completed_events": completed_events,
 		"player_flags": player_flags,
 		"npc_relationships": npc_relationships,
+		"conversation_histories": conversation_histories,
 		"current_zone": current_zone,
 		"game_time_hours": game_time_hours,
 	}
 
 func deserialize(data: Dictionary) -> void:
 	# JSON 反序列化回來是無型別 Array，需手動轉型
-	unlocked_zones.assign(data.get("unlocked_zones", ["zone_nccu"]))
+	unlocked_zones.assign(data.get("unlocked_zones", [Zones.STARTING]))
 	completed_events.assign(data.get("completed_events", []))
 	player_flags = data.get("player_flags", {})
 	npc_relationships = data.get("npc_relationships", {})
-	current_zone = data.get("current_zone", "zone_nccu")
+	conversation_histories = data.get("conversation_histories", {})
+	current_zone = data.get("current_zone", Zones.STARTING)
 	game_time_hours = data.get("game_time_hours", 14.0)
-	conversation_histories = {}  # Histories are session-only (not persisted)

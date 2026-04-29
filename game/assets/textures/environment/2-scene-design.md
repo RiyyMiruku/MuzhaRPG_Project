@@ -1,8 +1,8 @@
 # ② 場景製作流程（給地圖設計人）
 
-本文涵蓋**拿到素材後如何在 Godot 中組成場景**。前置作業（素材製作與歸檔）見 [① 素材製作與歸檔](1-asset-creation.md)。
-
-> **多人協作入口**：[docs/SCENE_DESIGN_WORKFLOW.md](../../../../docs/SCENE_DESIGN_WORKFLOW.md) 是給場景設計人的精簡入口，本文是詳細的 Godot 操作說明。
+> 文檔導覽：[../../../../docs/INDEX.md](../../../../docs/INDEX.md) — **對象**：場景設計人。**用途**：詳細 Godot 操作教學。
+> **速查版本**（一句話清單）：[docs/scene-design-workflow.md](../../../../docs/scene-design-workflow.md)
+> **前置作業**（素材製作）：[① 素材製作與歸檔](1-asset-creation.md)
 
 ---
 
@@ -56,15 +56,16 @@
 | 你做的事 | 跟 AI 說 |
 |---|---|
 | 把新 prop PNG 丟進 `temp/` | `我在 temp/ 加了新素材，幫我跑 import_assets.py` |
-| 把新 autotile PNG 丟進 `tilesets/<zone>/` | `我加了新 autotile，幫我跑 scaffold_zone.py` |
-| 兩件事一起 | `我在 temp/ 加素材也加 autotile，先跑 import_assets 再跑 scaffold_zone` |
+| 把新 autotile PNG 丟進 `tilesets/<zone>/` | `我加了 [zone] 的新 autotile PNG，幫我加進 .tres atlas sources` |
 
 AI 會自動：
 
 - **import_assets.py**：判斷分類 → 重命名 PNG → 生 prop `.tscn`（含 StaticBody2D + InteractArea）
-- **scaffold_zone.py**：建 `<zone>_terrain.tres`（含 16 個 tile 的完整 Pixellab 模板與 peering bits）→ 在 `zone_<zone>.tscn` 加 `TileMapLayer_Ground` 並掛 TileSet
+- **autotile**：把新 PNG 加進對應 zone 的 `<zone>_terrain.tres` 當作新 atlas source
 
 完成後在 Godot 左下角檔案系統看到新檔案（按 `Ctrl+Shift+R` 重掃）。
+
+> 地形邏輯改用 [TileMapDual addon](../../../../docs/tilemapdual-guide.md)，不再用原生 Terrain Set + 手動 peering bits。
 
 ---
 
@@ -77,17 +78,16 @@ AI 會自動：
 
 ---
 
-## Step 3：塗 autotile 地形
+## Step 3：塗 autotile 地形（TileMapDual）
 
-### 一般情況（scaffold_zone.py 跑過後）
+本專案地形改用 [TileMapDual](../../../../docs/tilemapdual-guide.md) 而不是原生 Terrain Set。
 
-`scaffold_zone.py` 已經自動寫好 16 個 tile 的 peering bits 跟 Terrain Sets，**不需要進 TileSet 編輯器手動設定**。
+### 簡化流程
 
-1. 場景樹點 `TileMapLayer_Ground`
-2. 視窗下方 TileMap 面板 → **「地形」**分頁
-3. 左側 palette 看到該 zone 的 terrain（dirt/stone、grass/asphalt、water/concrete...）
-4. **選一個 terrain → 上方工具列選筆刷形狀**（畫筆／線／矩形／油漆桶）
-5. 在 2D 視窗左鍵拖動 → Godot 自動拼接邊界
+1. 場景樹點 **`TileMapDual`** 節點（單一地形圖層，extends TileMapLayer）
+2. TileMap 面板 →「地形」分頁
+3. 選 `FG -<png名稱>` terrain（每張 PNG 一個）
+4. 用矩形／畫筆工具直接塗 — 邊界自動拼接
 
 ### 工具列說明
 
@@ -97,23 +97,11 @@ AI 會自動：
 | 線 | 兩點連線 |
 | **矩形** | 拉框填滿（最常用） |
 | 油漆桶 | 填滿封閉區域 |
-| 吸取 | 從畫面取色 |
 | 橡皮擦 | 移除 |
 
-### 視覺反向時
+### 完整節點配置與 preset 設定
 
-刷出來顏色跟你預期的相反（例：選 grass 結果出現 asphalt）：
-- 開該 zone 的 `.tres` 檔（例 `src/maps/tilesets/market_terrain.tres`）
-- 找到 `terrain_set_X/terrain_0/name` 跟 `terrain_set_X/terrain_1/name`，**對調名稱跟顏色**
-- peering bits 不用動
-
-### Pixellab 素材必看
-
-如果你要重新標 peering bits（自己畫的素材或 Pixellab 以外來源）：
-
-- **Mode 必須選 `Match Corners` (mode 1)**，不是 Match Corners and Sides。Pixellab 的 4×4 = 16 tile 對應 4 bit corner = 16 種組合，剛好夠。Match Corners and Sides 需要 256 tile。
-- 每塊 tile 標 4 個角 + 1 個中心點。每個角必須**只屬於一個 terrain**（不能漏標）。
-- Pixellab 4×4 PNG 的位置 → bitmask 對應規則記錄在 `scripts/scaffold_zone.py` 的 `PIXELLAB_LAYOUT` dict。
+如果 zone 還沒設好 TileMapDual（場景樹沒看到 `TileMapDual` 節點），照 [tilemapdual-guide.md](../../../../docs/tilemapdual-guide.md) 的「場景設定」段落操作（每個 zone 第一次設一次，4 個現有 zone 已設好）。
 
 ---
 
@@ -180,11 +168,11 @@ collision_mask = 7   ← 必須包含 1（terrain）+ 2（NPC）+ 4（prop）
 
 ### 地形邊界錯位 / 跳磚
 
-代表 peering bits 標錯，最常見原因：
-- Mode 設成 `0` (Match Corners and Sides) 而不是 `1` (Match Corners)
-- 用了 2×2 而不是 4×4 layout
+代表 TileMapDual 的 preset 對應跟 PNG layout 對不上。可能原因：
+- TileMapDual `Standard` preset 的 bg/fg 位置跟 Pixellab 4×4 PNG 相反（純 lower 位置不同）
+- PNG 大小不是 64×64
 
-讓 AI 跑 `python scripts/scaffold_zone.py <zone> --force` 重生即可。
+開 [tilemapdual-guide.md](../../../../docs/tilemapdual-guide.md) 對照「Pixellab 4×4 layout 跟 Standard preset 方向相反」段落，或請 AI 幫你檢查。
 
 ### Prop 擺位 Y-sort 錯亂
 

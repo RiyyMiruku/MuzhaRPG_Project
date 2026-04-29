@@ -13,17 +13,7 @@ var _current_layer: MapLayer = MapLayer.HUD
 
 const EXPANDED_SIZE: Vector2 = Vector2(500, 360)
 
-const WORLD_NODES: Dictionary = {
-	"zone_nccu":      Vector2(250, 200),
-	"zone_market":    Vector2(100, 200),
-	"zone_zhinan":    Vector2(100, 80),
-	"zone_riverside": Vector2(400, 200),
-}
-const WORLD_EDGES: Array = [
-	["zone_nccu", "zone_market"],
-	["zone_nccu", "zone_riverside"],
-	["zone_market", "zone_zhinan"],
-]
+## 世界地圖節點/邊資料來自 Zones（single source of truth）— 見 _draw_world_map
 
 const COLOR_BG: Color = Color(0.08, 0.1, 0.12, 0.85)
 const COLOR_BORDER: Color = Color(0.4, 0.4, 0.4, 0.6)
@@ -139,7 +129,7 @@ func _draw_hud_minimap() -> void:
 	draw_rect(Rect2(2, 16, s + 4, s + 4), COLOR_BG)
 	draw_rect(Rect2(2, 16, s + 4, s + 4), COLOR_BORDER, false, 1.0)
 
-	var zone_name: String = StoryManager.ZONE_DISPLAY.get(StoryManager.current_zone, "")
+	var zone_name: String = Zones.display_name(StoryManager.current_zone)
 	draw_string(font, Vector2(4, 14), zone_name, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color(0.7, 0.7, 0.7, 0.8))
 	draw_string(font, Vector2(s - 14, 14), "[M]", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(0.5, 0.5, 0.5, 0.6))
 
@@ -162,7 +152,7 @@ func _draw_zone_detail() -> void:
 	draw_rect(Rect2(Vector2.ZERO, ps), COLOR_BG)
 	draw_rect(Rect2(Vector2.ZERO, ps), COLOR_BORDER, false, 2.0)
 
-	var zone_name: String = StoryManager.ZONE_DISPLAY.get(StoryManager.current_zone, "")
+	var zone_name: String = Zones.display_name(StoryManager.current_zone)
 	draw_string(font, Vector2(12, 22), zone_name + " - Zone Map", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color.WHITE)
 
 	# 切換按鈕
@@ -194,16 +184,16 @@ func _draw_world_map() -> void:
 	_draw_switch_button(ps, font, "<< Zone Map")
 
 	# 連接線
-	for edge: Array in WORLD_EDGES:
+	for edge: Array in Zones.all_edges():
 		var f: String = edge[0]
 		var t: String = edge[1]
-		if WORLD_NODES.has(f) and WORLD_NODES.has(t):
+		if Zones.has_zone(f) and Zones.has_zone(t):
 			var c: Color = Color(0.5, 0.5, 0.5) if (unlocked.has(f) and unlocked.has(t)) else Color(0.2, 0.2, 0.2)
-			draw_line(WORLD_NODES[f], WORLD_NODES[t], c, 2.0)
+			draw_line(Zones.world_position(f), Zones.world_position(t), c, 2.0)
 
 	# 區域節點
-	for zone_id: String in WORLD_NODES:
-		var pos: Vector2 = WORLD_NODES[zone_id]
+	for zone_id: String in Zones.all_ids():
+		var pos: Vector2 = Zones.world_position(zone_id)
 		var is_cur: bool = zone_id == current
 		var is_unlk: bool = unlocked.has(zone_id)
 		var nc: Color = COLOR_ZONE_CURRENT if is_cur else (COLOR_ZONE_UNLOCKED if is_unlk else COLOR_ZONE_LOCKED)
@@ -211,7 +201,7 @@ func _draw_world_map() -> void:
 		draw_circle(pos, 18.0 if is_cur else 14.0, nc * 0.3)
 		draw_circle(pos, 16.0 if is_cur else 12.0, nc)
 
-		var dn: String = StoryManager.ZONE_DISPLAY.get(zone_id, zone_id) if is_unlk else "???"
+		var dn: String = Zones.display_name(zone_id) if is_unlk else "???"
 		var ts: Vector2 = font.get_string_size(dn, HORIZONTAL_ALIGNMENT_LEFT, -1, 13)
 		draw_string(font, pos + Vector2(-ts.x / 2, 32), dn, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color.WHITE)
 
@@ -249,7 +239,7 @@ func _draw_entities(center: Vector2, half: float, sf: float, player_pos: Vector2
 		var diamond: PackedVector2Array = PackedVector2Array([
 			dp + Vector2(0, -5), dp + Vector2(5, 0), dp + Vector2(0, 5), dp + Vector2(-5, 0)])
 		draw_colored_polygon(diamond, COLOR_TRANSITION)
-		var tn: String = StoryManager.ZONE_DISPLAY.get(ta.target_zone, "?")
+		var tn: String = Zones.display_name(ta.target_zone)
 		if labels:
 			draw_string(font, dp + Vector2(-20, -8), "→ " + tn, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, COLOR_TRANSITION)
 		else:

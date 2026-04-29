@@ -1,5 +1,8 @@
 # 章節開發指南
 
+> 文檔導覽：[INDEX](INDEX.md) — **對象**：章節作者 / 程式。**用途**：章節資料夾結構 + ChapterConfig 欄位 + 新章節流程。
+> 對話寫法見 [dialogue-architecture.md](dialogue-architecture.md)。
+
 《MuzhaRPG》以章節制推進故事。本文說明章節系統架構、新增章節流程、以及如何在章節中改變 NPC 行為。
 
 ---
@@ -11,33 +14,57 @@
 ```
 全域資源池（永遠存在）          章節資料夾（差異層）
 ───────────────────────────────────────────────────────
-角色 sprite / 立繪              章節故事腳本
+角色 sprite / 立繪              章節故事腳本（StoryBeat .tres）
 Tileset / autotile / props      章節獨有任務
-Zone 場景（共用地理）           章節 NPC 對話差異
+Zone 場景（共用地理）           章節 NPC 對話差異 / NPCProfile
 NPCConfig 基底人設              章節限定 NPC（若有）
                                 Cutscene
 ```
 
 → 改一張陳阿姨的圖只動一個地方；改第 5 章陳阿姨的對話傾向只動 chapter_05/。
 
+> **對話採用 Authored Beat + AI 混合架構（D 方案）**。完整設計見 [dialogue-architecture.md](dialogue-architecture.md)。本文聚焦於章節結構與作者流程。
+
 ---
 
 ## 2. 系統架構
 
+對話分三類，混合處理（詳見 [dialogue-architecture.md](dialogue-architecture.md)）：
+
+| 類別 | 觸發條件 | 流向 |
+|---|---|---|
+| **Authored Beat** | 進入 zone / interact NPC / event 觸發符合 | BeatRunner → DialogueUI (beat mode) |
+| **Constrained AI** | 與有 NPCProfile 的 NPC 互動且無 active beat | AIClient + TrustGate → DialogueUI (AI mode) |
+| **Free AI** | 與無 profile 的路人互動 | AIClient（簡化 prompt） |
+
 ```
-       NPCConfig (基底)            ChapterConfig (差異)        StoryManager (狀態)
-       ────────────────             ─────────────────           ─────────────────
-       npc_id = "chen_ayi"          npc_overlays[chen_ayi]      relationships[chen_ayi]
-       system_prompt = "..."        = "你不認識玩家"             = 0
-       (永遠不變)                    (隨章節變)                  (隨遊玩變)
+       NPCProfile (基底+規則)      ChapterConfig (差異)       StoryManager (狀態)
+       ─────────────────           ─────────────────          ─────────────────
+       npc_id, system_prompt       npc_overlays[chen_ayi]     relationships[chen_ayi]
+       trust_revelations[]         = "你不認識玩家"            = 0
+       forbidden_until_flag{}      (隨章節變)                  player_flags{}
+       known_facts[]                                          (隨遊玩變)
+       (永遠不變)                                             
                   │                          │                          │
                   └──────────────┬───────────┴──────────────────────────┘
                                  ▼
-                          AIClient.query()
-                          組合三層成完整 system prompt
+                          TrustGate.build_system_prompt()
+                          組合 4 層成完整約束 prompt
                                  │
                                  ▼
-                              LLM API
+                          AIClient.query() → LLM API
+
+       StoryBeat (預寫)            BeatRunner (執行)
+       ──────────────              ──────────────
+       beat_id, trigger_*          掃 chapters/*/beats/
+       dialogue_lines[]            監聽 EventBus / flags
+       choices[]                   觸發 → DialogueUI beat mode
+       on_complete_*               
+                  │                          │
+                  └──────────────┬───────────┘
+                                 ▼
+                          DialogueUI (beat mode)
+                          顯示文字 + 選項按鈕
 ```
 
 ---
@@ -61,7 +88,9 @@ game/src/
     │   ├── chapter.tres
     │   ├── events.gd
     │   ├── quests/
-    │   ├── dialogue_overlays/
+    │   ├── beats/                     ← Authored beats（StoryBeat .tres）
+    │   ├── npcs/                      ← 章節 NPCProfile .tres
+    │   ├── dialogue_overlays/         ← (legacy 文字片段，仍由 npc_overlays 用)
     │   └── cutscenes/
     ├── chapter_01_arrival/            ← 範例章節（已建立）
     │   └── ... (同上結構，已填內容)
@@ -123,7 +152,41 @@ func _on_event(event_id: String) -> void:
         ChapterManager.complete_current()
 ```
 
-### Step 5：啟動章節
+### Step 5：寫 beats（authored 對話劇情）
+
+在 `beats/` 內建立 `<beat_id>.tres`（StoryBeat 資源）。每個 beat 對應一段必須一字不差出現的劇情：
+
+```
+beat_id = "ch02_market_first_visit"
+trigger_zone = "zone_market"
+trigger_flags = { "ch02_started": true }
+dialogue_lines = [
+    { "speaker": "narrator", "text": "市場的喧鬧迎面而來。" },
+    { "speaker": "阿謙", "text": "（找到陳阿姨的攤位...）" },
+]
+on_complete_flags = { "saw_market_intro": true }
+```
+
+完整 schema 跟範例見 [dialogue-architecture.md](dialogue-architecture.md) 第 6 節。
+
+### Step 6：寫 NPCProfile（章節 NPC 的 AI 約束）
+
+在 `npcs/` 放章節限定的 `<npc_id>.tres`（NPCProfile 資源），定義信任值門檻、禁忌主題、已知事實：
+
+```
+npc_id = "lin_rongchang"
+era = "1983"
+trust_revelations = [
+    { "threshold": 0,  "topics": ["藥行日常", "中藥知識"] },
+    { "threshold": 60, "topics": ["承認家裡有上鎖房間"] },
+    { "threshold": 80, "topics": ["有個弟弟（不說名字）"] },
+]
+forbidden_until_flag = { "林榮華": "ending_finale_active" }
+```
+
+> 跨章節 NPC（陳阿姨等）的基底 `NPCConfig.tres` 仍放在 `entities/npcs/definitions/`，章節差異走 `npc_overlays`；章節限定 NPC（林榮昌等）的 `NPCProfile.tres` 才放在章節 `npcs/`。
+
+### Step 7：啟動章節
 
 由 `GameManager` 或新遊戲流程呼叫：
 
@@ -205,8 +268,11 @@ var all: Array = ChapterManager.list_all()
 
 ## 8. 相關檔案
 
+- **對話混合架構**：[dialogue-architecture.md](dialogue-architecture.md)
+- **Addons 評估記錄**：[addons.md](addons.md)
 - 類別定義：[ChapterConfig.gd](../game/src/core/classes/ChapterConfig.gd)
 - Autoload：[ChapterManager.gd](../game/src/autoload/ChapterManager.gd)
 - AIClient prompt 組合：[AIClient.gd](../game/src/autoload/AIClient.gd)
+- 對話 UI：[DialogueUI.gd](../game/src/ui/dialogue/DialogueUI.gd)
 - 範本：[chapter_template/](../game/src/chapters/chapter_template/)
 - 範例章節：[chapter_01_arrival/](../game/src/chapters/chapter_01_arrival/)

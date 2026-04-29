@@ -25,12 +25,10 @@ func _process(_delta: float) -> void:
 	if not visible:
 		return
 	_time_label.text = StoryManager._get_time_string()
-	_zone_label.text = StoryManager.ZONE_DISPLAY.get(
-		StoryManager.current_zone, StoryManager.current_zone)
+	_zone_label.text = Zones.display_name(StoryManager.current_zone)
 
 func _on_zone_changed(_zone_id: String) -> void:
-	_zone_label.text = StoryManager.ZONE_DISPLAY.get(
-		StoryManager.current_zone, StoryManager.current_zone)
+	_zone_label.text = Zones.display_name(StoryManager.current_zone)
 
 func _on_quest_changed(_quest_id: String) -> void:
 	_update_quest_display()

@@ -84,14 +84,16 @@ func launch_llama_server() -> void:
 	_poll_server_health.call_deferred()
 
 func _poll_server_health() -> void:
-	var port: int = _ai_config.get("server", {}).get("port", 8000)
 	var timeout: float = _ai_config.get("server", {}).get("startup_timeout_sec", 30.0)
 	var elapsed: float = 0.0
 	while elapsed < timeout:
+		AIClient.check_server_health()
 		await get_tree().create_timer(1.0).timeout
 		elapsed += 1.0
-		# AIClient will handle health checks; emit ready after delay as fallback
-	server_ready.emit()
+		if AIClient.is_server_online:
+			server_ready.emit()
+			return
+	server_failed.emit("llama-server 啟動逾時（%d 秒），請檢查 binary/model 路徑與系統資源" % int(timeout))
 
 func shutdown_server() -> void:
 	if _server_pid > 0:
@@ -159,6 +161,7 @@ func save_game(slot: int = 1) -> void:
 		},
 		"story": StoryManager.serialize(),
 		"quests": QuestManager.serialize(),
+		"chapter": ChapterManager.serialize(),
 		"time_played_sec": _time_played_sec,
 	}
 
@@ -189,10 +192,13 @@ func load_game(slot: int = 1) -> void:
 	var data: Dictionary = json.data
 
 	# 還原 StoryManager 與 QuestManager 狀態
+	# 注意順序：StoryManager 先（含 player_flags），ChapterManager 之後再依 flags 解析
 	if data.has("story"):
 		StoryManager.deserialize(data["story"])
 	if data.has("quests"):
 		QuestManager.deserialize(data["quests"])
+	if data.has("chapter"):
+		ChapterManager.deserialize(data["chapter"])
 
 	# 還原遊戲時間
 	if data.has("time_played_sec"):
@@ -201,7 +207,7 @@ func load_game(slot: int = 1) -> void:
 	# 切換到存檔中的區域
 	if data.has("player"):
 		var player_data: Dictionary = data["player"]
-		var zone_id: String = player_data.get("zone", "zone_nccu")
+		var zone_id: String = player_data.get("zone", Zones.STARTING)
 		var pos_x: float = player_data.get("position_x", 0.0)
 		var pos_y: float = player_data.get("position_y", 0.0)
 		_pending_load_position = Vector2(pos_x, pos_y)
@@ -209,6 +215,19 @@ func load_game(slot: int = 1) -> void:
 
 	print("GameManager: Game loaded from slot %d" % slot)
 	EventBus.hud_message_requested.emit("遊戲已載入", 2.0)
+
+## 回主選單：重置 autoload 狀態 + reload 主場景（MainMenu 會自動重新 push）
+func return_to_main_menu() -> void:
+	# 重置故事 / 任務 / 章節 狀態（傳空 dict 讓 deserialize 套預設值）
+	StoryManager.deserialize({})
+	QuestManager.deserialize({})
+	ChapterManager.deserialize({})
+	_time_played_sec = 0.0
+	# 中止任何 in-flight AI 請求
+	AIClient.abort_current_request()
+	# 切回 MAIN_MENU state，reload 主場景讓 zone/player 重置
+	change_state(GameState.MAIN_MENU)
+	get_tree().reload_current_scene()
 
 func has_save(slot: int = 1) -> bool:
 	return FileAccess.file_exists(SAVE_DIR + "save_%d.json" % slot)

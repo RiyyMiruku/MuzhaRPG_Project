@@ -1,8 +1,10 @@
 # Maps — 場景地圖系統
 
-混合式架構：**地形用 autotile + TileMap**（Terrain Set 自動處理邊緣），**裝飾物用獨立 Prop 場景**（Y-sort + collision）。
+> 文檔導覽：[../../../docs/INDEX.md](../../../docs/INDEX.md) — **對象**：程式。**用途**：Maps 目錄結構、Zone 場景標準。
 
-> **協作流程入口（場景設計人請先看）**：[docs/SCENE_DESIGN_WORKFLOW.md](../../../docs/SCENE_DESIGN_WORKFLOW.md)
+混合式架構：**地形用 [TileMapDual](../../../docs/tilemapdual-guide.md)**（addon，自動雙網格邊緣），**裝飾物用獨立 Prop 場景**（Y-sort + collision）。
+
+> **協作流程入口（場景設計人請先看）**：[docs/scene-design-workflow.md](../../../docs/scene-design-workflow.md)
 > 內含「美術一句話 → AI 跑腳本」的批次匯入流程，本 README 是技術參考。
 
 ## 目錄結構
@@ -45,20 +47,12 @@ game/
 
 ### A. 新增地形（autotile）
 
-**推薦路徑（腳本自動）**：
+地形使用 [TileMapDual addon](../../../docs/tilemapdual-guide.md)，**單一節點即可**（不用 sibling 邏輯層 + 視覺層配對）。
 
-1. PNG 直接放 `assets/textures/environment/tilesets/<zone>/autotile_<lower>_<upper>.png`
-2. 跑 `python scripts/scaffold_zone.py`（或請 AI 跑）
-3. 腳本會建 `src/maps/tilesets/<zone>_terrain.tres` + 在 zone scene 加 `TileMapLayer_Ground` 節點並掛好 TileSet
-4. 在 Godot 開 TileSet 編輯器設 Terrain Set + peering bits（這步無法腳本化，太脆弱）
-5. TileMap 面板 Terrains 分頁刷地板
-
-**手動路徑**（理解流程用）：
-
-1. 建 `src/maps/tilesets/<zone>_terrain.tres`、Region Size = 16×16、加 atlas source
-2. Terrain Sets → New Terrain Set → mode = Match Corners and Sides
-3. 為 4 格分別設 bitmask
-4. 在 zone scene 加 `TileMapLayer_Ground` 節點掛 .tres
+1. PNG 放 `assets/textures/environment/tilesets/<zone>/autotile_<lower>_<upper>.png`
+2. 開該 zone 的 `.tscn`，找到 `TileMapDual` 節點
+3. 加新 PNG 到 inline TileSet sub_resource 的 atlas sources（手動或請 AI 加），peering bits 照 zhinan 範本
+4. TileMap 面板 → 地形分頁 → 選 `FG -<png名>` 直接刷
 
 ### B. 新增 Prop（裝飾物）
 
@@ -88,8 +82,10 @@ game/
 ZoneNCCU (Node2D)
 ├── Ground (ColorRect)              # 背景色塊佔位 — 等地形畫好後手動刪
 ├── ZoneLabel (Label)               # 區域名稱顯示（debug 用）
-├── TileMapLayer_Ground             # 地磚、草地（無碰撞）— 由 scaffold_zone.py 加入
-│                                   #   tile_set 掛 src/maps/tilesets/<zone>_terrain.tres
+├── TileMapDual (TileMapLayer)      # 地形 — TileMapDual addon (extends TileMapLayer)
+│                                   #   tile_set: 內嵌 SubResource（包含 16-tile peering + <any>/FG terrains）
+│                                   #   material: addons/TileMapDual/ghost_material.tres
+│                                   #   script: addons/TileMapDual/tile_map_dual.gd
 ├── YSortRoot (Node2D, y_sort)      # Y 排序層
 │   ├── Player                      #   玩家（zone scene 內或由 ZoneManager 注入）
 │   └── (Prop / NPC instances)      #   拖入的 prop .tscn 與 NPC
@@ -115,10 +111,10 @@ ZoneNCCU (Node2D)
 
 ## 相關文件
 
-- **協作流程入口（場景設計人）**：[docs/SCENE_DESIGN_WORKFLOW.md](../../../docs/SCENE_DESIGN_WORKFLOW.md)
+- **協作流程入口（場景設計人）**：[docs/scene-design-workflow.md](../../../docs/scene-design-workflow.md)
 - 給生圖人 — 素材製作：[1-asset-creation.md](../../assets/textures/environment/1-asset-creation.md)
 - 給地圖設計人 — 場景組合：[2-scene-design.md](../../assets/textures/environment/2-scene-design.md)
-- 大量 prop 匯入腳本：[scripts/IMPORT_ASSETS_README.md](../../../scripts/IMPORT_ASSETS_README.md)
+- 大量 prop 匯入腳本：[scripts/import-assets-guide.md](../../../scripts/import-assets-guide.md)
 - AI prompt 範本（少用，當腳本不適用時）：[3-ai-prompt.md](../../assets/textures/environment/3-ai-prompt.md)
 - 角色實裝流程：[art_source/characters/3-asset-usage.md](../../../art_source/characters/3-asset-usage.md)
 - 章節制開發：[docs/chapter-development.md](../../../docs/chapter-development.md)

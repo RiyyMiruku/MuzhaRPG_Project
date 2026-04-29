@@ -81,6 +81,11 @@ layout_mode = 2
 text = "Settings"
 theme_override_font_sizes/font_size = 14
 
+[node name="MainMenuButton" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Main Menu"
+theme_override_font_sizes/font_size = 14
+
 [node name="StatusLabel" type="Label" parent="Panel/VBox"]
 layout_mode = 2
 text = ""

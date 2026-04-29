@@ -16,6 +16,8 @@ var request_timeout_sec: float = 30.0
 var _http: HTTPRequest          # 用於 AI query
 var _health_http: HTTPRequest   # 用於 health check（獨立）
 var _current_npc_id: String = ""
+var _current_profile: NPCConfig = null   # 用於 post-process 過濾禁忌詞
+var _current_flags: Dictionary = {}      # query 當下的 player_flags 快照
 var _is_busy: bool = false
 
 func _ready() -> void:
@@ -69,6 +71,8 @@ func query(npc_config: Resource, user_input: String, context: Dictionary) -> voi
 
 	_is_busy = true
 	_current_npc_id = npc_config.npc_id
+	_current_profile = npc_config as NPCConfig
+	_current_flags = context.get("player_flags", {}).duplicate()
 
 	var payload: Dictionary = _build_chat_payload(npc_config, user_input, context)
 	var body: String = JSON.stringify(payload)
@@ -87,9 +91,19 @@ func query(npc_config: Resource, user_input: String, context: Dictionary) -> voi
 func _on_query_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	_is_busy = false
 
+	# 若請求已被取消（abort_current_request 清空了 _current_npc_id），丟棄此回應
+	if _current_npc_id.is_empty():
+		return
+
+	if result == HTTPRequest.RESULT_TIMEOUT:
+		_set_online(false)
+		_clear_query_state()
+		request_failed.emit("AI 伺服器逾時（%d 秒未回應），請確認 llama-server 狀態" % int(request_timeout_sec))
+		return
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		_set_online(false)
-		request_failed.emit("伺服器回應錯誤 (HTTP %d)" % response_code)
+		_clear_query_state()
+		request_failed.emit("伺服器回應錯誤 (result=%d, HTTP %d)" % [result, response_code])
 		return
 
 	_set_online(true)
@@ -122,19 +136,29 @@ func _on_query_completed(result: int, response_code: int, _headers: PackedString
 		request_failed.emit("AI 回應為空，請重試")
 		return
 
+	# Post-process: 過濾未解鎖的禁忌詞（防 LLM 違反 prompt 約束）
+	if _current_profile != null:
+		content = TrustGate.filter_forbidden(content, _current_profile, _current_flags)
+
 	# Save to conversation history
 	StoryManager.add_conversation_turn(_current_npc_id, "assistant", content)
 
 	var npc_id: String = _current_npc_id
 	_current_npc_id = ""
+	_current_profile = null
+	_current_flags = {}
 	response_complete.emit(content, npc_id)
 
 # ── Payload Builder ─────────────────────────────────────────────────────────
 func _build_chat_payload(npc_config: Resource, user_input: String, context: Dictionary) -> Dictionary:
-	var chapter_overlay: String = ChapterManager.get_npc_overlay(npc_config.npc_id)
-	var system_content: String = npc_config.system_prompt
-	if not chapter_overlay.is_empty():
-		system_content += "\n\n[章節背景] " + chapter_overlay
+	# 用 TrustGate 組裝核心 system prompt（人格 + 章節 overlay + 信任值門檻）
+	var system_content: String = TrustGate.build_system_prompt(
+		npc_config as NPCConfig,
+		int(context.get("relationship", 0)),
+		context.get("player_flags", {}),
+		context.get("chapter_overlay", "")
+	)
+	# 追加 per-call 動態情境（time / zone / recent events）— 不適合進 TrustGate
 	system_content += "\n\n" + _build_context_string(context)
 
 	var messages: Array[Dictionary] = [{"role": "system", "content": system_content}]
@@ -191,4 +215,9 @@ func abort_current_request() -> void:
 	if _is_busy:
 		_http.cancel_request()
 		_is_busy = false
-		_current_npc_id = ""
+		_clear_query_state()
+
+func _clear_query_state() -> void:
+	_current_npc_id = ""
+	_current_profile = null
+	_current_flags = {}

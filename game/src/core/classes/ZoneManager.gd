@@ -9,21 +9,7 @@ signal zone_transition_started(from_zone: String, to_zone: String)
 signal zone_transition_finished(zone_id: String)
 
 # ── Config ──────────────────────────────────────────────────────────────────
-## 區域場景路徑對照表
-const ZONE_SCENES: Dictionary = {
-	"zone_nccu":      "res://src/maps/zones/zone_nccu.tscn",
-	"zone_market":    "res://src/maps/zones/zone_market.tscn",
-	"zone_zhinan":    "res://src/maps/zones/zone_zhinan.tscn",
-	"zone_riverside": "res://src/maps/zones/zone_riverside.tscn",
-}
-
-## 區域之間的入口點座標（zone_id -> entry_point_id -> Vector2）
-var _entry_points: Dictionary = {
-	"zone_nccu":      {"default": Vector2(0, 50),   "from_market": Vector2(-200, 0), "from_riverside": Vector2(200, 0)},
-	"zone_market":    {"default": Vector2(0, 50),   "from_nccu": Vector2(200, 0), "from_zhinan": Vector2(0, -100)},
-	"zone_zhinan":    {"default": Vector2(0, 50),   "from_market": Vector2(0, 100)},
-	"zone_riverside": {"default": Vector2(0, 50),   "from_nccu": Vector2(0, -100)},
-}
+## Zone 資料源：見 game/src/core/classes/Zones.gd（scene path / entry points / 連接）
 
 # ── State ───────────────────────────────────────────────────────────────────
 var current_zone_id: String = ""
@@ -66,7 +52,7 @@ func transition_to_zone(zone_id: String, entry_point: String = "default") -> voi
 		return
 	if zone_id == current_zone_id:
 		return
-	if not ZONE_SCENES.has(zone_id):
+	if not Zones.has_zone(zone_id):
 		push_error("ZoneManager: Unknown zone: " + zone_id)
 		return
 
@@ -87,7 +73,7 @@ func transition_to_zone(zone_id: String, entry_point: String = "default") -> voi
 		_current_zone_node = null
 
 	# 3. 非同步載入新區域
-	var scene_path: String = ZONE_SCENES[zone_id]
+	var scene_path: String = Zones.scene_path(zone_id)
 	ResourceLoader.load_threaded_request(scene_path)
 
 	# 等待載入完成
@@ -97,7 +83,13 @@ func transition_to_zone(zone_id: String, entry_point: String = "default") -> voi
 	var packed_scene: PackedScene = ResourceLoader.load_threaded_get(scene_path) as PackedScene
 	if packed_scene == null:
 		push_error("ZoneManager: Failed to load zone: " + scene_path)
+		# 還原畫面避免永久黑屏
+		if screen_transition:
+			screen_transition.fade_in()
+			await screen_transition.fade_finished
+		GameManager.change_state(GameManager.GameState.EXPLORING)
 		_is_transitioning = false
+		EventBus.hud_message_requested.emit("區域載入失敗：%s" % zone_id, 3.0)
 		return
 
 	# 4. 實例化新區域
@@ -112,8 +104,7 @@ func transition_to_zone(zone_id: String, entry_point: String = "default") -> voi
 	# 5. 定位玩家到入口點
 	_player = _find_player()
 	if _player:
-		var pos: Vector2 = _get_entry_position(zone_id, entry_point)
-		_player.global_position = pos
+		_player.global_position = Zones.entry_position(zone_id, entry_point)
 
 	# 6. 淡入
 	if screen_transition:
@@ -136,17 +127,9 @@ func _find_player() -> Player:
 		return result as Player
 	return null
 
-func _get_entry_position(zone_id: String, entry_point: String) -> Vector2:
-	if _entry_points.has(zone_id):
-		var points: Dictionary = _entry_points[zone_id]
-		if points.has(entry_point):
-			return points[entry_point]
-		return points.get("default", Vector2.ZERO)
-	return Vector2.ZERO
-
 func _get_zone_id_from_node(node: Node) -> String:
 	var node_name: String = node.name.to_lower()
-	for zone_id: String in ZONE_SCENES:
+	for zone_id: String in Zones.all_ids():
 		if node_name.contains(zone_id.replace("zone_", "")):
 			return zone_id
 	return ""

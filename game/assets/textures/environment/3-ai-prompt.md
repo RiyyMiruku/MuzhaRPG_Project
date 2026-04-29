@@ -25,7 +25,7 @@ AI 會：
 2. 看每個資料夾的代表圖片，填入 category / collision 等判斷欄位
 3. `--dry-run` 確認後正式匯入
 
-詳細流程見 [scripts/IMPORT_ASSETS_README.md](../../../scripts/IMPORT_ASSETS_README.md)。
+詳細流程見 [scripts/import-assets-guide.md](../../../scripts/import-assets-guide.md)。
 
 匯入完成後若還需要建 autotile 的 `.tres` 或在 zone scene 加 TileMapLayer 節點，再用下方的整段 prompt。
 

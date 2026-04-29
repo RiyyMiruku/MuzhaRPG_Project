@@ -6,6 +6,7 @@ extends Control
 @onready var _save_btn: Button        = $Panel/VBox/SaveButton
 @onready var _load_btn: Button        = $Panel/VBox/LoadButton
 @onready var _settings_btn: Button    = $Panel/VBox/SettingsButton
+@onready var _main_menu_btn: Button   = $Panel/VBox/MainMenuButton
 @onready var _status_label: Label     = $Panel/VBox/StatusLabel
 @onready var _time_label: Label       = $Panel/VBox/TimeLabel
 @onready var _zone_label: Label       = $Panel/VBox/ZoneLabel
@@ -16,6 +17,7 @@ func _ready() -> void:
 	_save_btn.pressed.connect(_on_save)
 	_load_btn.pressed.connect(_on_load)
 	_settings_btn.pressed.connect(_on_settings)
+	_main_menu_btn.pressed.connect(_on_main_menu)
 
 func _input(event: InputEvent) -> void:
 	if GameManager.current_state == GameManager.GameState.DIALOGUE:
@@ -30,7 +32,7 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func _update_info() -> void:
-	_zone_label.text = "Location: " + StoryManager.ZONE_DISPLAY.get(StoryManager.current_zone, StoryManager.current_zone)
+	_zone_label.text = "Location: " + Zones.display_name(StoryManager.current_zone)
 	_time_label.text = "Time: " + StoryManager._get_time_string()
 	_load_btn.disabled = not GameManager.has_save(1)
 	_status_label.text = ""
@@ -49,3 +51,8 @@ func _on_load() -> void:
 
 func _on_settings() -> void:
 	UIManager.push("KeybindSettings")
+
+func _on_main_menu() -> void:
+	# 回主畫面：重置遊戲狀態並 reload 場景，讓 MainMenu 重新 push
+	UIManager.pop_all()
+	GameManager.return_to_main_menu()
