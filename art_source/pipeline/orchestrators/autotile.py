@@ -43,7 +43,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--transition-description", default=None)
     parser.add_argument("--tile-size", type=int, default=16)
     parser.add_argument(
-        "--review-mode", choices=["none", "stage", "step"], default="stage"
+        "--review-mode", choices=["none", "stage"], default="stage"
     )
     parser.add_argument("--resume-from", default=None)
     parser.add_argument("--force-restart-stage", action="append", default=[])
@@ -112,7 +112,7 @@ def iso_project(ctx: StageContext) -> list[str]:
     return [str(iso_path.relative_to(plab.project_root()))]
 
 
-@stage("verify_in_godot")
+@stage("verify_in_godot", is_last=True)
 def verify_in_godot(ctx: StageContext) -> list[str]:
     out_dir = manifest.tileset_dir(ctx.name)
     iso_path = out_dir / f"{ctx.name}_iso.png"

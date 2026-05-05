@@ -45,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--no-idle", action="store_true")
     p.add_argument("--idle-frame-count", type=int, default=4)
     p.add_argument(
-        "--review-mode", choices=["none", "stage", "step"], default="stage"
+        "--review-mode", choices=["none", "stage"], default="stage"
     )
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
@@ -110,7 +110,7 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
     return run_character_animation(ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count)
 
 
-@stage("compile_spritesheet")
+@stage("compile_spritesheet", is_last=True)
 def compile_spritesheet(ctx: StageContext) -> list[str]:
     char_dir = manifest.character_dir(ctx.name)
     script = plab.project_root() / "scripts" / "generate_spritesheet.py"

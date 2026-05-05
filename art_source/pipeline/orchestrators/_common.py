@@ -17,7 +17,7 @@ from typing import Any, Callable, Literal
 import manifest
 
 
-ReviewMode = Literal["none", "stage", "step"]
+ReviewMode = Literal["none", "stage"]
 
 
 @dataclass
@@ -32,20 +32,24 @@ class StageContext:
     extra: dict[str, Any] = field(default_factory=dict)
 
 
-def stage(stage_name: str) -> Callable[[Callable[..., list[str]]], Callable[..., None]]:
+def stage(
+    stage_name: str, *, is_last: bool = False
+) -> Callable[[Callable[..., list[str]]], Callable[..., None]]:
     """裝飾器:把一個函式登錄為 pipeline stage。
 
     被裝飾函式:
       - 接受 ctx: StageContext
       - 回傳 list[str](該 stage 產出的檔案路徑)
 
+    參數:
+      - is_last: 標記此 stage 為 pipeline 最後一個。review_mode=="stage"
+        時,最後一個 stage 跑完不暫停也不印 resume 提示(因無下一階段)。
+
     框架負責:
       - skip_set 中的 stage 直接跳過(已 resume;優先於 force_restart)
       - 已在 manifest 完成且不在 force_restart 的 stage 直接跳過
       - 跑完寫入 manifest.mark_stage
-      - review_mode == "stage" 跑完印路徑後 sys.exit(0)
-      - review_mode == "step" 在 wrapper 層等同 "none";細粒度暫停由各
-        stage 函式自行實作(stage 內部判讀 ctx.review_mode 後逐步停)
+      - review_mode == "stage" 且非最後一階段:跑完印路徑後 sys.exit(0)
     """
     def decorator(fn: Callable[..., list[str]]) -> Callable[..., None]:
         @wraps(fn)
@@ -63,7 +67,7 @@ def stage(stage_name: str) -> Callable[[Callable[..., list[str]]], Callable[...,
             manifest.mark_stage(ctx.asset_type, ctx.name, stage_name, paths)
             print(f"[done] {stage_name} → {paths}")
 
-            if ctx.review_mode == "stage":
+            if ctx.review_mode == "stage" and not is_last:
                 print(
                     f"\n--- review-mode=stage:於 {stage_name} 暫停 ---\n"
                     f"檢視產出後,以 --resume-from <next-stage> 繼續。"
@@ -95,9 +99,9 @@ def parse_common_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--name", required=True, help="資產名(manifest key)")
     parser.add_argument(
         "--review-mode",
-        choices=["none", "stage", "step"],
+        choices=["none", "stage"],
         default="stage",
-        help="none=一路到底;stage=每階段停;step=每 API 呼叫停",
+        help="none=一路到底;stage=每階段停",
     )
     parser.add_argument(
         "--resume-from", default=None, help="從指定 stage 起跑,前面 stage 跳過"

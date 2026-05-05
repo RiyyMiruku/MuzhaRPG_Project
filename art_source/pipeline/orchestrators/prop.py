@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--size", type=int, default=32, help="iso_prop 用")
     p.add_argument("--view", default="high_top_down", help="building 用")
     p.add_argument(
-        "--review-mode", choices=["none", "stage", "step"], default="stage"
+        "--review-mode", choices=["none", "stage"], default="stage"
     )
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
@@ -105,7 +105,7 @@ def generate_object(ctx: StageContext) -> list[str]:
     return [str(img_path.relative_to(plab.project_root()))]
 
 
-@stage("chroma_key")
+@stage("chroma_key", is_last=True)
 def chroma_key(ctx: StageContext) -> list[str]:
     img_path = manifest.object_dir(ctx.name) / f"{ctx.name}.png"
     pp.chroma_key_file(img_path)

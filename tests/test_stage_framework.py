@@ -96,6 +96,22 @@ def test_stage_exits_after_run_when_review_mode_stage(
     assert exc.value.code == 0
 
 
+def test_stage_does_not_exit_when_is_last(
+    isolated_manifest: Path, tmp_path: Path
+) -> None:
+    manifest.upsert_character("test_npc", {"character_id": "id"})
+
+    @oc.stage("only", is_last=True)
+    def only_stage(ctx: oc.StageContext) -> list[str]:
+        return ["p"]
+
+    ctx = _ctx(tmp_path)
+    ctx.review_mode = "stage"
+    only_stage(ctx)  # should NOT raise SystemExit
+    # verify it ran and marked
+    assert "only" in manifest.get_completed_stages("character", "test_npc")
+
+
 def test_resume_from_skips_earlier_stages(
     isolated_manifest: Path, tmp_path: Path
 ) -> None:
