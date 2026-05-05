@@ -71,9 +71,11 @@ Thumbs.db
 # =================================================================
 # 5. Claude Code 相關
 # =================================================================
-.claude/
+# 預設 .claude/ 內檔案不進版控(個人設定),但允許 skills/ 子目錄共享
+.claude/*
+!.claude/skills/
+.claude/skills/**/local-*
 CLAUDE.md
 .claude.json
 .claude.local.json
-.claude/settings.json
 
