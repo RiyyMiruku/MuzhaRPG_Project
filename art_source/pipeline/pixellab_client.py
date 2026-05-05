@@ -392,11 +392,12 @@ def download_character_rotations(
     if not urls:
         raise RuntimeError(f"character {character_id} 無 rotation_urls")
     saved: dict[str, Path] = {}
-    headers = {"Authorization": f"Bearer {token}"}
+    # rotation_urls are public Supabase storage URLs, not Pixellab API endpoints.
+    # Sending the Pixellab Bearer token causes Supabase to 401.
     for direction, url in urls.items():
         fname = direction.replace("-", "_") + ".png"
         out = output_dir / fname
-        r = requests.get(url, headers=headers, timeout=60)
+        r = requests.get(url, timeout=60)
         if r.status_code != 200:
             raise RuntimeError(f"下載 {direction} → HTTP {r.status_code}")
         out.write_bytes(r.content)
