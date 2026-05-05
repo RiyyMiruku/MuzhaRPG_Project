@@ -33,9 +33,6 @@ from PIL import Image
 V1_BASE: str = "https://api.pixellab.ai/v1"
 V2_BASE: str = "https://api.pixellab.ai/v2"
 
-PIXFLUX_URL: str = f"{V1_BASE}/generate-image-pixflux"
-ROTATE_URL: str = f"{V1_BASE}/rotate"
-ANIMATE_TEXT_V3_URL: str = f"{V2_BASE}/animate-with-text-v3"
 BACKGROUND_JOBS_URL: str = f"{V2_BASE}/background-jobs"
 
 CREATE_CHAR_8DIR_URL: str = f"{V2_BASE}/create-character-with-8-directions"
@@ -43,15 +40,10 @@ CREATE_CHAR_4DIR_URL: str = f"{V2_BASE}/create-character-with-4-directions"
 ANIMATE_CHARACTER_URL: str = f"{V2_BASE}/animate-character"
 CREATE_TOPDOWN_TILESET_URL: str = f"{V2_BASE}/create-topdown-tileset"
 CREATE_MAP_OBJECT_URL: str = f"{V2_BASE}/create-map-object"
+CREATE_ISO_TILE_URL: str = f"{V2_BASE}/create-isometric-tile"
 CHARACTERS_URL: str = f"{V2_BASE}/characters"
 TILESETS_URL: str = f"{V2_BASE}/topdown-tilesets"
 OBJECTS_URL: str = f"{V2_BASE}/objects"
-
-
-# === 端點限制 ===
-
-ROTATE_VALID_SIZES: tuple[int, ...] = (16, 32, 64, 128)
-ANIMATE_V3_PIXEL_BUDGET: int = 524_288
 
 
 # === Token / 路徑 ===
@@ -170,51 +162,6 @@ def _get(token: str, url: str) -> requests.Response:
     return r
 
 
-# === 同步 v1 端點 ===
-
-
-def call_pixflux(
-    token: str,
-    description: str,
-    width: int,
-    height: int,
-    seed: int | None = None,
-    negative_description: str = "",
-    no_background: bool = True,
-) -> PixellabResponse:
-    payload: dict[str, Any] = {
-        "description": description,
-        "image_size": {"width": width, "height": height},
-        "negative_description": negative_description,
-        "no_background": no_background,
-        "text_guidance_scale": 8.0,
-    }
-    if seed is not None:
-        payload["seed"] = seed
-    return _post(token, PIXFLUX_URL, payload)
-
-
-def call_rotate(
-    token: str,
-    from_image: Image.Image,
-    from_direction: str,
-    to_direction: str,
-    size: int = 64,
-) -> PixellabResponse:
-    if size not in ROTATE_VALID_SIZES:
-        raise ValueError(f"rotate size 必須 ∈ {ROTATE_VALID_SIZES}，收到 {size}")
-    img = from_image
-    if img.size != (size, size):
-        img = img.resize((size, size), resample=Image.Resampling.NEAREST)
-    payload = {
-        "from_image": {"type": "base64", "base64": img_to_b64(img)},
-        "image_size": {"width": size, "height": size},
-        "from_direction": from_direction,
-        "to_direction": to_direction,
-    }
-    return _post(token, ROTATE_URL, payload)
-
-
 # === Async (v2) ===
 
 _POLL_INTERVAL: float = 5.0
@@ -277,30 +224,6 @@ def _post_async(
     return PixellabResponse(image_field=image_field, metadata=metadata, raw=result)
 
 
-def call_animate_with_text_v3(
-    token: str,
-    first_frame: Image.Image,
-    action: str,
-    frame_count: int = 8,
-    size: int = 64,
-    no_background: bool = True,
-) -> PixellabResponse:
-    if not (4 <= frame_count <= 16):
-        raise ValueError(f"frame_count 必須 4-16，收到 {frame_count}")
-    if size * size * frame_count > ANIMATE_V3_PIXEL_BUDGET:
-        raise ValueError(f"像素預算超過 {ANIMATE_V3_PIXEL_BUDGET}")
-    img = first_frame
-    if img.size != (size, size):
-        img = img.resize((size, size), resample=Image.Resampling.NEAREST)
-    payload = {
-        "first_frame": {"type": "base64", "base64": img_to_b64(img)},
-        "action": action,
-        "frame_count": frame_count,
-        "no_background": no_background,
-    }
-    return _post_async(token, ANIMATE_TEXT_V3_URL, payload)
-
-
 # === Character Creator ===
 
 
@@ -338,6 +261,51 @@ def submit_character_8dir(
     r = requests.post(CREATE_CHAR_8DIR_URL, headers=headers, json=payload, timeout=60)
     if r.status_code != 200:
         raise RuntimeError(f"create-character-8dir → HTTP {r.status_code}: {r.text[:500]}")
+    char_id = r.json().get("character_id", "")
+    if not char_id:
+        raise RuntimeError(f"回應無 character_id: {r.json()}")
+    return char_id
+
+
+def submit_character_4dir(
+    token: str,
+    description: str,
+    size: int = 64,
+    view: str = "high_top_down",
+    proportions_preset: str = "cartoon",
+    outline: str | None = "single_color_outline",
+    shading: str | None = "medium_shading",
+    detail: str | None = "detailed",
+    text_guidance_scale: float = 8.0,
+) -> str:
+    """提交建 4 方向角色,回傳 character_id;不等完成。
+
+    與 submit_character_8dir 相同介面,只生 4 個基本方向(N/S/E/W),
+    Pixellab credit ~50% 較便宜。注意:character_id 與 8-dir 端點不通用,
+    日後升級成移動 NPC 需重新 create_character。
+    """
+    if view not in ("low_top_down", "high_top_down", "side"):
+        raise ValueError(f"view 必須 low_top_down/high_top_down/side,收到 {view}")
+    payload: dict[str, Any] = {
+        "description": description,
+        "image_size": {"width": size, "height": size},
+        "view": view,
+        "proportions": {"type": "preset", "name": proportions_preset},
+        "text_guidance_scale": text_guidance_scale,
+    }
+    if outline:
+        payload["outline"] = outline
+    if shading:
+        payload["shading"] = shading
+    if detail:
+        payload["detail"] = detail
+
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    r = requests.post(CREATE_CHAR_4DIR_URL, headers=headers, json=payload, timeout=60)
+    if r.status_code != 200:
+        raise RuntimeError(
+            f"create-character-4dir → HTTP {r.status_code}: {r.text[:500]}"
+        )
     char_id = r.json().get("character_id", "")
     if not char_id:
         raise RuntimeError(f"回應無 character_id: {r.json()}")
@@ -523,3 +491,33 @@ def wait_for_object(token: str, object_id: str, timeout_sec: float = 1800.0, pol
             raise RuntimeError(f"object {object_id} 失敗: {meta}")
         time.sleep(poll_interval)
     raise TimeoutError(f"object {object_id} 超時")
+
+
+# === Isometric Tile ===
+
+
+def submit_iso_tile(
+    token: str,
+    description: str,
+    size: int = 32,
+    text_guidance_scale: float = 8.0,
+) -> str:
+    """提交建單格 isometric tile(含 prop / 小物件),回傳 object_id。
+
+    用於小型 iso 物件(燈籠、攤車裝飾等)。大建築仍走 create-map-object。
+    """
+    payload: dict[str, Any] = {
+        "description": description,
+        "image_size": {"width": size, "height": size},
+        "text_guidance_scale": text_guidance_scale,
+    }
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    r = requests.post(CREATE_ISO_TILE_URL, headers=headers, json=payload, timeout=60)
+    if r.status_code != 200:
+        raise RuntimeError(
+            f"create-isometric-tile → HTTP {r.status_code}: {r.text[:500]}"
+        )
+    obj_id = r.json().get("object_id") or r.json().get("id", "")
+    if not obj_id:
+        raise RuntimeError(f"回應無 object_id: {r.json()}")
+    return obj_id
