@@ -34,7 +34,7 @@ from orchestrators._common import (
 )
 
 
-STAGES: list[str] = ["generate_object", "chroma_key"]
+STAGES: list[str] = ["generate_object", "chroma_key", "import_to_godot"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -55,6 +55,10 @@ def parse_args() -> argparse.Namespace:
                    help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
     p.add_argument("--category", default=None,
                    help="自由形 category tag (e.g. 'vendor', 'decoration')")
+    p.add_argument("--collision", default="bottom_16x16",
+                   help='碰撞範圍: none|bottom_16x8|bottom_16x16|full|"WxH"')
+    p.add_argument("--no-collision", action="store_true",
+                   help="不生成 StaticBody collision (覆蓋 --collision)")
     return p.parse_args()
 
 
@@ -110,7 +114,7 @@ def generate_object(ctx: StageContext) -> list[str]:
     return [str(img_path.relative_to(plab.project_root()))]
 
 
-@stage("chroma_key", is_last=True)
+@stage("chroma_key")
 def chroma_key(ctx: StageContext) -> list[str]:
     img_path = manifest.object_dir(ctx.name) / f"{ctx.name}.png"
     pp.chroma_key_file(img_path)
@@ -122,6 +126,33 @@ def chroma_key(ctx: StageContext) -> list[str]:
         },
     )
     return [str(img_path.relative_to(plab.project_root()))]
+
+
+@stage("import_to_godot", is_last=True)
+def import_to_godot(ctx: StageContext) -> list[str]:
+    from orchestrators import _godot_import as gimport
+    args = ctx.args
+    assert args is not None
+    src = manifest.object_dir(ctx.name) / f"{ctx.name}.png"
+    has_coll = not args.no_collision
+    png_dest, tscn_dest = gimport.import_prop(
+        src_png=src,
+        name=ctx.name,
+        collision=args.collision,
+        has_collision=has_coll,
+    )
+    rel_root = plab.project_root()
+    manifest.mark_imported(
+        "object",
+        ctx.name,
+        game_png_path=str(png_dest.relative_to(rel_root)),
+        game_tscn_path=str(tscn_dest.relative_to(rel_root)),
+        collision=args.collision if has_coll else "none",
+    )
+    return [
+        str(png_dest.relative_to(rel_root)),
+        str(tscn_dest.relative_to(rel_root)),
+    ]
 
 
 def main() -> None:
@@ -144,6 +175,7 @@ def main() -> None:
 
     generate_object(ctx)
     chroma_key(ctx)
+    import_to_godot(ctx)
     print(f"\n[prop:{args.kind}] {ctx.name} 完成。")
 
 
