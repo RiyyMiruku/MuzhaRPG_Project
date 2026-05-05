@@ -273,3 +273,38 @@ def tileset_dir(name: str) -> Path:
 
 def object_dir(name: str) -> Path:
     return output_dir() / "objects" / name
+
+
+# === Import-state tracking ===
+
+
+def mark_imported(
+    asset_type: str,
+    name: str,
+    *,
+    game_png_path: str,
+    game_tscn_path: str | None = None,
+    game_json_path: str | None = None,
+    collision: str | None = None,
+) -> None:
+    """Record that an asset has been copied into the Godot project tree."""
+    from datetime import datetime
+    fields: dict = {
+        "imported_at": datetime.now().isoformat(timespec="seconds"),
+        "game_png_path": game_png_path,
+    }
+    if game_tscn_path is not None:
+        fields["game_tscn_path"] = game_tscn_path
+    if game_json_path is not None:
+        fields["game_json_path"] = game_json_path
+    if collision is not None:
+        fields["collision"] = collision
+
+    if asset_type == "object":
+        upsert_object(name=name, fields=fields)
+    elif asset_type == "tileset":
+        upsert_tileset(name=name, fields=fields)
+    elif asset_type == "character":
+        upsert_character(name=name, fields=fields)
+    else:
+        raise ValueError(f"unknown asset_type: {asset_type!r}")
