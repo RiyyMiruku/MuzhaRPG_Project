@@ -1,11 +1,11 @@
 ## SpriteSheetLoader — 從預編譯的 spritesheet 載入角色動畫
 ## 運行時唯一的角色動畫載入路徑。
-## 預編譯流程：python scripts/generate_spritesheet.py
+## 預編譯流程由 art-pipeline orchestrator 的 import_to_godot 階段自動完成,
+## 也可手動: uv run python scripts/generate_spritesheet.py --character-dir <path>
 class_name SpriteSheetLoader
 extends RefCounted
 
-const ATLAS_CONFIG: String = "res://assets/spritesheet_cache/atlas_config.json"
-const SPRITESHEET_DIR: String = "res://assets/spritesheet_cache"
+const CHARACTERS_DIR: String = "res://assets/textures/characters"
 
 ## atlas (north/south/east/west) → Godot (up/down/right/left)
 const _DIR_MAP: Dictionary = {
@@ -13,23 +13,14 @@ const _DIR_MAP: Dictionary = {
 }
 
 ## 從預編譯 spritesheet 載入角色 SpriteFrames。
-## character_id: 角色 ID（同 art_source/characters/<id>/ 與 atlas key），如 "chen_ayi"、"player"
+## character_id: 角色 ID(同 art_source/pipeline/output/characters/<id>/ 與檔名),如 "chen_ayi"、"player"
 ## 找不到時 push_error 並返回 null。
 static func load_character(character_id: String) -> SpriteFrames:
-	var atlas: Dictionary = _read_atlas_config()
-	if atlas.is_empty():
-		return null
-
-	var characters: Dictionary = atlas.get("characters", {})
-	var char_config: Dictionary = characters.get(character_id, {})
+	var char_config: Dictionary = _read_character_config(character_id)
 	if char_config.is_empty():
-		push_error(
-			"SpriteSheetLoader: '%s' not in atlas_config. Run scripts/generate_spritesheet.py?"
-			% character_id
-		)
 		return null
 
-	var sheet_path: String = "%s/%s.png" % [SPRITESHEET_DIR, character_id]
+	var sheet_path: String = "%s/%s.png" % [CHARACTERS_DIR, character_id]
 	if not ResourceLoader.exists(sheet_path):
 		push_error("SpriteSheetLoader: Spritesheet missing: " + sheet_path)
 		return null
@@ -77,18 +68,22 @@ static func _convert_anim_name(atlas_name: String) -> String:
 			return atlas_name.replace(suffix, "_" + _DIR_MAP[atlas_dir])
 	return ""
 
-static func _read_atlas_config() -> Dictionary:
-	if not ResourceLoader.exists(ATLAS_CONFIG):
-		push_error("SpriteSheetLoader: atlas_config.json not found at " + ATLAS_CONFIG)
+static func _read_character_config(character_id: String) -> Dictionary:
+	var json_path: String = "%s/%s.json" % [CHARACTERS_DIR, character_id]
+	if not FileAccess.file_exists(json_path):
+		push_error(
+			"SpriteSheetLoader: '%s' not found at %s. Did the orchestrator's import_to_godot stage run?"
+			% [character_id, json_path]
+		)
 		return {}
-	var file: FileAccess = FileAccess.open(ATLAS_CONFIG, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(json_path, FileAccess.READ)
 	if file == null:
-		push_error("SpriteSheetLoader: Cannot open " + ATLAS_CONFIG)
+		push_error("SpriteSheetLoader: Cannot open " + json_path)
 		return {}
 	var json: JSON = JSON.new()
 	var err: Error = json.parse(file.get_as_text())
 	file.close()
 	if err != OK:
-		push_error("SpriteSheetLoader: Failed to parse atlas_config.json")
+		push_error("SpriteSheetLoader: Failed to parse " + json_path)
 		return {}
 	return json.data
