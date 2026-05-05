@@ -356,21 +356,33 @@ def submit_character_4dir(
 def wait_for_character(
     token: str, character_id: str, timeout_sec: float = 1800.0, poll_interval: float = 15.0
 ) -> None:
-    """輪詢 GET /characters/{id} 直到所有 rotation_urls 都 ready。
+    """輪詢直到所有 rotation 圖檔實際上傳到 storage。
 
-    過去版本是輪詢 /zip endpoint 等 200,但 Pixellab 的 zip 在 rotations
-    全部 ready 之後還要額外打包,且實測比 rotations 渲染慢非常多
-    (有時 21+ 分鐘),且回應的 ETA 是固定字串(180s)不可信。
-    直接看 rotation_urls 字段更快也更可靠 — 所有方向都有非空 URL
-    就視為 character 可用,接下來 download_character_rotations 直接
-    用這些 URL 抓圖,完全跳過 zip 打包。
+    Pixellab 的 rotation_urls 是「預測路徑」,在檔案實際渲染並上傳到
+    Backblaze 之前就會出現在 GET /characters/{id} 回應中。所以「URL 非空」
+    不等於「圖可下載」— 必須對每個 URL 實際 HEAD 一次,200 才算 ready。
+
+    過去版本(已修)輪詢 /zip endpoint 等 200,但 zip 是 rotations + 所有
+    animations 都好才解鎖,stage 1 還沒提交 animations 就 poll zip 必然
+    deadlock。
     """
     deadline = time.time() + timeout_sec
     while time.time() < deadline:
         meta = get_character(token, character_id)
         urls = meta.get("rotation_urls") or {}
         if urls and all(urls.values()):
-            return
+            ready = True
+            for direction, url in urls.items():
+                try:
+                    h = requests.head(url, timeout=15)
+                except requests.RequestException:
+                    ready = False
+                    break
+                if h.status_code != 200:
+                    ready = False
+                    break
+            if ready:
+                return
         time.sleep(poll_interval)
     raise TimeoutError(f"character {character_id} 等 {timeout_sec}s 未完成")
 
