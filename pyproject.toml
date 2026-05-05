@@ -10,3 +10,12 @@ dependencies = [
     "python-dotenv>=1.2.2",
     "mcp>=1.27.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["art_source/pipeline"]
