@@ -150,6 +150,9 @@ def mark_stage(
 
     asset_type: "character" | "tileset" | "object"
     paths: 該 stage 產出的檔案路徑(相對 project root)
+
+    重複呼叫同一 stage_name 會覆蓋既有 completed_at 與 paths
+    (供 Task 5 @stage decorator 的 --force-restart-stage 流程使用)。
     """
     key = _ASSET_KEY.get(asset_type)
     if key is None:
