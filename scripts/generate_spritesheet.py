@@ -22,7 +22,10 @@ from typing import Iterable
 from PIL import Image
 
 FRAME_SIZE = (92, 92)
-DIRECTION_ORDER = ["south", "east", "north", "west"]
+DIRECTION_ORDER = [
+    "south", "east", "north", "west",
+    "south-east", "north-east", "north-west", "south-west",
+]
 ACTION_ORDER = ["idle", "walk"]
 
 

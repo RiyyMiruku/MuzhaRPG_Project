@@ -7,9 +7,18 @@ extends RefCounted
 
 const CHARACTERS_DIR: String = "res://assets/textures/characters"
 
-## atlas (north/south/east/west) → Godot (up/down/right/left)
+## atlas direction (Pixellab 風格,連字符) → Godot anim 後綴(底線)
+## 4 cardinal + 4 diagonal。SpriteSheets 沒做 diagonal 動畫的角色就 atlas 端
+## 沒這些 key,_convert_anim_name 不會匹配,該動畫直接被 skip。
 const _DIR_MAP: Dictionary = {
-	"north": "up", "south": "down", "east": "right", "west": "left"
+	"north": "up",
+	"south": "down",
+	"east": "right",
+	"west": "left",
+	"north-east": "up_right",
+	"north-west": "up_left",
+	"south-east": "down_right",
+	"south-west": "down_left",
 }
 
 ## 從預編譯 spritesheet 載入角色 SpriteFrames。
