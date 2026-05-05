@@ -356,17 +356,22 @@ def submit_character_4dir(
 def wait_for_character(
     token: str, character_id: str, timeout_sec: float = 1800.0, poll_interval: float = 15.0
 ) -> None:
-    """輪詢 /characters/{id}/zip 直到 200。"""
-    url = f"{CHARACTERS_URL}/{character_id}/zip"
+    """輪詢 GET /characters/{id} 直到所有 rotation_urls 都 ready。
+
+    過去版本是輪詢 /zip endpoint 等 200,但 Pixellab 的 zip 在 rotations
+    全部 ready 之後還要額外打包,且實測比 rotations 渲染慢非常多
+    (有時 21+ 分鐘),且回應的 ETA 是固定字串(180s)不可信。
+    直接看 rotation_urls 字段更快也更可靠 — 所有方向都有非空 URL
+    就視為 character 可用,接下來 download_character_rotations 直接
+    用這些 URL 抓圖,完全跳過 zip 打包。
+    """
     deadline = time.time() + timeout_sec
     while time.time() < deadline:
-        r = _get(token, url)
-        if r.status_code == 200:
+        meta = get_character(token, character_id)
+        urls = meta.get("rotation_urls") or {}
+        if urls and all(urls.values()):
             return
-        if r.status_code == 423:
-            time.sleep(poll_interval)
-            continue
-        raise RuntimeError(f"wait_for_character → HTTP {r.status_code}: {r.text[:200]}")
+        time.sleep(poll_interval)
     raise TimeoutError(f"character {character_id} 等 {timeout_sec}s 未完成")
 
 
