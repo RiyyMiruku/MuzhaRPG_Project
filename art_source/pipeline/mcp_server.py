@@ -44,6 +44,7 @@ def create_character(
     size: int = 64,
     view: str = "high_top_down",
     proportions: str = "cartoon",
+    directions: int = 8,
 ) -> dict[str, Any]:
     """產生 8 方向角色 sprite（用 Pixellab v2 create-character）。
 
@@ -57,6 +58,9 @@ def create_character(
       size: 請求尺寸 hint（mannequin template 可能強制 92×92）
       view: "low_top_down" | "high_top_down" | "side"
       proportions: "default" | "chibi" | "cartoon" | "stylized" | "realistic_male" | "realistic_female" | "heroic"
+      directions: 4 或 8(預設 8)。4 用於確認永不移動的劇情背景 NPC,
+                  省 ~50% Pixellab credit;但 character_id 與 8-dir 端點不通用,
+                  日後想加 walk 動畫須重建。
     """
     if manifest.get_character(name):
         return {
@@ -66,13 +70,27 @@ def create_character(
         }
 
     token: str = plab.load_token()
-    char_id: str = plab.submit_character_8dir(
-        token=token,
-        description=description,
-        size=size,
-        view=view,
-        proportions_preset=proportions,
-    )
+    if directions == 4:
+        char_id = plab.submit_character_4dir(
+            token=token,
+            description=description,
+            size=size,
+            view=view,
+            proportions_preset=proportions,
+        )
+    elif directions == 8:
+        char_id = plab.submit_character_8dir(
+            token=token,
+            description=description,
+            size=size,
+            view=view,
+            proportions_preset=proportions,
+        )
+    else:
+        return {
+            "status": "error",
+            "message": f"directions 必須 4 或 8,收到 {directions}",
+        }
 
     # 先寫 manifest 記錄 pending 狀態（即使後續失敗也能查回 character_id）
     manifest.upsert_character(
@@ -83,6 +101,7 @@ def create_character(
             "view": view,
             "proportions": proportions,
             "description": description,
+            "directions": directions,
             "status": "pending",
         },
     )
@@ -366,6 +385,88 @@ def create_building(
         return {
             "status": "error",
             "message": "無法解析 object 圖片欄位",
+            "object_id": object_id,
+        }
+
+    pp.chroma_key_file(img_path)
+
+    manifest.upsert_object(
+        name=name,
+        fields={
+            "status": "completed",
+            "local_path": str(img_path.relative_to(plab.project_root())),
+        },
+    )
+
+    return {
+        "status": "completed",
+        "name": name,
+        "object_id": object_id,
+        "local_path": str(img_path.relative_to(plab.project_root())),
+    }
+
+
+@mcp.tool()
+def create_iso_prop(
+    name: str,
+    description: str,
+    size: int = 32,
+) -> dict[str, Any]:
+    """產生單格 isometric prop(燈籠、攤車裝飾、小物件)。
+
+    使用 Pixellab v2 create-isometric-tile 端點,**原生 iso 視角**。
+    與 create_building 不同:適合單格小物;大建築仍用 create_building 的 high_top_down。
+
+    參數:
+      name: 物件名(如 "red_lantern")
+      description: 外觀描述
+      size: 像素大小(建議 16-64,預設 32)
+    """
+    if manifest.get_object(name):
+        return {
+            "status": "exists",
+            "message": f"object '{name}' 已存在",
+            "object": manifest.get_object(name),
+        }
+
+    token: str = plab.load_token()
+    object_id: str = plab.submit_iso_tile(
+        token=token,
+        description=description,
+        size=size,
+    )
+
+    manifest.upsert_object(
+        name=name,
+        fields={
+            "object_id": object_id,
+            "description": description,
+            "kind": "iso_prop",
+            "size": {"width": size, "height": size},
+            "status": "pending",
+        },
+    )
+
+    meta: dict[str, Any] = plab.wait_for_object(token, object_id)
+
+    out_dir: Path = manifest.object_dir(name)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    img_path: Path = out_dir / f"{name}.png"
+
+    img_field: Any = meta.get("image") or meta.get("image_url")
+    if isinstance(img_field, dict):
+        plab.b64_to_img(img_field.get("base64", "")).save(img_path)
+    elif isinstance(img_field, str) and img_field.startswith("http"):
+        import requests
+        r = requests.get(
+            img_field, headers={"Authorization": f"Bearer {token}"}, timeout=60
+        )
+        img_path.write_bytes(r.content)
+    else:
+        (out_dir / "raw_response.json").write_text(str(meta), encoding="utf-8")
+        return {
+            "status": "error",
+            "message": "無法解析 iso_prop 圖片欄位",
             "object_id": object_id,
         }
 
