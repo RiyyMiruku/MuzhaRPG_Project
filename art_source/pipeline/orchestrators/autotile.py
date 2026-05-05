@@ -1,0 +1,152 @@
+"""Pipeline 1: Autotile orchestrator.
+
+Stages:
+  1. generate_atlas      — Pixellab create-topdown-tileset(async)
+  2. iso_project         — PIL 4×4 affine 投影成菱形 atlas
+  3. verify_in_godot     — 印 Godot import 提示(不做事)
+
+CLI:
+  uv run python art_source/pipeline/orchestrators/autotile.py \\
+      --name market_grass_asphalt \\
+      --lower "green grass texture" \\
+      --upper "dark asphalt road" \\
+      [--transition-size 0.25] [--transition-description "grey concrete curb"] \\
+      [--tile-size 16] [--review-mode stage]
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import manifest
+import pixellab_client as plab
+import post_process as pp
+from orchestrators._common import (
+    StageContext,
+    make_context,
+    parse_common_args,
+    stage,
+)
+
+
+STAGES: list[str] = ["generate_atlas", "iso_project", "verify_in_godot"]
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--name", required=True)
+    parser.add_argument("--lower", help="下層地形描述(首次必填)")
+    parser.add_argument("--upper", help="上層地形描述(首次必填)")
+    parser.add_argument("--transition-size", type=float, default=0.0)
+    parser.add_argument("--transition-description", default=None)
+    parser.add_argument("--tile-size", type=int, default=16)
+    parser.add_argument(
+        "--review-mode", choices=["none", "stage", "step"], default="stage"
+    )
+    parser.add_argument("--resume-from", default=None)
+    parser.add_argument("--force-restart-stage", action="append", default=[])
+    return parser.parse_args()
+
+
+@stage("generate_atlas")
+def generate_atlas(ctx: StageContext) -> list[str]:
+    args = ctx.args
+    assert args is not None
+    if not args.lower or not args.upper:
+        raise SystemExit("首次跑 generate_atlas 須提供 --lower 與 --upper")
+
+    token = plab.load_token()
+    tileset_id = plab.submit_topdown_tileset(
+        token=token,
+        lower_description=args.lower,
+        upper_description=args.upper,
+        transition_size=args.transition_size,
+        transition_description=args.transition_description,
+        tile_width=args.tile_size,
+        tile_height=args.tile_size,
+    )
+    manifest.upsert_tileset(
+        name=ctx.name,
+        fields={
+            "tileset_id": tileset_id,
+            "lower": args.lower,
+            "upper": args.upper,
+            "tile_size": args.tile_size,
+            "status": "pending",
+        },
+    )
+    meta = plab.wait_for_tileset(token, tileset_id)
+
+    out_dir = manifest.tileset_dir(ctx.name)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    atlas_path = out_dir / f"{ctx.name}_topdown.png"
+    field_value = meta.get("image") or meta.get("atlas") or meta.get("image_url")
+    if isinstance(field_value, dict):
+        plab.b64_to_img(field_value.get("base64", "")).save(atlas_path)
+    elif isinstance(field_value, str) and field_value.startswith("http"):
+        import requests
+        r = requests.get(
+            field_value, headers={"Authorization": f"Bearer {token}"}, timeout=60
+        )
+        atlas_path.write_bytes(r.content)
+    else:
+        (out_dir / "raw_response.json").write_text(str(meta), encoding="utf-8")
+        raise SystemExit(f"無法解析 atlas 圖片欄位 — 見 {out_dir}/raw_response.json")
+
+    manifest.upsert_tileset(
+        name=ctx.name,
+        fields={
+            "status": "atlas_ready",
+            "topdown_path": str(atlas_path.relative_to(plab.project_root())),
+        },
+    )
+    return [str(atlas_path.relative_to(plab.project_root()))]
+
+
+@stage("iso_project")
+def iso_project(ctx: StageContext) -> list[str]:
+    out_dir = manifest.tileset_dir(ctx.name)
+    atlas_path = out_dir / f"{ctx.name}_topdown.png"
+    iso_path = out_dir / f"{ctx.name}_iso.png"
+    pp.project_atlas_file(atlas_path, iso_path, cols=4, rows=4)
+    manifest.upsert_tileset(
+        name=ctx.name,
+        fields={
+            "iso_path": str(iso_path.relative_to(plab.project_root())),
+            "status": "completed",
+        },
+    )
+    return [str(iso_path.relative_to(plab.project_root()))]
+
+
+@stage("verify_in_godot")
+def verify_in_godot(ctx: StageContext) -> list[str]:
+    out_dir = manifest.tileset_dir(ctx.name)
+    iso_path = out_dir / f"{ctx.name}_iso.png"
+    print(
+        f"\n→ 將 {iso_path} import 到 Godot,搭 TileMapDual addon。"
+        f"\n  參考 docs/tilemapdual-guide.md"
+    )
+    return [str(iso_path.relative_to(plab.project_root()))]
+
+
+def main() -> None:
+    plab.setup_console()
+    args = parse_args()
+    ctx = make_context("tileset", args, STAGES)
+
+    # 確保 manifest 條目存在(供 mark_stage 用)
+    if not manifest.get_tileset(ctx.name):
+        manifest.upsert_tileset(name=ctx.name, fields={"status": "init"})
+
+    generate_atlas(ctx)
+    iso_project(ctx)
+    verify_in_godot(ctx)
+    print(f"\n[autotile] {ctx.name} 完成。")
+
+
+if __name__ == "__main__":
+    main()
