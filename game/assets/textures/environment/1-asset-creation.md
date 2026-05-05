@@ -2,6 +2,8 @@
 
 > 文檔導覽：[../../../../docs/INDEX.md](../../../../docs/INDEX.md) — **對象**：美術 / 生圖人。**用途**：Pixellab 設定、命名規範、像素規格。
 
+> **2026-05 更新**：autotile 與 prop 建議走新的 [Pixellab MCP pipeline](../../../../art_source/pipeline/README.md)，跟 Claude 說「建一張 grass+asphalt autotile」即可自動產出 + 投影 iso；本文的 Pixellab Web UI 流程仍可用，但 MCP 流程更省工。
+
 本文涵蓋《MuzhaRPG》場景所需素材的**製作規格與歸檔流程**。完成後丟進對應資料夾即可，**不需要操作 Godot**。
 
 > **大批匯入捷徑**：如果你一次有十幾張同類 prop（例如 16 種燈籠變體），不用一張張歸檔。直接全部丟到 `temp/<物件名>/` 下面，跟 AI 說「我在 temp/ 加了新素材，幫我跑 import_assets.py」。AI 會自動重命名、搬位、生成對應 Godot 場景。詳見 [docs/scene-design-workflow.md](../../../../docs/scene-design-workflow.md)。

@@ -1,5 +1,7 @@
 # ① 角色素材製作（給生圖人）
 
+> **2026-05 更新**：建議走新的 [Pixellab MCP pipeline](../pipeline/README.md) 自動產出 — 角色名 + 描述 → MCP 工具自動完成 8 方向 + idle/walk 動畫 + 後處理。本文流程僅在你想完全手動或處理 v1 既有角色時參考。
+
 本文涵蓋如何**從零產出一個新角色**的所有素材。完成後丟進對應資料夾即可，**不需要操作 Godot**。
 
 > 後續流程：素材 → spritesheet 編譯（[② 2-spritesheet-workflow.md](2-spritesheet-workflow.md)）→ 角色實裝（[③ 3-asset-usage.md](3-asset-usage.md)）。

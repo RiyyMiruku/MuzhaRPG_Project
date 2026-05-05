@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "muzharpg-pixellab": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "python", "art_source/pipeline/mcp_server.py"]
+    }
+  }
+}

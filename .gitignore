@@ -48,6 +48,12 @@ venv/
 ENV/
 .env
 
+# Pixellab pipeline 產出（圖檔與 manifest 不進版控）
+art_source/pipeline/output/**/*.png
+art_source/pipeline/output/**/*.json
+art_source/pipeline/output/**/*.zip
+art_source/pipeline/__pycache__/
+
 # =================================================================
 # 4. 編輯器與作業系統 (環境清潔)
 # =================================================================

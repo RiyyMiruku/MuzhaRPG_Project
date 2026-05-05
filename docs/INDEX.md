@@ -61,6 +61,8 @@
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
 | [scripts/import-assets-guide.md](../scripts/import-assets-guide.md) | 117 | 美術 / 程式 | `import_assets.py` 用法（TOML manifest 驅動 prop 匯入） |
+| [art_source/pipeline/README.md](../art_source/pipeline/README.md) | — | 美術 / 程式 | **Pixellab MCP server 工作流程** — 用 Claude 直接生成角色／autotile／物件，自動下載 + 後處理 |
+| [docs/art-pipeline-refactor-plan.md](art-pipeline-refactor-plan.md) | — | 程式 | Pipeline 架構決策 ADR（為什麼自寫 MCP server、各美術類型方法選擇） |
 | [ai_engine/config-guide.md](../ai_engine/config-guide.md) | 116 | 系統管理員 | llama-server 設定、模型路徑、CUDA/CPU 切換 |
 
 ### Addons 與技術決策
