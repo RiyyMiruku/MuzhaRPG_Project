@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://muzha_test_spritesheet"]
+
+[ext_resource type="Script" path="res://src/test/test_spritesheet_loader.gd" id="1_test_ssl"]
+
+[node name="TestSpritesheetLoader" type="Node2D"]
+script = ExtResource("1_test_ssl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(200, 150)
