@@ -33,7 +33,7 @@ from orchestrators._common import (
 )
 
 
-STAGES: list[str] = ["generate_4dir_base", "add_idle_animation", "compile_spritesheet"]
+STAGES: list[str] = ["generate_4dir_base", "add_idle_animation", "compile_spritesheet", "import_to_godot"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -115,7 +115,7 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
     return run_character_animation(ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count)
 
 
-@stage("compile_spritesheet", is_last=True)
+@stage("compile_spritesheet", is_last=False)
 def compile_spritesheet(ctx: StageContext) -> list[str]:
     char_dir = manifest.character_dir(ctx.name)
     script = plab.project_root() / "scripts" / "generate_spritesheet.py"
@@ -126,6 +126,33 @@ def compile_spritesheet(ctx: StageContext) -> list[str]:
     print(f"$ {' '.join(cmd)}")
     subprocess.run(cmd, check=True)
     return [str(char_dir.relative_to(plab.project_root()))]
+
+
+@stage("import_to_godot", is_last=True)
+def import_to_godot(ctx: StageContext) -> list[str]:
+    from orchestrators import _godot_import as gimport
+    char_dir = manifest.character_dir(ctx.name)
+    sheet_dir = char_dir / "spritesheet"
+    src_png = sheet_dir / f"{ctx.name}.png"
+    src_json = sheet_dir / f"{ctx.name}.json"
+    if not src_png.exists() or not src_json.exists():
+        raise SystemExit(
+            f"spritesheet not found in {sheet_dir} — did compile_spritesheet succeed?"
+        )
+    png_dest, json_dest = gimport.import_character_spritesheet(
+        src_png=src_png, src_atlas_json=src_json, name=ctx.name
+    )
+    rel_root = plab.project_root()
+    manifest.mark_imported(
+        "character",
+        ctx.name,
+        game_png_path=str(png_dest.relative_to(rel_root)),
+        game_json_path=str(json_dest.relative_to(rel_root)),
+    )
+    return [
+        str(png_dest.relative_to(rel_root)),
+        str(json_dest.relative_to(rel_root)),
+    ]
 
 
 def main() -> None:
@@ -149,6 +176,7 @@ def main() -> None:
     generate_4dir_base(ctx)
     add_idle_animation(ctx)
     compile_spritesheet(ctx)
+    import_to_godot(ctx)
     print(f"\n[npc_static] {ctx.name} 完成。")
 
 
