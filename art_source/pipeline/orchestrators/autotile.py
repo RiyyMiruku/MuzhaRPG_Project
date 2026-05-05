@@ -32,7 +32,7 @@ from orchestrators._common import (
 )
 
 
-STAGES: list[str] = ["generate_atlas", "iso_project", "verify_in_godot"]
+STAGES: list[str] = ["generate_atlas", "iso_project", "verify_in_godot", "import_to_godot"]
 
 
 def parse_args() -> argparse.Namespace:
@@ -117,7 +117,7 @@ def iso_project(ctx: StageContext) -> list[str]:
     return [str(iso_path.relative_to(plab.project_root()))]
 
 
-@stage("verify_in_godot", is_last=True)
+@stage("verify_in_godot", is_last=False)
 def verify_in_godot(ctx: StageContext) -> list[str]:
     out_dir = manifest.tileset_dir(ctx.name)
     iso_path = out_dir / f"{ctx.name}_iso.png"
@@ -126,6 +126,26 @@ def verify_in_godot(ctx: StageContext) -> list[str]:
         f"\n  參考 docs/tilemapdual-guide.md"
     )
     return [str(iso_path.relative_to(plab.project_root()))]
+
+
+@stage("import_to_godot", is_last=True)
+def import_to_godot(ctx: StageContext) -> list[str]:
+    from orchestrators import _godot_import as gimport
+    src = manifest.tileset_dir(ctx.name) / f"{ctx.name}_iso.png"
+    if not src.exists():
+        # fallback to whatever the previous stage produced
+        candidates = sorted(manifest.tileset_dir(ctx.name).glob("*_iso.png"))
+        if not candidates:
+            raise SystemExit(f"no iso PNG found in {manifest.tileset_dir(ctx.name)}")
+        src = candidates[-1]
+    dest = gimport.import_tileset(src_png=src, name=ctx.name)
+    rel_root = plab.project_root()
+    manifest.mark_imported(
+        "tileset",
+        ctx.name,
+        game_png_path=str(dest.relative_to(rel_root)),
+    )
+    return [str(dest.relative_to(rel_root))]
 
 
 def main() -> None:
@@ -150,6 +170,7 @@ def main() -> None:
     generate_atlas(ctx)
     iso_project(ctx)
     verify_in_godot(ctx)
+    import_to_godot(ctx)
     print(f"\n[autotile] {ctx.name} 完成。")
 
 
