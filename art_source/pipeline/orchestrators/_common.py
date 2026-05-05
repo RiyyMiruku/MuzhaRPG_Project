@@ -40,10 +40,12 @@ def stage(stage_name: str) -> Callable[[Callable[..., list[str]]], Callable[...,
       - 回傳 list[str](該 stage 產出的檔案路徑)
 
     框架負責:
-      - skip_set 中的 stage 直接跳過(已 resume)
+      - skip_set 中的 stage 直接跳過(已 resume;優先於 force_restart)
       - 已在 manifest 完成且不在 force_restart 的 stage 直接跳過
       - 跑完寫入 manifest.mark_stage
       - review_mode == "stage" 跑完印路徑後 sys.exit(0)
+      - review_mode == "step" 在 wrapper 層等同 "none";細粒度暫停由各
+        stage 函式自行實作(stage 內部判讀 ctx.review_mode 後逐步停)
     """
     def decorator(fn: Callable[..., list[str]]) -> Callable[..., None]:
         @wraps(fn)
