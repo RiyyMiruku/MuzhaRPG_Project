@@ -6,16 +6,11 @@ truth for the path layout under `game/assets/textures/` and `game/src/maps/`.
 from __future__ import annotations
 
 import hashlib
-import json
 import shutil
 from pathlib import Path
-from typing import Literal
-
 from PIL import Image
 
 UID_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789"
-
-CollisionSpec = Literal["none", "bottom_16x8", "bottom_16x16", "full"] | str
 
 COLLISION_PRESETS: dict[str, tuple[float, float] | str | None] = {
     "none": None,
@@ -58,25 +53,27 @@ def _collision_rect(png_w: int, png_h: int, spec: str) -> tuple[tuple[float, flo
 
 
 def import_prop(
-    src_png: Path, name: str, collision: str, has_collision: bool
+    src_png: Path, name: str, collision: str, has_collision: bool,
+    *, root: Path | None = None,
 ) -> tuple[Path, Path]:
     """Copy prop PNG into Godot tree and generate a .tscn from PropTemplate.
 
     Returns (game_png_path, game_tscn_path), both absolute.
     """
-    root = project_root()
+    root = root or project_root()
     png_dest = root / "game" / "assets" / "textures" / "props" / f"{name}.png"
     tscn_dest = root / "game" / "src" / "maps" / "props" / f"{name}.tscn"
     png_dest.parent.mkdir(parents=True, exist_ok=True)
     tscn_dest.parent.mkdir(parents=True, exist_ok=True)
 
     shutil.copyfile(src_png, png_dest)
-    _write_prop_tscn(tscn_dest, png_dest, name, collision, has_collision)
+    _write_prop_tscn(tscn_dest, png_dest, name, collision, has_collision, root=root)
     return png_dest, tscn_dest
 
 
 def _write_prop_tscn(
-    tscn_path: Path, png_path: Path, name: str, collision: str, has_collision: bool
+    tscn_path: Path, png_path: Path, name: str, collision: str, has_collision: bool,
+    *, root: Path,
 ) -> None:
     with Image.open(png_path) as im:
         w, h = im.size
@@ -90,14 +87,14 @@ def _write_prop_tscn(
     scene_uid = godot_uid("scene:" + name)
     template_uid = "uid://muzha_prop_template"
 
-    rel_png = "res://" + str(png_path.relative_to(project_root() / "game")).replace("\\", "/")
+    rel_png = "res://" + str(png_path.relative_to(root / "game")).replace("\\", "/")
     rel_template = "res://src/maps/props/PropTemplate.tscn"
 
     parts: list[str] = []
     load_steps = 4 if coll is None else 5
     parts.append(f'[gd_scene load_steps={load_steps} format=3 uid="{scene_uid}"]\n')
     parts.append(f'[ext_resource type="PackedScene" uid="{template_uid}" path="{rel_template}" id="4_tmpl"]')
-    parts.append(f'[ext_resource type="Texture2D" path="{rel_png}" id="3_tex"]\n')
+    parts.append(f'[ext_resource type="Texture2D" uid="{tex_uid}" path="{rel_png}" id="3_tex"]\n')
 
     if coll is not None:
         size, _ = coll
@@ -124,8 +121,8 @@ def _write_prop_tscn(
     tscn_path.write_text("\n".join(parts), encoding="utf-8")
 
 
-def import_tileset(src_png: Path, name: str) -> Path:
-    root = project_root()
+def import_tileset(src_png: Path, name: str, *, root: Path | None = None) -> Path:
+    root = root or project_root()
     dest = root / "game" / "assets" / "textures" / "tilesets" / f"{name}.png"
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src_png, dest)
@@ -133,9 +130,10 @@ def import_tileset(src_png: Path, name: str) -> Path:
 
 
 def import_character_spritesheet(
-    src_png: Path, src_atlas_json: Path, name: str
+    src_png: Path, src_atlas_json: Path, name: str,
+    *, root: Path | None = None,
 ) -> tuple[Path, Path]:
-    root = project_root()
+    root = root or project_root()
     png_dest = root / "game" / "assets" / "textures" / "characters" / f"{name}.png"
     json_dest = root / "game" / "assets" / "textures" / "characters" / f"{name}.json"
     png_dest.parent.mkdir(parents=True, exist_ok=True)
