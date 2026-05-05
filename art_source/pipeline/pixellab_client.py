@@ -279,10 +279,17 @@ def submit_character_8dir(
     shading: str | None = "medium_shading",
     detail: str | None = "detailed",
     text_guidance_scale: float = 8.0,
-) -> str:
-    """提交建角色，回傳 character_id；不等完成（需另外 poll）。"""
+) -> tuple[str, dict[str, str]]:
+    """同步建 8 方向角色,回傳 (character_id, {direction: base64_png})。
+
+    Pixellab 的 /create-character-with-8-directions 是同步端點 — POST 一次
+    回傳 8 張完整渲染的 base64 PNG。**不是**先回 character_id 再 poll。
+    所以 caller 應該直接用回傳的 images 存檔,不要用 wait_for_character /
+    download_character_rotations 走 storage URL 路徑(URL 是預測路徑,常常
+    永遠不會上傳)。
+    """
     if view not in ("low_top_down", "high_top_down", "side"):
-        raise ValueError(f"view 必須 low_top_down/high_top_down/side，收到 {view}")
+        raise ValueError(f"view 必須 low_top_down/high_top_down/side,收到 {view}")
     payload: dict[str, Any] = {
         "description": description,
         "image_size": {"width": size, "height": size},
@@ -299,13 +306,25 @@ def submit_character_8dir(
         payload["detail"] = detail
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_CHAR_8DIR_URL, headers=headers, json=payload, timeout=60)
+    r = requests.post(CREATE_CHAR_8DIR_URL, headers=headers, json=payload, timeout=600)
     if r.status_code != 200:
         raise RuntimeError(f"create-character-8dir → HTTP {r.status_code}: {r.text[:500]}")
-    char_id = r.json().get("character_id", "")
+    data = r.json()
+    char_id = data.get("character_id", "")
     if not char_id:
-        raise RuntimeError(f"回應無 character_id: {r.json()}")
-    return char_id
+        raise RuntimeError(f"回應無 character_id: {data}")
+    images_raw = data.get("images") or {}
+    images: dict[str, str] = {}
+    for direction, entry in images_raw.items():
+        if isinstance(entry, dict):
+            images[direction] = entry.get("base64") or ""
+        elif isinstance(entry, str):
+            images[direction] = entry
+    if len(images) != 8 or not all(images.values()):
+        raise RuntimeError(
+            f"回應 images 不完整 (got {len(images)} dirs, content keys={list(data.keys())})"
+        )
+    return char_id, images
 
 
 def submit_character_4dir(
@@ -318,10 +337,10 @@ def submit_character_4dir(
     shading: str | None = "medium_shading",
     detail: str | None = "detailed",
     text_guidance_scale: float = 8.0,
-) -> str:
-    """提交建 4 方向角色,回傳 character_id;不等完成。
+) -> tuple[str, dict[str, str]]:
+    """同步建 4 方向角色,回傳 (character_id, {direction: base64_png})。
 
-    與 submit_character_8dir 相同介面,只生 4 個基本方向(N/S/E/W),
+    與 submit_character_8dir 同樣是同步端點,POST 直接回 4 張 N/S/E/W base64。
     Pixellab credit ~50% 較便宜。注意:character_id 與 8-dir 端點不通用,
     日後升級成移動 NPC 需重新 create_character。
     """
@@ -342,15 +361,27 @@ def submit_character_4dir(
         payload["detail"] = detail
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_CHAR_4DIR_URL, headers=headers, json=payload, timeout=60)
+    r = requests.post(CREATE_CHAR_4DIR_URL, headers=headers, json=payload, timeout=600)
     if r.status_code != 200:
         raise RuntimeError(
             f"create-character-4dir → HTTP {r.status_code}: {r.text[:500]}"
         )
-    char_id = r.json().get("character_id", "")
+    data = r.json()
+    char_id = data.get("character_id", "")
     if not char_id:
-        raise RuntimeError(f"回應無 character_id: {r.json()}")
-    return char_id
+        raise RuntimeError(f"回應無 character_id: {data}")
+    images_raw = data.get("images") or {}
+    images: dict[str, str] = {}
+    for direction, entry in images_raw.items():
+        if isinstance(entry, dict):
+            images[direction] = entry.get("base64") or ""
+        elif isinstance(entry, str):
+            images[direction] = entry
+    if len(images) < 4 or not all(images.values()):
+        raise RuntimeError(
+            f"回應 images 不完整 (got {len(images)} dirs, content keys={list(data.keys())})"
+        )
+    return char_id, images
 
 
 def wait_for_character(

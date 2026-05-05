@@ -71,7 +71,7 @@ def create_character(
 
     token: str = plab.load_token()
     if directions == 4:
-        char_id = plab.submit_character_4dir(
+        char_id, images = plab.submit_character_4dir(
             token=token,
             description=description,
             size=size,
@@ -79,7 +79,7 @@ def create_character(
             proportions_preset=proportions,
         )
     elif directions == 8:
-        char_id = plab.submit_character_8dir(
+        char_id, images = plab.submit_character_8dir(
             token=token,
             description=description,
             size=size,
@@ -106,14 +106,16 @@ def create_character(
         },
     )
 
-    plab.wait_for_character(token, char_id)
-
     out_dir: Path = manifest.character_dir(name) / "rotations"
-    saved: dict[str, Path] = plab.download_character_rotations(token, char_id, out_dir)
-
-    # 後處理：可能有去背問題，補上
-    for p in saved.values():
-        pp.chroma_key_file(p)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    saved: dict[str, Path] = {}
+    for direction, b64 in images.items():
+        img = plab.b64_to_img(b64)
+        img = pp.chroma_key_bg(img)
+        fname = direction.replace("-", "_") + ".png"
+        out = out_dir / fname
+        img.save(out)
+        saved[direction] = out
 
     meta: dict[str, Any] = plab.get_character(token, char_id)
     manifest.upsert_character(

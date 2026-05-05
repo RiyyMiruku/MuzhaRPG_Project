@@ -72,7 +72,7 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
         raise SystemExit("首次跑須提供 --description")
 
     token = plab.load_token()
-    char_id = plab.submit_character_8dir(
+    char_id, images = plab.submit_character_8dir(
         token=token, description=args.description,
         view=args.view, proportions_preset=args.proportions,
     )
@@ -88,11 +88,16 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
             "status": "pending",
         },
     )
-    plab.wait_for_character(token, char_id)
     out_dir = manifest.character_dir(ctx.name) / "rotations"
-    saved = plab.download_character_rotations(token, char_id, out_dir)
-    for p in saved.values():
-        pp.chroma_key_file(p)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    saved: dict[str, Path] = {}
+    for direction, b64 in images.items():
+        img = plab.b64_to_img(b64)
+        img = pp.chroma_key_bg(img)
+        fname = direction.replace("-", "_") + ".png"
+        out = out_dir / fname
+        img.save(out)
+        saved[direction] = out
     manifest.upsert_character(
         name=ctx.name,
         fields={
