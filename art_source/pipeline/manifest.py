@@ -130,6 +130,54 @@ def remove_object(name: str) -> bool:
     return True
 
 
+# === Stage tracking ===
+
+
+_ASSET_KEY: dict[str, str] = {
+    "character": "characters",
+    "tileset": "tilesets",
+    "object": "objects",
+}
+
+
+def mark_stage(
+    asset_type: str,
+    name: str,
+    stage_name: str,
+    paths: list[str],
+) -> None:
+    """記錄某資產某 stage 已完成,寫入 manifest。
+
+    asset_type: "character" | "tileset" | "object"
+    paths: 該 stage 產出的檔案路徑(相對 project root)
+    """
+    key = _ASSET_KEY.get(asset_type)
+    if key is None:
+        raise ValueError(f"unknown asset_type: {asset_type}")
+    data = load()
+    if name not in data[key]:
+        raise KeyError(f"{asset_type} '{name}' not found in manifest")
+    entry = data[key][name]
+    stages = entry.setdefault("stages", {})
+    stages[stage_name] = {
+        "completed_at": now_iso(),
+        "paths": paths,
+    }
+    entry["updated_at"] = now_iso()
+    save(data)
+
+
+def get_completed_stages(asset_type: str, name: str) -> list[str]:
+    """回傳已完成 stage 名,依 manifest 寫入順序。"""
+    key = _ASSET_KEY.get(asset_type)
+    if key is None:
+        raise ValueError(f"unknown asset_type: {asset_type}")
+    data = load()
+    entry = data[key].get(name, {})
+    stages = entry.get("stages", {})
+    return list(stages.keys())
+
+
 # === 路徑 helpers ===
 
 
