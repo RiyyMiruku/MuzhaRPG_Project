@@ -126,3 +126,60 @@ def make_context(
         force_restart=set(args.force_restart_stage),
         args=args,
     )
+
+
+CARDINAL_DIRECTIONS: list[str] = ["south", "east", "north", "west"]
+ALL_8_DIRECTIONS: list[str] = [
+    "south", "south-east", "east", "north-east",
+    "north", "north-west", "west", "south-west",
+]
+
+
+def run_character_animation(
+    ctx: StageContext,
+    action: str,
+    directions: list[str],
+    frame_count: int,
+) -> list[str]:
+    """執行 character animation:submit job → poll 每方向 → 存 frame → 寫 manifest。
+
+    供 npc_static / npc_moving 共用。
+    """
+    # Lazy import: pixellab_client 拉很多 transitive deps,放 module 頂層
+    # 會讓 _common 的 import 變重;且 post_process 也是業務模組。
+    import pixellab_client as plab
+    import post_process as pp
+
+    char = manifest.get_character(ctx.name)
+    assert char is not None
+    char_id: str = char["character_id"]
+    token = plab.load_token()
+
+    submitted = plab.submit_character_animation(
+        token=token,
+        character_id=char_id,
+        action_description=action,
+        directions=directions,
+        frame_count=frame_count,
+    )
+    saved_paths: list[str] = []
+    for direction, job_id in zip(submitted["directions"], submitted["background_job_ids"]):
+        result = plab.poll_background_job(token, job_id)
+        images = result.get("images") or []
+        anim_dir = manifest.character_dir(ctx.name) / "animations" / action / direction
+        anim_dir.mkdir(parents=True, exist_ok=True)
+        for i, item in enumerate(images):
+            b64 = item.get("base64") if isinstance(item, dict) else item
+            img = plab.b64_to_img(b64)
+            img = pp.chroma_key_bg(img)
+            frame_path = anim_dir / f"frame_{i:03d}.png"
+            img.save(frame_path)
+            saved_paths.append(str(frame_path.relative_to(plab.project_root())))
+
+    animations = char.get("animations", {})
+    animations.setdefault(action, [])
+    for d in submitted["directions"]:
+        if d not in animations[action]:
+            animations[action].append(d)
+    manifest.upsert_character(name=ctx.name, fields={"animations": animations})
+    return saved_paths

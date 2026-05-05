@@ -24,14 +24,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import manifest
 import pixellab_client as plab
 import post_process as pp
-from orchestrators._common import StageContext, make_context, stage
+from orchestrators._common import (
+    ALL_8_DIRECTIONS,
+    CARDINAL_DIRECTIONS,
+    StageContext,
+    make_context,
+    run_character_animation,
+    stage,
+)
 
 
-CARDINAL_DIRECTIONS: list[str] = ["south", "east", "north", "west"]
-ALL_8_DIRECTIONS: list[str] = [
-    "south", "south-east", "east", "north-east",
-    "north", "north-west", "west", "south-west",
-]
 STAGES: list[str] = [
     "generate_8dir_base",
     "add_idle_animation",
@@ -54,47 +56,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
     return p.parse_args()
-
-
-def _run_animation(
-    ctx: StageContext,
-    action: str,
-    directions: list[str],
-    frame_count: int,
-) -> list[str]:
-    char = manifest.get_character(ctx.name)
-    assert char is not None
-    char_id: str = char["character_id"]
-    token = plab.load_token()
-
-    submitted = plab.submit_character_animation(
-        token=token,
-        character_id=char_id,
-        action_description=action,
-        directions=directions,
-        frame_count=frame_count,
-    )
-    saved_paths: list[str] = []
-    for direction, job_id in zip(submitted["directions"], submitted["background_job_ids"]):
-        result = plab.poll_background_job(token, job_id)
-        images = result.get("images") or []
-        anim_dir = manifest.character_dir(ctx.name) / "animations" / action / direction
-        anim_dir.mkdir(parents=True, exist_ok=True)
-        for i, item in enumerate(images):
-            b64 = item.get("base64") if isinstance(item, dict) else item
-            img = plab.b64_to_img(b64)
-            img = pp.chroma_key_bg(img)
-            frame_path = anim_dir / f"frame_{i:03d}.png"
-            img.save(frame_path)
-            saved_paths.append(str(frame_path.relative_to(plab.project_root())))
-
-    animations = char.get("animations", {})
-    animations.setdefault(action, [])
-    for d in submitted["directions"]:
-        if d not in animations[action]:
-            animations[action].append(d)
-    manifest.upsert_character(name=ctx.name, fields={"animations": animations})
-    return saved_paths
 
 
 @stage("generate_8dir_base")
@@ -143,14 +104,14 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
 def add_idle_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    return _run_animation(ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count)
+    return run_character_animation(ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count)
 
 
 @stage("add_walk_animation")
 def add_walk_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    return _run_animation(ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count)
+    return run_character_animation(ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count)
 
 
 @stage("compile_spritesheet")

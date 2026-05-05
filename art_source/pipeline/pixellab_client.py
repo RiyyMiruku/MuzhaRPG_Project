@@ -95,14 +95,25 @@ def download_object_image(
     token: str,
     meta: dict[str, Any],
     out_path: Path,
+    extra_keys: tuple[str, ...] = (),
 ) -> bool:
     """Download generated image from a Pixellab object meta response.
 
-    Tries `meta["image"]` then `meta["image_url"]`. Handles base64 dicts and
-    HTTP URLs. On unparseable shape, writes raw_response.json next to out_path
-    and returns False; otherwise saves to out_path and returns True.
+    Tries `meta["image"]` then any `extra_keys` then `meta["image_url"]`.
+    Handles base64 dicts and HTTP URLs. On unparseable shape, writes
+    raw_response.json next to out_path and returns False; otherwise saves
+    to out_path and returns True.
+
+    extra_keys: 額外要嘗試的 meta keys(在 image / image_url 之外),
+                例如 tileset 端點會回 'atlas'。順序依優先度。
     """
-    img_field: Any = meta.get("image") or meta.get("image_url")
+    candidates: list[str] = ["image", *extra_keys, "image_url"]
+    img_field: Any = None
+    for k in candidates:
+        v = meta.get(k)
+        if v:
+            img_field = v
+            break
     if isinstance(img_field, dict):
         b64_to_img(img_field.get("base64", "")).save(out_path)
         return True

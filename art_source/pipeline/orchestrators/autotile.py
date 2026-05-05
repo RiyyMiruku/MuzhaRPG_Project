@@ -27,7 +27,6 @@ import post_process as pp
 from orchestrators._common import (
     StageContext,
     make_context,
-    parse_common_args,
     stage,
 )
 
@@ -83,17 +82,8 @@ def generate_atlas(ctx: StageContext) -> list[str]:
     out_dir = manifest.tileset_dir(ctx.name)
     out_dir.mkdir(parents=True, exist_ok=True)
     atlas_path = out_dir / f"{ctx.name}_topdown.png"
-    field_value = meta.get("image") or meta.get("atlas") or meta.get("image_url")
-    if isinstance(field_value, dict):
-        plab.b64_to_img(field_value.get("base64", "")).save(atlas_path)
-    elif isinstance(field_value, str) and field_value.startswith("http"):
-        import requests
-        r = requests.get(
-            field_value, headers={"Authorization": f"Bearer {token}"}, timeout=60
-        )
-        atlas_path.write_bytes(r.content)
-    else:
-        (out_dir / "raw_response.json").write_text(str(meta), encoding="utf-8")
+    ok = plab.download_object_image(token, meta, atlas_path, extra_keys=("atlas",))
+    if not ok:
         raise SystemExit(f"無法解析 atlas 圖片欄位 — 見 {out_dir}/raw_response.json")
 
     manifest.upsert_tileset(

@@ -79,6 +79,18 @@ def test_download_object_image_url(mock_get: MagicMock, tmp_path: Path) -> None:
     assert kwargs["headers"]["Authorization"] == "Bearer tok"
 
 
+def test_download_object_image_extra_keys_atlas(tmp_path: Path) -> None:
+    out = tmp_path / "atlas.png"
+    # Note: meta has neither 'image' nor 'image_url'; only 'atlas'.
+    meta: dict[str, Any] = {"atlas": {"base64": _make_b64_png()}}
+    ok = plab.download_object_image(
+        token="t", meta=meta, out_path=out, extra_keys=("atlas",)
+    )
+    assert ok is True
+    assert out.exists()
+    assert out.stat().st_size > 0
+
+
 def test_download_object_image_unparseable_writes_raw(tmp_path: Path) -> None:
     out = tmp_path / "sub" / "obj.png"
     out.parent.mkdir(parents=True, exist_ok=True)

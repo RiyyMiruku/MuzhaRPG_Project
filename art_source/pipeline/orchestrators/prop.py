@@ -20,7 +20,6 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -30,7 +29,6 @@ import post_process as pp
 from orchestrators._common import (
     StageContext,
     make_context,
-    parse_common_args,
     stage,
 )
 
@@ -53,23 +51,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
     return p.parse_args()
-
-
-def _download_image(token: str, meta: dict[str, Any], dst: Path) -> None:
-    img_field = meta.get("image") or meta.get("image_url")
-    if isinstance(img_field, dict):
-        plab.b64_to_img(img_field.get("base64", "")).save(dst)
-        return
-    if isinstance(img_field, str) and img_field.startswith("http"):
-        import requests
-        r = requests.get(
-            img_field, headers={"Authorization": f"Bearer {token}"}, timeout=60
-        )
-        dst.write_bytes(r.content)
-        return
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    (dst.parent / "raw_response.json").write_text(str(meta), encoding="utf-8")
-    raise SystemExit(f"無法解析 image 欄位 — 見 {dst.parent}/raw_response.json")
 
 
 @stage("generate_object")
@@ -119,7 +100,8 @@ def generate_object(ctx: StageContext) -> list[str]:
         )
 
     meta = plab.wait_for_object(token, object_id)
-    _download_image(token, meta, img_path)
+    if not plab.download_object_image(token, meta, img_path):
+        raise SystemExit(f"無法解析 image 欄位 — 見 {img_path.parent}/raw_response.json")
     return [str(img_path.relative_to(plab.project_root()))]
 
 
