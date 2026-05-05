@@ -22,7 +22,46 @@ mcp_server.py  ── FastMCP，暴露 8 個專案特化工具
     └── manifest.py         ── output/manifest.json 索引
 ```
 
-## 八個 MCP 工具
+## 兩種使用方式
+
+| 用途 | 工具 |
+|---|---|
+| **單張互動式生成**(對話中即時建一個 NPC / autotile) | MCP 工具(`mcp__muzharpg-pixellab__*`) |
+| **多階段批次 / 可中斷續跑** | CLI orchestrator(`art_source/pipeline/orchestrators/*.py`) |
+
+orchestrator 在每個 stage 完成後可暫停讓使用者檢視成果,確認後 `--resume-from` 繼續;或用 `--review-mode none` 一路跑完(批次模式)。
+
+### Orchestrator 列表
+
+| 檔案 | Pipeline | Stages |
+|---|---|---|
+| `orchestrators/autotile.py` | iso 地形 autotile | `generate_atlas` → `iso_project` → `verify_in_godot` |
+| `orchestrators/prop.py` | 大建築 + iso 小 prop | `generate_object` → `chroma_key`(`--kind=building\|iso_prop`) |
+| `orchestrators/npc_static.py` | 劇情靜態 NPC(4 向 idle) | `generate_4dir_base` → `add_idle_animation` → `compile_spritesheet`(`--directions 4\|8`) |
+| `orchestrators/npc_moving.py` | 移動 NPC / player(8 向 walk + 4 向 idle) | `generate_8dir_base` → `add_idle_animation` → `add_walk_animation` → `compile_spritesheet` |
+
+共用 CLI 旗標:
+- `--review-mode {none,stage,step}` — 預設 `stage`(每階段停)
+- `--resume-from <stage_name>` — 從某 stage 起跑
+- `--force-restart-stage <stage_name>` — 強制重跑某已完成 stage(可多次)
+
+範例:
+
+```powershell
+# 互動,每階段停
+uv run python art_source/pipeline/orchestrators/npc_moving.py `
+  --name chen_ayi --description "..." --review-mode stage
+
+# 接續
+uv run python art_source/pipeline/orchestrators/npc_moving.py `
+  --name chen_ayi --resume-from add_walk_animation --review-mode stage
+
+# 批次
+uv run python art_source/pipeline/orchestrators/npc_static.py `
+  --name path_npc --description "..." --directions 4 --review-mode none
+```
+
+## 九個 MCP 工具
 
 | 工具 | 功能 |
 | --- | --- |
@@ -33,6 +72,7 @@ mcp_server.py  ── FastMCP，暴露 8 個專案特化工具
 | `create_building(name, description, width, height, view)` | 靜態建築/prop（map_object 端點，原生透明背景） |
 | `list_assets(asset_type)` | 列出 manifest 所有資產 |
 | `delete_asset(name, asset_type)` | 從 manifest 移除（不動本地檔/遠端資產） |
+| `create_iso_prop(name, description, size)` | 單格 iso prop(燈籠等),原生 isometric 視角 |
 
 ## 啟用步驟
 
