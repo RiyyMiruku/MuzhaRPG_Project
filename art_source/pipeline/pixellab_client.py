@@ -265,6 +265,85 @@ def _post_async(
     return PixellabResponse(image_field=image_field, metadata=metadata, raw=result)
 
 
+_VIEW_WIRE: dict[str, str] = {
+    "low_top_down": "low top-down",
+    "high_top_down": "high top-down",
+    "side": "side",
+    "none": "none",
+}
+
+
+def _wire_view(view: str) -> str:
+    """轉換內部用的 view 字串 (`high_top_down`) 成 Pixellab v2 API 要求的
+    wire format (`"high top-down"`)。讓 caller 端不用改,只在 HTTP boundary
+    做一次轉換。未知值原樣回傳,讓 API 自己回錯。"""
+    return _VIEW_WIRE.get(view, view)
+
+
+def _extract_direction_images(result: dict[str, Any], expected: int) -> dict[str, Image.Image]:
+    """從 background-job 完成結果中抽出 {direction: PIL.Image}。
+
+    Pixellab v2 character endpoints 的 result["images"] 形如:
+        {"south": {"type": "rgba_bytes", "width": 92, "height": 92,
+                   "base64": "<base64 of W*H*4 raw RGBA bytes>"},
+         "east":  {...}, ...}
+
+    "rgba_bytes" 不是 PNG-encoded — 是 raw RGBA pixel bytes,要用
+    Image.frombytes 重組,不能 Image.open。本函式統一在 client 層
+    decode,caller 拿到的就是現成 PIL.Image。
+    """
+    candidates: list[dict[str, Any]] = [result]
+    if isinstance(result.get("response"), dict):
+        candidates.append(result["response"])
+    if isinstance(result.get("last_response"), dict):
+        candidates.append(result["last_response"])
+
+    for source in candidates:
+        raw = source.get("images")
+        if not isinstance(raw, dict) or not raw:
+            continue
+        out: dict[str, Image.Image] = {}
+        for direction, entry in raw.items():
+            img = _decode_image_entry(entry)
+            if img is not None:
+                out[direction] = img
+        if len(out) >= expected:
+            return out
+
+    raise RuntimeError(
+        f"job result 無 images 欄位或不完整 (expected {expected} dirs); "
+        f"top keys: {list(result.keys())}"
+    )
+
+
+def _decode_image_entry(entry: Any) -> Image.Image | None:
+    """把 Pixellab 的單張 image entry 解成 PIL.Image。支援 rgba_bytes 與 base64 PNG。"""
+    if isinstance(entry, str):
+        # bare base64; assume PNG-encoded
+        try:
+            return Image.open(io.BytesIO(base64.b64decode(entry)))
+        except Exception:
+            return None
+    if not isinstance(entry, dict):
+        return None
+    b64 = entry.get("base64") or entry.get("data") or ""
+    if not b64:
+        return None
+    raw_bytes = base64.b64decode(b64)
+    kind = entry.get("type") or ""
+    if kind == "rgba_bytes":
+        w = int(entry.get("width") or 0)
+        h = int(entry.get("height") or 0)
+        if w <= 0 or h <= 0 or len(raw_bytes) != w * h * 4:
+            return None
+        return Image.frombytes("RGBA", (w, h), raw_bytes)
+    # default: assume PNG/JPEG file bytes
+    try:
+        return Image.open(io.BytesIO(raw_bytes))
+    except Exception:
+        return None
+
+
 # === Character Creator ===
 
 
@@ -279,7 +358,7 @@ def submit_character_8dir(
     shading: str | None = "medium_shading",
     detail: str | None = "detailed",
     text_guidance_scale: float = 8.0,
-) -> tuple[str, dict[str, str]]:
+) -> tuple[str, dict[str, Image.Image]]:
     """同步建 8 方向角色,回傳 (character_id, {direction: base64_png})。
 
     Pixellab 的 /create-character-with-8-directions 是同步端點 — POST 一次
@@ -293,7 +372,7 @@ def submit_character_8dir(
     payload: dict[str, Any] = {
         "description": description,
         "image_size": {"width": size, "height": size},
-        "view": view,
+        "view": _wire_view(view),
         "mode": mode,
         "proportions": {"type": "preset", "name": proportions_preset},
         "text_guidance_scale": text_guidance_scale,
@@ -306,24 +385,16 @@ def submit_character_8dir(
         payload["detail"] = detail
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_CHAR_8DIR_URL, headers=headers, json=payload, timeout=600)
+    r = requests.post(CREATE_CHAR_8DIR_URL, headers=headers, json=payload, timeout=60)
     if r.status_code != 200:
         raise RuntimeError(f"create-character-8dir → HTTP {r.status_code}: {r.text[:500]}")
     data = r.json()
     char_id = data.get("character_id", "")
-    if not char_id:
-        raise RuntimeError(f"回應無 character_id: {data}")
-    images_raw = data.get("images") or {}
-    images: dict[str, str] = {}
-    for direction, entry in images_raw.items():
-        if isinstance(entry, dict):
-            images[direction] = entry.get("base64") or ""
-        elif isinstance(entry, str):
-            images[direction] = entry
-    if len(images) != 8 or not all(images.values()):
-        raise RuntimeError(
-            f"回應 images 不完整 (got {len(images)} dirs, content keys={list(data.keys())})"
-        )
+    job_id = data.get("background_job_id") or data.get("job_id")
+    if not char_id or not job_id:
+        raise RuntimeError(f"POST 回應缺 character_id 或 job_id: {data}")
+    result = poll_background_job(token, job_id)
+    images = _extract_direction_images(result, expected=8)
     return char_id, images
 
 
@@ -337,7 +408,7 @@ def submit_character_4dir(
     shading: str | None = "medium_shading",
     detail: str | None = "detailed",
     text_guidance_scale: float = 8.0,
-) -> tuple[str, dict[str, str]]:
+) -> tuple[str, dict[str, Image.Image]]:
     """同步建 4 方向角色,回傳 (character_id, {direction: base64_png})。
 
     與 submit_character_8dir 同樣是同步端點,POST 直接回 4 張 N/S/E/W base64。
@@ -349,7 +420,7 @@ def submit_character_4dir(
     payload: dict[str, Any] = {
         "description": description,
         "image_size": {"width": size, "height": size},
-        "view": view,
+        "view": _wire_view(view),
         "proportions": {"type": "preset", "name": proportions_preset},
         "text_guidance_scale": text_guidance_scale,
     }
@@ -361,26 +432,18 @@ def submit_character_4dir(
         payload["detail"] = detail
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_CHAR_4DIR_URL, headers=headers, json=payload, timeout=600)
+    r = requests.post(CREATE_CHAR_4DIR_URL, headers=headers, json=payload, timeout=60)
     if r.status_code != 200:
         raise RuntimeError(
             f"create-character-4dir → HTTP {r.status_code}: {r.text[:500]}"
         )
     data = r.json()
     char_id = data.get("character_id", "")
-    if not char_id:
-        raise RuntimeError(f"回應無 character_id: {data}")
-    images_raw = data.get("images") or {}
-    images: dict[str, str] = {}
-    for direction, entry in images_raw.items():
-        if isinstance(entry, dict):
-            images[direction] = entry.get("base64") or ""
-        elif isinstance(entry, str):
-            images[direction] = entry
-    if len(images) < 4 or not all(images.values()):
-        raise RuntimeError(
-            f"回應 images 不完整 (got {len(images)} dirs, content keys={list(data.keys())})"
-        )
+    job_id = data.get("background_job_id") or data.get("job_id")
+    if not char_id or not job_id:
+        raise RuntimeError(f"POST 回應缺 character_id 或 job_id: {data}")
+    result = poll_background_job(token, job_id)
+    images = _extract_direction_images(result, expected=4)
     return char_id, images
 
 
@@ -495,7 +558,7 @@ def submit_topdown_tileset(
         "upper_description": upper_description,
         "transition_size": transition_size,
         "tile_size": {"width": tile_width, "height": tile_height},
-        "view": view,
+        "view": _wire_view(view),
         "text_guidance_scale": text_guidance_scale,
     }
     if transition_description:
@@ -548,7 +611,7 @@ def submit_map_object(
         "description": description,
         "width": width,
         "height": height,
-        "view": view,
+        "view": _wire_view(view),
         "outline": outline,
         "shading": shading,
         "detail": detail,

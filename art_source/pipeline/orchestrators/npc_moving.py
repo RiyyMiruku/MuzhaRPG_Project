@@ -91,8 +91,7 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
     out_dir = manifest.character_dir(ctx.name) / "rotations"
     out_dir.mkdir(parents=True, exist_ok=True)
     saved: dict[str, Path] = {}
-    for direction, b64 in images.items():
-        img = plab.b64_to_img(b64)
+    for direction, img in images.items():
         img = pp.chroma_key_bg(img)
         fname = direction.replace("-", "_") + ".png"
         out = out_dir / fname

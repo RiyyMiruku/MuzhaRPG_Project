@@ -173,8 +173,12 @@ def run_character_animation(
         anim_dir = manifest.character_dir(ctx.name) / "animations" / action / direction
         anim_dir.mkdir(parents=True, exist_ok=True)
         for i, item in enumerate(images):
-            b64 = item.get("base64") if isinstance(item, dict) else item
-            img = plab.b64_to_img(b64)
+            img = plab._decode_image_entry(item)
+            if img is None:
+                raise RuntimeError(
+                    f"animation frame {direction}/{i} failed to decode "
+                    f"(item type={type(item).__name__}, keys={list(item.keys()) if isinstance(item, dict) else 'n/a'})"
+                )
             img = pp.chroma_key_bg(img)
             frame_path = anim_dir / f"frame_{i:03d}.png"
             img.save(frame_path)
