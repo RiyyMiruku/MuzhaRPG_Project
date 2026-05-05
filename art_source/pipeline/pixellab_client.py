@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import base64
 import io
+import json
 import os
 import sys
 import time
@@ -88,6 +89,35 @@ def b64_to_img(b64: str) -> Image.Image:
     if b64.startswith("data:"):
         b64 = b64.split(",", 1)[1]
     return Image.open(io.BytesIO(base64.b64decode(b64)))
+
+
+def download_object_image(
+    token: str,
+    meta: dict[str, Any],
+    out_path: Path,
+) -> bool:
+    """Download generated image from a Pixellab object meta response.
+
+    Tries `meta["image"]` then `meta["image_url"]`. Handles base64 dicts and
+    HTTP URLs. On unparseable shape, writes raw_response.json next to out_path
+    and returns False; otherwise saves to out_path and returns True.
+    """
+    img_field: Any = meta.get("image") or meta.get("image_url")
+    if isinstance(img_field, dict):
+        b64_to_img(img_field.get("base64", "")).save(out_path)
+        return True
+    if isinstance(img_field, str) and img_field.startswith("http"):
+        r = requests.get(
+            img_field, headers={"Authorization": f"Bearer {token}"}, timeout=60
+        )
+        out_path.write_bytes(r.content)
+        return True
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    (out_path.parent / "raw_response.json").write_text(
+        json.dumps(meta, indent=2, ensure_ascii=False, default=str),
+        encoding="utf-8",
+    )
+    return False
 
 
 # === Response 封裝 ===

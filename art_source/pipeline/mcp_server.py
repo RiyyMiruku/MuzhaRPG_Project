@@ -373,18 +373,10 @@ def create_building(
     out_dir.mkdir(parents=True, exist_ok=True)
     img_path: Path = out_dir / f"{name}.png"
 
-    img_field: Any = meta.get("image") or meta.get("image_url")
-    if isinstance(img_field, dict):
-        plab.b64_to_img(img_field.get("base64", "")).save(img_path)
-    elif isinstance(img_field, str) and img_field.startswith("http"):
-        import requests
-        r = requests.get(img_field, headers={"Authorization": f"Bearer {token}"}, timeout=60)
-        img_path.write_bytes(r.content)
-    else:
-        (out_dir / "raw_response.json").write_text(str(meta), encoding="utf-8")
+    if not plab.download_object_image(token, meta, img_path):
         return {
             "status": "error",
-            "message": "無法解析 object 圖片欄位",
+            "message": "無法解析 building 圖片欄位",
             "object_id": object_id,
         }
 
@@ -453,17 +445,7 @@ def create_iso_prop(
     out_dir.mkdir(parents=True, exist_ok=True)
     img_path: Path = out_dir / f"{name}.png"
 
-    img_field: Any = meta.get("image") or meta.get("image_url")
-    if isinstance(img_field, dict):
-        plab.b64_to_img(img_field.get("base64", "")).save(img_path)
-    elif isinstance(img_field, str) and img_field.startswith("http"):
-        import requests
-        r = requests.get(
-            img_field, headers={"Authorization": f"Bearer {token}"}, timeout=60
-        )
-        img_path.write_bytes(r.content)
-    else:
-        (out_dir / "raw_response.json").write_text(str(meta), encoding="utf-8")
+    if not plab.download_object_image(token, meta, img_path):
         return {
             "status": "error",
             "message": "無法解析 iso_prop 圖片欄位",
