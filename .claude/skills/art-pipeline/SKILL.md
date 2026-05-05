@@ -20,9 +20,35 @@ This project has 4 CLI orchestrators that wrap Pixellab's v2 API into stage-by-s
 | 可能會升級成移動 NPC 的角色 | `npc_static.py` (預設 `--directions 8`) | 同上但生 8 方向,日後加 walk 不用重生 |
 | 移動 NPC / player (8 向 walk + 4 向 idle) | `npc_moving.py` | `generate_8dir_base` → `add_idle_animation` → `add_walk_animation` → `compile_spritesheet` |
 
+## Naming convention
+
+Asset names (manifest keys) are regex-enforced. Orchestrators reject invalid
+names before any Pixellab call.
+
+```
+^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$    length 3–64
+```
+
+Recommended structures:
+- **Named NPC**: `chen_ayi`, `lin_zhiwei`
+- **Generic NPC**: `vendor_market_01`, `student_nccu_03`
+- **Tilesets**: `market_grass_asphalt`, `riverside_water_sand`
+- **Buildings**: `nccu_dormitory`, `market_shophouse_01`
+- **Iso props**: `lantern_red`, `cart_fruit`
+
+Use `--zone <z>` (one of `market|nccu|riverside|zhinan|shared|test`) and
+`--category <c>` (free-form, e.g. `vendor`, `decoration`) on every orchestrator
+to write `zone:<z>` / `category:<c>` tags into the manifest. Do NOT duplicate
+zone/category info inside the name itself.
+
+Filter via `art_source/pipeline/orchestrators/list_assets.py` (e.g.
+`--zone market --type character`). Full detail: `docs/asset-naming-convention.md`.
+
 ## Common CLI flags (all orchestrators)
 
-- `--name <key>` — manifest 鍵 (必填)
+- `--name <key>` — manifest 鍵 (必填,須通過命名規範)
+- `--zone {market,nccu,riverside,zhinan,shared,test}` — 寫入 `zone:<z>` tag
+- `--category <free-form>` — 寫入 `category:<c>` tag
 - `--review-mode {none,stage}` — 預設 `stage` (每階段停);`none` = 一路跑完
 - `--resume-from <stage_name>` — 從某 stage 起跑,前面 stage 由 manifest 讀已完成路徑
 - `--force-restart-stage <name>` — 強制重跑某已完成 stage (可多次)
@@ -47,6 +73,7 @@ This project has 4 CLI orchestrators that wrap Pixellab's v2 API into stage-by-s
 uv run python art_source/pipeline/orchestrators/npc_moving.py `
   --name chen_ayi `
   --description "middle-aged taiwanese market vendor woman, red floral shirt, beige apron" `
+  --zone market --category vendor `
   --review-mode stage
 ```
 → 跑完 `generate_8dir_base` 後停。給使用者看 `output/characters/chen_ayi/rotations/*.png`。確認 OK 後:
@@ -58,8 +85,9 @@ uv run python art_source/pipeline/orchestrators/npc_moving.py `
 **確認絕對不會移動的劇情背景 NPC (省 credit):**
 ```powershell
 uv run python art_source/pipeline/orchestrators/npc_static.py `
-  --name street_vendor_01 `
+  --name vendor_market_01 `
   --description "elderly fruit seller, straw hat" `
+  --zone market --category vendor `
   --directions 4 --review-mode none
 ```
 
@@ -68,22 +96,25 @@ uv run python art_source/pipeline/orchestrators/npc_static.py `
 uv run python art_source/pipeline/orchestrators/autotile.py `
   --name market_grass_asphalt `
   --lower "green grass texture" --upper "dark asphalt road" `
+  --zone market --category terrain `
   --transition-size 0.25 --transition-description "grey concrete curb"
 ```
 
 **大建築 (high_top_down,不投影):**
 ```powershell
 uv run python art_source/pipeline/orchestrators/prop.py `
-  --name muzha_shophouse --kind building `
+  --name market_shophouse_01 --kind building `
   --description "traditional taiwanese two-story shophouse, red brick" `
+  --zone market --category building `
   --width 128 --height 128
 ```
 
 **小型 iso 單格 prop:**
 ```powershell
 uv run python art_source/pipeline/orchestrators/prop.py `
-  --name red_lantern --kind iso_prop `
-  --description "red paper lantern with gold tassel" --size 32
+  --name lantern_red --kind iso_prop `
+  --description "red paper lantern with gold tassel" `
+  --zone market --category decoration --size 32
 ```
 
 ## Important constraints (don't violate)

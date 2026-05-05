@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import manifest
 import pixellab_client as plab
 import post_process as pp
+import zones
 from orchestrators._common import (
     StageContext,
     make_context,
@@ -47,6 +48,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--resume-from", default=None)
     parser.add_argument("--force-restart-stage", action="append", default=[])
+    parser.add_argument("--zone", default=None,
+                        help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
+    parser.add_argument("--category", default=None,
+                        help="自由形 category tag (e.g. 'vendor', 'decoration')")
     return parser.parse_args()
 
 
@@ -126,11 +131,21 @@ def verify_in_godot(ctx: StageContext) -> list[str]:
 def main() -> None:
     plab.setup_console()
     args = parse_args()
+    manifest.validate_asset_name(args.name)
+    zones.validate_zone(args.zone)
     ctx = make_context("tileset", args, STAGES)
 
     # 確保 manifest 條目存在(供 mark_stage 用)
     if not manifest.get_tileset(ctx.name):
         manifest.upsert_tileset(name=ctx.name, fields={"status": "init"})
+
+    tags: list[str] = []
+    if args.zone:
+        tags.append(f"zone:{args.zone}")
+    if args.category:
+        tags.append(f"category:{args.category}")
+    if tags:
+        manifest.add_tags(ctx.asset_type, ctx.name, tags)
 
     generate_atlas(ctx)
     iso_project(ctx)

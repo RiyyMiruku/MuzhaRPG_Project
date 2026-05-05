@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import manifest
 import pixellab_client as plab
 import post_process as pp
+import zones
 from orchestrators._common import (
     CARDINAL_DIRECTIONS,
     StageContext,
@@ -49,6 +50,10 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
+    p.add_argument("--zone", default=None,
+                   help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
+    p.add_argument("--category", default=None,
+                   help="自由形 category tag (e.g. 'vendor', 'student')")
     return p.parse_args()
 
 
@@ -126,10 +131,20 @@ def compile_spritesheet(ctx: StageContext) -> list[str]:
 def main() -> None:
     plab.setup_console()
     args = parse_args()
+    manifest.validate_asset_name(args.name)
+    zones.validate_zone(args.zone)
     ctx = make_context("character", args, STAGES)
 
     if not manifest.get_character(ctx.name):
         manifest.upsert_character(name=ctx.name, fields={"status": "init"})
+
+    tags: list[str] = []
+    if args.zone:
+        tags.append(f"zone:{args.zone}")
+    if args.category:
+        tags.append(f"category:{args.category}")
+    if tags:
+        manifest.add_tags(ctx.asset_type, ctx.name, tags)
 
     generate_4dir_base(ctx)
     add_idle_animation(ctx)
