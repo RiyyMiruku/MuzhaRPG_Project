@@ -60,7 +60,7 @@
 
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
-| [scripts/import-assets-guide.md](../scripts/import-assets-guide.md) | 117 | 美術 / 程式 | `import_assets.py` 用法（TOML manifest 驅動 prop 匯入） |
+| [art_source/pipeline/orchestrators/](../art_source/pipeline/orchestrators/) | — | 美術 / 程式 | 4 個 CLI orchestrator (prop/autotile/npc_static/npc_moving)，`import_to_godot` 為最後 stage，自動完成 Godot 端匯入 |
 | [art_source/pipeline/README.md](../art_source/pipeline/README.md) | — | 美術 / 程式 | **Pixellab MCP server 工作流程** — 用 Claude 直接生成角色／autotile／物件，自動下載 + 後處理 |
 | [docs/art-pipeline-refactor-plan.md](art-pipeline-refactor-plan.md) | — | 程式 | Pipeline 架構決策 ADR（為什麼自寫 MCP server、各美術類型方法選擇） |
 | [superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md](superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md) | — | 程式 | Art pipeline orchestrators 設計 — CLI orchestrator 4 條(autotile/prop/npc_static/npc_moving),搭 stage/resume/批次模式 |
@@ -78,7 +78,7 @@
 
 | 我要做... | 看這幾份 |
 |---|---|
-| 加新 prop（樹、路燈） | `scene-design-workflow.md` → `import-assets-guide.md` |
+| 加新 prop（樹、路燈） | `scene-design-workflow.md` → 跑 `art_source/pipeline/orchestrators/prop.py` |
 | 加新地形 (autotile) | `scene-design-workflow.md` → `tilemapdual-guide.md` |
 | 在 zone 擺東西 / 塗地 | `scene-design-workflow.md`（一頁就夠） |
 | 改 prop 碰撞範圍 | `props/README.md` → 「修改碰撞範圍」段 |
@@ -123,9 +123,8 @@
                 │  (附在被引用的       │
                 │   程式或目錄旁)      │
                 │                     │
-                │  scripts/import-*   │
-                │  game/src/maps/     │
                 │  art_source/        │
+                │  game/src/maps/     │
                 │  ai_engine/         │
                 └─────────────────────┘
 ```

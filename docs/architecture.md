@@ -20,15 +20,15 @@ Godot 4.6 (Frontend)
 MuzhaRPG_Project/
 ├── ai_engine/         # llama-server config + models (gitignored)
 ├── art_source/        # Build-time character source (序列圖 + metadata.json)
-├── scripts/           # generate_spritesheet.py / import_assets.py / test_ping.py
+├── scripts/           # generate_spritesheet.py / test_ping.py
 └── game/              # Godot 4 project
-    ├── assets/        # fonts, spritesheet_cache/, textures/{portraits,environment}/
+    ├── assets/        # fonts, textures/{portraits,environment,characters/}/
     └── src/
         ├── autoload/  # 9 個 singleton（見下表）
         ├── core/      # classes/ (resources + helpers) + components/
         ├── entities/  # player/ + npcs/{BaseNPC, definitions/}
         ├── chapters/  # chapter_template/ + chapter_NN_xxx/{beats, npcs, events.gd}
-        ├── maps/      # main_world.tscn + zones/ + tilesets/ + props/{nature,urban}
+        ├── maps/      # main_world.tscn + zones/ + tilesets/ + props/
         ├── quests/    # *.tres
         └── ui/        # dialogue/, menus/, ScreenTransition
 ```
@@ -94,14 +94,13 @@ Daonan Riverside (zone_riverside) [Old Fisherman]
 ## Asset Import Pipeline
 
 ```
-[Artist] temp/<bulk PNG>/ → AI 跑 import_assets.py --init → temp/import.toml
-                          → AI 跑 import_assets.py        → props/<cat>/*.png + .tscn
-[Artist in Godot] TileMapDual 塗地形 + 拖 prop .tscn 進 YSortRoot
+[AI runs orchestrator] art_source/pipeline/orchestrators/prop.py --name X --kind iso_prop ...
+  → generate_object → chroma_key → import_to_godot (自動 PNG 複製 + .tscn 生成)
+[Artist in Godot] Ctrl+Shift+R 重掃 → 拖 prop .tscn 進 YSortRoot
+[Terrain] TileMapDual 塗地形
 ```
 
-入口：[scene-design-workflow.md](scene-design-workflow.md)。Manifest 細節：[scripts/import-assets-guide.md](../scripts/import-assets-guide.md)。地形：[tilemapdual-guide.md](tilemapdual-guide.md)。
-
-兩腳本都 idempotent + `--dry-run`，未列出的資料夾會 WARNING（不靜默忽略）。
+`import_assets.py` 已刪除；prop 匯入由 orchestrator 的 `import_to_godot` stage 統一完成。入口：[scene-design-workflow.md](scene-design-workflow.md)。地形：[tilemapdual-guide.md](tilemapdual-guide.md)。Pipeline 細節：[art_source/pipeline/README.md](../art_source/pipeline/README.md)。
 
 ## Save System
 

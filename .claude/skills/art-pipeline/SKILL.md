@@ -13,12 +13,14 @@ This project has 4 CLI orchestrators that wrap Pixellab's v2 API into stage-by-s
 
 | Need | Orchestrator | Pipeline |
 |---|---|---|
-| Iso 地形 autotile (Wang 16-tile + iso 投影) | `autotile.py` | `generate_atlas` → `iso_project` → `verify_in_godot` |
-| 大建築 (top-down ~30°) | `prop.py --kind=building` | `generate_object` → `chroma_key` |
-| 小型 iso prop (燈籠、攤車裝飾) | `prop.py --kind=iso_prop` | 同上,但走 native iso 端點 |
-| 劇情靜態 NPC (4 向 idle,不會移動) | `npc_static.py --directions 4` | `generate_4dir_base` → `add_idle_animation` → `compile_spritesheet` |
-| 可能會升級成移動 NPC 的角色 | `npc_static.py` (預設 `--directions 8`) | 同上但生 8 方向,日後加 walk 不用重生 |
-| 移動 NPC / player (8 向 walk + 4 向 idle) | `npc_moving.py` | `generate_8dir_base` → `add_idle_animation` → `add_walk_animation` → `compile_spritesheet` |
+| Iso 地形 autotile (Wang 16-tile + iso 投影) | `autotile.py` | `generate_atlas` → `iso_project` → `verify_in_godot` → `import_to_godot` |
+| 大建築 (top-down ~30°) | `prop.py --kind=building` | `generate_object` → `chroma_key` → `import_to_godot` |
+| 小型 iso prop (燈籠、攤車裝飾) | `prop.py --kind=iso_prop` | 同上,但走 native iso 端點 → `import_to_godot` |
+| 劇情靜態 NPC (4 向 idle,不會移動) | `npc_static.py --directions 4` | `generate_4dir_base` → `add_idle_animation` → `compile_spritesheet` → `import_to_godot` |
+| 可能會升級成移動 NPC 的角色 | `npc_static.py` (預設 `--directions 8`) | 同上但生 8 方向,日後加 walk 不用重生 → `import_to_godot` |
+| 移動 NPC / player (8 向 walk + 4 向 idle) | `npc_moving.py` | `generate_8dir_base` → `add_idle_animation` → `add_walk_animation` → `compile_spritesheet` → `import_to_godot` |
+
+`import_to_godot` 是所有 orchestrator 的最後一個 stage，自動完成 PNG 複製 + `.tscn` 生成 + manifest 更新，不需要再跑額外的匯入腳本。`--review-mode stage` 會在 `import_to_godot` 之前停下讓人檢查中間產物。
 
 ## Naming convention
 
@@ -49,9 +51,11 @@ Filter via `art_source/pipeline/orchestrators/list_assets.py` (e.g.
 - `--name <key>` — manifest 鍵 (必填,須通過命名規範)
 - `--zone {market,nccu,riverside,zhinan,shared,test}` — 寫入 `zone:<z>` tag
 - `--category <free-form>` — 寫入 `category:<c>` tag
-- `--review-mode {none,stage}` — 預設 `stage` (每階段停);`none` = 一路跑完
+- `--review-mode {none,stage}` — 預設 `stage` (每階段停,包含在 `import_to_godot` 前停);`none` = 一路跑完含自動匯入
 - `--resume-from <stage_name>` — 從某 stage 起跑,前面 stage 由 manifest 讀已完成路徑
 - `--force-restart-stage <name>` — 強制重跑某已完成 stage (可多次)
+- `--collision <preset>` — (prop.py) 碰撞 preset (e.g. `full`, `bottom_half`, `none`)
+- `--no-collision` — (prop.py) 略過碰撞 body 生成
 
 ## Decision flow
 
@@ -76,7 +80,7 @@ uv run python art_source/pipeline/orchestrators/npc_moving.py `
   --zone market --category vendor `
   --review-mode stage
 ```
-→ 跑完 `generate_8dir_base` 後停。給使用者看 `output/characters/chen_ayi/rotations/*.png`。確認 OK 後:
+→ 跑完 `generate_8dir_base` 後停（`--review-mode stage` 在每個 stage 結束後停，含 `import_to_godot` 前）。給使用者看 `output/characters/chen_ayi/rotations/*.png`。確認 OK 後:
 ```powershell
 uv run python art_source/pipeline/orchestrators/npc_moving.py `
   --name chen_ayi --resume-from add_idle_animation

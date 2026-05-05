@@ -18,10 +18,12 @@
 
 ### A. 加新 prop 素材
 
-1. 素材丟 `temp/<物件名>/tile1.png ~ tileN.png`
-2. 跟 AI 說：`我在 temp/ 加了新素材，幫我跑 import_assets.py`
-3. Godot `Ctrl+Shift+R` 重掃
-4. 從檔案系統拖 `src/maps/props/<cat>/<name>.tscn` 到 zone 的 `YSortRoot`
+1. 跟 AI 說：`我要加一個 prop 叫 X，描述是 ...，幫我跑 orchestrator`
+2. AI 會跑：`art_source/pipeline/orchestrators/prop.py --name X --kind iso_prop --description "..." --zone <z> --category <c>`
+3. `import_to_godot` stage 自動把 PNG + `.tscn` 放進 Godot 正確位置
+4. Godot `Ctrl+Shift+R` 重掃後，從檔案系統拖 `.tscn` 到 zone 的 `YSortRoot`
+
+> `import_assets.py` 已刪除；所有 prop 匯入改由 orchestrator 的 `import_to_godot` stage 自動完成。
 
 ### B. 加新 autotile（地形）
 
@@ -59,7 +61,7 @@
 
 | 想做的事 | 講這句 |
 |---|---|
-| 大批 prop 素材匯入 | `我在 temp/ 加了新素材，幫我跑 import_assets.py` |
+| 大批 prop 素材匯入 | `我要加 prop [名稱]，描述是 [...]，幫我跑 orchestrator` |
 | 加新 autotile PNG | `我加了 [zone] 的新 autotile PNG，幫我加進 TileMapDual` |
 | Player 穿過某物 | `Player 穿過 [prop名/地形]，幫我檢查物理層` |
 | 地形邊界錯位 | `[zone] 的 TileMapDual 拼接怪，幫我檢查 preset 對應` |
@@ -109,4 +111,4 @@ git push
 | [1-asset-creation.md](../game/assets/textures/environment/1-asset-creation.md) | Pixellab 設定、命名規範 |
 | [tilemapdual-guide.md](tilemapdual-guide.md) | 地形系統完整用法 |
 | [props/README.md](../game/src/maps/props/README.md) | Prop 程式契約、collision 規範 |
-| [scripts/import-assets-guide.md](../scripts/import-assets-guide.md) | import_assets.py 細節 |
+| [art_source/pipeline/README.md](../art_source/pipeline/README.md) | pipeline orchestrator 細節 |
