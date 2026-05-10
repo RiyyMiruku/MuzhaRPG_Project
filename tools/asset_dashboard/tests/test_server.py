@@ -24,6 +24,7 @@ def client(tmp_path, monkeypatch):
         "tilesets": {}, "objects": {},
     }), encoding="utf-8")
     monkeypatch.setattr(server, "MANIFEST_PATH", mpath)
+    monkeypatch.setattr(server.pipeline_manifest, "manifest_path", lambda: mpath)
     return TestClient(server.app)
 
 
@@ -47,3 +48,28 @@ def test_health_endpoint(client):
     r = client.get("/api/health")
     assert r.status_code == 200
     assert r.json() == {"status": "ok"}
+
+
+def test_thumbnail_404_when_missing(client):
+    r = client.get("/api/asset/character/alice/thumbnail")
+    assert r.status_code == 404
+
+
+def test_patch_prompt_for_unrealized_stage(client):
+    r = client.patch(
+        "/api/asset/character/alice/prompts",
+        json={"stage": "add_walk_animation", "prompt": "limping"},
+    )
+    assert r.status_code == 200, r.text
+    # GET back via manifest endpoint
+    r2 = client.get("/api/manifest")
+    alice = next(a for a in r2.json()["assets"] if a["name"] == "alice")
+    assert alice["prompts"]["add_walk_animation"] == "limping"
+
+
+def test_patch_prompt_for_completed_stage_blocked(client):
+    r = client.patch(
+        "/api/asset/character/alice/prompts",
+        json={"stage": "generate_8dir_base", "prompt": "tries to overwrite"},
+    )
+    assert r.status_code == 409
