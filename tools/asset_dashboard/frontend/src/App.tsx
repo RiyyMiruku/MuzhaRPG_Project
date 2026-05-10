@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import type { AssetSummary } from "./types"
 import { api } from "./api"
 import { FilterBar, applyFilter, makeInitialFilter } from "./components/FilterBar"
+import { AssetGrid } from "./components/AssetGrid"
 
 export default function App() {
   const [assets, setAssets] = useState<AssetSummary[]>([])
@@ -48,13 +49,7 @@ export default function App() {
         </div>
       )}
       <FilterBar filter={filter} onChange={setFilter} assets={assets} />
-      {loading ? (
-        <p className="text-stone-400">Loading…</p>
-      ) : (
-        <pre className="rounded bg-stone-900 p-4 text-xs text-stone-300">
-          {JSON.stringify(visible.slice(0, 3), null, 2)}
-        </pre>
-      )}
+      {loading ? <p className="text-stone-400">Loading…</p> : <AssetGrid assets={visible} />}
     </div>
   )
 }
