@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import type { AssetSummary } from "./types"
 import { api } from "./api"
+import { FilterBar, applyFilter, makeInitialFilter } from "./components/FilterBar"
 
 export default function App() {
   const [assets, setAssets] = useState<AssetSummary[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState(makeInitialFilter())
 
   useEffect(() => {
     let stopped = false
@@ -30,22 +32,27 @@ export default function App() {
     }
   }, [])
 
+  const visible = applyFilter(assets, filter)
+
   return (
     <div className="min-h-screen p-6">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Asset Dashboard</h1>
-        <span className="text-sm text-stone-400">{assets.length} assets</span>
+        <span className="text-sm text-stone-400">
+          {visible.length} of {assets.length} assets
+        </span>
       </header>
       {error && (
         <div className="mb-4 rounded bg-red-900/30 px-3 py-2 text-sm text-red-200">
           {error}
         </div>
       )}
+      <FilterBar filter={filter} onChange={setFilter} assets={assets} />
       {loading ? (
         <p className="text-stone-400">Loading…</p>
       ) : (
         <pre className="rounded bg-stone-900 p-4 text-xs text-stone-300">
-          {JSON.stringify(assets.slice(0, 3), null, 2)}
+          {JSON.stringify(visible.slice(0, 3), null, 2)}
         </pre>
       )}
     </div>
