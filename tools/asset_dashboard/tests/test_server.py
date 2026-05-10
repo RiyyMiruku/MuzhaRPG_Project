@@ -73,3 +73,14 @@ def test_patch_prompt_for_completed_stage_blocked(client):
         json={"stage": "generate_8dir_base", "prompt": "tries to overwrite"},
     )
     assert r.status_code == 409
+
+
+def test_list_jobs_initially_empty(client):
+    r = client.get("/api/jobs")
+    assert r.status_code == 200
+    assert r.json() == {"jobs": []}
+
+
+def test_job_detail_404_for_missing(client):
+    r = client.get("/api/jobs/nope")
+    assert r.status_code == 404

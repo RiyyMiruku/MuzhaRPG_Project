@@ -80,3 +80,58 @@ def update_prompt(asset_type: str, name: str, body: PromptUpdate) -> dict:
     except KeyError as e:
         raise HTTPException(404, str(e)) from e
     return {"status": "ok", "stage": body.stage, "prompt": body.prompt}
+
+
+from .jobs import JobRegistry, JobStatus  # noqa: E402
+
+_jobs = JobRegistry()
+
+
+_ORCHESTRATOR_PATH: dict[str, str] = {
+    "character": "art_source/pipeline/orchestrators/npc_moving.py",
+    "tileset": "art_source/pipeline/orchestrators/autotile.py",
+    "object": "art_source/pipeline/orchestrators/prop.py",
+}
+
+
+class RemakeRequest(BaseModel):
+    stage: str
+    prompt: str | None = None
+
+
+@app.post("/api/asset/{asset_type}/{name}/remake")
+def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
+    if asset_type not in _ORCHESTRATOR_PATH:
+        raise HTTPException(400, "invalid asset_type")
+    # Optionally update the prompt first.
+    if body.prompt is not None:
+        try:
+            pipeline_manifest.set_prompt(asset_type, name, body.stage, body.prompt)
+        except KeyError as e:
+            raise HTTPException(404, str(e)) from e
+
+    cmd: list[str] = [
+        "uv", "run", "python", "-u",
+        _ORCHESTRATOR_PATH[asset_type],
+        "--name", name,
+        "--review-mode", "none",
+        "--force-restart-stage", body.stage,
+        "--resume-from", body.stage,
+    ]
+    job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=name, stage=body.stage)
+    return {"job_id": job_id, "stage": body.stage}
+
+
+@app.get("/api/jobs")
+def list_jobs() -> dict:
+    return {"jobs": [j.to_dict() for j in _jobs.list()]}
+
+
+@app.get("/api/jobs/{job_id}")
+def job_detail(job_id: str) -> dict:
+    info = _jobs.get(job_id)
+    if info is None:
+        raise HTTPException(404, "job not found")
+    d = info.to_dict()
+    d["tail"] = info.tail(n=200)
+    return d
