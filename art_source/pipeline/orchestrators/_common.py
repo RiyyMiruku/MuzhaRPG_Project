@@ -144,10 +144,14 @@ def run_character_animation(
     action: str,
     directions: list[str],
     frame_count: int,
+    *,
+    stage_name: str | None = None,
 ) -> list[str]:
     """執行 character animation:submit job → poll 每方向 → 存 frame → 寫 manifest。
 
-    供 npc_static / npc_moving 共用。
+    `action` 是預設 prompt(供 fallback 與 Pixellab API 的 action_description 欄位)。
+    若 `stage_name` 提供且 manifest 內有該 stage 的 prompt,則用 prompt 取代 action 當作
+    送給 Pixellab 的 action_description。
     """
     # Lazy import: pixellab_client 拉很多 transitive deps,放 module 頂層
     # 會讓 _common 的 import 變重;且 post_process 也是業務模組。
@@ -159,10 +163,15 @@ def run_character_animation(
     char_id: str = char["character_id"]
     token = plab.load_token()
 
+    action_description = action
+    if stage_name is not None:
+        from_manifest = manifest.get_prompt(ctx.asset_type, ctx.name, stage_name)
+        if from_manifest:
+            action_description = from_manifest
     submitted = plab.submit_character_animation(
         token=token,
         character_id=char_id,
-        action_description=action,
+        action_description=action_description,
         directions=directions,
         frame_count=frame_count,
     )

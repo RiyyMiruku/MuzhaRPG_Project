@@ -114,14 +114,20 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
 def add_idle_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    return run_character_animation(ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count)
+    return run_character_animation(
+        ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
+        stage_name="add_idle_animation",
+    )
 
 
 @stage("add_walk_animation")
 def add_walk_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    return run_character_animation(ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count)
+    return run_character_animation(
+        ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count,
+        stage_name="add_walk_animation",
+    )
 
 
 @stage("compile_spritesheet", is_last=False)

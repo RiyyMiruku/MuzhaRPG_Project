@@ -116,7 +116,10 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
     if args.no_idle:
         print("--no-idle 指定,略過 idle 動畫")
         return []
-    return run_character_animation(ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count)
+    return run_character_animation(
+        ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
+        stage_name="add_idle_animation",
+    )
 
 
 @stage("compile_spritesheet", is_last=False)
