@@ -308,3 +308,56 @@ def mark_imported(
         upsert_character(name=name, fields=fields)
     else:
         raise ValueError(f"unknown asset_type: {asset_type!r}")
+
+
+# === Prompt management ===
+
+_BUCKET_FOR_TYPE: dict[str, str] = {
+    "character": "characters",
+    "tileset": "tilesets",
+    "object": "objects",
+}
+
+
+def _bucket_for(asset_type: str) -> str:
+    if asset_type not in _BUCKET_FOR_TYPE:
+        raise ValueError(f"unknown asset_type: {asset_type!r}")
+    return _BUCKET_FOR_TYPE[asset_type]
+
+
+def get_prompt(asset_type: str, name: str, stage: str) -> str | None:
+    """讀指定 stage 的 prompt。falls back 到 description(stage 1 兼容舊資產)。"""
+    bucket = _bucket_for(asset_type)
+    data = load()
+    asset = data.get(bucket, {}).get(name)
+    if asset is None:
+        return None
+    prompts = asset.get("prompts") or {}
+    if stage in prompts:
+        return prompts[stage]
+    if stage in {"generate_8dir_base", "generate_4dir_base", "generate_object", "generate_atlas"}:
+        return asset.get("description")
+    return None
+
+
+def list_prompts(asset_type: str, name: str) -> dict[str, str]:
+    """回傳該資產所有已存的 prompts(不含 description fallback)。"""
+    bucket = _bucket_for(asset_type)
+    data = load()
+    asset = data.get(bucket, {}).get(name)
+    if asset is None:
+        return {}
+    return dict(asset.get("prompts") or {})
+
+
+def set_prompt(asset_type: str, name: str, stage: str, prompt: str) -> None:
+    """寫入指定 stage 的 prompt。資產必須已存在。"""
+    bucket = _bucket_for(asset_type)
+    data = load()
+    asset = data.get(bucket, {}).get(name)
+    if asset is None:
+        raise KeyError(f"{asset_type} {name!r} not in manifest")
+    prompts = dict(asset.get("prompts") or {})
+    prompts[stage] = prompt
+    asset["prompts"] = prompts
+    save(data)
