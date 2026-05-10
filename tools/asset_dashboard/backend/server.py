@@ -135,3 +135,10 @@ def job_detail(job_id: str) -> dict:
     d = info.to_dict()
     d["tail"] = info.tail(n=200)
     return d
+
+
+from fastapi.staticfiles import StaticFiles  # noqa: E402
+
+_FRONTEND_DIST = REPO_ROOT / "tools" / "asset_dashboard" / "frontend" / "dist"
+if _FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=str(_FRONTEND_DIST), html=True), name="frontend")

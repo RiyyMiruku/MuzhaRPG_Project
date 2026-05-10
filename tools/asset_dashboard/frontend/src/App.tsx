@@ -3,6 +3,7 @@ import type { AssetSummary } from "./types"
 import { api } from "./api"
 import { FilterBar, applyFilter, makeInitialFilter } from "./components/FilterBar"
 import { AssetGrid } from "./components/AssetGrid"
+import { JobLogPanel } from "./components/JobLogPanel"
 
 export default function App() {
   const [assets, setAssets] = useState<AssetSummary[]>([])
@@ -50,6 +51,7 @@ export default function App() {
       )}
       <FilterBar filter={filter} onChange={setFilter} assets={assets} />
       {loading ? <p className="text-stone-400">Loading…</p> : <AssetGrid assets={visible} />}
+      <JobLogPanel />
     </div>
   )
 }
