@@ -150,3 +150,4 @@ art_source/pipeline/output/
 - 想看完整實作步驟:`docs/superpowers/plans/2026-05-05-art-pipeline-orchestrators.md`
 - pipeline 整體架構:`art_source/pipeline/README.md`
 - 底層 pixellab API wrapper:`art_source/pipeline/pixellab_client.py`
+- 視覺化檢視 + 編輯 prompt + Remake:啟動 `tools/asset_dashboard/`(`uv run uvicorn tools.asset_dashboard.backend.server:app --port 8765`),開 http://localhost:8765/。
