@@ -3,6 +3,7 @@ import { ImageOff } from "lucide-react"
 import type { AssetSummary } from "../types"
 import { api } from "../api"
 import { StageList } from "./StageList"
+import { PromptEditor } from "./PromptEditor"
 
 interface Props {
   asset: AssetSummary
@@ -10,7 +11,10 @@ interface Props {
 
 export function AssetCard({ asset }: Props) {
   const [thumbBroken, setThumbBroken] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const thumbUrl = api.thumbnailUrl(asset.asset_type, asset.name)
+
+  const completed = new Set(asset.completed_stages)
 
   return (
     <div className="rounded-lg border border-stone-800 bg-stone-900 p-4">
@@ -42,6 +46,32 @@ export function AssetCard({ asset }: Props) {
         ))}
       </div>
       <StageList asset={asset} />
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="mt-3 text-xs text-stone-500 hover:text-stone-300"
+      >
+        {expanded ? "Hide prompts ▴" : "Show prompts ▾"}
+      </button>
+      {expanded && (
+        <div className="mt-2">
+          {asset.all_stages.map((stage) => {
+            const realized = completed.has(stage)
+            const initial =
+              asset.prompts[stage] ??
+              (stage.startsWith("generate_") ? asset.description ?? "" : "")
+            return (
+              <PromptEditor
+                key={stage}
+                asset={asset}
+                stage={stage}
+                initialPrompt={initial}
+                realized={realized}
+              />
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
