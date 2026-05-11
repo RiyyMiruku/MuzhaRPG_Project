@@ -1,8 +1,20 @@
 import { useEffect, useState } from "react"
-import { Check, Circle, ImageOff } from "lucide-react"
+import { Check, Circle, ImageOff, RotateCcw } from "lucide-react"
 import type { AssetSummary, StageDetail } from "../types"
 import { api } from "../api"
 import { PromptEditor } from "./PromptEditor"
+
+/** Stages that send a prompt to Pixellab. Other stages are pure local processing
+ *  (chroma_key / iso_project / verify_in_godot / compile_spritesheet / import_to_godot)
+ *  and have no editable prompt — only a plain "re-run this stage" button. */
+const PROMPT_STAGES = new Set<string>([
+  "generate_8dir_base",
+  "generate_4dir_base",
+  "generate_object",
+  "generate_atlas",
+  "add_idle_animation",
+  "add_walk_animation",
+])
 
 interface Props {
   asset: AssetSummary
@@ -37,6 +49,8 @@ export function StageSection({ asset, stage, realized, refreshKey }: Props) {
     asset.prompts[stage] ??
     (stage.startsWith("generate_") ? asset.description ?? "" : "")
 
+  const hasPrompt = PROMPT_STAGES.has(stage)
+
   return (
     <section className="rounded-lg border border-stone-800 bg-stone-900 p-4">
       <div className="mb-3 flex items-center justify-between">
@@ -67,13 +81,71 @@ export function StageSection({ asset, stage, realized, refreshKey }: Props) {
         <StageImageStrip images={detail.images} />
       )}
 
-      <PromptEditor
-        asset={asset}
-        stage={stage}
-        initialPrompt={initialPrompt}
-        realized={realized}
-      />
+      {hasPrompt ? (
+        <PromptEditor
+          asset={asset}
+          stage={stage}
+          initialPrompt={initialPrompt}
+          realized={realized}
+        />
+      ) : (
+        <NoPromptRemake asset={asset} stage={stage} realized={realized} />
+      )}
     </section>
+  )
+}
+
+interface NoPromptProps {
+  asset: AssetSummary
+  stage: string
+  realized: boolean
+}
+
+/** Non-Pixellab stage — show only a plain re-run button when already realized.
+ *  Pure local processing (no prompt), so no textarea is shown. */
+function NoPromptRemake({ asset, stage, realized }: NoPromptProps) {
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+
+  if (!realized) {
+    return (
+      <p className="text-xs text-stone-500">
+        本階段是本地處理(不送 Pixellab),完成上一階段後會自動跑。
+      </p>
+    )
+  }
+
+  const onClick = async () => {
+    if (
+      !window.confirm(
+        `Re-run stage "${stage}"? 本地處理,不會花 Pixellab credit。下游 stage 不會自動失效,需要分別 re-run。`
+      )
+    )
+      return
+    setBusy(true)
+    setErr(null)
+    try {
+      await api.remake(asset.asset_type, asset.name, stage)
+    } catch (e) {
+      setErr((e as Error).message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={busy}
+        className="flex items-center gap-1 rounded bg-stone-800 px-2 py-1 text-xs hover:bg-stone-700 disabled:bg-stone-700 disabled:text-stone-500"
+      >
+        <RotateCcw className="h-3 w-3" />
+        {busy ? "Running…" : "Re-run this stage"}
+      </button>
+      {err && <span className="text-xs text-red-400">{err}</span>}
+    </div>
   )
 }
 
