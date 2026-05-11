@@ -99,6 +99,34 @@ class RemakeRequest(BaseModel):
     prompt: str | None = None
 
 
+class CreateAssetRequest(BaseModel):
+    asset_type: str           # "character" | "tileset" | "object"
+    kind: str | None = None   # character: "moving"|"static"; object: "iso_prop"|"building"
+    name: str
+    description: str | None = None
+    zone: str | None = None
+    category: str | None = None
+    chapter: str | None = None
+    # character
+    directions: int | None = None         # static only (4 or 8)
+    view: str | None = None
+    proportions: str | None = None
+    idle_frame_count: int | None = None
+    walk_frame_count: int | None = None
+    no_idle: bool | None = None           # static only
+    # object
+    size: int | None = None               # iso_prop
+    width: int | None = None              # building
+    height: int | None = None             # building
+    collision: str | None = None
+    has_collision: bool | None = None
+    # tileset
+    lower: str | None = None
+    upper: str | None = None
+    transition_size: float | None = None
+    transition_description: str | None = None
+
+
 @app.post("/api/asset/{asset_type}/{name}/remake")
 def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
     if asset_type not in _ORCHESTRATOR_PATH:
@@ -120,6 +148,96 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
     ]
     job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=name, stage=body.stage)
     return {"job_id": job_id, "stage": body.stage}
+
+
+@app.post("/api/asset/create")
+def create_asset(body: CreateAssetRequest) -> dict:
+    # 1. validate name via pipeline_manifest.validate_asset_name
+    try:
+        pipeline_manifest.validate_asset_name(body.name)
+    except ValueError as e:
+        raise HTTPException(400, f"invalid name: {e}") from e
+
+    # 2. refuse if asset already exists (caller should use /remake to redo)
+    existing = {a.name: a for a in load_assets(MANIFEST_PATH) if a.asset_type == body.asset_type}
+    if body.name in existing:
+        raise HTTPException(409, f"{body.asset_type} {body.name!r} already exists; use /remake instead")
+
+    # 3. build CLI command based on asset_type + kind
+    script: str
+    cli_args: list[str] = ["--name", body.name, "--review-mode", "none"]
+
+    if body.asset_type == "character":
+        if body.kind == "static":
+            script = "art_source/pipeline/orchestrators/npc_static.py"
+            if body.directions is not None:
+                cli_args += ["--directions", str(body.directions)]
+            if body.no_idle:
+                cli_args += ["--no-idle"]
+            if body.idle_frame_count is not None:
+                cli_args += ["--idle-frame-count", str(body.idle_frame_count)]
+        elif body.kind == "moving":
+            script = "art_source/pipeline/orchestrators/npc_moving.py"
+            if body.idle_frame_count is not None:
+                cli_args += ["--idle-frame-count", str(body.idle_frame_count)]
+            if body.walk_frame_count is not None:
+                cli_args += ["--walk-frame-count", str(body.walk_frame_count)]
+        else:
+            raise HTTPException(400, "character kind must be 'moving' or 'static'")
+        if not body.description:
+            raise HTTPException(400, "character requires description")
+        cli_args += ["--description", body.description]
+        if body.view:
+            cli_args += ["--view", body.view]
+        if body.proportions:
+            cli_args += ["--proportions", body.proportions]
+
+    elif body.asset_type == "object":
+        if body.kind not in ("iso_prop", "building"):
+            raise HTTPException(400, "object kind must be 'iso_prop' or 'building'")
+        script = "art_source/pipeline/orchestrators/prop.py"
+        if not body.description:
+            raise HTTPException(400, "object requires description")
+        cli_args += ["--kind", body.kind, "--description", body.description]
+        if body.kind == "iso_prop" and body.size is not None:
+            cli_args += ["--size", str(body.size)]
+        if body.kind == "building":
+            if body.width is not None:
+                cli_args += ["--width", str(body.width)]
+            if body.height is not None:
+                cli_args += ["--height", str(body.height)]
+            if body.view:
+                cli_args += ["--view", body.view]
+        if body.collision:
+            cli_args += ["--collision", body.collision]
+        if body.has_collision is False:
+            cli_args += ["--no-collision"]
+
+    elif body.asset_type == "tileset":
+        script = "art_source/pipeline/orchestrators/autotile.py"
+        if not body.lower or not body.upper:
+            raise HTTPException(400, "tileset requires lower and upper")
+        cli_args += ["--lower", body.lower, "--upper", body.upper]
+        if body.transition_size is not None:
+            cli_args += ["--transition-size", str(body.transition_size)]
+        if body.transition_description:
+            cli_args += ["--transition-description", body.transition_description]
+
+    else:
+        raise HTTPException(400, "asset_type must be character | tileset | object")
+
+    # 4. zone / category / chapter (now supported by orchestrators after Part A)
+    if body.zone:
+        cli_args += ["--zone", body.zone]
+    if body.category:
+        cli_args += ["--category", body.category]
+    if body.chapter:
+        cli_args += ["--chapter", body.chapter]
+
+    # 5. spawn subprocess
+    cmd = ["uv", "run", "python", "-u", script] + cli_args
+    job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=body.name, stage="create")
+    return {"job_id": job_id, "asset_name": body.name, "asset_type": body.asset_type}
 
 
 @app.get("/api/jobs")

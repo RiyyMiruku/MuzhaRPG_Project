@@ -52,6 +52,8 @@ def parse_args() -> argparse.Namespace:
                         help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
     parser.add_argument("--category", default=None,
                         help="自由形 category tag (e.g. 'vendor', 'decoration')")
+    parser.add_argument("--chapter", default=None,
+                        help="所屬章節 tag (e.g. '1', '2', 'prologue')")
     return parser.parse_args()
 
 
@@ -164,6 +166,8 @@ def main() -> None:
         tags.append(f"zone:{args.zone}")
     if args.category:
         tags.append(f"category:{args.category}")
+    if args.chapter:
+        tags.append(f"chapter:{args.chapter}")
     if tags:
         manifest.add_tags(ctx.asset_type, ctx.name, tags)
 

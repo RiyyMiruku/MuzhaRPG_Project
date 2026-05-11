@@ -55,6 +55,8 @@ def parse_args() -> argparse.Namespace:
                    help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
     p.add_argument("--category", default=None,
                    help="自由形 category tag (e.g. 'vendor', 'decoration')")
+    p.add_argument("--chapter", default=None,
+                   help="所屬章節 tag (e.g. '1', '2', 'prologue')")
     p.add_argument("--collision", default="bottom_16x16",
                    help='碰撞範圍: none|bottom_16x8|bottom_16x16|full|"WxH"')
     p.add_argument("--no-collision", action="store_true",
@@ -170,6 +172,8 @@ def main() -> None:
         tags.append(f"zone:{args.zone}")
     if args.category:
         tags.append(f"category:{args.category}")
+    if args.chapter:
+        tags.append(f"chapter:{args.chapter}")
     if tags:
         manifest.add_tags(ctx.asset_type, ctx.name, tags)
 

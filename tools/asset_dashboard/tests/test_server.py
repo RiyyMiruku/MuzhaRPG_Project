@@ -177,3 +177,136 @@ def test_file_missing_404(client, tmp_path, monkeypatch):
     (tmp_path / "art_source/pipeline/output").mkdir(parents=True)
     r = client.get("/api/asset/file", params={"p": "art_source/pipeline/output/ghost.png"})
     assert r.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# POST /api/asset/create tests
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def stub_jobs(monkeypatch):
+    """Replace JobRegistry.start with a stub that records calls but does NOT spawn subprocesses."""
+    from tools.asset_dashboard.backend import server as srv_mod
+    calls = []
+
+    def fake_start(cmd, cwd=None, asset_name=None, stage=None):
+        calls.append({"cmd": cmd, "cwd": cwd, "asset_name": asset_name, "stage": stage})
+        # Insert a synthetic JobInfo so list_jobs() still returns it
+        from tools.asset_dashboard.backend.jobs import JobInfo, JobStatus
+        import uuid, time, tempfile
+        from pathlib import Path
+        jid = uuid.uuid4().hex[:12]
+        log = Path(tempfile.gettempdir()) / f"stub_{jid}.log"
+        log.write_text("", encoding="utf-8")
+        info = JobInfo(
+            id=jid, cmd=list(cmd), cwd=Path(cwd or "."), log_path=log,
+            status=JobStatus.RUNNING, asset_name=asset_name, stage=stage,
+        )
+        srv_mod._jobs._jobs[jid] = info
+        return jid
+
+    monkeypatch.setattr(srv_mod._jobs, "start", fake_start)
+    return calls
+
+
+def test_create_character_moving_spawns_job(client, stub_jobs):
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "character",
+            "kind": "moving",
+            "name": "newbie_npc",
+            "description": "a brave new character",
+            "zone": "market",
+            "category": "vendor",
+            "chapter": "1",
+        },
+    )
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data["asset_name"] == "newbie_npc"
+    assert data["asset_type"] == "character"
+    assert "job_id" in data
+
+    # job appears in /api/jobs
+    jobs = client.get("/api/jobs").json()["jobs"]
+    assert any(j["asset_name"] == "newbie_npc" for j in jobs)
+
+
+def test_create_existing_asset_rejected(client):
+    # The fixture seeds 'alice' as a character
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "character",
+            "kind": "moving",
+            "name": "alice",
+            "description": "would clash",
+        },
+    )
+    assert r.status_code == 409
+
+
+def test_create_invalid_name_rejected(client):
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "character",
+            "kind": "moving",
+            "name": "Bad Name With Spaces",
+            "description": "x",
+        },
+    )
+    assert r.status_code == 400
+
+
+def test_create_character_requires_kind(client):
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "character",
+            "name": "no_kind",
+            "description": "x",
+        },
+    )
+    assert r.status_code == 400
+
+
+def test_create_object_iso_prop(client, stub_jobs):
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "object",
+            "kind": "iso_prop",
+            "name": "test_lantern",
+            "description": "red lantern",
+            "size": 32,
+            "collision": "none",
+        },
+    )
+    assert r.status_code == 200, r.text
+
+
+def test_create_tileset(client, stub_jobs):
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "tileset",
+            "name": "test_grass_dirt",
+            "lower": "grass",
+            "upper": "dirt",
+            "transition_size": 0.2,
+        },
+    )
+    assert r.status_code == 200, r.text
+
+
+def test_create_tileset_missing_lower_upper(client):
+    r = client.post(
+        "/api/asset/create",
+        json={
+            "asset_type": "tileset",
+            "name": "incomplete_tileset",
+        },
+    )
+    assert r.status_code == 400
