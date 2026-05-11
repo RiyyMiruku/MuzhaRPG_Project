@@ -43,109 +43,22 @@
         "add_idle_animation": {
           "completed_at": "2026-05-05T18:31:21",
           "paths": [
-            "art_source\\characters\\player\\animations\\idle\\south\\frame_000.png",
-            "art_source\\characters\\player\\animations\\idle\\south\\frame_001.png",
-            "art_source\\characters\\player\\animations\\idle\\south\\frame_002.png",
-            "art_source\\characters\\player\\animations\\idle\\south\\frame_003.png",
-            "art_source\\characters\\player\\animations\\idle\\south\\frame_004.png",
-            "art_source\\characters\\player\\animations\\idle\\east\\frame_000.png",
-            "art_source\\characters\\player\\animations\\idle\\east\\frame_001.png",
-            "art_source\\characters\\player\\animations\\idle\\east\\frame_002.png",
-            "art_source\\characters\\player\\animations\\idle\\east\\frame_003.png",
-            "art_source\\characters\\player\\animations\\idle\\east\\frame_004.png",
-            "art_source\\characters\\player\\animations\\idle\\north\\frame_000.png",
-            "art_source\\characters\\player\\animations\\idle\\north\\frame_001.png",
-            "art_source\\characters\\player\\animations\\idle\\north\\frame_002.png",
-            "art_source\\characters\\player\\animations\\idle\\north\\frame_003.png",
-            "art_source\\characters\\player\\animations\\idle\\north\\frame_004.png",
-            "art_source\\characters\\player\\animations\\idle\\west\\frame_000.png",
-            "art_source\\characters\\player\\animations\\idle\\west\\frame_001.png",
-            "art_source\\characters\\player\\animations\\idle\\west\\frame_002.png",
-            "art_source\\characters\\player\\animations\\idle\\west\\frame_003.png",
-            "art_source\\characters\\player\\animations\\idle\\west\\frame_004.png"
+            "art_source\\characters\\player\\spritesheet\\player.png",
+            "art_source\\characters\\player\\spritesheet\\player.json"
           ]
         },
         "add_walk_animation": {
           "completed_at": "2026-05-05T18:34:11",
           "paths": [
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\south\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\east\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\north\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\west\\frame_008.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_000.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_001.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_002.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_003.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_004.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_005.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_006.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_007.png",
-            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_008.png"
+            "art_source\\characters\\player\\spritesheet\\player.png",
+            "art_source\\characters\\player\\spritesheet\\player.json"
           ]
         },
         "compile_spritesheet": {
           "completed_at": "2026-05-05T18:34:11",
           "paths": [
-            "art_source\\characters\\player"
+            "art_source\\characters\\player\\spritesheet\\player.png",
+            "art_source\\characters\\player\\spritesheet\\player.json"
           ]
         },
         "import_to_godot": {
@@ -178,21 +91,204 @@
       "game_png_path": "game\\assets\\textures\\characters\\player.png",
       "game_json_path": "game\\assets\\textures\\characters\\player.json"
     },
-    "test_static_npc": {
+    "test_moving_npc": {
       "status": "base_ready",
-      "created_at": "2026-05-11T22:23:07",
-      "updated_at": "2026-05-11T22:24:41",
+      "created_at": "2026-05-11T23:06:48",
+      "updated_at": "2026-05-11T23:45:37",
       "tags": [
         "zone:test",
-        "category:villager",
+        "category:npc",
         "chapter:test"
       ],
-      "character_id": "bff8d267-ca7b-4902-8b9d-609af2d35783",
+      "character_id": "32aedff9-6327-40e7-a35d-db153a7377ae",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "young taiwanese university student, plain white t-shirt, dark blue jeans,\nblack low-top sneakers, short tidy black hair, slim build,\nneutral expression, arms relaxed at sides, no accessories, no bag",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source\\characters\\test_moving_npc",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-11T23:08:24",
+          "paths": [
+            "art_source\\characters\\test_moving_npc\\rotations\\east.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\west.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\north.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\south.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\north_east.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\north_west.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\south_east.png",
+            "art_source\\characters\\test_moving_npc\\rotations\\south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-11T23:32:55",
+          "paths": [
+            "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.png",
+            "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-11T23:27:46",
+          "paths": [
+            "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.png",
+            "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-11T23:45:37",
+          "paths": [
+            "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.png",
+            "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-11T23:27:46",
+          "paths": [
+            "game\\assets\\textures\\characters\\test_moving_npc.png",
+            "game\\assets\\textures\\characters\\test_moving_npc.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "prompts": {
+        "add_idle_animation": "standing in place, head held perfectly still and facing the camera-relative\nforward direction the same as the body, eyes looking straight ahead,\nno head turning, no looking around, no rubbernecking, gentle breathing only\n— shoulders rise and fall subtly, arms remain at sides, feet planted",
+        "add_walk_animation": "walking forward in the same direction the body is facing, head locked\nforward and aligned with torso, eyes fixed straight ahead in the walking\ndirection, no head turning, no looking sideways, no glancing around,\nnatural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "imported_at": "2026-05-11T23:27:46",
+      "game_png_path": "game\\assets\\textures\\characters\\test_moving_npc.png",
+      "game_json_path": "game\\assets\\textures\\characters\\test_moving_npc.json"
+    },
+    "lin_xiaoyu": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T00:05:52",
+      "updated_at": "2026-05-12T00:16:13",
+      "prompts": {
+        "add_idle_animation": "standing in place at her food stall, head held perfectly still and facing\nforward in the same direction as her torso, ponytail hanging straight down\nthe centerline of her back, eyes looking straight ahead, no head turning,\nno looking around, no rubbernecking, gentle breathing only — shoulders rise\nand fall subtly, arms remain at sides, feet planted, bandana knot stays\ncentered at the back of her head",
+        "add_walk_animation": "walking forward in the same direction her body is facing, head locked\nforward and aligned with torso, eyes fixed straight ahead in the walking\ndirection, ponytail swinging straight down behind her (not sideways), no\nhead turning, no looking sideways, no glancing around, natural arm swing\nopposite to leg stride, consistent gait and posture across all frames"
+      },
+      "tags": [
+        "zone:test",
+        "category:npc",
+        "chapter:test"
+      ],
+      "character_id": "ab93f6a2-fff9-4344-9993-28d8a9aa35a4",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "young taiwanese street-food vendor woman in her twenties, long black hair\npulled into a low ponytail straight down her back, light blue cotton bandana\ntied as a forehead headband (knot at back, no dangling ends), white\nshort-sleeved button-up shirt with sleeves rolled to elbows, navy bib apron\nwith two square front pockets, dark slim trousers, black canvas sneakers,\nslim athletic build, neutral focused expression, small silver hoop earrings,\narms relaxed at sides, no other accessories, no bag",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source\\characters\\lin_xiaoyu",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T00:08:10",
+          "paths": [
+            "art_source\\characters\\lin_xiaoyu\\rotations\\east.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\west.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\north.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\south.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\north_east.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\north_west.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\south_east.png",
+            "art_source\\characters\\lin_xiaoyu\\rotations\\south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T00:10:04",
+          "paths": [
+            "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.png",
+            "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T00:16:13",
+          "paths": [
+            "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.png",
+            "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T00:16:13",
+          "paths": [
+            "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.png",
+            "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T00:16:13",
+          "paths": [
+            "game\\assets\\textures\\characters\\lin_xiaoyu.png",
+            "game\\assets\\textures\\characters\\lin_xiaoyu.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east",
+          "north-east",
+          "north",
+          "north-west",
+          "west",
+          "south-west"
+        ]
+      },
+      "imported_at": "2026-05-12T00:16:13",
+      "game_png_path": "game\\assets\\textures\\characters\\lin_xiaoyu.png",
+      "game_json_path": "game\\assets\\textures\\characters\\lin_xiaoyu.json"
+    },
+    "test_static_npc": {
+      "status": "completed",
+      "created_at": "2026-05-12T00:31:25",
+      "updated_at": "2026-05-12T00:36:56",
+      "prompts": {
+        "add_idle_animation": "standing in place, head held perfectly still and facing forward in the same direction as the torso, eyes looking straight ahead, no head turning, no looking around, no rubbernecking, arms relaxed at the sides with wrists hanging naturally and motionless — no random hand or wrist movement, no finger fidgeting, gentle breathing only (shoulders rise and fall subtly), feet planted, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:test",
+        "category:npc",
+        "chapter:test"
+      ],
+      "character_id": "5c0bb678-f56a-43b7-ab1d-51e45a72c592",
       "preset": "npc",
       "directions": 8,
       "view": "high_top_down",
-      "proportions": "stylized",
-      "description": "elderly taiwanese woman, grey hair bun, blue floral apron, kind smile",
+      "proportions": "cartoon",
+      "description": "young taiwanese street-food vendor woman in her twenties, long black hair pulled into a low ponytail straight down her back, light blue cotton bandana tied as a forehead headband (knot at back, no dangling ends), white short-sleeved button-up shirt with sleeves rolled to elbows, navy bib apron with two square front pockets, dark slim trousers, black canvas sneakers, slim athletic build, neutral focused expression, small silver hoop earrings, arms relaxed at sides, no other accessories, no bag",
       "rotations": [
         "east",
         "west",
@@ -206,7 +302,7 @@
       "local_path": "art_source\\characters\\test_static_npc",
       "stages": {
         "generate_4dir_base": {
-          "completed_at": "2026-05-11T22:24:41",
+          "completed_at": "2026-05-12T00:32:57",
           "paths": [
             "art_source\\characters\\test_static_npc\\rotations\\east.png",
             "art_source\\characters\\test_static_npc\\rotations\\west.png",
@@ -217,19 +313,86 @@
             "art_source\\characters\\test_static_npc\\rotations\\south_east.png",
             "art_source\\characters\\test_static_npc\\rotations\\south_west.png"
           ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T00:34:45",
+          "paths": [
+            "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.png",
+            "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T00:36:51",
+          "paths": [
+            "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.png",
+            "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T00:36:56",
+          "paths": [
+            "game\\assets\\textures\\characters\\test_static_npc.png",
+            "game\\assets\\textures\\characters\\test_static_npc.json"
+          ]
         }
-      }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T00:36:56",
+      "game_png_path": "game\\assets\\textures\\characters\\test_static_npc.png",
+      "game_json_path": "game\\assets\\textures\\characters\\test_static_npc.json"
     }
   },
   "tilesets": {
     "test_autotiles": {
-      "status": "init",
-      "created_at": "2026-05-11T22:20:58",
-      "updated_at": "2026-05-11T22:20:58",
+      "status": "completed",
+      "created_at": "2026-05-11T22:49:28",
+      "updated_at": "2026-05-11T22:58:39",
       "tags": [
         "zone:test",
-        "category: terrain"
-      ]
+        "category:terrain",
+        "chapter:test"
+      ],
+      "tileset_id": "987cad1e-eb38-474f-9383-f7524798ca2a",
+      "lower": "cobble stone",
+      "upper": "green grass",
+      "tile_size": 16,
+      "topdown_path": "art_source\\tilesets\\test_autotiles\\test_autotiles_topdown.png",
+      "stages": {
+        "generate_atlas": {
+          "completed_at": "2026-05-11T22:55:25",
+          "paths": [
+            "art_source\\tilesets\\test_autotiles\\test_autotiles_topdown.png"
+          ]
+        },
+        "iso_project": {
+          "completed_at": "2026-05-11T22:58:39",
+          "paths": [
+            "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png"
+          ]
+        },
+        "verify_in_godot": {
+          "completed_at": "2026-05-11T22:58:39",
+          "paths": [
+            "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-11T22:58:39",
+          "paths": [
+            "game\\assets\\textures\\tilesets\\test_autotiles.png"
+          ]
+        }
+      },
+      "iso_path": "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png",
+      "imported_at": "2026-05-11T22:58:39",
+      "game_png_path": "game\\assets\\textures\\tilesets\\test_autotiles.png"
     }
   },
   "objects": {
