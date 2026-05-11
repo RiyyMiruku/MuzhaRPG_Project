@@ -1,4 +1,4 @@
-# 文檔導覽
+﻿# 文檔導覽
 
 《MuzhaRPG》全部文檔的單一入口。**先看這頁，再點進對應主題。**
 
@@ -61,8 +61,8 @@
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
 | [docs/art-production-guide.md](art-production-guide.md) | — | 美術 / 程式 | **美術生產手冊** — CLI orchestrator 指令範例 + Web UI 使用方法 + 中斷續跑 + 命名規範 + FAQ |
-| [art_source/pipeline/orchestrators/](../art_source/pipeline/orchestrators/) | — | 美術 / 程式 | 4 個 CLI orchestrator (prop/autotile/npc_static/npc_moving)，`import_to_godot` 為最後 stage，自動完成 Godot 端匯入 |
-| [art_source/pipeline/README.md](../art_source/pipeline/README.md) | — | 美術 / 程式 | **美術 pipeline 架構** — orchestrator 列表、輸出結構、重要限制、開發 debug |
+| [pipeline/orchestrators/](../pipeline/orchestrators/) | — | 美術 / 程式 | 4 個 CLI orchestrator (prop/autotile/npc_static/npc_moving)，`import_to_godot` 為最後 stage，自動完成 Godot 端匯入 |
+| [pipeline/README.md](../pipeline/README.md) | — | 美術 / 程式 | **美術 pipeline 架構** — orchestrator 列表、輸出結構、重要限制、開發 debug |
 | `tools/asset_dashboard/` | — | 程式 / 美術 | 內部 Web UI:瀏覽 art-pipeline 產出 + 編輯 prompt + Remake（主介面） |
 | [docs/art-pipeline-refactor-plan.md](art-pipeline-refactor-plan.md) | — | 程式 | Pipeline 架構決策 ADR（各美術類型方法選擇；歷史記錄，MCP server 已退役） |
 | [superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md](superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md) | — | 程式 | Art pipeline orchestrators 設計 — CLI orchestrator 4 條(autotile/prop/npc_static/npc_moving),搭 stage/resume/批次模式 |
@@ -80,7 +80,7 @@
 
 | 我要做... | 看這幾份 |
 |---|---|
-| 加新 prop（樹、路燈） | `scene-design-workflow.md` → 跑 `art_source/pipeline/orchestrators/prop.py` |
+| 加新 prop（樹、路燈） | `scene-design-workflow.md` → 跑 `pipeline/orchestrators/prop.py` |
 | 加新地形 (autotile) | `scene-design-workflow.md` → `tilemapdual-guide.md` |
 | 在 zone 擺東西 / 塗地 | `scene-design-workflow.md`（一頁就夠） |
 | 改 prop 碰撞範圍 | `props/README.md` → 「修改碰撞範圍」段 |

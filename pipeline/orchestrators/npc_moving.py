@@ -1,20 +1,20 @@
-"""Pipeline 3: Static NPC orchestrator(劇情背景 NPC,4 向 idle)。
+"""Pipeline 4: Moving NPC orchestrator(player + 移動 NPC)。
 
 Stages:
-  1. generate_4dir_base   — create-character(4-dir 或 8-dir,看 --directions)
-  2. add_idle_animation   — animate-character 4 向 idle(可 --no-idle 關)
-  3. compile_spritesheet  — 呼叫 scripts/generate_spritesheet.py
+  1. generate_8dir_base   — create-character-with-8-directions
+  2. add_idle_animation   — animate-character 4 向 idle
+  3. add_walk_animation   — animate-character 8 向 walk
+  4. compile_spritesheet  — pipeline/spritesheet.py compile_character()
 
 CLI:
-  uv run python art_source/pipeline/orchestrators/npc_static.py \\
-      --name shopkeeper_li \\
-      --description "elderly taiwanese male shopkeeper, blue shirt" \\
-      [--directions 4] [--no-idle] [--review-mode stage]
+  uv run python pipeline/orchestrators/npc_moving.py \
+      --name chen_ayi \
+      --description "middle-aged taiwanese market vendor woman, red floral shirt" \
+      [--review-mode stage]
 """
 from __future__ import annotations
 
 import argparse
-import subprocess
 import sys
 from pathlib import Path
 
@@ -25,6 +25,7 @@ import pixellab_client as plab
 import post_process as pp
 import zones
 from orchestrators._common import (
+    ALL_8_DIRECTIONS,
     CARDINAL_DIRECTIONS,
     StageContext,
     make_context,
@@ -33,18 +34,23 @@ from orchestrators._common import (
 )
 
 
-STAGES: list[str] = ["generate_4dir_base", "add_idle_animation", "compile_spritesheet", "import_to_godot"]
+STAGES: list[str] = [
+    "generate_8dir_base",
+    "add_idle_animation",
+    "add_walk_animation",
+    "compile_spritesheet",
+    "import_to_godot",
+]
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("--name", required=True)
     p.add_argument("--description", default=None)
-    p.add_argument("--directions", type=int, choices=[4, 8], default=8)
     p.add_argument("--view", default="high_top_down")
     p.add_argument("--proportions", default="cartoon")
-    p.add_argument("--no-idle", action="store_true")
     p.add_argument("--idle-frame-count", type=int, default=4)
+    p.add_argument("--walk-frame-count", type=int, default=8)
     p.add_argument(
         "--review-mode", choices=["none", "stage"], default="stage"
     )
@@ -53,36 +59,30 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--zone", default=None,
                    help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
     p.add_argument("--category", default=None,
-                   help="自由形 category tag (e.g. 'vendor', 'student')")
+                   help="自由形 category tag (e.g. 'vendor', 'player')")
     p.add_argument("--chapter", default=None,
                    help="所屬章節 tag (e.g. '1', '2', 'prologue')")
     return p.parse_args()
 
 
-@stage("generate_4dir_base")
-def generate_4dir_base(ctx: StageContext) -> list[str]:
+@stage("generate_8dir_base")
+def generate_8dir_base(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
     if not args.description:
         raise SystemExit("首次跑須提供 --description")
 
     token = plab.load_token()
-    if args.directions == 4:
-        char_id, images = plab.submit_character_4dir(
-            token=token, description=args.description,
-            view=args.view, proportions_preset=args.proportions,
-        )
-    else:
-        char_id, images = plab.submit_character_8dir(
-            token=token, description=args.description,
-            view=args.view, proportions_preset=args.proportions,
-        )
+    char_id, images = plab.submit_character_8dir(
+        token=token, description=args.description,
+        view=args.view, proportions_preset=args.proportions,
+    )
     manifest.upsert_character(
         name=ctx.name,
         fields={
             "character_id": char_id,
-            "preset": "npc",
-            "directions": args.directions,
+            "preset": "player",
+            "directions": 8,
             "view": args.view,
             "proportions": args.proportions,
             "description": args.description,
@@ -115,25 +115,28 @@ def generate_4dir_base(ctx: StageContext) -> list[str]:
 def add_idle_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    if args.no_idle:
-        print("--no-idle 指定,略過 idle 動畫")
-        return []
     return run_character_animation(
         ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
         stage_name="add_idle_animation",
     )
 
 
+@stage("add_walk_animation")
+def add_walk_animation(ctx: StageContext) -> list[str]:
+    args = ctx.args
+    assert args is not None
+    return run_character_animation(
+        ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count,
+        stage_name="add_walk_animation",
+    )
+
+
 @stage("compile_spritesheet", is_last=False)
 def compile_spritesheet(ctx: StageContext) -> list[str]:
     char_dir = manifest.character_dir(ctx.name)
-    script = plab.project_root() / "scripts" / "generate_spritesheet.py"
-    if not script.exists():
-        print(f"[warn] {script} 不存在,略過 spritesheet 編譯")
-        return []
-    cmd = ["uv", "run", "python", str(script), "--character-dir", str(char_dir)]
-    print(f"$ {' '.join(cmd)}")
-    subprocess.run(cmd, check=True)
+    # Local import — keeps top-level import surface light.
+    import spritesheet
+    spritesheet.compile_character(char_dir)
     return [str(char_dir.relative_to(plab.project_root()))]
 
 
@@ -184,11 +187,12 @@ def main() -> None:
     if tags:
         manifest.add_tags(ctx.asset_type, ctx.name, tags)
 
-    generate_4dir_base(ctx)
+    generate_8dir_base(ctx)
     add_idle_animation(ctx)
+    add_walk_animation(ctx)
     compile_spritesheet(ctx)
     import_to_godot(ctx)
-    print(f"\n[npc_static] {ctx.name} 完成。")
+    print(f"\n[npc_moving] {ctx.name} 完成。")
 
 
 if __name__ == "__main__":

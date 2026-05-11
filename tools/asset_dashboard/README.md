@@ -1,4 +1,4 @@
-# Asset Dashboard
+﻿# Asset Dashboard
 
 Internal Web UI for browsing art-pipeline output, viewing each asset's stage
 progress, and editing/remaking prompts.
@@ -33,7 +33,7 @@ Visit http://localhost:5173/.
 
 ## What it does
 
-- Reads `art_source/pipeline/output/manifest.json`.
+- Reads `pipeline/output/manifest.json`.
 - Lists every asset with thumbnail (south rotation / iso PNG / object PNG).
 - Filters by chapter (manifest `tags` containing `chapter:N`), asset type, status.
 - Shows per-stage prompt. Realized stages are read-only; click `Remake` to unlock.

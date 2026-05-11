@@ -1,16 +1,16 @@
-"""Pipeline 2: Prop orchestrator(building 大建築 + iso_prop 小單格)。
+﻿"""Pipeline 2: Prop orchestrator(building 大建築 + iso_prop 小單格)。
 
 Stages:
   1. generate_object  — building → create-map-object;iso_prop → create-isometric-tile
   2. chroma_key       — PIL 去背(若 API 有殘留底色)
 
 CLI:
-  uv run python art_source/pipeline/orchestrators/prop.py \
+  uv run python pipeline/orchestrators/prop.py \
       --name muzha_shophouse --kind building \
       --description "traditional taiwanese shophouse, red brick" \
       --width 128 --height 128 [--review-mode stage]
 
-  uv run python art_source/pipeline/orchestrators/prop.py \
+  uv run python pipeline/orchestrators/prop.py \
       --name red_lantern --kind iso_prop \
       --description "red paper lantern with gold tassel" \
       --size 32

@@ -1,4 +1,4 @@
-# Project Muzha — Architecture Blueprint
+﻿# Project Muzha — Architecture Blueprint
 
 > 文檔導覽：[INDEX](INDEX.md) — **對象**：程式 / 系統設計人。**用途**：技術架構參考。
 > Last updated: 2026-04-28
@@ -19,8 +19,9 @@ Godot 4.6 (Frontend)
 ```
 MuzhaRPG_Project/
 ├── ai_engine/         # llama-server config + models (gitignored)
-├── art_source/        # Build-time character source (序列圖 + metadata.json)
-├── scripts/           # generate_spritesheet.py / test_ping.py
+├── art_source/        # Raw art inputs only (portraits/ + future references/)
+├── pipeline/          # Art generation pipeline: orchestrators + spritesheet compiler
+├── scripts/           # test_ping.py (llama.cpp health check)
 └── game/              # Godot 4 project
     ├── assets/        # fonts, textures/{portraits,environment,characters/}/
     └── src/
@@ -94,13 +95,13 @@ Daonan Riverside (zone_riverside) [Old Fisherman]
 ## Asset Import Pipeline
 
 ```
-[AI runs orchestrator] art_source/pipeline/orchestrators/prop.py --name X --kind iso_prop ...
+[AI runs orchestrator] pipeline/orchestrators/prop.py --name X --kind iso_prop ...
   → generate_object → chroma_key → import_to_godot (自動 PNG 複製 + .tscn 生成)
 [Artist in Godot] Ctrl+Shift+R 重掃 → 拖 prop .tscn 進 YSortRoot
 [Terrain] TileMapDual 塗地形
 ```
 
-`import_assets.py` 已刪除；prop 匯入由 orchestrator 的 `import_to_godot` stage 統一完成。入口：[scene-design-workflow.md](scene-design-workflow.md)。地形：[tilemapdual-guide.md](tilemapdual-guide.md)。Pipeline 細節：[art_source/pipeline/README.md](../art_source/pipeline/README.md)。
+`import_assets.py` 已刪除；prop 匯入由 orchestrator 的 `import_to_godot` stage 統一完成。入口：[scene-design-workflow.md](scene-design-workflow.md)。地形：[tilemapdual-guide.md](tilemapdual-guide.md)。Pipeline 細節：[pipeline/README.md](../pipeline/README.md)。
 
 ## Save System
 

@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Compile art-pipeline character output into a single spritesheet + atlas JSON.
 
-Reads:  art_source/pipeline/output/characters/<name>/animations/<action>/<direction>/frame_*.png
-Writes: art_source/pipeline/output/characters/<name>/spritesheet/<name>.png
-        art_source/pipeline/output/characters/<name>/spritesheet/<name>.json
+Reads:  pipeline/output/characters/<name>/animations/<action>/<direction>/frame_*.png
+Writes: pipeline/output/characters/<name>/spritesheet/<name>.png
+        pipeline/output/characters/<name>/spritesheet/<name>.json
 
 Per-character output (no shared atlas_config). Orchestrator's import_to_godot
 stage copies these into game/assets/textures/characters/.
@@ -100,7 +100,7 @@ def compile_character(char_dir: Path) -> tuple[Path, Path]:
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument("--character-dir", type=Path, required=True,
-                   help="path to art_source/pipeline/output/characters/<name>/")
+                   help="path to pipeline/output/characters/<name>/")
     args = p.parse_args()
     compile_character(args.character_dir.resolve())
     return 0

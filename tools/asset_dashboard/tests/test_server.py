@@ -1,4 +1,4 @@
-# tools/asset_dashboard/tests/test_server.py
+﻿# tools/asset_dashboard/tests/test_server.py
 import json
 from pathlib import Path
 
@@ -100,8 +100,8 @@ def test_stage_returns_images_and_prompt(client, tmp_path, monkeypatch):
                     "generate_8dir_base": {
                         "completed_at": "2026-01-01T00:00:00",
                         "paths": [
-                            "art_source\\pipeline\\output\\characters\\alice\\rotations\\south.png",
-                            "art_source\\pipeline\\output\\characters\\alice\\rotations\\east.png",
+                            "pipeline\\output\\characters\\alice\\rotations\\south.png",
+                            "pipeline\\output\\characters\\alice\\rotations\\east.png",
                         ],
                     },
                 },
@@ -122,7 +122,7 @@ def test_stage_returns_images_and_prompt(client, tmp_path, monkeypatch):
     assert data["prompt"] == "alice base prompt"
     assert len(data["images"]) == 2
     # Paths normalized to forward slashes.
-    assert data["images"][0]["path"] == "art_source/pipeline/output/characters/alice/rotations/south.png"
+    assert data["images"][0]["path"] == "pipeline/output/characters/alice/rotations/south.png"
     # URL points at the file-serving endpoint with encoded p.
     assert data["images"][0]["url"].startswith("/api/asset/file?p=")
     assert "south.png" in data["images"][0]["url"]
@@ -148,11 +148,11 @@ def test_stage_invalid_asset_type_400(client):
 
 def test_file_serves_existing_png(client, tmp_path, monkeypatch):
     # Place a PNG inside the allowed area
-    fake_png = tmp_path / "art_source/pipeline/output/characters/alice/rotations/south.png"
+    fake_png = tmp_path / "pipeline/output/characters/alice/rotations/south.png"
     fake_png.parent.mkdir(parents=True)
     fake_png.write_bytes(b"\x89PNG\r\n\x1a\nfake")
     monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
-    r = client.get("/api/asset/file", params={"p": "art_source/pipeline/output/characters/alice/rotations/south.png"})
+    r = client.get("/api/asset/file", params={"p": "pipeline/output/characters/alice/rotations/south.png"})
     assert r.status_code == 200, r.text
     assert r.headers["content-type"].startswith("image/")
     assert r.content.startswith(b"\x89PNG")
@@ -168,14 +168,14 @@ def test_file_rejects_path_outside_allowed_roots(client, tmp_path, monkeypatch):
 
 def test_file_rejects_path_traversal(client, tmp_path, monkeypatch):
     monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
-    r = client.get("/api/asset/file", params={"p": "art_source/pipeline/output/../../../etc/passwd"})
+    r = client.get("/api/asset/file", params={"p": "pipeline/output/../../../etc/passwd"})
     assert r.status_code in (400, 403, 404)
 
 
 def test_file_missing_404(client, tmp_path, monkeypatch):
     monkeypatch.setattr(server, "REPO_ROOT", tmp_path)
-    (tmp_path / "art_source/pipeline/output").mkdir(parents=True)
-    r = client.get("/api/asset/file", params={"p": "art_source/pipeline/output/ghost.png"})
+    (tmp_path / "pipeline/output").mkdir(parents=True)
+    r = client.get("/api/asset/file", params={"p": "pipeline/output/ghost.png"})
     assert r.status_code == 404
 
 

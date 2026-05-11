@@ -1,4 +1,4 @@
-# tools/asset_dashboard/backend/thumbnails.py
+﻿# tools/asset_dashboard/backend/thumbnails.py
 """Pick a representative PNG to show as the asset thumbnail."""
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def resolve_thumbnail(
       - tileset:   <output>/tilesets/<name>/<name>_iso.png
       - object:    <output>/objects/<name>/<name>.png
     """
-    pipeline_out = repo_root / "art_source" / "pipeline" / "output"
+    pipeline_out = repo_root / "pipeline" / "output"
     if asset_type == "character":
         candidate = pipeline_out / "characters" / name / "rotations" / "south.png"
     elif asset_type == "tileset":

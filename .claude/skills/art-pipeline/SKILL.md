@@ -1,4 +1,4 @@
----
+﻿---
 name: art-pipeline
 description: Use when the user wants to generate art assets (autotiles, props/buildings, NPC characters with directional sprites + animations) for this MuzhaRPG project. Triggers on requests like "幫我建一個 NPC", "make a character", "generate an autotile", "新增一個 prop", or any creation of pixel-art game assets via Pixellab. Skips for asking ABOUT the pipeline, debugging, or non-art work.
 ---
@@ -43,7 +43,7 @@ Use `--zone <z>` (one of `market|nccu|riverside|zhinan|shared|test`) and
 to write `zone:<z>` / `category:<c>` tags into the manifest. Do NOT duplicate
 zone/category info inside the name itself.
 
-Filter via `art_source/pipeline/orchestrators/list_assets.py` (e.g.
+Filter via `pipeline/orchestrators/list_assets.py` (e.g.
 `--zone market --type character`). Full detail: `docs/asset-naming-convention.md`.
 
 ## Common CLI flags (all orchestrators)
@@ -74,7 +74,7 @@ Filter via `art_source/pipeline/orchestrators/list_assets.py` (e.g.
 
 **新建一個會走路的 NPC (對話):**
 ```powershell
-uv run python art_source/pipeline/orchestrators/npc_moving.py `
+uv run python pipeline/orchestrators/npc_moving.py `
   --name chen_ayi `
   --description "middle-aged taiwanese market vendor woman, red floral shirt, beige apron" `
   --zone market --category vendor `
@@ -82,13 +82,13 @@ uv run python art_source/pipeline/orchestrators/npc_moving.py `
 ```
 → 跑完 `generate_8dir_base` 後停（`--review-mode stage` 在每個 stage 結束後停，含 `import_to_godot` 前）。給使用者看 `output/characters/chen_ayi/rotations/*.png`。確認 OK 後:
 ```powershell
-uv run python art_source/pipeline/orchestrators/npc_moving.py `
+uv run python pipeline/orchestrators/npc_moving.py `
   --name chen_ayi --resume-from add_idle_animation
 ```
 
 **確認絕對不會移動的劇情背景 NPC (省 credit):**
 ```powershell
-uv run python art_source/pipeline/orchestrators/npc_static.py `
+uv run python pipeline/orchestrators/npc_static.py `
   --name vendor_market_01 `
   --description "elderly fruit seller, straw hat" `
   --zone market --category vendor `
@@ -97,7 +97,7 @@ uv run python art_source/pipeline/orchestrators/npc_static.py `
 
 **Iso autotile:**
 ```powershell
-uv run python art_source/pipeline/orchestrators/autotile.py `
+uv run python pipeline/orchestrators/autotile.py `
   --name market_grass_asphalt `
   --lower "green grass texture" --upper "dark asphalt road" `
   --zone market --category terrain `
@@ -106,7 +106,7 @@ uv run python art_source/pipeline/orchestrators/autotile.py `
 
 **大建築 (high_top_down,不投影):**
 ```powershell
-uv run python art_source/pipeline/orchestrators/prop.py `
+uv run python pipeline/orchestrators/prop.py `
   --name market_shophouse_01 --kind building `
   --description "traditional taiwanese two-story shophouse, red brick" `
   --zone market --category building `
@@ -115,7 +115,7 @@ uv run python art_source/pipeline/orchestrators/prop.py `
 
 **小型 iso 單格 prop:**
 ```powershell
-uv run python art_source/pipeline/orchestrators/prop.py `
+uv run python pipeline/orchestrators/prop.py `
   --name lantern_red --kind iso_prop `
   --description "red paper lantern with gold tassel" `
   --zone market --category decoration --size 32
@@ -132,7 +132,7 @@ uv run python art_source/pipeline/orchestrators/prop.py `
 ## Output locations
 
 ```
-art_source/pipeline/output/
+pipeline/output/
 ├── manifest.json                    ← 單一索引,用 `--name` 查
 ├── characters/<name>/
 │   ├── rotations/{south,east,...}.png
@@ -148,6 +148,6 @@ art_source/pipeline/output/
 
 - 想看 stage 之間的依賴 / 設計理由:`docs/superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md`
 - 想看完整實作步驟:`docs/superpowers/plans/2026-05-05-art-pipeline-orchestrators.md`
-- pipeline 整體架構:`art_source/pipeline/README.md`
-- 底層 pixellab API wrapper:`art_source/pipeline/pixellab_client.py`
+- pipeline 整體架構:`pipeline/README.md`
+- 底層 pixellab API wrapper:`pipeline/pixellab_client.py`
 - 視覺化檢視 + 編輯 prompt + Remake:啟動 `tools/asset_dashboard/`(`uv run uvicorn tools.asset_dashboard.backend.server:app --port 8765`),開 http://localhost:8765/。

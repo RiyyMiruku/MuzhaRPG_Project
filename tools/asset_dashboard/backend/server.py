@@ -1,4 +1,4 @@
-# tools/asset_dashboard/backend/server.py
+﻿# tools/asset_dashboard/backend/server.py
 """FastAPI app for the asset dashboard.
 
 Run: uv run uvicorn tools.asset_dashboard.backend.server:app --reload --port 8765
@@ -17,10 +17,10 @@ from .manifest_io import load_assets
 from .thumbnails import resolve_thumbnail
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-MANIFEST_PATH = REPO_ROOT / "art_source" / "pipeline" / "output" / "manifest.json"
+MANIFEST_PATH = REPO_ROOT / "pipeline" / "output" / "manifest.json"
 
 # Make `manifest` (the pipeline module) importable in this process for prompt edits.
-sys.path.insert(0, str(REPO_ROOT / "art_source" / "pipeline"))
+sys.path.insert(0, str(REPO_ROOT / "pipeline"))
 import manifest as pipeline_manifest  # noqa: E402
 
 app = FastAPI(title="MuzhaRPG Asset Dashboard", version="0.1.0")
@@ -105,9 +105,9 @@ _jobs = JobRegistry()
 
 
 _ORCHESTRATOR_PATH: dict[str, str] = {
-    "character": "art_source/pipeline/orchestrators/npc_moving.py",
-    "tileset": "art_source/pipeline/orchestrators/autotile.py",
-    "object": "art_source/pipeline/orchestrators/prop.py",
+    "character": "pipeline/orchestrators/npc_moving.py",
+    "tileset": "pipeline/orchestrators/autotile.py",
+    "object": "pipeline/orchestrators/prop.py",
 }
 
 
@@ -186,7 +186,7 @@ def create_asset(body: CreateAssetRequest) -> dict:
 
     if body.asset_type == "character":
         if body.kind == "static":
-            script = "art_source/pipeline/orchestrators/npc_static.py"
+            script = "pipeline/orchestrators/npc_static.py"
             if body.directions is not None:
                 cli_args += ["--directions", str(body.directions)]
             if body.no_idle:
@@ -194,7 +194,7 @@ def create_asset(body: CreateAssetRequest) -> dict:
             if body.idle_frame_count is not None:
                 cli_args += ["--idle-frame-count", str(body.idle_frame_count)]
         elif body.kind == "moving":
-            script = "art_source/pipeline/orchestrators/npc_moving.py"
+            script = "pipeline/orchestrators/npc_moving.py"
             if body.idle_frame_count is not None:
                 cli_args += ["--idle-frame-count", str(body.idle_frame_count)]
             if body.walk_frame_count is not None:
@@ -212,7 +212,7 @@ def create_asset(body: CreateAssetRequest) -> dict:
     elif body.asset_type == "object":
         if body.kind not in ("iso_prop", "building"):
             raise HTTPException(400, "object kind must be 'iso_prop' or 'building'")
-        script = "art_source/pipeline/orchestrators/prop.py"
+        script = "pipeline/orchestrators/prop.py"
         if not body.description:
             raise HTTPException(400, "object requires description")
         cli_args += ["--kind", body.kind, "--description", body.description]
@@ -231,7 +231,7 @@ def create_asset(body: CreateAssetRequest) -> dict:
             cli_args += ["--no-collision"]
 
     elif body.asset_type == "tileset":
-        script = "art_source/pipeline/orchestrators/autotile.py"
+        script = "pipeline/orchestrators/autotile.py"
         if not body.lower or not body.upper:
             raise HTTPException(400, "tileset requires lower and upper")
         cli_args += ["--lower", body.lower, "--upper", body.upper]
@@ -278,7 +278,7 @@ import mimetypes
 
 
 _ALLOWED_FILE_ROOTS: list[str] = [
-    "art_source/pipeline/output",
+    "pipeline/output",
     "game/assets/textures",
 ]
 

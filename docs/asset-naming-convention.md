@@ -1,4 +1,4 @@
-# Asset Naming Convention
+﻿# Asset Naming Convention
 
 Project-wide rules for naming art-pipeline assets (manifest keys). Enforced by
 `manifest.validate_asset_name()`; orchestrators reject invalid names before any
@@ -61,7 +61,7 @@ Invalid examples: `Chen_ayi`, `_leading`, `trailing_`, `double__under`, `ab`,
 
 ## Canonical zones
 
-Defined in `art_source/pipeline/zones.py`:
+Defined in `pipeline/zones.py`:
 
 ```
 market, nccu, riverside, zhinan, shared, test
@@ -73,18 +73,18 @@ market, nccu, riverside, zhinan, shared, test
 
 ```powershell
 # All assets in the market zone
-uv run python art_source/pipeline/orchestrators/list_assets.py --zone market
+uv run python pipeline/orchestrators/list_assets.py --zone market
 
 # All vendor NPCs across zones
-uv run python art_source/pipeline/orchestrators/list_assets.py `
+uv run python pipeline/orchestrators/list_assets.py `
   --type character --category vendor
 
 # Tilesets in market zone
-uv run python art_source/pipeline/orchestrators/list_assets.py `
+uv run python pipeline/orchestrators/list_assets.py `
   --type tileset --zone market
 
 # Free-form tag filter (AND logic, repeatable)
-uv run python art_source/pipeline/orchestrators/list_assets.py `
+uv run python pipeline/orchestrators/list_assets.py `
   --tag zone:market --tag category:decoration
 ```
 

@@ -1,4 +1,4 @@
-# 場景設計協作流程（速查）
+﻿# 場景設計協作流程（速查）
 
 > **對象**：場景設計人。**用途**：一頁速查 + 跟 AI 對話的指令清單。
 > **詳細教學**：[2-scene-design.md](../game/assets/textures/environment/2-scene-design.md)
@@ -19,7 +19,7 @@
 ### A. 加新 prop 素材
 
 1. 跟 AI 說：`我要加一個 prop 叫 X，描述是 ...，幫我跑 orchestrator`
-2. AI 會跑：`art_source/pipeline/orchestrators/prop.py --name X --kind iso_prop --description "..." --zone <z> --category <c>`
+2. AI 會跑：`pipeline/orchestrators/prop.py --name X --kind iso_prop --description "..." --zone <z> --category <c>`
 3. `import_to_godot` stage 自動把 PNG + `.tscn` 放進 Godot 正確位置
 4. Godot `Ctrl+Shift+R` 重掃後，從檔案系統拖 `.tscn` 到 zone 的 `YSortRoot`
 
@@ -111,4 +111,4 @@ git push
 | [1-asset-creation.md](../game/assets/textures/environment/1-asset-creation.md) | Pixellab 設定、命名規範 |
 | [tilemapdual-guide.md](tilemapdual-guide.md) | 地形系統完整用法 |
 | [props/README.md](../game/src/maps/props/README.md) | Prop 程式契約、collision 規範 |
-| [art_source/pipeline/README.md](../art_source/pipeline/README.md) | pipeline orchestrator 細節 |
+| [pipeline/README.md](../pipeline/README.md) | pipeline orchestrator 細節 |

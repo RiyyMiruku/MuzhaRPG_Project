@@ -1,4 +1,4 @@
-"""
+﻿"""
 Manifest 管理 — 本地索引所有透過 pipeline 產出的美術資產。
 
 讓使用者只需用「名字」就能操作資產（例：animate_character("chen_ayi", "walk")），
@@ -57,7 +57,7 @@ def validate_asset_name(name: str) -> None:
 
 
 def manifest_path() -> Path:
-    """art_source/pipeline/output/manifest.json 的絕對路徑。"""
+    """pipeline/output/manifest.json 的絕對路徑。"""
     return Path(__file__).resolve().parent / "output" / "manifest.json"
 
 

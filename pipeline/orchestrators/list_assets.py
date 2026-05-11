@@ -1,11 +1,11 @@
-"""List / filter art-pipeline assets from manifest.
+﻿"""List / filter art-pipeline assets from manifest.
 
 Usage:
-  uv run python art_source/pipeline/orchestrators/list_assets.py
-  uv run python art_source/pipeline/orchestrators/list_assets.py --type character
-  uv run python art_source/pipeline/orchestrators/list_assets.py --zone market
-  uv run python art_source/pipeline/orchestrators/list_assets.py --category vendor
-  uv run python art_source/pipeline/orchestrators/list_assets.py --type tileset --zone market
+  uv run python pipeline/orchestrators/list_assets.py
+  uv run python pipeline/orchestrators/list_assets.py --type character
+  uv run python pipeline/orchestrators/list_assets.py --zone market
+  uv run python pipeline/orchestrators/list_assets.py --category vendor
+  uv run python pipeline/orchestrators/list_assets.py --type tileset --zone market
 """
 from __future__ import annotations
 

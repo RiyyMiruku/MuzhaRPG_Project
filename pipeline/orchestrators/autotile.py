@@ -1,4 +1,4 @@
-"""Pipeline 1: Autotile orchestrator.
+﻿"""Pipeline 1: Autotile orchestrator.
 
 Stages:
   1. generate_atlas      — Pixellab create-topdown-tileset(async)
@@ -6,7 +6,7 @@ Stages:
   3. verify_in_godot     — 印 Godot import 提示(不做事)
 
 CLI:
-  uv run python art_source/pipeline/orchestrators/autotile.py \\
+  uv run python pipeline/orchestrators/autotile.py \\
       --name market_grass_asphalt \\
       --lower "green grass texture" \\
       --upper "dark asphalt road" \\
