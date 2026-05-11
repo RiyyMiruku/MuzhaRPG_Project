@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://d26qs0yixaeyh" path="res://assets/textures/iso_test/iso_building_shophouse.png" id="5_shophouse"]
 [ext_resource type="Texture2D" uid="uid://dqrs7ljqx7f86" path="res://assets/textures/iso_test/iso_building_temple.png" id="6_temple"]
 [ext_resource type="Texture2D" uid="uid://gy0xh2x20aef" path="res://assets/textures/iso_test/iso_prop_market_stall.png" id="7_stall"]
+[ext_resource type="PackedScene" uid="uid://dyt8ss8h4qgmt" path="res://src/maps/props/test_iso.tscn" id="10_xlgqu"]
+[ext_resource type="PackedScene" uid="uid://byxew331wfdca" path="res://src/maps/props/test_well.tscn" id="11_3avjs"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xlgqu"]
 texture = ExtResource("2_iso_grass")
@@ -426,11 +428,12 @@ y_sort_enabled = true
 position = Vector2(0, -83)
 
 [node name="Shophouse" type="Sprite2D" parent="YSortRoot" unique_id=218958363]
-position = Vector2(-120, 40)
+position = Vector2(-108, 59)
+scale = Vector2(1.1640625, 1.15625)
 texture = ExtResource("5_shophouse")
 
 [node name="Temple" type="Sprite2D" parent="YSortRoot" unique_id=1596696037]
-position = Vector2(120, 40)
+position = Vector2(133, 66)
 texture = ExtResource("6_temple")
 
 [node name="MarketStall" type="Sprite2D" parent="YSortRoot" unique_id=909987783]
@@ -454,3 +457,9 @@ text = "上方三張 = pixflux 一次生成 + PIL 投影的 iso autotile sheet
 此場景僅顯示素材 — TileMapLayer 之後在編輯器手動 wire up
 WASD 走路、E 互動（沿用原 Player）"
 horizontal_alignment = 1
+
+[node name="test_iso" parent="." unique_id=1880713541 instance=ExtResource("10_xlgqu")]
+position = Vector2(-156, -277)
+
+[node name="test_well" parent="." unique_id=901870940 instance=ExtResource("11_3avjs")]
+position = Vector2(89, -288)

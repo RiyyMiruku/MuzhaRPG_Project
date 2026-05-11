@@ -25,20 +25,20 @@ game/
 │       └── urban/                #   bench_*, lamp_*, lantern_* …
 │
 └── src/maps/
-    ├── main_world.tscn          # 主世界容器
-    ├── tilesets/                # TileSet .tres 資源
-    │   ├── <zone>_terrain.tres  #   autotile + 地形（Terrain Set，16×16）
-    │   └── <zone>_props.tres    #   （未來：手繪 atlas，若需要）
-    ├── props/                   # 可重用的 Prop 場景
-    │   ├── Prop.gd              #   基底類別（含腳底錨點、collision、互動）
-    │   ├── PropTemplate.tscn    #   範本 — 新建 prop 從此繼承
-    │   ├── nature/              #   tree_oak.tscn, bush_flower.tscn …
-    │   └── urban/                #   bench_wood.tscn, lamp_street.tscn …
-    └── zones/                   # 各場景實例
-        ├── zone_nccu.tscn
-        ├── zone_market.tscn
-        ├── zone_riverside.tscn
-        └── zone_zhinan.tscn
+	├── main_world.tscn          # 主世界容器
+	├── tilesets/                # TileSet .tres 資源
+	│   ├── <zone>_terrain.tres  #   autotile + 地形（Terrain Set，16×16）
+	│   └── <zone>_props.tres    #   （未來：手繪 atlas，若需要）
+	├── props/                   # 可重用的 Prop 場景
+	│   ├── Prop.gd              #   基底類別（含腳底錨點、collision、互動）
+	│   ├── PropTemplate.tscn    #   範本 — 新建 prop 從此繼承
+	│   ├── nature/              #   tree_oak.tscn, bush_flower.tscn …
+	│   └── urban/                #   bench_wood.tscn, lamp_street.tscn …
+	└── zones/                   # 各場景實例
+		├── zone_nccu.tscn
+		├── zone_market.tscn
+		├── zone_riverside.tscn
+		└── zone_zhinan.tscn
 ```
 
 ---
