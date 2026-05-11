@@ -80,12 +80,22 @@ class JobRegistry:
             stage=stage,
         )
         log_fh = log_path.open("ab", buffering=0)
-        proc = subprocess.Popen(
-            cmd,
-            cwd=str(info.cwd),
-            stdout=log_fh,
-            stderr=subprocess.STDOUT,
-        )
+        # Detach subprocess from the uvicorn worker's process group so that
+        # `--reload` (which kills the worker on code change) doesn't take the
+        # orchestrator with it. Without this, a 10-minute Pixellab job dies the
+        # moment any backend file is edited.
+        popen_kwargs: dict = {
+            "cwd": str(info.cwd),
+            "stdout": log_fh,
+            "stderr": subprocess.STDOUT,
+        }
+        if os.name == "nt":
+            popen_kwargs["creationflags"] = (
+                subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS  # type: ignore[attr-defined]
+            )
+        else:
+            popen_kwargs["start_new_session"] = True
+        proc = subprocess.Popen(cmd, **popen_kwargs)
         info._process = proc
         with self._lock:
             self._jobs[job_id] = info
