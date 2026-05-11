@@ -50,7 +50,7 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
 
   // character-specific
   const [view, setView] = useState<CharacterView>("high_top_down")
-  const [proportions, setProportions] = useState<Proportions>("cartoon")
+  const [proportions, setProportions] = useState<Proportions | "">("")
   const [directions, setDirections] = useState<4 | 8>(8)
   const [idleFrames, setIdleFrames] = useState(4)
   const [walkFrames, setWalkFrames] = useState(8)
@@ -87,7 +87,7 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
       base.kind = picked.kind
       base.description = description
       base.view = view
-      base.proportions = proportions
+      if (proportions) base.proportions = proportions
       base.idle_frame_count = idleFrames
       if (picked.kind === "moving") {
         base.walk_frame_count = walkFrames
@@ -264,12 +264,15 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
                   ))}
                 </select>
               </Field>
-              <Field label="Proportions">
+              <Field label="Proportions (optional)">
                 <select
                   value={proportions}
-                  onChange={(e) => setProportions(e.target.value as Proportions)}
+                  onChange={(e) =>
+                    setProportions(e.target.value === "" ? "" : (e.target.value as Proportions))
+                  }
                   className="w-full rounded bg-stone-800 px-3 py-2 text-sm"
                 >
+                  <option value="">(預設:cartoon)</option>
                   {PROPORTIONS_OPTIONS.map((p) => (
                     <option key={p} value={p}>{p}</option>
                   ))}

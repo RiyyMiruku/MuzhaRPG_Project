@@ -317,15 +317,42 @@ def _extract_direction_images(result: dict[str, Any], expected: int) -> dict[str
 
 
 def _decode_image_entry(entry: Any) -> Image.Image | None:
-    """把 Pixellab 的單張 image entry 解成 PIL.Image。支援 rgba_bytes 與 base64 PNG。"""
+    """把 Pixellab 的單張 image entry 解成 PIL.Image。
+
+    支援三種格式:
+      - bare base64 string (PNG encoded)
+      - dict with "base64"/"data" + optional "type":"rgba_bytes" + w/h
+      - dict (or string) with "url"/"image_url" → HTTP GET 下載
+        (tileset endpoint 用這種,storage URL 無需 auth)
+    """
+    # URL string
     if isinstance(entry, str):
-        # bare base64; assume PNG-encoded
+        if entry.startswith("http://") or entry.startswith("https://"):
+            try:
+                r = requests.get(entry, timeout=60)
+                if r.status_code == 200:
+                    return Image.open(io.BytesIO(r.content))
+            except requests.RequestException:
+                return None
+            return None
+        # bare base64 PNG
         try:
             return Image.open(io.BytesIO(base64.b64decode(entry)))
         except Exception:
             return None
     if not isinstance(entry, dict):
         return None
+    # URL inside dict
+    url = entry.get("url") or entry.get("image_url")
+    if isinstance(url, str) and (url.startswith("http://") or url.startswith("https://")):
+        try:
+            r = requests.get(url, timeout=60)
+            if r.status_code == 200:
+                return Image.open(io.BytesIO(r.content))
+        except requests.RequestException:
+            return None
+        return None
+    # base64 (inline)
     b64 = entry.get("base64") or entry.get("data") or ""
     if not b64:
         return None
