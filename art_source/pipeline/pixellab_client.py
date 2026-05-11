@@ -344,6 +344,46 @@ def _decode_image_entry(entry: Any) -> Image.Image | None:
         return None
 
 
+def _extract_single_image(result: dict[str, Any]) -> Image.Image | None:
+    """Extract a single PIL.Image from a Pixellab background-job result.
+
+    Tries several shapes:
+      - {"image": {type, base64, ...}}
+      - {"image": "base64..."}
+      - {"images": {<single key>: {...}}}  (rare; pick first)
+      - {"images": [{...}]}                  (rare; pick first)
+      - nested in {"response": {...}} or {"last_response": {...}}
+    Returns None if nothing decodable.
+    """
+    candidates: list[dict[str, Any]] = [result]
+    for key in ("response", "last_response"):
+        nested = result.get(key)
+        if isinstance(nested, dict):
+            candidates.append(nested)
+
+    for source in candidates:
+        # Singular "image"
+        img_entry = source.get("image")
+        if img_entry is not None:
+            decoded = _decode_image_entry(img_entry)
+            if decoded is not None:
+                return decoded
+
+        # Plural "images" — may be dict or list
+        imgs = source.get("images")
+        if isinstance(imgs, dict) and imgs:
+            first_entry = next(iter(imgs.values()))
+            decoded = _decode_image_entry(first_entry)
+            if decoded is not None:
+                return decoded
+        if isinstance(imgs, list) and imgs:
+            decoded = _decode_image_entry(imgs[0])
+            if decoded is not None:
+                return decoded
+
+    return None
+
+
 # === Character Creator ===
 
 
@@ -552,7 +592,12 @@ def submit_topdown_tileset(
     tile_height: int = 16,
     view: str = "high_top_down",
     text_guidance_scale: float = 8.0,
-) -> str:
+) -> tuple[str, Image.Image]:
+    """同步建 4×4 top-down tileset atlas,回傳 (tileset_id, PIL.Image)。
+
+    Pixellab v2 端點 async:POST 回 202 + background_job_id + tileset_id。
+    本函式 poll + decode 完一次回傳。
+    """
     payload: dict[str, Any] = {
         "lower_description": lower_description,
         "upper_description": upper_description,
@@ -566,12 +611,20 @@ def submit_topdown_tileset(
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     r = requests.post(CREATE_TOPDOWN_TILESET_URL, headers=headers, json=payload, timeout=60)
-    if r.status_code != 200:
+    if r.status_code not in (200, 202):
         raise RuntimeError(f"create-topdown-tileset → HTTP {r.status_code}: {r.text[:500]}")
-    tileset_id = r.json().get("tileset_id") or r.json().get("id", "")
-    if not tileset_id:
-        raise RuntimeError(f"回應無 tileset_id: {r.json()}")
-    return tileset_id
+    data = r.json()
+    tileset_id = data.get("tileset_id") or data.get("id")
+    job_id = data.get("background_job_id") or data.get("job_id")
+    if not tileset_id or not job_id:
+        raise RuntimeError(f"POST 回應缺 tileset_id 或 job_id: {data}")
+    result = poll_background_job(token, job_id)
+    img = _extract_single_image(result)
+    if img is None:
+        raise RuntimeError(
+            f"create-topdown-tileset job 完成但無 image 可解 (top keys: {list(result.keys())})"
+        )
+    return tileset_id, img
 
 
 def get_topdown_tileset(token: str, tileset_id: str) -> dict[str, Any]:
@@ -606,7 +659,12 @@ def submit_map_object(
     outline: str = "single_color_outline",
     shading: str = "medium_shading",
     detail: str = "medium_detail",
-) -> str:
+) -> tuple[str, Image.Image]:
+    """同步建 map object(建築物),回傳 (object_id, PIL.Image)。
+
+    Pixellab v2 端點 async:POST 回 202 + background_job_id + object_id。
+    本函式 poll + decode 完一次回傳。
+    """
     payload: dict[str, Any] = {
         "description": description,
         "width": width,
@@ -618,12 +676,20 @@ def submit_map_object(
     }
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     r = requests.post(CREATE_MAP_OBJECT_URL, headers=headers, json=payload, timeout=60)
-    if r.status_code != 200:
+    if r.status_code not in (200, 202):
         raise RuntimeError(f"create-map-object → HTTP {r.status_code}: {r.text[:500]}")
-    object_id = r.json().get("object_id") or r.json().get("id", "")
-    if not object_id:
-        raise RuntimeError(f"回應無 object_id: {r.json()}")
-    return object_id
+    data = r.json()
+    object_id = data.get("object_id") or data.get("id")
+    job_id = data.get("background_job_id") or data.get("job_id")
+    if not object_id or not job_id:
+        raise RuntimeError(f"POST 回應缺 object_id 或 job_id: {data}")
+    result = poll_background_job(token, job_id)
+    img = _extract_single_image(result)
+    if img is None:
+        raise RuntimeError(
+            f"create-map-object job 完成但無 image 可解 (top keys: {list(result.keys())})"
+        )
+    return object_id, img
 
 
 def get_map_object(token: str, object_id: str) -> dict[str, Any]:
@@ -654,10 +720,11 @@ def submit_iso_tile(
     description: str,
     size: int = 32,
     text_guidance_scale: float = 8.0,
-) -> str:
-    """提交建單格 isometric tile(含 prop / 小物件),回傳 object_id。
+) -> tuple[str, Image.Image]:
+    """同步建單格 isometric tile,回傳 (tile_id, PIL.Image)。
 
-    用於小型 iso 物件(燈籠、攤車裝飾等)。大建築仍走 create-map-object。
+    Pixellab v2 端點是 async:POST 回 202 + background_job_id + tile_id。
+    本函式內部完成 poll_background_job + image decode,caller 拿到已 decode 的圖。
     """
     payload: dict[str, Any] = {
         "description": description,
@@ -666,11 +733,19 @@ def submit_iso_tile(
     }
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     r = requests.post(CREATE_ISO_TILE_URL, headers=headers, json=payload, timeout=60)
-    if r.status_code != 200:
+    if r.status_code not in (200, 202):
         raise RuntimeError(
             f"create-isometric-tile → HTTP {r.status_code}: {r.text[:500]}"
         )
-    obj_id = r.json().get("object_id") or r.json().get("id", "")
-    if not obj_id:
-        raise RuntimeError(f"回應無 object_id: {r.json()}")
-    return obj_id
+    data = r.json()
+    tile_id = data.get("tile_id") or data.get("object_id") or data.get("id")
+    job_id = data.get("background_job_id") or data.get("job_id")
+    if not tile_id or not job_id:
+        raise RuntimeError(f"POST 回應缺 tile_id 或 job_id: {data}")
+    result = poll_background_job(token, job_id)
+    img = _extract_single_image(result)
+    if img is None:
+        raise RuntimeError(
+            f"create-isometric-tile job 完成但無 image 可解 (top keys: {list(result.keys())})"
+        )
+    return tile_id, img

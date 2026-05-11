@@ -77,7 +77,7 @@ def generate_object(ctx: StageContext) -> list[str]:
     img_path = out_dir / f"{ctx.name}.png"
 
     if args.kind == "building":
-        object_id = plab.submit_map_object(
+        object_id, img = plab.submit_map_object(
             token=token,
             description=args.description,
             width=args.width,
@@ -96,7 +96,7 @@ def generate_object(ctx: StageContext) -> list[str]:
             },
         )
     else:  # iso_prop
-        object_id = plab.submit_iso_tile(
+        object_id, img = plab.submit_iso_tile(
             token=token, description=args.description, size=args.size
         )
         manifest.upsert_object(
@@ -110,9 +110,7 @@ def generate_object(ctx: StageContext) -> list[str]:
             },
         )
 
-    meta = plab.wait_for_object(token, object_id)
-    if not plab.download_object_image(token, meta, img_path):
-        raise SystemExit(f"無法解析 image 欄位 — 見 {img_path.parent}/raw_response.json")
+    img.save(img_path)
     return [str(img_path.relative_to(plab.project_root()))]
 
 

@@ -65,7 +65,7 @@ def generate_atlas(ctx: StageContext) -> list[str]:
         raise SystemExit("首次跑 generate_atlas 須提供 --lower 與 --upper")
 
     token = plab.load_token()
-    tileset_id = plab.submit_topdown_tileset(
+    tileset_id, atlas_img = plab.submit_topdown_tileset(
         token=token,
         lower_description=args.lower,
         upper_description=args.upper,
@@ -84,14 +84,11 @@ def generate_atlas(ctx: StageContext) -> list[str]:
             "status": "pending",
         },
     )
-    meta = plab.wait_for_tileset(token, tileset_id)
 
     out_dir = manifest.tileset_dir(ctx.name)
     out_dir.mkdir(parents=True, exist_ok=True)
     atlas_path = out_dir / f"{ctx.name}_topdown.png"
-    ok = plab.download_object_image(token, meta, atlas_path, extra_keys=("atlas",))
-    if not ok:
-        raise SystemExit(f"無法解析 atlas 圖片欄位 — 見 {out_dir}/raw_response.json")
+    atlas_img.save(atlas_path)
 
     manifest.upsert_tileset(
         name=ctx.name,
