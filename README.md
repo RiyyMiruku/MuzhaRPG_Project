@@ -250,8 +250,8 @@ Godot Frontend                    AI Backend
 - [x] UIManager 堆疊式面板協調
 
 ### 🚧 Phase 4: 美術與音效 — 進行中
-- [x] 場景素材匯入流水線（`scripts/import_assets.py`）
-- [x] Prop 場景批次生成（自動 .tscn + collision）
+- [x] 美術生產 pipeline（`pipeline/orchestrators/` 4 個 CLI + `tools/asset_dashboard/` Web UI）
+- [x] Prop / autotile / 角色 Godot 端匯入（orchestrator `import_to_godot` stage 統一完成）
 - [x] TileMapDual addon 整合（取代手動 Terrain Set + peering bits）
 - [ ] 像素角色精靈（取代佔位方塊）
 - [ ] TileMap 區域地形實際塗繪（在各 zone 完成 TileMapDual 配置 + 美術產地圖）
@@ -276,19 +276,14 @@ Godot Frontend                    AI Backend
 | 角色 | 入口文件 | 一句話描述 |
 |---|---|---|
 | **場景設計人**（不寫程式也能做） | [docs/scene-design-workflow.md](docs/scene-design-workflow.md) | 跟 AI 說「我加了素材」，AI 跑腳本，你拖 prop 塗地圖 |
-| **美術 / 生圖人** | [game/assets/textures/environment/1-asset-creation.md](game/assets/textures/environment/1-asset-creation.md) | Pixellab 設定、檔名規範、像素規格 |
-| **角色美術**（NPC 動畫） | [art_source/characters/1-asset-creation.md](art_source/characters/1-asset-creation.md) | NPC 序列圖製作、spritesheet 編譯 |
+| **美術 / 生圖人**（角色 / autotile / prop） | [pipeline/README.md](pipeline/README.md) | Pipeline 架構 + CLI orchestrator + Web UI 使用方式 |
 | **章節作者** | [docs/chapter-development.md](docs/chapter-development.md) | 章節資源 + events.gd + 對話 beats |
 | **對話系統工程師** | [docs/dialogue-architecture.md](docs/dialogue-architecture.md) | StoryBeat / NPCProfile / TrustGate / BeatRunner |
 | **程式 / 系統** | [docs/architecture.md](docs/architecture.md) | Autoload、AI pipeline、UI stack、目錄結構 |
 
-### 自動化腳本（給 AI 代為執行）
+### 美術生產
 
-| 腳本 | 用途 |
-|---|---|
-| `scripts/import_assets.py` | 大量 prop PNG → .tscn 場景（TOML manifest 驅動） |
-| `scripts/generate_spritesheet.py` | NPC 序列圖 → spritesheet 預編譯 |
-| `scripts/test_ping.py` | llama-server 健康檢查 |
+所有美術資產（角色、autotile、prop / 建築）由 [`pipeline/orchestrators/`](pipeline/orchestrators/) 的 4 個 CLI 或 [`tools/asset_dashboard/`](tools/asset_dashboard/) Web UI 產出，`import_to_godot` stage 自動複製到 `game/assets/textures/`。詳見 [pipeline/README.md](pipeline/README.md)。
 
 ### 已採用 Addons
 

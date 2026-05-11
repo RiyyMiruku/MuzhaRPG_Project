@@ -1,8 +1,6 @@
 ﻿# 美術生產 Pipeline
 
-> 透過 Pixellab v2 API 產出角色、autotile、map 物件。所有資產由 [output/manifest.json](output/) 索引，使用者只需用「名字」操作。
->
-> **Note:** MCP server 已於 2026-05-12 退役。Dashboard Web UI + CLI orchestrator 是唯一入口。
+> 透過 Pixellab v2 API 產出角色、autotile、map 物件。所有資產由 [`art_source/manifest.json`](../art_source/manifest.json) 索引，使用者只需用「名字」操作。
 
 ## 架構
 
@@ -22,7 +20,7 @@
             │
             ├── post_process.py     ── PIL 後處理（去背、iso 投影）
             │
-            └── manifest.py         ── output/manifest.json 索引
+            └── manifest.py         ── art_source/manifest.json 索引
 ```
 
 ## 兩種介面
@@ -32,7 +30,7 @@
 | **Dashboard Web UI** (`tools/asset_dashboard/`) | 視覺化瀏覽 pipeline 輸出、編輯 prompt、一鍵 Remake；適合所有使用者 |
 | **CLI Orchestrator** (`pipeline/orchestrators/*.py`) | 可在終端機直接跑；支援 `--resume-from`、`--review-mode none` 批次模式；AI 透過 Bash 工具調用 |
 
-兩者存取同一份 `output/manifest.json`，狀態完全一致。
+兩者存取同一份 `art_source/manifest.json`，狀態完全一致。
 
 ## Orchestrator 列表
 
@@ -87,17 +85,26 @@ uv run uvicorn tools.asset_dashboard.backend.server:app --port 8765
 ## 輸出結構
 
 ```
-art_source/             # 所有美術資產（LFS 追蹤）
-├── manifest.json                  # 所有資產索引
+art_source/                              # 所有美術資產（LFS 追蹤）
+├── manifest.json                        # 所有資產索引
 ├── characters/<name>/
-│   ├── rotations/{south,east,...}.png
-│   └── animations/<action>/<dir>/frame_NNN.png
+│   ├── rotations/{south,east,...}.png   # base 圖（Pixellab character_id reference）
+│   └── spritesheet/
+│       ├── <name>.png                   # 所有 idle/walk frames baked 進此檔
+│       └── <name>.json                  # row 對照表（per (action,direction) 一 row）
 ├── tilesets/<name>/
 │   ├── <name>_topdown.png
 │   └── <name>_iso.png
 └── objects/<name>/
     └── <name>.png
+
+game/assets/textures/                    # import_to_godot 自動複製目的地
+├── characters/<name>.{png,json}
+├── tilesets/<name>.png
+└── props/<name>.png
 ```
+
+> 2026-05-12 起 animation frame 直接寫進 spritesheet，不再存 `animations/<action>/<dir>/frame_NNN.png` 中介檔。
 
 ## 重要限制
 

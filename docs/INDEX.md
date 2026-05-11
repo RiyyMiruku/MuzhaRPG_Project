@@ -1,4 +1,4 @@
-﻿# 文檔導覽
+# 文檔導覽
 
 《MuzhaRPG》全部文檔的單一入口。**先看這頁，再點進對應主題。**
 
@@ -8,128 +8,76 @@
 
 | 你是誰 | 直接看這一份 |
 |---|---|
-| 想試玩專案 | [README.md](../README.md) — 安裝 / 啟動 / 鍵位 |
+| 想試玩專案 | [README.md](../README.md) — 安裝、啟動、鍵位 |
 | 場景設計人（不寫程式） | [docs/scene-design-workflow.md](scene-design-workflow.md) — 一頁速查 |
-| 美術 / 生圖人 | [docs/art-production-guide.md](art-production-guide.md) — 一頁手冊:CLI orchestrator + Web UI 使用方式 |
+| 美術 / 生圖人 | [pipeline/README.md](../pipeline/README.md) — Pipeline + Web UI 使用方式 |
 | 章節作者 | [docs/chapter-development.md](chapter-development.md) |
 | 程式 / 系統設計 | [docs/architecture.md](architecture.md) |
 | 對話系統工程師 | [docs/dialogue-architecture.md](dialogue-architecture.md) |
 
 ---
 
-## 📖 文檔總清單（按主題分組）
+## 📖 文檔總清單
 
-### 入口與架構（先看這層）
-
-| 文檔 | 行數 | 給誰看 | 內容 |
-|---|---|---|---|
-| [README.md](../README.md) | 319 | 所有人 | 專案總覽、安裝、啟動、鍵位、開發進度、各角色入口連結 |
-| [docs/architecture.md](architecture.md) | 401 | 程式 | 完整系統架構、autoload 職責、目錄樹、資料流、AI pipeline |
-| **docs/INDEX.md**（本文） | — | 所有人 | 文檔導覽（你正在看的這份） |
-
-### 場景與美術（依工作分流）
+### 入口與架構
 
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
-| [docs/scene-design-workflow.md](scene-design-workflow.md) | 198 | 場景設計人 | **一句話清單** — 跟 AI 說什麼、怎麼擺場景、提交流程 |
-| [docs/tilemapdual-guide.md](tilemapdual-guide.md) | 154 | 場景設計人 / 程式 | TileMapDual addon 設定、地形繪製、Pixellab 4×4 範本 |
-| [game/assets/textures/environment/1-asset-creation.md](../game/assets/textures/environment/1-asset-creation.md) | 238 | 美術 | Pixellab 設定、命名規範、像素規格 |
-| [game/assets/textures/environment/2-scene-design.md](../game/assets/textures/environment/2-scene-design.md) | 277 | 場景設計人 | 詳細 Godot 操作（步驟版，補 scene-design-workflow 的細節） |
-| [game/assets/textures/environment/3-ai-prompt.md](../game/assets/textures/environment/3-ai-prompt.md) | 110 | AI 操作員 | 大段 AI prompt 範本（一般用不到，本檔備援） |
-| [game/src/maps/README.md](../game/src/maps/README.md) | 120 | 程式 | Maps 目錄結構、Zone 場景標準、新增 zone 流程 |
-| [game/src/maps/props/README.md](../game/src/maps/props/README.md) | 104 | 程式 | Prop.gd 契約、collision layer、修改碰撞範圍 |
+| [README.md](../README.md) | 322 | 所有人 | 專案總覽、安裝、啟動、鍵位、開發進度 |
+| [docs/architecture.md](architecture.md) | 144 | 程式 | 系統架構、autoload 職責、目錄樹、資料流 |
+| **docs/INDEX.md**（本檔） | — | 所有人 | 文檔導覽 |
 
-### 對話與章節系統
+### 場景與美術
 
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
-| [docs/dialogue-architecture.md](dialogue-architecture.md) | 426 | 程式 / 章節作者 | **對話混合架構（D 方案）** — 三層流程、StoryBeat / NPCProfile / TrustGate / BeatRunner schema、Phase 1-3 任務 |
-| [docs/chapter-development.md](chapter-development.md) | 275 | 章節作者 | 章節資料夾結構、ChapterConfig 欄位、events.gd 寫法、新章節步驟 |
-| [game/src/chapters/chapter_template/README.md](../game/src/chapters/chapter_template/README.md) | 50 | 章節作者 | 範本資料夾速查（複製來建新章節） |
+| [docs/scene-design-workflow.md](scene-design-workflow.md) | 114 | 場景設計人 | **一句話清單** — 跟 AI 說什麼、怎麼擺場景、提交流程 |
+| [docs/tilemapdual-guide.md](tilemapdual-guide.md) | 155 | 場景設計人 / 程式 | TileMapDual addon 設定、地形繪製、Wang 4×4 layout |
+| [docs/asset-naming-convention.md](asset-naming-convention.md) | 96 | 美術 / 程式 | 資產命名規則、zone / category tag 規範 |
+| [pipeline/README.md](../pipeline/README.md) | 131 | 美術 / 程式 | Pipeline 架構 + CLI orchestrator + Web UI 使用方式 |
+| [game/src/maps/README.md](../game/src/maps/README.md) | 116 | 程式 | Maps 目錄結構、Zone 場景標準、新增 zone 流程 |
+| [game/src/maps/props/README.md](../game/src/maps/props/README.md) | 106 | 程式 | Prop.gd 契約、collision layer、修改碰撞範圍 |
+
+### 對話與章節
+
+| 文檔 | 行數 | 給誰看 | 內容 |
+|---|---|---|---|
+| [docs/dialogue-architecture.md](dialogue-architecture.md) | 272 | 程式 / 章節作者 | 對話混合架構（D 方案）— 三層流程、Schema、Phase 1–3 任務 |
+| [docs/chapter-development.md](chapter-development.md) | 278 | 章節作者 | 章節資料夾結構、ChapterConfig、events.gd、新章節步驟 |
+| [game/src/chapters/chapter_template/README.md](../game/src/chapters/chapter_template/README.md) | 53 | 章節作者 | 範本資料夾速查 |
 | [game/src/chapters/chapter_01_arrival/README.md](../game/src/chapters/chapter_01_arrival/README.md) | 23 | 章節作者 | 範例章節摘要 |
 
-### 角色動畫
+### Runtime / Addons
 
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
-| [art_source/characters/1-asset-creation.md](../art_source/characters/1-asset-creation.md) | 217 | 角色美術 | NPC 序列圖製作、metadata.json |
-| [art_source/characters/2-spritesheet-workflow.md](../art_source/characters/2-spritesheet-workflow.md) | 137 | 角色美術 / 程式 | Spritesheet 編譯流程（generate_spritesheet.py） |
-| [art_source/characters/3-asset-usage.md](../art_source/characters/3-asset-usage.md) | 200 | 程式 | 在遊戲中載入角色動畫的 API |
-
-### 自動化與 AI
-
-| 文檔 | 行數 | 給誰看 | 內容 |
-|---|---|---|---|
-| [docs/art-production-guide.md](art-production-guide.md) | — | 美術 / 程式 | **美術生產手冊** — CLI orchestrator 指令範例 + Web UI 使用方法 + 中斷續跑 + 命名規範 + FAQ |
-| [pipeline/orchestrators/](../pipeline/orchestrators/) | — | 美術 / 程式 | 4 個 CLI orchestrator (prop/autotile/npc_static/npc_moving)，`import_to_godot` 為最後 stage，自動完成 Godot 端匯入 |
-| [pipeline/README.md](../pipeline/README.md) | — | 美術 / 程式 | **美術 pipeline 架構** — orchestrator 列表、輸出結構、重要限制、開發 debug |
-| `tools/asset_dashboard/` | — | 程式 / 美術 | 內部 Web UI:瀏覽 art-pipeline 產出 + 編輯 prompt + Remake（主介面） |
-| [docs/art-pipeline-refactor-plan.md](art-pipeline-refactor-plan.md) | — | 程式 | Pipeline 架構決策 ADR（各美術類型方法選擇；歷史記錄，MCP server 已退役） |
-| [superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md](superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md) | — | 程式 | Art pipeline orchestrators 設計 — CLI orchestrator 4 條(autotile/prop/npc_static/npc_moving),搭 stage/resume/批次模式 |
 | [llm_engine/config-guide.md](../llm_engine/config-guide.md) | 116 | 系統管理員 | llama-server 設定、模型路徑、CUDA/CPU 切換 |
+| [docs/addons.md](addons.md) | 86 | 程式 | 採用 / 未採用 addons 紀錄、引入決策清單 |
 
-### Addons 與技術決策
+### 歷史紀錄
 
-| 文檔 | 行數 | 給誰看 | 內容 |
-|---|---|---|---|
-| [docs/addons.md](addons.md) | 84 | 程式 | 採用 / 未採用的 addons 紀錄、引入決策清單 |
+| 位置 | 內容 |
+|---|---|
+| [docs/archive/](archive/) | 已完成的實作計畫、ADR、retired 設計（MCP server、舊 spritesheet 流程等）。日常開發不用看 |
 
 ---
 
 ## 🎯 依任務查文檔
 
-| 我要做... | 看這幾份 |
+| 我要做… | 看這幾份 |
 |---|---|
-| 加新 prop（樹、路燈） | `scene-design-workflow.md` → 跑 `pipeline/orchestrators/prop.py` |
-| 加新地形 (autotile) | `scene-design-workflow.md` → `tilemapdual-guide.md` |
+| 加新 prop（樹、路燈） | `scene-design-workflow.md` → `pipeline/README.md` |
+| 加新地形 autotile | `scene-design-workflow.md` → `tilemapdual-guide.md` |
+| 加新 NPC（含立繪 / 動畫） | `pipeline/README.md`（Web UI Create modal 最快） |
 | 在 zone 擺東西 / 塗地 | `scene-design-workflow.md`（一頁就夠） |
-| 改 prop 碰撞範圍 | `props/README.md` → 「修改碰撞範圍」段 |
-| 加新 NPC（基底） | `chapter-development.md` →（建 NPCConfig.tres） |
-| 加新 zone | `maps/README.md` |
+| 改 prop 碰撞範圍 | `game/src/maps/props/README.md` |
+| 加新 zone | `game/src/maps/README.md` |
 | 寫新章節 | `chapter-development.md` → `chapter_template/README.md` |
 | 寫 authored 對話 beat | `dialogue-architecture.md` 第 6 節 |
-| 寫 NPC 約束 prompt（信任值） | `dialogue-architecture.md` 第 4-5 節 |
-| 加新 NPC 立繪 / 動畫 | `art_source/characters/1-asset-creation.md` |
-| 改 LLM 模型 / 改 host | `llm_engine/config-guide.md` |
+| 寫 NPC 約束 prompt | `dialogue-architecture.md` 第 4–5 節 |
+| 改 LLM 模型 / 換 host | `llm_engine/config-guide.md` |
 | 引入新 Godot addon | `addons.md` 的決策清單 |
-
----
-
-## 📐 文檔層級設計（為什麼這樣切）
-
-```
-                ┌─────────────────────┐
-                │   README.md         │  入口層（必看）
-                │   docs/INDEX.md     │
-                └──────────┬──────────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        ▼                  ▼                  ▼
-┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-│ 速查層        │   │ 教學層        │   │ 架構層        │
-│ (一句話清單)  │   │ (詳細步驟)    │   │ (技術參考)    │
-│               │   │               │   │               │
-│ scene-design- │   │ 2-scene-      │   │ architecture  │
-│ workflow      │   │ design        │   │               │
-│               │   │ chapter-      │   │ dialogue-     │
-│ chapter_*/    │   │ development   │   │ architecture  │
-│ README        │   │ tilemapdual-  │   │               │
-│               │   │ guide         │   │               │
-└──────────────┘   └──────────────┘   └──────────────┘
-        ▲                  ▲                  ▲
-        │                  │                  │
-        └──────────────────┴──────────────────┘
-                           │
-                ┌──────────┴──────────┐
-                │  資源/腳本層         │
-                │  (附在被引用的       │
-                │   程式或目錄旁)      │
-                │                     │
-                │  art_source/        │
-                │  game/src/maps/     │
-                │  llm_engine/         │
-                └─────────────────────┘
-```
+| 命名新資產 | `asset-naming-convention.md` |
 
 ---
 
@@ -137,8 +85,10 @@
 
 新增 / 修改文檔時：
 
-1. **先想分類**：是速查、教學、還是架構參考？放對位置
-2. **不重複**：同一資訊只在一處詳述，其他地方放連結
-3. **更新時順手改 INDEX**：本檔的行數/摘要要保持新鮮
-4. **每個文檔頂端 1 行說目的**：「這份是 X 給 Y 看的」
-5. **快速命中**：寫文檔時想像讀者在 ctrl+F 找特定字串
+1. **先想分類** — 是入口、場景美術、對話章節、Runtime，還是該歸 archive？
+2. **不重複** — 同一資訊只在一處詳述，其他地方放連結
+3. **更新時順手改 INDEX** — 本檔行數、摘要要保持新鮮
+4. **每個文檔頂端 1 行說目的** — 「這份是 X 給 Y 看的」
+5. **完工的實作計畫進 [archive/](archive/)** — 不要污染主清單
+
+AI agent 的 art-pipeline skill 在 `.claude/skills/art-pipeline/SKILL.md`，與本份 INDEX 互補（AI 用 skill，人類用本 INDEX）。

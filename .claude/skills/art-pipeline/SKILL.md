@@ -361,7 +361,7 @@ game/assets/textures/               ← import_to_godot 自動複製目的地
 
 ## 延伸閱讀
 
-- Stage 之間依賴 / 設計理由：`docs/superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md`
+- Stage 之間依賴 / 設計理由：`docs/archive/2026-05-art-pipeline-design-spec.md`
 - Pipeline 整體架構：`pipeline/README.md`
 - 底層 Pixellab API wrapper：`pipeline/pixellab_client.py`（注意：動畫端點預設 `text_guidance_scale=12.0`，比 Pixellab 官方 8 嚴，為了減少頭轉 / 亂手）
 - Spritesheet 寫入 API（3 個 function）：`pipeline/spritesheet.py`（`load_or_init_sheet` / `write_animation_frames` / `save_sheet`）
