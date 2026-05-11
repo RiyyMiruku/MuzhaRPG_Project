@@ -665,9 +665,9 @@ def submit_map_object(
     width: int = 64,
     height: int = 64,
     view: str = "high_top_down",
-    outline: str = "single_color_outline",
-    shading: str = "medium_shading",
-    detail: str = "medium_detail",
+    outline: str | None = "single color outline",
+    shading: str | None = "medium shading",
+    detail: str | None = None,
 ) -> tuple[str, Image.Image]:
     """同步建 map object(建築物),回傳 (object_id, PIL.Image)。
 
@@ -678,10 +678,16 @@ def submit_map_object(
         "description": description,
         "image_size": {"width": width, "height": height},
         "view": _wire_view(view),
-        "outline": outline,
-        "shading": shading,
-        "detail": detail,
     }
+    # Pixellab v2 enums use space-separated strings (e.g. "single color outline").
+    # Send only when caller supplies a value; omit otherwise to avoid 422 on
+    # under-documented `detail` enum.
+    if outline:
+        payload["outline"] = outline
+    if shading:
+        payload["shading"] = shading
+    if detail:
+        payload["detail"] = detail
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     r = requests.post(CREATE_MAP_OBJECT_URL, headers=headers, json=payload, timeout=60)
     if r.status_code not in (200, 202):
