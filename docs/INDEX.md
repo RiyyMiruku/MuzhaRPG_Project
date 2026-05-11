@@ -10,7 +10,7 @@
 |---|---|
 | 想試玩專案 | [README.md](../README.md) — 安裝 / 啟動 / 鍵位 |
 | 場景設計人（不寫程式） | [docs/scene-design-workflow.md](scene-design-workflow.md) — 一頁速查 |
-| 美術 / 生圖人 | [game/assets/textures/environment/1-asset-creation.md](../game/assets/textures/environment/1-asset-creation.md) |
+| 美術 / 生圖人 | [docs/art-production-guide.md](art-production-guide.md) — 一頁手冊:CLI orchestrator + Web UI 使用方式 |
 | 章節作者 | [docs/chapter-development.md](chapter-development.md) |
 | 程式 / 系統設計 | [docs/architecture.md](architecture.md) |
 | 對話系統工程師 | [docs/dialogue-architecture.md](dialogue-architecture.md) |
@@ -60,6 +60,7 @@
 
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
+| [docs/art-production-guide.md](art-production-guide.md) | — | 美術 / 程式 | **美術生產手冊** — CLI orchestrator 指令範例 + Web UI 使用方法 + 中斷續跑 + 命名規範 + FAQ |
 | [art_source/pipeline/orchestrators/](../art_source/pipeline/orchestrators/) | — | 美術 / 程式 | 4 個 CLI orchestrator (prop/autotile/npc_static/npc_moving)，`import_to_godot` 為最後 stage，自動完成 Godot 端匯入 |
 | [art_source/pipeline/README.md](../art_source/pipeline/README.md) | — | 美術 / 程式 | **Pixellab MCP server 工作流程** — 用 Claude 直接生成角色／autotile／物件，自動下載 + 後處理 |
 | `tools/asset_dashboard/` | 程式 / 美術 | 內部 Web UI:瀏覽 art-pipeline 產出 + 編輯 prompt + Remake |
