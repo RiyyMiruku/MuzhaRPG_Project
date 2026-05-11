@@ -310,3 +310,28 @@ def test_create_tileset_missing_lower_upper(client):
         },
     )
     assert r.status_code == 400
+
+
+# ---------------------------------------------------------------------------
+# DELETE /api/asset/{type}/{name} tests
+# ---------------------------------------------------------------------------
+
+def test_delete_asset_removes_from_manifest(client, tmp_path, monkeypatch):
+    # alice is seeded by the client fixture
+    r = client.delete("/api/asset/character/alice")
+    assert r.status_code == 200, r.text
+    assert r.json()["deleted"] == "alice"
+
+    # confirm gone from /api/manifest
+    listing = client.get("/api/manifest").json()
+    assert not any(a["name"] == "alice" for a in listing["assets"])
+
+
+def test_delete_asset_404_for_missing(client):
+    r = client.delete("/api/asset/character/nobody")
+    assert r.status_code == 404
+
+
+def test_delete_asset_invalid_type(client):
+    r = client.delete("/api/asset/widget/alice")
+    assert r.status_code == 400

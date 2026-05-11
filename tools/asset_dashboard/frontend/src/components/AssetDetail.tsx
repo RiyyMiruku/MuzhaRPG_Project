@@ -1,28 +1,53 @@
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Trash2 } from "lucide-react"
 import type { AssetSummary } from "../types"
+import { api } from "../api"
 import { SpritePreview } from "./SpritePreview"
 import { StageSection } from "./StageSection"
 
 interface Props {
   asset: AssetSummary
   onBack: () => void
+  onDeleted?: () => void
 }
 
-export function AssetDetail({ asset, onBack }: Props) {
+export function AssetDetail({ asset, onBack, onDeleted }: Props) {
   const completed = new Set(asset.completed_stages)
   const hasSpritesheet =
     asset.asset_type === "character" && completed.has("compile_spritesheet")
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={onBack}
-        className="mb-4 flex items-center gap-1 rounded bg-stone-800 px-3 py-1.5 text-sm hover:bg-stone-700"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to grid
-      </button>
+      <div className="mb-4 flex items-center justify-between">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex items-center gap-1 rounded bg-stone-800 px-3 py-1.5 text-sm hover:bg-stone-700"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to grid
+        </button>
+        <button
+          type="button"
+          onClick={async () => {
+            if (!window.confirm(
+              `Delete "${asset.name}" from manifest?\n\n` +
+              `This only removes the manifest entry; PNG files on disk are kept. ` +
+              `You can rebuild later by creating a new asset with the same name.`
+            )) return
+            try {
+              await api.deleteAsset(asset.asset_type, asset.name)
+              onDeleted?.()
+              onBack()
+            } catch (e) {
+              window.alert(`Delete failed: ${(e as Error).message}`)
+            }
+          }}
+          className="flex items-center gap-1 rounded bg-red-900/40 px-3 py-1.5 text-sm text-red-200 hover:bg-red-900/60"
+        >
+          <Trash2 className="h-4 w-4" />
+          Delete
+        </button>
+      </div>
 
       <div className="mb-6 rounded-lg border border-stone-800 bg-stone-900 p-6">
         <div className="mb-2 flex items-baseline justify-between gap-4">

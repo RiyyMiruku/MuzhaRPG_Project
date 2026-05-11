@@ -14,18 +14,38 @@ from PIL import Image
 import pixellab_client as plab
 
 
+@patch("pixellab_client.poll_background_job")
 @patch("pixellab_client.requests.post")
-def test_submit_character_4dir_calls_correct_url(mock_post: MagicMock) -> None:
+def test_submit_character_4dir_calls_correct_url(
+    mock_post: MagicMock, mock_poll: MagicMock
+) -> None:
+    """POST URL points at v2 create-character-with-4-directions endpoint."""
     mock_post.return_value = MagicMock(
-        status_code=200, json=lambda: {"character_id": "id-4dir"}
+        status_code=200,
+        json=lambda: {
+            "character_id": "abc-123",
+            "background_job_id": "job-456",
+            "status": "processing",
+        },
     )
-    char_id = plab.submit_character_4dir(
+    blank_rgba = base64.b64encode(b"\x00\x00\x00\x00").decode()
+    mock_poll.return_value = {
+        "images": {
+            "south": {"type": "rgba_bytes", "width": 1, "height": 1, "base64": blank_rgba},
+            "east":  {"type": "rgba_bytes", "width": 1, "height": 1, "base64": blank_rgba},
+            "north": {"type": "rgba_bytes", "width": 1, "height": 1, "base64": blank_rgba},
+            "west":  {"type": "rgba_bytes", "width": 1, "height": 1, "base64": blank_rgba},
+        }
+    }
+
+    char_id, images = plab.submit_character_4dir(
         token="t", description="desc", size=64, view="high_top_down"
     )
-    assert char_id == "id-4dir"
-    args, kwargs = mock_post.call_args
-    assert args[0] == plab.CREATE_CHAR_4DIR_URL
-    assert kwargs["json"]["description"] == "desc"
+    assert char_id == "abc-123"
+    assert len(images) == 4
+    actual_url = mock_post.call_args.args[0] if mock_post.call_args.args else mock_post.call_args.kwargs.get("url")
+    assert "create-character-with-4-directions" in actual_url
+    mock_poll.assert_called_once_with("t", "job-456")
 
 
 @patch("pixellab_client.requests.post")
@@ -41,13 +61,28 @@ def test_submit_character_4dir_no_id_raises(mock_post: MagicMock) -> None:
         plab.submit_character_4dir(token="t", description="d")
 
 
+@patch("pixellab_client.poll_background_job")
 @patch("pixellab_client.requests.post")
-def test_submit_iso_tile_returns_id(mock_post: MagicMock) -> None:
+def test_submit_iso_tile_returns_id(
+    mock_post: MagicMock, mock_poll: MagicMock
+) -> None:
     mock_post.return_value = MagicMock(
-        status_code=200, json=lambda: {"object_id": "iso-1"}
+        status_code=200,
+        json=lambda: {
+            "tile_id": "iso-789",
+            "background_job_id": "job-abc",
+            "status": "processing",
+        },
     )
-    obj_id = plab.submit_iso_tile(token="t", description="lantern", size=32)
-    assert obj_id == "iso-1"
+    blank_rgba = base64.b64encode(b"\x00\x00\x00\x00").decode()
+    mock_poll.return_value = {
+        "image": {"type": "rgba_bytes", "width": 1, "height": 1, "base64": blank_rgba},
+    }
+
+    tile_id, img = plab.submit_iso_tile(token="t", description="lantern", size=32)
+    assert tile_id == "iso-789"
+    assert img is not None
+    mock_poll.assert_called_once_with("t", "job-abc")
 
 
 def _make_b64_png() -> str:

@@ -64,4 +64,10 @@ export const api = {
       body: JSON.stringify(body),
     })
   },
+
+  async deleteAsset(assetType: AssetType, name: string): Promise<void> {
+    await jsonFetch(`/api/asset/${assetType}/${encodeURIComponent(name)}`, {
+      method: "DELETE",
+    })
+  },
 }

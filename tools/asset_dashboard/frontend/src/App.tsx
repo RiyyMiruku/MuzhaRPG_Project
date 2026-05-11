@@ -73,7 +73,11 @@ export default function App() {
         </div>
       )}
       {selectedAsset ? (
-        <AssetDetail asset={selectedAsset} onBack={() => setSelectedKey(null)} />
+        <AssetDetail
+          asset={selectedAsset}
+          onBack={() => setSelectedKey(null)}
+          onDeleted={() => setSelectedKey(null)}
+        />
       ) : (
         <>
           <FilterBar filter={filter} onChange={setFilter} assets={assets} />

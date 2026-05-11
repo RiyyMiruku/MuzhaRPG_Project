@@ -82,6 +82,23 @@ def update_prompt(asset_type: str, name: str, body: PromptUpdate) -> dict:
     return {"status": "ok", "stage": body.stage, "prompt": body.prompt}
 
 
+@app.delete("/api/asset/{asset_type}/{name}")
+def delete_asset(asset_type: str, name: str) -> dict:
+    """Remove an asset from the manifest. Does NOT delete files on disk."""
+    if asset_type not in ("character", "tileset", "object"):
+        raise HTTPException(400, "invalid asset_type")
+    bucket = {"character": "characters", "tileset": "tilesets", "object": "objects"}[asset_type]
+    import json as _json_del
+    if not MANIFEST_PATH.exists():
+        raise HTTPException(404, "manifest missing")
+    data = _json_del.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    if name not in (data.get(bucket) or {}):
+        raise HTTPException(404, f"{asset_type} {name!r} not found")
+    del data[bucket][name]
+    MANIFEST_PATH.write_text(_json_del.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    return {"status": "ok", "deleted": name}
+
+
 from .jobs import JobRegistry, JobStatus  # noqa: E402
 
 _jobs = JobRegistry()
