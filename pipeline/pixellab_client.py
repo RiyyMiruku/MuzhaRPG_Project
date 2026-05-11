@@ -582,6 +582,9 @@ def submit_character_animation(
 # === Top-down Tileset ===
 
 
+VALID_TRANSITION_SIZES: tuple[float, ...] = (0.0, 0.25, 0.5, 1.0)
+
+
 def submit_topdown_tileset(
     token: str,
     lower_description: str,
@@ -597,7 +600,13 @@ def submit_topdown_tileset(
 
     Pixellab v2 端點 async:POST 回 202 + background_job_id + tileset_id。
     本函式 poll + decode 完一次回傳。
+
+    transition_size 必須是 {0.0, 0.25, 0.5, 1.0} 之一(Pixellab enum 限制)。
     """
+    if transition_size not in VALID_TRANSITION_SIZES:
+        raise ValueError(
+            f"transition_size 必須是 {VALID_TRANSITION_SIZES} 其中一個,收到 {transition_size}"
+        )
     payload: dict[str, Any] = {
         "lower_description": lower_description,
         "upper_description": upper_description,
@@ -612,7 +621,7 @@ def submit_topdown_tileset(
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     r = requests.post(CREATE_TOPDOWN_TILESET_URL, headers=headers, json=payload, timeout=60)
     if r.status_code not in (200, 202):
-        raise RuntimeError(f"create-topdown-tileset → HTTP {r.status_code}: {r.text[:500]}")
+        raise RuntimeError(f"create-tileset → HTTP {r.status_code}: {r.text[:500]}")
     data = r.json()
     tileset_id = data.get("tileset_id") or data.get("id")
     job_id = data.get("background_job_id") or data.get("job_id")

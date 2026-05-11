@@ -225,16 +225,17 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
                 />
               </Field>
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Transition size (0-1)">
-                  <input
-                    type="number"
-                    step="0.05"
-                    min={0}
-                    max={1}
+                <Field label="Transition size (Pixellab 限定 enum)">
+                  <select
                     value={transitionSize}
                     onChange={(e) => setTransitionSize(parseFloat(e.target.value))}
                     className="w-full rounded bg-stone-800 px-3 py-2 text-sm"
-                  />
+                  >
+                    <option value={0}>0.0 (無過渡)</option>
+                    <option value={0.25}>0.25 (細邊)</option>
+                    <option value={0.5}>0.5 (中等)</option>
+                    <option value={1}>1.0 (完整 tile)</option>
+                  </select>
                 </Field>
                 <Field label="Transition description (optional)">
                   <input
