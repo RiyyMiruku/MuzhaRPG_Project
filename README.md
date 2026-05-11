@@ -54,7 +54,7 @@ git lfs pull
 
 > **目前專案預設路徑**對應版本 `b8583`，但更新版本通常向下相容。
 
-下載後解壓，將整個資料夾放入 `ai_engine/engines/` 目錄下。
+下載後解壓，將整個資料夾放入 `llm_engine/engines/` 目錄下。
 
 #### 2b. 下載語言模型（GGUF 格式）
 
@@ -62,14 +62,14 @@ git lfs pull
 
 1. 前往 Hugging Face 模型頁面：[Qwen/Qwen3.5-0.8B-GGUF](https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF)](https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF)
 2. 下載 `Qwen3.5-0.8B-Q4_K_M.gguf`
-3. 將模型檔案放入 `ai_engine/models/` 目錄
+3. 將模型檔案放入 `llm_engine/models/` 目錄
 
 #### 2c. 確認目錄結構
 
 完成後應有如下結構（引擎與模型分開管理）：
 
 ```
-ai_engine/
+llm_engine/
 ├── engines/                                  ← 推論引擎執行檔
 │   └── llama-b8583-bin-win-cuda-13.1-x64/
 │       ├── llama-server.exe
@@ -79,12 +79,12 @@ ai_engine/
 └── config.json
 ```
 
-> **重要**：如果你的資料夾名稱與預設不同，請修改 `ai_engine/config.json` 中的 `binaries` 和 `model_path` 路徑使其對應。
-> 詳細參數說明請參考 [config-guide.md](ai_engine/config-guide.md)。
+> **重要**：如果你的資料夾名稱與預設不同，請修改 `llm_engine/config.json` 中的 `binaries` 和 `model_path` 路徑使其對應。
+> 詳細參數說明請參考 [config-guide.md](llm_engine/config-guide.md)。
 
 #### 2d. 調整設定（視需要）
 
-編輯 `ai_engine/config.json`：
+編輯 `llm_engine/config.json`：
 
 ```jsonc
 {
@@ -108,14 +108,14 @@ ai_engine/
 **Windows（PowerShell）：**
 
 ```powershell
-cd ai_engine
+cd llm_engine
 .\start_server.ps1
 ```
 
 **macOS / Linux：**
 
 ```bash
-cd ai_engine
+cd llm_engine
 ./start_server.sh
 ```
 

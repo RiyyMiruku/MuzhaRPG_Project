@@ -16,7 +16,7 @@ var _time_played_sec: float = 0.0
 var _pending_load_position: Vector2 = Vector2.INF  # INF = 無待載入位置
 
 # ── Constants ──────────────────────────────────────────────────────────────
-const CONFIG_PATH: String = "../../ai_engine/config.json"
+const CONFIG_PATH: String = "../../llm_engine/config.json"
 
 # ── Lifecycle ──────────────────────────────────────────────────────────────
 func _ready() -> void:
@@ -38,10 +38,10 @@ func _notification(what: int) -> void:
 
 # ── Config ─────────────────────────────────────────────────────────────────
 func _load_ai_config() -> void:
-	var config_path: String = ProjectSettings.globalize_path("res://") + "../ai_engine/config.json"
+	var config_path: String = ProjectSettings.globalize_path("res://") + "../llm_engine/config.json"
 	var file: FileAccess = FileAccess.open(config_path, FileAccess.READ)
 	if file == null:
-		push_warning("GameManager: ai_engine/config.json not found at: " + config_path)
+		push_warning("GameManager: llm_engine/config.json not found at: " + config_path)
 		return
 	var json: JSON = JSON.new()
 	var err: int = json.parse(file.get_as_text())
@@ -113,21 +113,21 @@ func _get_server_binary_path() -> String:
 	var rel_path: String = _ai_config.get("binaries", {}).get(key, "")
 	if rel_path.is_empty():
 		return ""
-	return _resolve_ai_engine_path(rel_path)
+	return _resolve_llm_engine_path(rel_path)
 
 func _get_model_path() -> String:
 	var rel_path: String = _ai_config.get("model_path", "")
 	if rel_path.is_empty():
 		return ""
-	return _resolve_ai_engine_path(rel_path)
+	return _resolve_llm_engine_path(rel_path)
 
-func _resolve_ai_engine_path(relative: String) -> String:
+func _resolve_llm_engine_path(relative: String) -> String:
 	# Works both in editor and exported builds
 	var base: String
 	if OS.has_feature("editor"):
-		base = ProjectSettings.globalize_path("res://") + "../ai_engine/"
+		base = ProjectSettings.globalize_path("res://") + "../llm_engine/"
 	else:
-		base = OS.get_executable_path().get_base_dir() + "/ai_engine/"
+		base = OS.get_executable_path().get_base_dir() + "/llm_engine/"
 	return (base + relative).simplify_path()
 
 # ── State Machine ──────────────────────────────────────────────────────────

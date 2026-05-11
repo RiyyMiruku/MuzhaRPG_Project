@@ -18,7 +18,7 @@ Godot 4.6 (Frontend)
 
 ```
 MuzhaRPG_Project/
-├── ai_engine/         # llama-server config + models (gitignored)
+├── llm_engine/         # llama-server config + models (gitignored)
 ├── art_source/        # Raw art inputs only (portraits/ + future references/)
 ├── pipeline/          # Art generation pipeline: orchestrators + spritesheet compiler
 ├── scripts/           # test_ping.py (llama.cpp health check)
@@ -141,4 +141,4 @@ ChapterManager (autoload)
 | `127.0.0.1` 不用 `localhost` | Godot HTTP client on Windows 解析 localhost 失敗 |
 | 非 streaming HTTP | Godot 4 HTTPRequest 不支援真 streaming，改用 thinking 動畫 |
 | UIManager stack | 確保只有一個 panel 可見 + auto-pause |
-| `ai_engine/config.json` | 與程式碼解耦，方便 llama.cpp 升級 |
+| `llm_engine/config.json` | 與程式碼解耦，方便 llama.cpp 升級 |

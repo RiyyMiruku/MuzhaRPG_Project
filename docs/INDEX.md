@@ -66,7 +66,7 @@
 | `tools/asset_dashboard/` | — | 程式 / 美術 | 內部 Web UI:瀏覽 art-pipeline 產出 + 編輯 prompt + Remake（主介面） |
 | [docs/art-pipeline-refactor-plan.md](art-pipeline-refactor-plan.md) | — | 程式 | Pipeline 架構決策 ADR（各美術類型方法選擇；歷史記錄，MCP server 已退役） |
 | [superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md](superpowers/specs/2026-05-05-art-pipeline-orchestrators-design.md) | — | 程式 | Art pipeline orchestrators 設計 — CLI orchestrator 4 條(autotile/prop/npc_static/npc_moving),搭 stage/resume/批次模式 |
-| [ai_engine/config-guide.md](../ai_engine/config-guide.md) | 116 | 系統管理員 | llama-server 設定、模型路徑、CUDA/CPU 切換 |
+| [llm_engine/config-guide.md](../llm_engine/config-guide.md) | 116 | 系統管理員 | llama-server 設定、模型路徑、CUDA/CPU 切換 |
 
 ### Addons 與技術決策
 
@@ -90,7 +90,7 @@
 | 寫 authored 對話 beat | `dialogue-architecture.md` 第 6 節 |
 | 寫 NPC 約束 prompt（信任值） | `dialogue-architecture.md` 第 4-5 節 |
 | 加新 NPC 立繪 / 動畫 | `art_source/characters/1-asset-creation.md` |
-| 改 LLM 模型 / 改 host | `ai_engine/config-guide.md` |
+| 改 LLM 模型 / 改 host | `llm_engine/config-guide.md` |
 | 引入新 Godot addon | `addons.md` 的決策清單 |
 
 ---
@@ -127,7 +127,7 @@
                 │                     │
                 │  art_source/        │
                 │  game/src/maps/     │
-                │  ai_engine/         │
+                │  llm_engine/         │
                 └─────────────────────┘
 ```
 

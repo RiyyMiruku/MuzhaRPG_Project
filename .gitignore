@@ -19,18 +19,18 @@ game/logs/
 # 2. AI 引擎與模型檔案 (防止倉庫爆炸)
 # =================================================================
 # 排除推論引擎執行檔與 DLL (llama-server 相關)
-ai_engine/engines/*
-!ai_engine/engines/.gitkeep
+llm_engine/engines/*
+!llm_engine/engines/.gitkeep
 
 # 個人化設定（保留 config.default.json 作為模板；config.json 為使用者本地覆寫值）
-ai_engine/config.json
+llm_engine/config.json
 
 # 排除大型模型檔案 (GGUF, Safetensors 等)
 *.gguf
 *.bin
 *.safetensors
-ai_engine/models/*
-!ai_engine/models/.gitkeep
+llm_engine/models/*
+!llm_engine/models/.gitkeep
 
 # =================================================================
 # 3. Python 測試環境 (用於 LLM 測試腳本)
@@ -45,7 +45,7 @@ ENV/
 
 # Pixellab pipeline:程式碼快取不進版控,但**產出 PNG/JSON 進版控**(團隊共用)
 pipeline/__pycache__/
-# Backblaze 下載的中間 zip 不必保留(原始圖會解壓到 rotations/ animations/)
+# Backblaze 下載的中間 zip 不必保留(原始圖會解壓到 rotations/)
 art_source/**/*.zip
 # 一次性 debug dump(若 _decode_image_entry fallback 寫過)
 art_source/_debug_*.json

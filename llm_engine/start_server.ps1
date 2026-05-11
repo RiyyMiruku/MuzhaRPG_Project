@@ -58,7 +58,7 @@ if (-not (Test-Path $Server)) {
     Write-Host "Setup steps:"
     Write-Host "  1. Go to https://github.com/ggml-org/llama.cpp/releases"
     Write-Host "  2. Download the Windows CUDA or CPU build"
-    Write-Host "  3. Extract into ai_engine/engines/"
+    Write-Host "  3. Extract into llm_engine/engines/"
     Write-Host "  4. Override binaries.windows in config.json (personal override)"
     Read-Host "Press Enter to exit"
     exit 1
@@ -70,7 +70,7 @@ if (-not (Test-Path $Model)) {
     Write-Host "Setup steps:"
     Write-Host "  1. Go to https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF"
     Write-Host "  2. Download Qwen3.5-0.8B-Q4_K_M.gguf"
-    Write-Host "  3. Place it in ai_engine/models/"
+    Write-Host "  3. Place it in llm_engine/models/"
     Read-Host "Press Enter to exit"
     exit 1
 }

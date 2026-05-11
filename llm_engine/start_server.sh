@@ -79,7 +79,7 @@ if [[ ! -f "$SERVER" ]]; then
     echo "Setup steps:"
     echo "  1. Go to https://github.com/ggml-org/llama.cpp/releases"
     echo "  2. Download the build for your platform (macOS: llama-*-bin-macos-arm64.zip)"
-    echo "  3. Extract into ai_engine/engines/"
+    echo "  3. Extract into llm_engine/engines/"
     echo "  4. Override the binaries path in config.json (personal override)"
     echo ""
     echo "Or install via Homebrew:"
@@ -94,7 +94,7 @@ if [[ ! -f "$MODEL" ]]; then
     echo "Setup steps:"
     echo "  1. Go to https://huggingface.co/Qwen/Qwen3.5-0.8B-GGUF"
     echo "  2. Download Qwen3.5-0.8B-Q4_K_M.gguf"
-    echo "  3. Place it in ai_engine/models/"
+    echo "  3. Place it in llm_engine/models/"
     exit 1
 fi
 

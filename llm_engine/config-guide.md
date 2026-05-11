@@ -23,7 +23,7 @@
 ## 目錄結構
 
 ```
-ai_engine/
+llm_engine/
 ├── config.default.json  ← 團隊預設（追蹤，勿放個人硬體設定）
 ├── config.json          ← 個人覆寫（gitignored，只放差異）
 ├── engines/             ← 推論引擎執行檔（llama-server 等）
@@ -54,7 +54,7 @@ ai_engine/
 
 | 參數 | 目前值 | 說明 |
 |------|--------|------|
-| `windows` | `"engines/llama-b8583-bin-win-cuda-13.1-x64/llama-server.exe"` | Windows 執行檔路徑（相對於 `ai_engine/`） |
+| `windows` | `"engines/llama-b8583-bin-win-cuda-13.1-x64/llama-server.exe"` | Windows 執行檔路徑（相對於 `llm_engine/`） |
 | `linux` | `"llama-server"` | Linux 執行檔路徑，若使用系統安裝的 llama-server 可直接填 `"llama-server"` |
 | `macos` | `"llama-server"` | macOS 執行檔路徑，Homebrew 安裝後可填 `"llama-server"`；手動下載則填完整相對路徑如 `"engines/llama-macos-arm64/llama-server"` |
 
@@ -62,7 +62,7 @@ ai_engine/
 
 | 參數 | 目前值 | 說明 |
 |------|--------|------|
-| `model_path` | `"models/Qwen3.5-0.8B-Q4_K_M.gguf"` | 模型檔案路徑（相對於 `ai_engine/`）。切換模型時只需改此路徑，並確認 `chat_template` 與新模型匹配 |
+| `model_path` | `"models/Qwen3.5-0.8B-Q4_K_M.gguf"` | 模型檔案路徑（相對於 `llm_engine/`）。切換模型時只需改此路徑，並確認 `chat_template` 與新模型匹配 |
 
 ## 常見配置範例
 
