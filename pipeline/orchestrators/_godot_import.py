@@ -21,7 +21,8 @@ COLLISION_PRESETS: dict[str, tuple[float, float] | str | None] = {
 
 
 def project_root() -> Path:
-    return Path(__file__).resolve().parents[3]
+    # _godot_import.py → orchestrators/ → pipeline/ → <repo root>
+    return Path(__file__).resolve().parents[2]
 
 
 def godot_uid(seed: str) -> str:
