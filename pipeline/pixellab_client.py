@@ -39,11 +39,11 @@ BACKGROUND_JOBS_URL: str = f"{V2_BASE}/background-jobs"
 CREATE_CHAR_8DIR_URL: str = f"{V2_BASE}/create-character-with-8-directions"
 CREATE_CHAR_4DIR_URL: str = f"{V2_BASE}/create-character-with-4-directions"
 ANIMATE_CHARACTER_URL: str = f"{V2_BASE}/animate-character"
-CREATE_TOPDOWN_TILESET_URL: str = f"{V2_BASE}/create-topdown-tileset"
-CREATE_MAP_OBJECT_URL: str = f"{V2_BASE}/create-map-object"
+CREATE_TOPDOWN_TILESET_URL: str = f"{V2_BASE}/create-tileset"
+CREATE_MAP_OBJECT_URL: str = f"{V2_BASE}/map-objects"
 CREATE_ISO_TILE_URL: str = f"{V2_BASE}/create-isometric-tile"
 CHARACTERS_URL: str = f"{V2_BASE}/characters"
-TILESETS_URL: str = f"{V2_BASE}/topdown-tilesets"
+TILESETS_URL: str = f"{V2_BASE}/tilesets"
 OBJECTS_URL: str = f"{V2_BASE}/objects"
 
 
@@ -667,8 +667,7 @@ def submit_map_object(
     """
     payload: dict[str, Any] = {
         "description": description,
-        "width": width,
-        "height": height,
+        "image_size": {"width": width, "height": height},
         "view": _wire_view(view),
         "outline": outline,
         "shading": shading,
@@ -677,7 +676,7 @@ def submit_map_object(
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     r = requests.post(CREATE_MAP_OBJECT_URL, headers=headers, json=payload, timeout=60)
     if r.status_code not in (200, 202):
-        raise RuntimeError(f"create-map-object → HTTP {r.status_code}: {r.text[:500]}")
+        raise RuntimeError(f"map-objects → HTTP {r.status_code}: {r.text[:500]}")
     data = r.json()
     object_id = data.get("object_id") or data.get("id")
     job_id = data.get("background_job_id") or data.get("job_id")
