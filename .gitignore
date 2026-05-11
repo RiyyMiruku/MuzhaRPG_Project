@@ -43,11 +43,12 @@ venv/
 ENV/
 .env
 
-# Pixellab pipeline 產出（圖檔與 manifest 不進版控）
-pipeline/output/**/*.png
-pipeline/output/**/*.json
-pipeline/output/**/*.zip
+# Pixellab pipeline:程式碼快取不進版控,但**產出 PNG/JSON 進版控**(團隊共用)
 pipeline/__pycache__/
+# Backblaze 下載的中間 zip 不必保留(原始圖會解壓到 rotations/ animations/)
+pipeline/output/**/*.zip
+# 一次性 debug dump(若 _decode_image_entry fallback 寫過)
+pipeline/output/_debug_*.json
 
 # =================================================================
 # 4. 編輯器與作業系統 (環境清潔)
