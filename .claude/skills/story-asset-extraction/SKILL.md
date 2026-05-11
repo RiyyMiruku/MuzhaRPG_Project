@@ -125,6 +125,25 @@ story/chapters/*.md  劇本草稿
 
 沒這類特殊姿態就**完全省略**這兩個欄位，讓 backend 用預設值。
 
+## Output location（重要 — 一律寫進 story/ 對應章節資料夾）
+
+抽完的清單**不要只貼在對話**，要落地成檔案：
+
+```
+story/chapters/<chapter_slug>/
+├── draft.md       ← 來源（你讀的）
+├── assets.json    ← 你寫這個（machine-readable，給 art-pipeline 餵）
+└── assets.md      ← 也寫這個（人類版鏡像，給使用者 review）
+```
+
+`<chapter_slug>` 跟 `game/src/chapters/<slug>/` 對齊（例：`chapter_01_arrival`）。從 `draft.md` 所在的資料夾名直接取即可。
+
+如果使用者沒指定章節，先問清楚：「這份劇本對應到哪個章節 slug？要建新的還是寫進現有的？」**不要自己猜或亂建**。
+
+寫入後再把摘要貼回對話（前 5–10 項即可）讓使用者審，**並提示檔案路徑**，例：
+
+> 已寫入 `story/chapters/chapter_01_arrival/assets.{json,md}`，共 N 項（M 個 NPC、K 個 prop…）。確認後可叫 art-pipeline skill 餵 Dashboard。
+
 ## Output schema（給使用者看的）
 
 用 markdown 表格 + JSON code block 雙呈現（人類看表、AI / 腳本讀 JSON）：

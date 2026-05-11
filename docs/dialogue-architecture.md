@@ -269,4 +269,4 @@ game/src/
 
 - [DialogueUI.gd](../game/src/ui/dialogue/DialogueUI.gd) / [AIClient.gd](../game/src/autoload/AIClient.gd)
 - [chapter-development.md](chapter-development.md) / [addons.md](addons.md)
-- 第一章劇本：[temp/Chapter 1：鐵門後的那個人.txt](../temp/Chapter%201%EF%BC%9A%E9%90%B5%E9%96%80%E5%BE%8C%E7%9A%84%E9%82%A3%E5%80%8B%E4%BA%BA.txt)
+- 第一章劇本：[story/chapters/chapter_01_arrival/draft.md](../story/chapters/chapter_01_arrival/draft.md)

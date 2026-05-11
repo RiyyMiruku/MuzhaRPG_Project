@@ -71,7 +71,35 @@ NPCConfig 基底人設              章節限定 NPC（若有）
 
 ## 3. 檔案結構
 
+章節分為**敘事側**與**程式側**，用相同 slug 對齊：
+
 ```
+story/chapters/<slug>/                 ← 敘事側（草稿、資產清單、設定筆記）
+├── README.md                          ← 章節入口
+├── draft.md                           ← 劇情草稿
+├── assets.json + assets.md            ← 由 story-asset-extraction skill 產出
+└── notes.md                           ← 選填：角色 bio、worldbuilding
+
+game/src/chapters/<slug>/              ← 程式側（Godot 資源、邏輯）
+├── README.md
+├── chapter.tres
+├── events.gd
+├── quests/
+├── beats/                             ← Authored beats（StoryBeat .tres）
+├── npcs/                              ← 章節 NPCProfile .tres
+├── dialogue_overlays/                 ← (legacy 文字片段，仍由 npc_overlays 用)
+└── cutscenes/
+```
+
+整個專案的章節相關目錄：
+
+```
+story/chapters/
+├── README.md                          ← 章節敘事工作區說明
+├── chapter_01_arrival/                ← 範例（已有 draft）
+├── chapter_02_xxx/
+└── ...
+
 game/src/
 ├── core/classes/
 │   └── ChapterConfig.gd               ← Resource 類別定義
@@ -80,23 +108,14 @@ game/src/
 ├── entities/npcs/
 │   └── definitions/                   ← NPC 基底設定（不分章節）
 │       ├── chen_ayi.tres
-│       ├── master_guang.tres
 │       └── ...
 └── chapters/
-    ├── chapter_template/              ← 範本：複製這個建新章節
-    │   ├── README.md
-    │   ├── chapter.tres
-    │   ├── events.gd
-    │   ├── quests/
-    │   ├── beats/                     ← Authored beats（StoryBeat .tres）
-    │   ├── npcs/                      ← 章節 NPCProfile .tres
-    │   ├── dialogue_overlays/         ← (legacy 文字片段，仍由 npc_overlays 用)
-    │   └── cutscenes/
+    ├── chapter_template/              ← 範本：複製建新章節
     ├── chapter_01_arrival/            ← 範例章節（已建立）
-    │   └── ... (同上結構，已填內容)
-    ├── chapter_02_xxx/
-    └── chapter_03_xxx/
+    └── ...
 ```
+
+**工作流方向**：敘事側 → 抽資產清單 → 美術生成 → 程式側實作。詳見 [story/chapters/README.md](../story/chapters/README.md)。
 
 ---
 
