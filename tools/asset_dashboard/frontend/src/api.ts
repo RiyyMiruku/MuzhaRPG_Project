@@ -70,4 +70,12 @@ export const api = {
       method: "DELETE",
     })
   },
+
+  async deleteJob(jobId: string): Promise<void> {
+    await jsonFetch(`/api/jobs/${jobId}`, { method: "DELETE" })
+  },
+
+  async clearFinishedJobs(): Promise<{ removed_count: number }> {
+    return jsonFetch("/api/jobs", { method: "DELETE" })
+  },
 }

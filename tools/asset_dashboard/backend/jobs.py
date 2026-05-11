@@ -120,3 +120,34 @@ class JobRegistry:
                 return
             time.sleep(0.05)
         raise TimeoutError(f"job {job_id} did not finish in {timeout}s")
+
+    def remove(self, job_id: str) -> bool:
+        """Drop a finished job from the registry. Returns False if not found
+        or still running. Refuses to remove RUNNING/PENDING jobs."""
+        with self._lock:
+            info = self._jobs.get(job_id)
+            if info is None:
+                return False
+            if info.status in (JobStatus.PENDING, JobStatus.RUNNING):
+                return False
+            try:
+                info.log_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+            del self._jobs[job_id]
+            return True
+
+    def clear_finished(self) -> int:
+        """Drop all completed + failed jobs. Returns the number removed."""
+        with self._lock:
+            finished_ids = [
+                jid for jid, info in self._jobs.items()
+                if info.status in (JobStatus.COMPLETED, JobStatus.FAILED)
+            ]
+            for jid in finished_ids:
+                try:
+                    self._jobs[jid].log_path.unlink(missing_ok=True)
+                except OSError:
+                    pass
+                del self._jobs[jid]
+            return len(finished_ids)

@@ -272,6 +272,24 @@ def job_detail(job_id: str) -> dict:
     return d
 
 
+@app.delete("/api/jobs/{job_id}")
+def delete_job(job_id: str) -> dict:
+    """Remove a finished (completed/failed) job from the registry."""
+    info = _jobs.get(job_id)
+    if info is None:
+        raise HTTPException(404, "job not found")
+    if not _jobs.remove(job_id):
+        raise HTTPException(409, f"refused: job is {info.status.value} (only finished jobs can be removed)")
+    return {"status": "ok", "removed": job_id}
+
+
+@app.delete("/api/jobs")
+def clear_finished_jobs() -> dict:
+    """Remove ALL completed + failed jobs at once. Running jobs stay."""
+    count = _jobs.clear_finished()
+    return {"status": "ok", "removed_count": count}
+
+
 import urllib.parse
 import json as _json
 import mimetypes
