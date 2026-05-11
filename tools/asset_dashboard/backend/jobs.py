@@ -90,8 +90,13 @@ class JobRegistry:
             "stderr": subprocess.STDOUT,
         }
         if os.name == "nt":
+            # NEW_PROCESS_GROUP: isolate from parent's signal (so --reload SIGINT
+            # doesn't propagate). NO_WINDOW: don't pop up a console window for
+            # the python.exe child — stdout goes to our log file anyway.
+            # DETACHED_PROCESS would also detach the console but Windows then
+            # allocates a fresh console window for the child, which surfaces.
             popen_kwargs["creationflags"] = (
-                subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS  # type: ignore[attr-defined]
+                subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW  # type: ignore[attr-defined]
             )
         else:
             popen_kwargs["start_new_session"] = True
