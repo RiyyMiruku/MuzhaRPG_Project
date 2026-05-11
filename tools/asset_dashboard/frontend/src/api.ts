@@ -1,4 +1,4 @@
-import type { AssetType, JobInfo, ManifestResponse, StageDetail } from "./types"
+import type { AssetType, CreateAssetBody, JobInfo, ManifestResponse, StageDetail } from "./types"
 
 const BASE = ""
 
@@ -55,5 +55,13 @@ export const api = {
     return jsonFetch<StageDetail>(
       `/api/asset/${assetType}/${encodeURIComponent(name)}/stage/${encodeURIComponent(stage)}`
     )
+  },
+
+  create(body: CreateAssetBody): Promise<{ job_id: string; asset_name: string; asset_type: string }> {
+    return jsonFetch("/api/asset/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
   },
 }

@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react"
+import { Plus } from "lucide-react"
 import type { AssetSummary } from "./types"
 import { api } from "./api"
 import { FilterBar, applyFilter, makeInitialFilter } from "./components/FilterBar"
 import { AssetGrid } from "./components/AssetGrid"
 import { AssetDetail } from "./components/AssetDetail"
 import { JobLogPanel } from "./components/JobLogPanel"
+import { CreateAssetModal } from "./components/CreateAssetModal"
 
 export default function App() {
   const [assets, setAssets] = useState<AssetSummary[]>([])
@@ -12,6 +14,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState(makeInitialFilter())
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
+  const [createOpen, setCreateOpen] = useState(false)
 
   useEffect(() => {
     let stopped = false
@@ -46,11 +49,23 @@ export default function App() {
     <div className="min-h-screen p-6">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Asset Dashboard</h1>
-        {!selectedAsset && (
-          <span className="text-sm text-stone-400">
-            {visible.length} of {assets.length} assets
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          {!selectedAsset && (
+            <span className="text-sm text-stone-400">
+              {visible.length} of {assets.length} assets
+            </span>
+          )}
+          {!selectedAsset && (
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="flex items-center gap-1 rounded bg-emerald-700 px-3 py-1.5 text-sm text-emerald-50 hover:bg-emerald-600"
+            >
+              <Plus className="h-4 w-4" />
+              New asset
+            </button>
+          )}
+        </div>
       </header>
       {error && (
         <div className="mb-4 rounded bg-red-900/30 px-3 py-2 text-sm text-red-200">
@@ -73,6 +88,14 @@ export default function App() {
         </>
       )}
       <JobLogPanel />
+      <CreateAssetModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={() => {
+          // Manifest poller (2s) will pick up the new asset entry.
+          // Nothing else to do — JobLogPanel will show the running job.
+        }}
+      />
     </div>
   )
 }
