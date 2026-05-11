@@ -7,7 +7,7 @@ description: Use when the user wants to generate art assets (autotiles, props/bu
 
 This project has 4 CLI orchestrators that wrap Pixellab's v2 API into stage-by-stage art-generation pipelines. They support pause/review/resume so the human can check intermediate output before continuing, and a batch mode for unattended runs.
 
-**You invoke them via the `Bash` tool.** Do NOT call the `mcp__muzharpg-pixellab__*` tools for these flows — those are for one-shot single-asset generation only.
+**You invoke them via the `Bash` tool.**
 
 ## When to use which orchestrator
 
@@ -127,7 +127,7 @@ uv run python art_source/pipeline/orchestrators/prop.py `
 - **`create_building` 不做 PIL iso 投影**。建築立體感不能被 affine 壓扁;接受 `high_top_down` ~30° 視角。
 - **生成是 async 且不可預測**。標稱 ETA 180s 但實測可能 10-30 分鐘。`--review-mode stage` 跑完一個 stage 就 `sys.exit(0)`,不會 hang。
 - **第一次跑必須給 `--description`** (`autotile` 是 `--lower`/`--upper`)。Resume 時可省略 — 從 manifest 讀。
-- **不要直接呼叫底層 `pixellab_client` 函式**或 mcp_server 工具來重複實作 pipeline 邏輯。orchestrator 已封裝好;只需 Bash 調用。
+- **不要直接呼叫底層 `pixellab_client` 函式**來重複實作 pipeline 邏輯。orchestrator 已封裝好;只需 Bash 調用。
 
 ## Output locations
 

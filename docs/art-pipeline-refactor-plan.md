@@ -1,5 +1,7 @@
 # 美術生產 Pipeline 重構計畫
 
+> **Status update (2026-05-12):** MCP server retired in favor of the Web UI dashboard (`tools/asset_dashboard/`) + CLI orchestrators. The "MCP server" sections below describe historical state.
+
 > 日期：2026-05-05　|　分支：`test-isometric-view`
 > 狀態：執行中
 

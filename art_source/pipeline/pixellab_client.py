@@ -8,7 +8,7 @@ Pixellab HTTP 客戶端（純底層）。
   - base64 ↔ PIL Image 轉換
 
 不做：
-  - 業務邏輯（manifest 寫入、檔案命名 — 由 mcp_server 負責）
+  - 業務邏輯（manifest 寫入、檔案命名 — 由 orchestrator 負責）
   - PIL 後處理（chroma_key, iso 投影 — 由 post_process 負責）
 """
 
