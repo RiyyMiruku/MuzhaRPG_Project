@@ -179,13 +179,7 @@
       "game_json_path": "game\\assets\\textures\\characters\\player.json"
     }
   },
-  "tilesets": {
-    "test_autotiles": {
-      "status": "init",
-      "created_at": "2026-05-11T21:13:05",
-      "updated_at": "2026-05-11T21:13:05"
-    }
-  },
+  "tilesets": {},
   "objects": {
     "test_iso": {
       "status": "completed",
@@ -223,6 +217,45 @@
       "imported_at": "2026-05-11T19:59:54",
       "game_png_path": "game\\assets\\textures\\props\\test_iso.png",
       "game_tscn_path": "game\\src\\maps\\props\\test_iso.tscn",
+      "collision": "bottom_16x16"
+    },
+    "test_well": {
+      "status": "completed",
+      "created_at": "2026-05-11T21:44:11",
+      "updated_at": "2026-05-11T21:57:54",
+      "object_id": "6c49898d-720c-4206-8778-070a182871ee",
+      "kind": "building",
+      "description": "stone water well with wooden roof, mossy bricks",
+      "view": "high_top_down",
+      "size": {
+        "width": 96,
+        "height": 96
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-11T21:44:37",
+          "paths": [
+            "art_source\\objects\\test_well\\test_well.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-11T21:44:37",
+          "paths": [
+            "art_source\\objects\\test_well\\test_well.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-11T21:57:54",
+          "paths": [
+            "game\\assets\\textures\\props\\test_well.png",
+            "game\\src\\maps\\props\\test_well.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source\\objects\\test_well\\test_well.png",
+      "imported_at": "2026-05-11T21:57:54",
+      "game_png_path": "game\\assets\\textures\\props\\test_well.png",
+      "game_tscn_path": "game\\src\\maps\\props\\test_well.tscn",
       "collision": "bottom_16x16"
     }
   }

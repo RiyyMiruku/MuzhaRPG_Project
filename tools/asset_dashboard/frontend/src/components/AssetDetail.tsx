@@ -1,7 +1,7 @@
 import { ArrowLeft, Trash2 } from "lucide-react"
 import type { AssetSummary } from "../types"
 import { api } from "../api"
-import { SpritePreview } from "./SpritePreview"
+import { AssetPreview } from "./AssetPreview"
 import { StageSection } from "./StageSection"
 
 interface Props {
@@ -12,8 +12,6 @@ interface Props {
 
 export function AssetDetail({ asset, onBack, onDeleted }: Props) {
   const completed = new Set(asset.completed_stages)
-  const hasSpritesheet =
-    asset.asset_type === "character" && completed.has("compile_spritesheet")
 
   return (
     <div>
@@ -49,6 +47,12 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
         </button>
       </div>
 
+      {/* Big zoomable preview — first thing on the page. Animated for characters
+          with a spritesheet, static for everything else. */}
+      <section className="mb-6">
+        <AssetPreview asset={asset} />
+      </section>
+
       <div className="mb-6 rounded-lg border border-stone-800 bg-stone-900 p-6">
         <div className="mb-2 flex items-baseline justify-between gap-4">
           <h2 className="font-mono text-2xl font-semibold">{asset.name}</h2>
@@ -70,15 +74,6 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
           <p className="text-sm text-stone-400">{asset.description}</p>
         )}
       </div>
-
-      {hasSpritesheet && (
-        <section className="mb-6">
-          <h3 className="mb-3 text-sm font-semibold text-stone-300">
-            Sprite preview
-          </h3>
-          <SpritePreview characterName={asset.name} />
-        </section>
-      )}
 
       <section className="mb-6">
         <h3 className="mb-3 text-sm font-semibold text-stone-300">
