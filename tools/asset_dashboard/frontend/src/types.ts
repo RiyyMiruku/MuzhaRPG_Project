@@ -32,3 +32,15 @@ export interface JobInfo {
   finished_at: number | null
   tail?: string
 }
+
+export interface StageImage {
+  path: string
+  url: string
+}
+
+export interface StageDetail {
+  stage: string
+  completed_at: string | null
+  prompt: string | null
+  images: StageImage[]
+}

@@ -1,4 +1,4 @@
-import type { AssetType, JobInfo, ManifestResponse } from "./types"
+import type { AssetType, JobInfo, ManifestResponse, StageDetail } from "./types"
 
 const BASE = ""
 
@@ -49,5 +49,11 @@ export const api = {
 
   jobDetail(jobId: string): Promise<JobInfo> {
     return jsonFetch(`/api/jobs/${jobId}`)
+  },
+
+  stage(assetType: AssetType, name: string, stage: string): Promise<StageDetail> {
+    return jsonFetch<StageDetail>(
+      `/api/asset/${assetType}/${encodeURIComponent(name)}/stage/${encodeURIComponent(stage)}`
+    )
   },
 }

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { AssetSummary } from "./types"
 import { api } from "./api"
 import { FilterBar, applyFilter, makeInitialFilter } from "./components/FilterBar"
 import { AssetGrid } from "./components/AssetGrid"
+import { AssetDetail } from "./components/AssetDetail"
 import { JobLogPanel } from "./components/JobLogPanel"
 
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState(makeInitialFilter())
+  const [selectedKey, setSelectedKey] = useState<string | null>(null)
 
   useEffect(() => {
     let stopped = false
@@ -35,22 +37,41 @@ export default function App() {
   }, [])
 
   const visible = applyFilter(assets, filter)
+  const selectedAsset = useMemo(
+    () => assets.find((a) => `${a.asset_type}:${a.name}` === selectedKey) ?? null,
+    [assets, selectedKey]
+  )
 
   return (
     <div className="min-h-screen p-6">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Asset Dashboard</h1>
-        <span className="text-sm text-stone-400">
-          {visible.length} of {assets.length} assets
-        </span>
+        {!selectedAsset && (
+          <span className="text-sm text-stone-400">
+            {visible.length} of {assets.length} assets
+          </span>
+        )}
       </header>
       {error && (
         <div className="mb-4 rounded bg-red-900/30 px-3 py-2 text-sm text-red-200">
           {error}
         </div>
       )}
-      <FilterBar filter={filter} onChange={setFilter} assets={assets} />
-      {loading ? <p className="text-stone-400">Loading…</p> : <AssetGrid assets={visible} />}
+      {selectedAsset ? (
+        <AssetDetail asset={selectedAsset} onBack={() => setSelectedKey(null)} />
+      ) : (
+        <>
+          <FilterBar filter={filter} onChange={setFilter} assets={assets} />
+          {loading ? (
+            <p className="text-stone-400">Loading…</p>
+          ) : (
+            <AssetGrid
+              assets={visible}
+              onSelect={(a) => setSelectedKey(`${a.asset_type}:${a.name}`)}
+            />
+          )}
+        </>
+      )}
       <JobLogPanel />
     </div>
   )
