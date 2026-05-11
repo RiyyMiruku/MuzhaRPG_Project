@@ -104,7 +104,7 @@ function StaticPreview({ asset }: { asset: AssetSummary }) {
           )
         }
       />
-      <div className="flex max-h-[60vh] items-center justify-center overflow-auto bg-stone-950 p-4">
+      <div className="flex max-h-[60vh] items-start justify-center overflow-auto bg-stone-950 p-4">
         {broken ? (
           <div className="flex flex-col items-center gap-2 text-stone-600">
             <ImageOff className="h-10 w-10" />
@@ -116,15 +116,15 @@ function StaticPreview({ asset }: { asset: AssetSummary }) {
             alt={asset.name}
             style={{
               imageRendering: "pixelated",
-              width: naturalSize ? naturalSize.w * zoom : "auto",
-              height: naturalSize ? naturalSize.h * zoom : "auto",
+              width: naturalSize ? `${naturalSize.w * zoom}px` : "auto",
+              height: naturalSize ? `${naturalSize.h * zoom}px` : "auto",
             }}
             onError={() => setBroken(true)}
             onLoad={(e) => {
               const img = e.currentTarget
               setNaturalSize({ w: img.naturalWidth, h: img.naturalHeight })
             }}
-            className="border border-stone-800"
+            className="shrink-0 border border-stone-800"
           />
         )}
       </div>
@@ -289,12 +289,18 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
           </>
         }
       />
-      <div className="flex max-h-[60vh] justify-center overflow-auto bg-stone-950 p-4">
+      <div className="flex max-h-[60vh] items-start justify-center overflow-auto bg-stone-950 p-4">
         {atlas && image ? (
           <canvas
             ref={canvasRef}
-            style={{ imageRendering: "pixelated" }}
-            className="border border-stone-800"
+            style={{
+              imageRendering: "pixelated",
+              // Explicit CSS dimensions match the drawing buffer so flex
+              // can't stretch us beyond the intended pixel-art scale.
+              width: `${atlas.frame_size[0] * zoom}px`,
+              height: `${atlas.frame_size[1] * zoom}px`,
+            }}
+            className="shrink-0 border border-stone-800"
           />
         ) : (
           <p className="text-sm text-stone-500">Loading sprite…</p>
