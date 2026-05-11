@@ -206,7 +206,7 @@ A: 改 manifest 的 `tags`,把 `chapter:1` 改成 `chapter:2`。或在 dashboard
 
 ## 相關文檔
 
-- [pipeline/README.md](../pipeline/README.md) — 內部架構、MCP 工具、底層 API
+- [pipeline/README.md](../pipeline/README.md) — 內部架構、orchestrator 細節、底層 API
 - [tools/asset_dashboard/README.md](../tools/asset_dashboard/README.md) — Web UI 詳細端點 + 限制
 - [docs/asset-naming-convention.md](asset-naming-convention.md) — 命名規範細節
 - [docs/scene-design-workflow.md](scene-design-workflow.md) — 拿到資產後怎麼放進場景
