@@ -137,6 +137,83 @@ def job_detail(job_id: str) -> dict:
     return d
 
 
+import urllib.parse
+import json as _json
+import mimetypes
+
+
+_ALLOWED_FILE_ROOTS: list[str] = [
+    "art_source/pipeline/output",
+    "game/assets/textures",
+]
+
+
+def _read_manifest_raw() -> dict:
+    """Direct JSON read of the manifest file. Used by stage_detail to access
+    raw stages structure (load_assets() doesn't expose stage.paths)."""
+    if not MANIFEST_PATH.exists():
+        return {}
+    return _json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+
+
+@app.get("/api/asset/{asset_type}/{name}/stage/{stage}")
+def stage_detail(asset_type: str, name: str, stage: str) -> dict:
+    if asset_type not in ("character", "tileset", "object"):
+        raise HTTPException(400, "invalid asset_type")
+
+    # Find the asset entry in the manifest.
+    data = _read_manifest_raw()
+    bucket = {"character": "characters", "tileset": "tilesets", "object": "objects"}[asset_type]
+    asset = (data.get(bucket) or {}).get(name)
+    if asset is None:
+        raise HTTPException(404, f"{asset_type} {name!r} not found")
+
+    stages = asset.get("stages") or {}
+    stage_info = stages.get(stage) or {}
+    raw_paths: list[str] = list(stage_info.get("paths") or [])
+    images: list[dict] = []
+    for p in raw_paths:
+        norm = p.replace("\\", "/")
+        images.append({
+            "path": norm,
+            "url": f"/api/asset/file?p={urllib.parse.quote(norm, safe='')}",
+        })
+
+    prompt = pipeline_manifest.get_prompt(asset_type, name, stage)
+    return {
+        "stage": stage,
+        "completed_at": stage_info.get("completed_at"),
+        "prompt": prompt,
+        "images": images,
+    }
+
+
+@app.get("/api/asset/file")
+def serve_asset_file(p: str) -> FileResponse:
+    # Resolve to absolute path under REPO_ROOT and verify containment.
+    try:
+        abs_path = (REPO_ROOT / p).resolve()
+    except (OSError, ValueError):
+        raise HTTPException(400, "invalid path")
+    repo_root_abs = REPO_ROOT.resolve()
+    # Check that the resolved path is under one of the allowed roots.
+    allowed = False
+    for root in _ALLOWED_FILE_ROOTS:
+        root_abs = (repo_root_abs / root).resolve()
+        try:
+            abs_path.relative_to(root_abs)
+            allowed = True
+            break
+        except ValueError:
+            continue
+    if not allowed:
+        raise HTTPException(403, "path outside allowed roots")
+    if not abs_path.is_file():
+        raise HTTPException(404, "file not found")
+    mime, _ = mimetypes.guess_type(str(abs_path))
+    return FileResponse(abs_path, media_type=mime or "application/octet-stream")
+
+
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 
 _FRONTEND_DIST = REPO_ROOT / "tools" / "asset_dashboard" / "frontend" / "dist"
