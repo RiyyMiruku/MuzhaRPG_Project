@@ -146,6 +146,7 @@ def run_character_animation(
     frame_count: int,
     *,
     stage_name: str | None = None,
+    only_directions: list[str] | None = None,
 ) -> list[str]:
     """執行 character animation:submit job → poll 每方向 → 存 frame → 寫 manifest。
 
@@ -168,30 +169,50 @@ def run_character_animation(
         from_manifest = manifest.get_prompt(ctx.asset_type, ctx.name, stage_name)
         if from_manifest:
             action_description = from_manifest
+
+    effective_directions = list(directions)
+    if only_directions:
+        wanted = set(only_directions)
+        effective_directions = [d for d in directions if d in wanted]
+        if not effective_directions:
+            raise SystemExit(
+                f"--only-directions {sorted(wanted)} 與此 stage 預設方向 "
+                f"{directions} 沒交集,沒事可做"
+            )
+        print(f"[partial] regenerating only directions: {effective_directions}")
+
     submitted = plab.submit_character_animation(
         token=token,
         character_id=char_id,
         action_description=action_description,
-        directions=directions,
+        directions=effective_directions,
         frame_count=frame_count,
     )
-    saved_paths: list[str] = []
+
+    # New flow: paste frames directly into the per-character spritesheet
+    # (no `frame_NNN.png` sprawl). The sheet + atlas JSON is the source of
+    # truth; `compile_spritesheet` is now a no-op verification step.
+    import spritesheet  # local: keep top-level deps light
+    char_dir = manifest.character_dir(ctx.name)
+    sheet, atlas = spritesheet.load_or_init_sheet(char_dir)
+
     for direction, job_id in zip(submitted["directions"], submitted["background_job_ids"]):
         result = plab.poll_background_job(token, job_id)
-        images = result.get("images") or []
-        anim_dir = manifest.character_dir(ctx.name) / "animations" / action / direction
-        anim_dir.mkdir(parents=True, exist_ok=True)
-        for i, item in enumerate(images):
+        items = result.get("images") or []
+        frames: list = []
+        for i, item in enumerate(items):
             img = plab._decode_image_entry(item)
             if img is None:
                 raise RuntimeError(
                     f"animation frame {direction}/{i} failed to decode "
                     f"(item type={type(item).__name__}, keys={list(item.keys()) if isinstance(item, dict) else 'n/a'})"
                 )
-            img = pp.chroma_key_bg(img)
-            frame_path = anim_dir / f"frame_{i:03d}.png"
-            img.save(frame_path)
-            saved_paths.append(str(frame_path.relative_to(plab.project_root())))
+            frames.append(pp.chroma_key_bg(img))
+        sheet, atlas = spritesheet.write_animation_frames(
+            sheet, atlas, action, direction, frames,
+        )
+
+    sheet_png, sheet_json = spritesheet.save_sheet(char_dir, sheet, atlas)
 
     animations = char.get("animations", {})
     animations.setdefault(action, [])
@@ -199,4 +220,9 @@ def run_character_animation(
         if d not in animations[action]:
             animations[action].append(d)
     manifest.upsert_character(name=ctx.name, fields={"animations": animations})
-    return saved_paths
+
+    root = plab.project_root()
+    return [
+        str(sheet_png.relative_to(root)),
+        str(sheet_json.relative_to(root)),
+    ]

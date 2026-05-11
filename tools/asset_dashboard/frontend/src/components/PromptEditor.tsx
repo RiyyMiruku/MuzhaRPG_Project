@@ -10,18 +10,52 @@ interface Props {
   realized: boolean
 }
 
+// Direction lists per animation stage, in display order. Stages not listed
+// here have no per-direction selector. Values must match Pixellab's wire form.
+const STAGE_DIRECTIONS: Record<string, string[]> = {
+  add_idle_animation: ["south", "east", "north", "west"],
+  add_walk_animation: [
+    "south", "east", "north", "west",
+    "south-east", "north-east", "north-west", "south-west",
+  ],
+}
+
 export function PromptEditor({ asset, stage, initialPrompt, realized }: Props) {
   const [text, setText] = useState(initialPrompt)
   const [unlocked, setUnlocked] = useState(!realized)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const availableDirs = STAGE_DIRECTIONS[stage] ?? []
+  const [selectedDirs, setSelectedDirs] = useState<Set<string>>(
+    () => new Set(availableDirs)
+  )
+
+  const toggleDir = (d: string) => {
+    setSelectedDirs((prev) => {
+      const next = new Set(prev)
+      if (next.has(d)) next.delete(d)
+      else next.add(d)
+      return next
+    })
+  }
+  const allSelected =
+    availableDirs.length > 0 &&
+    availableDirs.every((d) => selectedDirs.has(d))
+  const partial = !allSelected && selectedDirs.size > 0
+
   const onSubmit = async () => {
     setSubmitting(true)
     setError(null)
     try {
       if (realized && unlocked) {
-        await api.remake(asset.asset_type, asset.name, stage, text)
+        // Pass directions only when user has narrowed the set; an empty/full
+        // selection means "regen all" (server treats undefined the same).
+        const dirsToPass =
+          availableDirs.length > 0 && partial
+            ? availableDirs.filter((d) => selectedDirs.has(d))
+            : undefined
+        await api.remake(asset.asset_type, asset.name, stage, text, dirsToPass)
       } else {
         await api.patchPrompt(asset.asset_type, asset.name, stage, text)
       }
@@ -64,6 +98,58 @@ export function PromptEditor({ asset, stage, initialPrompt, realized }: Props) {
         readOnly={!editable}
         onChange={(e) => setText(e.target.value)}
       />
+      {availableDirs.length > 0 && unlocked && (
+        <div className="mt-2 rounded border border-stone-800 bg-stone-900 px-2 py-1.5">
+          <div className="mb-1 flex items-center justify-between text-[10px]">
+            <span className="text-stone-400">
+              Regen directions
+              {partial && (
+                <span className="ml-1 text-amber-400">(partial)</span>
+              )}
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedDirs(new Set(availableDirs))}
+                className="text-stone-500 hover:text-stone-300"
+              >
+                all
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedDirs(new Set())}
+                className="text-stone-500 hover:text-stone-300"
+              >
+                none
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {availableDirs.map((d) => {
+              const active = selectedDirs.has(d)
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => toggleDir(d)}
+                  className={
+                    "rounded border px-1.5 py-0.5 text-[10px] font-mono " +
+                    (active
+                      ? "border-emerald-700 bg-emerald-900/40 text-emerald-100"
+                      : "border-stone-700 bg-stone-950 text-stone-500 hover:border-stone-600")
+                  }
+                >
+                  {d}
+                </button>
+              )
+            })}
+          </div>
+          <p className="mt-1 text-[10px] text-stone-500">
+            勾起來的方向才會重生 Pixellab credit;全選 = 等同舊行為,partial
+            模式 spritesheet 只 patch 對應 row,不會全重組。
+          </p>
+        </div>
+      )}
       <div className="mt-1 flex items-center gap-2">
         {realized && !unlocked && (
           <button
@@ -78,7 +164,13 @@ export function PromptEditor({ asset, stage, initialPrompt, realized }: Props) {
         {editable && (
           <button
             type="button"
-            disabled={submitting || text === initialPrompt}
+            disabled={
+              submitting ||
+              (text === initialPrompt &&
+                (!realized ||
+                  availableDirs.length === 0 ||
+                  allSelected))
+            }
             onClick={onSubmit}
             className="flex items-center gap-1 rounded bg-emerald-700 px-2 py-1 text-xs text-emerald-50 disabled:bg-stone-700 disabled:text-stone-500"
           >

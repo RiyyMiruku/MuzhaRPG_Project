@@ -29,6 +29,27 @@ const PROPORTIONS_OPTIONS: Proportions[] = [
 ]
 const COLLISION_OPTIONS = ["bottom_16x16", "bottom_16x8", "full", "none"]
 
+// Default action_description overrides for character animations. They emphasise
+// a forward-locked head and minimal limb noise to counter v3 mode's tendency
+// to add head-turn and random hand/wrist motion. Users can clear or edit
+// before submitting.
+const DEFAULT_IDLE_PROMPT = [
+  "standing in place, head held perfectly still and facing forward in the same",
+  "direction as the torso, eyes looking straight ahead, no head turning, no",
+  "looking around, no rubbernecking, arms relaxed at the sides with wrists",
+  "hanging naturally and motionless — no random hand or wrist movement, no",
+  "finger fidgeting, gentle breathing only (shoulders rise and fall subtly),",
+  "feet planted, posture consistent across all frames",
+].join(" ")
+
+const DEFAULT_WALK_PROMPT = [
+  "walking forward in the same direction the body is facing, head locked",
+  "forward and aligned with torso, eyes fixed straight ahead in the walking",
+  "direction, no head turning, no looking sideways, no glancing around,",
+  "natural arm swing opposite to leg stride, consistent gait and posture",
+  "across all frames",
+].join(" ")
+
 interface Props {
   open: boolean
   onClose: () => void
@@ -55,6 +76,8 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
   const [idleFrames, setIdleFrames] = useState(4)
   const [walkFrames, setWalkFrames] = useState(8)
   const [noIdle, setNoIdle] = useState(false)
+  const [idleAction, setIdleAction] = useState(DEFAULT_IDLE_PROMPT)
+  const [walkAction, setWalkAction] = useState(DEFAULT_WALK_PROMPT)
 
   // object-specific
   const [size, setSize] = useState(32)
@@ -74,6 +97,7 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
   const resetForm = () => {
     setName(""); setDescription(""); setZone(""); setCategory(""); setChapter("")
     setLower(""); setUpper(""); setTransitionDescription("")
+    setIdleAction(DEFAULT_IDLE_PROMPT); setWalkAction(DEFAULT_WALK_PROMPT)
     setError(null)
   }
 
@@ -91,9 +115,13 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
       base.idle_frame_count = idleFrames
       if (picked.kind === "moving") {
         base.walk_frame_count = walkFrames
+        if (walkAction.trim()) base.walk_action_description = walkAction.trim()
       } else {
         base.directions = directions
         if (noIdle) base.no_idle = true
+      }
+      if (idleAction.trim() && !(picked.kind === "static" && noIdle)) {
+        base.idle_action_description = idleAction.trim()
       }
     } else if (picked.type === "object") {
       base.kind = picked.kind
@@ -335,6 +363,32 @@ export function CreateAssetModal({ open, onClose, onCreated }: Props) {
                   </Field>
                 </>
               )}
+              <div className="col-span-2 space-y-3">
+                <Field label='Idle prompt override (optional; default "idle")'>
+                  <textarea
+                    rows={2}
+                    value={idleAction}
+                    onChange={(e) => setIdleAction(e.target.value)}
+                    placeholder="e.g. standing still, head facing forward, no head turning, gentle breathing"
+                    className="w-full rounded bg-stone-800 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-stone-500"
+                  />
+                </Field>
+                {picked.kind === "moving" && (
+                  <Field label='Walk prompt override (optional; default "walk")'>
+                    <textarea
+                      rows={2}
+                      value={walkAction}
+                      onChange={(e) => setWalkAction(e.target.value)}
+                      placeholder="e.g. walking forward, head locked forward, eyes straight ahead, no head turning"
+                      className="w-full rounded bg-stone-800 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-stone-500"
+                    />
+                  </Field>
+                )}
+                <p className="text-[11px] text-stone-500">
+                  留空就用 Pixellab 預設(容易頭轉);填字後第一次 run 就用此 prompt
+                  當 action_description。事後也可在 stage 卡片的 PromptEditor 改 + Remake。
+                </p>
+              </div>
             </div>
           )}
 

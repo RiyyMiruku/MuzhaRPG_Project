@@ -10,6 +10,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -82,9 +83,62 @@ def update_prompt(asset_type: str, name: str, body: PromptUpdate) -> dict:
     return {"status": "ok", "stage": body.stage, "prompt": body.prompt}
 
 
+def _delete_asset_files(asset_type: str, name: str) -> tuple[list[str], list[str]]:
+    """Remove the on-disk files associated with an asset. Returns
+    (deleted_paths, errors). Best-effort: a missing file is not an error,
+    but a permission/IO failure is."""
+    import shutil
+    deleted: list[str] = []
+    errors: list[str] = []
+
+    # 1. Pipeline output directory under art_source/
+    art_root = {
+        "character": REPO_ROOT / "art_source" / "characters" / name,
+        "tileset":   REPO_ROOT / "art_source" / "tilesets" / name,
+        "object":    REPO_ROOT / "art_source" / "objects" / name,
+    }[asset_type]
+    if art_root.is_dir():
+        try:
+            shutil.rmtree(art_root)
+            deleted.append(str(art_root.relative_to(REPO_ROOT)))
+        except OSError as e:
+            errors.append(f"{art_root}: {e}")
+
+    # 2. Godot-imported files under game/. Include .import sidecars that
+    # Godot's resource importer auto-generates.
+    candidates: list[Path] = []
+    if asset_type == "character":
+        base = REPO_ROOT / "game" / "assets" / "textures" / "characters"
+        for ext in (".png", ".json"):
+            candidates.append(base / f"{name}{ext}")
+            candidates.append(base / f"{name}{ext}.import")
+    elif asset_type == "tileset":
+        base = REPO_ROOT / "game" / "assets" / "textures" / "tilesets"
+        candidates.append(base / f"{name}.png")
+        candidates.append(base / f"{name}.png.import")
+    elif asset_type == "object":
+        tex_base = REPO_ROOT / "game" / "assets" / "textures" / "props"
+        scn_base = REPO_ROOT / "game" / "src" / "maps" / "props"
+        candidates.append(tex_base / f"{name}.png")
+        candidates.append(tex_base / f"{name}.png.import")
+        candidates.append(scn_base / f"{name}.tscn")
+        candidates.append(scn_base / f"{name}.tscn.uid")  # Godot 4.x uid file
+
+    for path in candidates:
+        if path.is_file():
+            try:
+                path.unlink()
+                deleted.append(str(path.relative_to(REPO_ROOT)))
+            except OSError as e:
+                errors.append(f"{path}: {e}")
+
+    return deleted, errors
+
+
 @app.delete("/api/asset/{asset_type}/{name}")
-def delete_asset(asset_type: str, name: str) -> dict:
-    """Remove an asset from the manifest. Does NOT delete files on disk."""
+def delete_asset(asset_type: str, name: str, keep_files: bool = False) -> dict:
+    """Remove an asset from the manifest AND delete its files on disk.
+    Pass ?keep_files=true to preserve files (manifest-only delete)."""
     if asset_type not in ("character", "tileset", "object"):
         raise HTTPException(400, "invalid asset_type")
     bucket = {"character": "characters", "tileset": "tilesets", "object": "objects"}[asset_type]
@@ -96,7 +150,18 @@ def delete_asset(asset_type: str, name: str) -> dict:
         raise HTTPException(404, f"{asset_type} {name!r} not found")
     del data[bucket][name]
     MANIFEST_PATH.write_text(_json_del.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
-    return {"status": "ok", "deleted": name}
+
+    deleted_files: list[str] = []
+    file_errors: list[str] = []
+    if not keep_files:
+        deleted_files, file_errors = _delete_asset_files(asset_type, name)
+
+    return {
+        "status": "ok",
+        "deleted": name,
+        "deleted_files": deleted_files,
+        "file_errors": file_errors,
+    }
 
 
 from .jobs import JobRegistry, JobStatus  # noqa: E402
@@ -114,6 +179,11 @@ _ORCHESTRATOR_PATH: dict[str, str] = {
 class RemakeRequest(BaseModel):
     stage: str
     prompt: str | None = None
+    # Optional partial-direction filter for character animation stages.
+    # When provided, orchestrator receives --only-directions and Pixellab is
+    # asked to regen only those directions; compile_spritesheet patches only
+    # the matching rows. Empty list == None == regen all.
+    directions: list[str] | None = None
 
 
 class CreateAssetRequest(BaseModel):
@@ -131,6 +201,11 @@ class CreateAssetRequest(BaseModel):
     idle_frame_count: int | None = None
     walk_frame_count: int | None = None
     no_idle: bool | None = None           # static only
+    # Optional per-stage prompt overrides for character animations. When set,
+    # we pre-seed the manifest before the orchestrator starts so the first
+    # run uses the custom action_description instead of the default "idle"/"walk".
+    idle_action_description: str | None = None
+    walk_action_description: str | None = None
     # object
     size: int | None = None               # iso_prop
     width: int | None = None              # building
@@ -163,6 +238,10 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
         "--force-restart-stage", body.stage,
         "--resume-from", body.stage,
     ]
+    if asset_type == "character" and body.directions:
+        cleaned = [d.strip() for d in body.directions if d and d.strip()]
+        if cleaned:
+            cmd += ["--only-directions", ",".join(cleaned)]
     # prop.py requires --kind even when resuming; pull it from the manifest entry.
     if asset_type == "object":
         raw = _read_manifest_raw()
@@ -268,7 +347,26 @@ def create_asset(body: CreateAssetRequest) -> dict:
     if body.chapter:
         cli_args += ["--chapter", body.chapter]
 
-    # 5. spawn subprocess
+    # 5. pre-seed manifest with custom animation prompts (character only).
+    # The orchestrator's main() does `if not get_character(name): upsert(...)` so
+    # this entry survives. run_character_animation reads the prompt for the
+    # current stage via manifest.get_prompt — that's how this takes effect.
+    if body.asset_type == "character" and (
+        body.idle_action_description or body.walk_action_description
+    ):
+        pipeline_manifest.upsert_character(name=body.name, fields={"status": "init"})
+        if body.idle_action_description:
+            pipeline_manifest.set_prompt(
+                "character", body.name, "add_idle_animation",
+                body.idle_action_description,
+            )
+        if body.walk_action_description:
+            pipeline_manifest.set_prompt(
+                "character", body.name, "add_walk_animation",
+                body.walk_action_description,
+            )
+
+    # 6. spawn subprocess
     cmd = ["uv", "run", "python", "-u", script] + cli_args
     job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=body.name, stage="create")
     return {"job_id": job_id, "asset_name": body.name, "asset_type": body.asset_type}
@@ -341,13 +439,55 @@ def stage_detail(asset_type: str, name: str, stage: str) -> dict:
     stages = asset.get("stages") or {}
     stage_info = stages.get(stage) or {}
     raw_paths: list[str] = list(stage_info.get("paths") or [])
+
+    # Animation stages now save the whole spritesheet, not per-frame PNGs.
+    # Expand into per-(action, direction) row crops so the dashboard can show
+    # one thumbnail per direction. The crop endpoint slices on demand.
     images: list[dict] = []
-    for p in raw_paths:
-        norm = p.replace("\\", "/")
-        images.append({
-            "path": norm,
-            "url": f"/api/asset/file?p={urllib.parse.quote(norm, safe='')}",
-        })
+    if asset_type == "character" and stage in ("add_idle_animation", "add_walk_animation"):
+        action_filter = "idle" if stage == "add_idle_animation" else "walk"
+        sheet_path = next(
+            (p for p in raw_paths if p.replace("\\", "/").endswith(".png")), None
+        )
+        json_path = next(
+            (p for p in raw_paths if p.replace("\\", "/").endswith(".json")), None
+        )
+        if sheet_path and json_path:
+            atlas_abs = (REPO_ROOT / json_path).resolve()
+            try:
+                atlas = _json.loads(atlas_abs.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                atlas = {}
+            sheet_norm = sheet_path.replace("\\", "/")
+            for key, anim in (atlas.get("animations") or {}).items():
+                if not key.startswith(f"{action_filter}_"):
+                    continue
+                direction = key[len(action_filter) + 1:]
+                row = anim.get("row")
+                if not isinstance(row, int):
+                    continue
+                images.append({
+                    "path": f"{sheet_norm}#{key}",
+                    "url": (
+                        f"/api/asset/sheet-row?p={urllib.parse.quote(sheet_norm, safe='')}"
+                        f"&row={row}"
+                    ),
+                })
+            # Always append the raw sheet+json links at the end for power use.
+            for p in raw_paths:
+                norm = p.replace("\\", "/")
+                images.append({
+                    "path": norm,
+                    "url": f"/api/asset/file?p={urllib.parse.quote(norm, safe='')}",
+                })
+
+    if not images:
+        for p in raw_paths:
+            norm = p.replace("\\", "/")
+            images.append({
+                "path": norm,
+                "url": f"/api/asset/file?p={urllib.parse.quote(norm, safe='')}",
+            })
 
     prompt = pipeline_manifest.get_prompt(asset_type, name, stage)
     return {
@@ -356,6 +496,49 @@ def stage_detail(asset_type: str, name: str, stage: str) -> dict:
         "prompt": prompt,
         "images": images,
     }
+
+
+@app.get("/api/asset/sheet-row")
+def sheet_row_crop(p: str, row: int) -> Response:
+    """Return the Nth row of a character spritesheet as a standalone PNG.
+    Row height comes from the sister `<name>.json`'s frame_size."""
+    try:
+        sheet_abs = (REPO_ROOT / p).resolve()
+    except (OSError, ValueError):
+        raise HTTPException(400, "invalid path")
+    repo_root_abs = REPO_ROOT.resolve()
+    allowed = False
+    for r in _ALLOWED_FILE_ROOTS:
+        try:
+            sheet_abs.relative_to((repo_root_abs / r).resolve())
+            allowed = True
+            break
+        except ValueError:
+            continue
+    if not allowed:
+        raise HTTPException(403, "path outside allowed roots")
+    if not sheet_abs.is_file() or sheet_abs.suffix.lower() != ".png":
+        raise HTTPException(404, "sheet not found")
+    json_path = sheet_abs.with_suffix(".json")
+    fh = 92
+    if json_path.is_file():
+        try:
+            atlas = _json.loads(json_path.read_text(encoding="utf-8"))
+            fh = int((atlas.get("frame_size") or [92, 92])[1])
+        except (OSError, ValueError):
+            pass
+    from PIL import Image
+    import io
+    with Image.open(sheet_abs) as img:
+        w, h = img.size
+        y0 = row * fh
+        y1 = y0 + fh
+        if y0 < 0 or y1 > h:
+            raise HTTPException(416, f"row {row} out of bounds (sheet h={h}, fh={fh})")
+        crop = img.crop((0, y0, w, y1))
+        buf = io.BytesIO()
+        crop.save(buf, "PNG", compress_level=6)
+    return Response(content=buf.getvalue(), media_type="image/png")
 
 
 @app.get("/api/asset/file")

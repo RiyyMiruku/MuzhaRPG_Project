@@ -34,12 +34,16 @@ export const api = {
     assetType: AssetType,
     name: string,
     stage: string,
-    prompt?: string
+    prompt?: string,
+    directions?: string[]
   ): Promise<{ job_id: string; stage: string }> {
+    const body: Record<string, unknown> = { stage }
+    if (prompt !== undefined) body.prompt = prompt
+    if (directions && directions.length > 0) body.directions = directions
     return jsonFetch(`/api/asset/${assetType}/${encodeURIComponent(name)}/remake`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ stage, prompt }),
+      body: JSON.stringify(body),
     })
   },
 
@@ -65,8 +69,11 @@ export const api = {
     })
   },
 
-  async deleteAsset(assetType: AssetType, name: string): Promise<void> {
-    await jsonFetch(`/api/asset/${assetType}/${encodeURIComponent(name)}`, {
+  async deleteAsset(
+    assetType: AssetType,
+    name: string
+  ): Promise<{ deleted: string; deleted_files: string[]; file_errors: string[] }> {
+    return jsonFetch(`/api/asset/${assetType}/${encodeURIComponent(name)}`, {
       method: "DELETE",
     })
   },

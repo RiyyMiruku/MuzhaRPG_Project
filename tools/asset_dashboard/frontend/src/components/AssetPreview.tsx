@@ -39,11 +39,18 @@ interface Props {
  *  shows an animated canvas player. For everything else (and for characters
  *  pre-spritesheet), shows the static thumbnail. Both support a zoom slider. */
 export function AssetPreview({ asset }: Props) {
-  const hasSpritesheet =
+  // Show the animated preview as soon as any animation stage has completed
+  // (the sheet starts existing then, even before compile_spritesheet /
+  // import_to_godot). The sheet is read straight from art_source/ so users
+  // see in-progress work — partial directions display, missing ones are
+  // filtered out by the direction dropdown.
+  const hasAnyAnimation =
     asset.asset_type === "character" &&
-    asset.completed_stages.includes("compile_spritesheet")
+    (asset.completed_stages.includes("add_idle_animation") ||
+      asset.completed_stages.includes("add_walk_animation") ||
+      asset.completed_stages.includes("compile_spritesheet"))
 
-  return hasSpritesheet ? (
+  return hasAnyAnimation ? (
     <AnimatedPreview characterName={asset.name} />
   ) : (
     <StaticPreview asset={asset} />
@@ -152,11 +159,14 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
     setImage(null)
     setError(null)
 
+    // Read straight from art_source/ (pipeline output) so previews reflect
+    // partial pipeline state — works the moment add_idle_animation or
+    // add_walk_animation completes, no need to wait for import_to_godot.
     const png = `/api/asset/file?p=${encodeURIComponent(
-      `game/assets/textures/characters/${characterName}.png`
+      `art_source/characters/${characterName}/spritesheet/${characterName}.png`
     )}`
     const json = `/api/asset/file?p=${encodeURIComponent(
-      `game/assets/textures/characters/${characterName}.json`
+      `art_source/characters/${characterName}/spritesheet/${characterName}.json`
     )}`
 
     fetch(json)

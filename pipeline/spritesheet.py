@@ -1,110 +1,104 @@
-﻿#!/usr/bin/env python3
-"""Compile art-pipeline character output into a single spritesheet + atlas JSON.
+"""Incremental spritesheet writer for art-pipeline characters.
 
-Reads:  pipeline/output/characters/<name>/animations/<action>/<direction>/frame_*.png
-Writes: pipeline/output/characters/<name>/spritesheet/<name>.png
-        pipeline/output/characters/<name>/spritesheet/<name>.json
+The sheet PNG + sister JSON under `art_source/characters/<name>/spritesheet/`
+is the single source of truth for character animations — Pixellab frames are
+pasted directly into the sheet, never saved as per-frame PNGs.
 
-Per-character output (no shared atlas_config). Orchestrator's import_to_godot
-stage copies these into game/assets/textures/characters/.
-
-Usage:
-    uv run python scripts/generate_spritesheet.py --character-dir <path>
+Public API:
+    load_or_init_sheet(char_dir)       — open existing or create placeholder
+    write_animation_frames(...)        — paste a row, growing the sheet as needed
+    save_sheet(char_dir, sheet, atlas) — write PNG + JSON atomically
 """
 from __future__ import annotations
 
-import argparse
 import json
-import sys
 from pathlib import Path
-from typing import Iterable
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
-FRAME_SIZE = (92, 92)
-DIRECTION_ORDER = [
-    "south", "east", "north", "west",
-    "south-east", "north-east", "north-west", "south-west",
-]
-ACTION_ORDER = ["idle", "walk"]
+FRAME_SIZE: tuple[int, int] = (92, 92)
 
 
-def _natural_key(p: Path) -> tuple:
-    import re
-    return tuple(int(s) if s.isdigit() else s for s in re.split(r"(\d+)", p.stem))
-
-
-def _collect_rows(char_dir: Path) -> list[tuple[str, str, list[Path]]]:
-    """Return [(action, direction, sorted_frame_paths), ...] in stable order."""
-    anim_root = char_dir / "animations"
-    rows: list[tuple[str, str, list[Path]]] = []
-    actions = sorted(
-        (d for d in anim_root.iterdir() if d.is_dir()),
-        key=lambda d: (ACTION_ORDER.index(d.name) if d.name in ACTION_ORDER else 99, d.name),
-    ) if anim_root.is_dir() else []
-
-    for action_dir in actions:
-        for direction in DIRECTION_ORDER:
-            dir_path = action_dir / direction
-            if not dir_path.is_dir():
-                continue
-            frames = sorted(dir_path.glob("frame_*.png"), key=_natural_key)
-            if frames:
-                rows.append((action_dir.name, direction, frames))
-    return rows
-
-
-def compile_character(char_dir: Path) -> tuple[Path, Path]:
-    rows = _collect_rows(char_dir)
-    if not rows:
-        raise SystemExit(f"no animations found under {char_dir}/animations/")
-
-    max_frames = max(len(r[2]) for r in rows)
-    width = max_frames * FRAME_SIZE[0]
-    height = len(rows) * FRAME_SIZE[1]
-
-    sheet = Image.new("RGBA", (width, height), (0, 0, 0, 0))
-    for row_idx, (_action, _direction, frames) in enumerate(rows):
-        for col_idx, frame_path in enumerate(frames):
-            with Image.open(frame_path) as f:
-                sheet.paste(f.convert("RGBA"), (col_idx * FRAME_SIZE[0], row_idx * FRAME_SIZE[1]))
-
-    out_dir = char_dir / "spritesheet"
-    out_dir.mkdir(parents=True, exist_ok=True)
+def _sheet_paths(char_dir: Path) -> tuple[Path, Path]:
     name = char_dir.name
-    png_path = out_dir / f"{name}.png"
-    json_path = out_dir / f"{name}.json"
+    out_dir = char_dir / "spritesheet"
+    return out_dir / f"{name}.png", out_dir / f"{name}.json"
 
-    sheet.save(png_path, "PNG", compress_level=6)
 
+def load_or_init_sheet(char_dir: Path) -> tuple[Image.Image, dict]:
+    """Open existing spritesheet + atlas, or return a tiny empty pair to
+    grow on first write. Rows are assigned lazily in write_animation_frames."""
+    png_path, json_path = _sheet_paths(char_dir)
+    if png_path.exists() and json_path.exists():
+        atlas = json.loads(json_path.read_text(encoding="utf-8"))
+        sheet = Image.open(png_path).convert("RGBA")
+        return sheet, atlas
     atlas = {
-        "character_name": name,
+        "character_name": char_dir.name,
         "frame_size": list(FRAME_SIZE),
-        "animations": {
-            f"{action}_{direction}": {
-                "row": row_idx,
-                "start": 0,
-                "end": len(frames),
-                "fps": 6.0,
-                "loop": True,
-            }
-            for row_idx, (action, direction, frames) in enumerate(rows)
-        },
+        "animations": {},
     }
+    return Image.new("RGBA", FRAME_SIZE, (0, 0, 0, 0)), atlas
+
+
+def write_animation_frames(
+    sheet: Image.Image,
+    atlas: dict,
+    action: str,
+    direction: str,
+    frames: list[Image.Image],
+    *,
+    fps: float = 6.0,
+    loop: bool = True,
+) -> tuple[Image.Image, dict]:
+    """Paste `frames` into the sheet at the row for (action, direction),
+    growing the sheet if needed. Returns the (possibly new) sheet + atlas.
+
+    Row index is taken from atlas['animations'][f'{action}_{direction}'].row
+    when present; otherwise a fresh row is appended at the end. Column count
+    matches len(frames); sheet width grows to fit if the new row is longer
+    than the existing max.
+    """
+    if not frames:
+        raise ValueError(f"no frames provided for {action}/{direction}")
+    fw, fh = atlas.get("frame_size") or FRAME_SIZE
+    animations = atlas.setdefault("animations", {})
+    key = f"{action}_{direction}"
+    entry = animations.get(key)
+    row = entry["row"] if entry and isinstance(entry.get("row"), int) else len(animations)
+
+    need_w = max(sheet.size[0], len(frames) * fw)
+    need_h = max(sheet.size[1], (row + 1) * fh)
+    if (need_w, need_h) != sheet.size:
+        grown = Image.new("RGBA", (need_w, need_h), (0, 0, 0, 0))
+        grown.paste(sheet, (0, 0))
+        sheet = grown
+
+    # Clear the row band so a shorter regen wipes trailing stale frames.
+    ImageDraw.Draw(sheet).rectangle(
+        [(0, row * fh), (sheet.size[0], (row + 1) * fh)],
+        fill=(0, 0, 0, 0),
+    )
+    for col_idx, frame in enumerate(frames):
+        f = frame if frame.mode == "RGBA" else frame.convert("RGBA")
+        if f.size != (fw, fh):
+            f = f.resize((fw, fh), Image.Resampling.NEAREST)
+        sheet.paste(f, (col_idx * fw, row * fh), f)
+
+    animations[key] = {
+        "row": row,
+        "start": 0,
+        "end": len(frames),
+        "fps": fps,
+        "loop": loop,
+    }
+    return sheet, atlas
+
+
+def save_sheet(char_dir: Path, sheet: Image.Image, atlas: dict) -> tuple[Path, Path]:
+    """Write sheet PNG + atlas JSON."""
+    png_path, json_path = _sheet_paths(char_dir)
+    png_path.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(png_path, "PNG", compress_level=6)
     json_path.write_text(json.dumps(atlas, indent=2, ensure_ascii=False), encoding="utf-8")
-
-    print(f"[ok] {name}: {len(rows)} rows × {max_frames} cols → {png_path.name}")
     return png_path, json_path
-
-
-def main() -> int:
-    p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    p.add_argument("--character-dir", type=Path, required=True,
-                   help="path to pipeline/output/characters/<name>/")
-    args = p.parse_args()
-    compile_character(args.character_dir.resolve())
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

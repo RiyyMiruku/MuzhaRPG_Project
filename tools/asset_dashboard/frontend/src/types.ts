@@ -72,6 +72,8 @@ export interface CreateAssetBody {
   idle_frame_count?: number
   walk_frame_count?: number
   no_idle?: boolean
+  idle_action_description?: string
+  walk_action_description?: string
 
   // object
   size?: number

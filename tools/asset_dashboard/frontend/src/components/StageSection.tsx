@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Check, Circle, ImageOff, RotateCcw } from "lucide-react"
+import { Check, Circle, ImageOff, Play, RotateCcw } from "lucide-react"
 import type { AssetSummary, StageDetail } from "../types"
 import { api } from "../api"
 import { PromptEditor } from "./PromptEditor"
@@ -107,21 +107,8 @@ function NoPromptRemake({ asset, stage, realized }: NoPromptProps) {
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
-  if (!realized) {
-    return (
-      <p className="text-xs text-stone-500">
-        本階段是本地處理(不送 Pixellab),完成上一階段後會自動跑。
-      </p>
-    )
-  }
-
-  const onClick = async () => {
-    if (
-      !window.confirm(
-        `Re-run stage "${stage}"? 本地處理,不會花 Pixellab credit。下游 stage 不會自動失效,需要分別 re-run。`
-      )
-    )
-      return
+  const runStage = async (confirmMsg: string) => {
+    if (!window.confirm(confirmMsg)) return
     setBusy(true)
     setErr(null)
     try {
@@ -133,11 +120,42 @@ function NoPromptRemake({ asset, stage, realized }: NoPromptProps) {
     }
   }
 
+  if (!realized) {
+    return (
+      <div className="space-y-2">
+        <p className="text-xs text-stone-500">
+          本階段是本地處理(不送 Pixellab)。通常前一階段完成後會自動跑;
+          若卡住,可手動觸發(會 resume-from 此 stage,接著一路跑到 pipeline 結束)。
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() =>
+              runStage(
+                `Run stage "${stage}" 並繼續跑後續 stage? 本地處理,不會花 Pixellab credit。`
+              )
+            }
+            disabled={busy}
+            className="flex items-center gap-1 rounded bg-emerald-900/60 px-2 py-1 text-xs hover:bg-emerald-800 disabled:bg-stone-700 disabled:text-stone-500"
+          >
+            <Play className="h-3 w-3" />
+            {busy ? "Running…" : "Run this stage"}
+          </button>
+          {err && <span className="text-xs text-red-400">{err}</span>}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-center gap-2">
       <button
         type="button"
-        onClick={onClick}
+        onClick={() =>
+          runStage(
+            `Re-run stage "${stage}"? 本地處理,不會花 Pixellab credit。下游 stage 不會自動失效,需要分別 re-run。`
+          )
+        }
         disabled={busy}
         className="flex items-center gap-1 rounded bg-stone-800 px-2 py-1 text-xs hover:bg-stone-700 disabled:bg-stone-700 disabled:text-stone-500"
       >
@@ -154,8 +172,14 @@ interface StripProps {
 }
 
 function StageImageStrip({ images }: StripProps) {
+  // If any image is a row crop, stack vertically (wide strips don't tile well
+  // side-by-side). Otherwise keep the original wrap-grid for square thumbs.
+  const hasRowCrop = images.some((i) => i.url.includes("/api/asset/sheet-row"))
+  const layoutCls = hasRowCrop
+    ? "mb-3 flex flex-col gap-1.5 rounded bg-stone-950 p-2"
+    : "mb-3 flex flex-wrap gap-2 rounded bg-stone-950 p-2"
   return (
-    <div className="mb-3 flex flex-wrap gap-2 rounded bg-stone-950 p-2">
+    <div className={layoutCls}>
       {images.map((img) => (
         <StageImageThumb key={img.path} url={img.url} path={img.path} />
       ))}
@@ -170,31 +194,49 @@ interface ThumbProps {
 
 function StageImageThumb({ url, path }: ThumbProps) {
   const [broken, setBroken] = useState(false)
-  const filename = path.split("/").pop() ?? path
+  // Per-direction row crops are returned as wide strips (N frames × 92px tall).
+  // Render them in a wide container so frames stay legible; whole-sheet links
+  // and rotation PNGs keep the square 80×80 thumb.
+  const isRowCrop = url.includes("/api/asset/sheet-row")
+  // Display label: for "sheet.png#walk_east" surface "walk_east"; otherwise
+  // use the filename.
+  const fragment = path.includes("#") ? path.split("#").pop() : null
+  const label = fragment ?? path.split("/").pop() ?? path
+
+  const containerCls = isRowCrop
+    ? "group block overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
+    : "group block w-20 overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
+  const innerCls = isRowCrop
+    ? "flex h-12 items-center justify-start bg-stone-950"
+    : "flex h-20 w-20 items-center justify-center bg-stone-950"
 
   return (
     <a
       href={url}
       target="_blank"
       rel="noreferrer"
-      className="group block w-20 overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
+      className={containerCls}
       title={path}
     >
-      <div className="flex h-20 w-20 items-center justify-center bg-stone-950">
+      <div className={innerCls}>
         {broken ? (
           <ImageOff className="h-6 w-6 text-stone-700" />
         ) : (
           <img
             src={url}
-            alt={filename}
-            className="max-h-full max-w-full object-contain"
+            alt={label}
+            className={
+              isRowCrop
+                ? "h-full w-auto object-contain"
+                : "max-h-full max-w-full object-contain"
+            }
             onError={() => setBroken(true)}
             style={{ imageRendering: "pixelated" }}
           />
         )}
       </div>
       <div className="truncate px-1 py-0.5 text-[9px] text-stone-500 group-hover:text-stone-300">
-        {filename}
+        {label}
       </div>
     </a>
   )

@@ -585,13 +585,23 @@ def submit_character_animation(
     directions: list[str] | None = None,
     frame_count: int = 8,
     mode: str = "v3",
+    text_guidance_scale: float = 12.0,
 ) -> dict[str, Any]:
-    """送出 animate-character；回傳 {job_ids, directions}。"""
+    """送出 animate-character；回傳 {job_ids, directions}。
+
+    text_guidance_scale (1-20, Pixellab 預設 8) 控制「對 action_description 的
+    服從度」: 越高越死板貼字面、不亂發揮; 越低越自由創作。idle/walk 容易出現
+    頭轉/亂甩手等「過度創意」, 所以我們預設拉到 12 比 Pixellab 官方預設嚴。
+
+    注意: Pixellab docs 標註此參數「template mode only」, v3 mode 是否生效未
+    保證, 但 schema 接受、送了不會出錯, 留著作為可調整旋鈕。
+    """
     payload: dict[str, Any] = {
         "character_id": character_id,
         "action_description": action_description,
         "mode": mode,
         "frame_count": frame_count,
+        "text_guidance_scale": text_guidance_scale,
     }
     if directions:
         payload["directions"] = directions
@@ -654,13 +664,64 @@ def submit_topdown_tileset(
     job_id = data.get("background_job_id") or data.get("job_id")
     if not tileset_id or not job_id:
         raise RuntimeError(f"POST 回應缺 tileset_id 或 job_id: {data}")
-    result = poll_background_job(token, job_id)
-    img = _extract_single_image(result)
-    if img is None:
-        raise RuntimeError(
-            f"create-topdown-tileset job 完成但無 image 可解 (top keys: {list(result.keys())})"
-        )
+    # Wait for streaming job to finish; its `image` field is just a per-frame
+    # preview, not the final atlas. Fetch the structured tileset record (16
+    # Wang tiles, each its own PNG) and assemble the 4×4 atlas ourselves.
+    poll_background_job(token, job_id)
+    meta = get_topdown_tileset(token, tileset_id)
+    img = _assemble_wang_atlas(meta, tile_width, tile_height)
     return tileset_id, img
+
+
+# TileMapDual `Standard` preset layout — Wang ID (bit 1=TL, 2=TR, 4=BL, 8=BR)
+# at (col, row) in the 4×4 atlas. Source: docs/tilemapdual-guide.md
+_WANG_ID_TO_POS: dict[int, tuple[int, int]] = {
+    # row 0
+     4: (0, 0), 10: (1, 0), 13: (2, 0), 12: (3, 0),
+    # row 1
+     9: (0, 1), 14: (1, 1), 15: (2, 1),  8: (3, 1),
+    # row 2
+     2: (0, 2),  3: (1, 2), 11: (2, 2),  5: (3, 2),
+    # row 3
+     0: (0, 3),  7: (1, 3),  6: (2, 3),  1: (3, 3),
+}
+
+
+def _assemble_wang_atlas(
+    meta: dict[str, Any], tile_w: int, tile_h: int
+) -> Image.Image:
+    """Pack the 16 Wang tiles in a `get_topdown_tileset` response into a 4×4
+    atlas using the TileMapDual Standard preset layout."""
+    tileset = meta.get("tileset") or {}
+    tiles = tileset.get("tiles") or []
+    if len(tiles) != 16:
+        raise RuntimeError(
+            f"expected 16 Wang tiles from tileset endpoint, got {len(tiles)}"
+        )
+    atlas = Image.new("RGBA", (tile_w * 4, tile_h * 4), (0, 0, 0, 0))
+    seen: set[int] = set()
+    for t in tiles:
+        try:
+            wid = int(t.get("id"))
+        except (TypeError, ValueError):
+            raise RuntimeError(f"tile missing numeric id: {t.get('name')!r}")
+        pos = _WANG_ID_TO_POS.get(wid)
+        if pos is None:
+            raise RuntimeError(f"Wang id {wid} not in Standard preset layout")
+        decoded = _decode_image_entry(t.get("image"))
+        if decoded is None:
+            raise RuntimeError(f"failed to decode image for Wang tile id={wid}")
+        if decoded.mode != "RGBA":
+            decoded = decoded.convert("RGBA")
+        if decoded.size != (tile_w, tile_h):
+            decoded = decoded.resize((tile_w, tile_h), Image.Resampling.NEAREST)
+        col, row = pos
+        atlas.paste(decoded, (col * tile_w, row * tile_h), decoded)
+        seen.add(wid)
+    missing = set(_WANG_ID_TO_POS) - seen
+    if missing:
+        raise RuntimeError(f"tileset response missing Wang IDs: {sorted(missing)}")
+    return atlas
 
 
 def get_topdown_tileset(token: str, tileset_id: str) -> dict[str, Any]:

@@ -3,7 +3,7 @@
 Stages:
   1. generate_4dir_base   — create-character(4-dir 或 8-dir,看 --directions)
   2. add_idle_animation   — animate-character 4 向 idle(可 --no-idle 關)
-  3. compile_spritesheet  — pipeline/spritesheet.py compile_character()
+  3. compile_spritesheet  — verify sheet PNG+JSON written by add_idle_animation
 
 CLI:
   uv run python pipeline/orchestrators/npc_static.py \\
@@ -55,7 +55,19 @@ def parse_args() -> argparse.Namespace:
                    help="自由形 category tag (e.g. 'vendor', 'student')")
     p.add_argument("--chapter", default=None,
                    help="所屬章節 tag (e.g. '1', '2', 'prologue')")
+    p.add_argument("--only-directions", default=None,
+                   help="comma-separated direction list — restricts animation "
+                        "regen to these directions; compile_spritesheet patches "
+                        "only those rows.")
     return p.parse_args()
+
+
+def _parse_only_directions(args: argparse.Namespace) -> list[str] | None:
+    raw = getattr(args, "only_directions", None)
+    if not raw:
+        return None
+    parts = [p.strip() for p in raw.split(",") if p.strip()]
+    return parts or None
 
 
 @stage("generate_4dir_base")
@@ -120,16 +132,26 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
     return run_character_animation(
         ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
         stage_name="add_idle_animation",
+        only_directions=_parse_only_directions(args),
     )
 
 
 @stage("compile_spritesheet", is_last=False)
 def compile_spritesheet(ctx: StageContext) -> list[str]:
+    """Verify the sheet exists. add_idle_animation writes frames straight into
+    the sheet, so this stage is a no-op checkpoint between animation gen and
+    Godot import."""
     char_dir = manifest.character_dir(ctx.name)
-    # Local import — keeps top-level import surface light.
     import spritesheet
-    spritesheet.compile_character(char_dir)
-    return [str(char_dir.relative_to(plab.project_root()))]
+    png_path, json_path = spritesheet._sheet_paths(char_dir)
+    if not (png_path.exists() and json_path.exists()):
+        raise SystemExit(
+            f"spritesheet missing at {png_path} — did add_idle_animation run? "
+            f"(or --no-idle was passed and there's nothing to compile)"
+        )
+    print(f"[ok] sheet ready at {png_path}")
+    root = plab.project_root()
+    return [str(png_path.relative_to(root)), str(json_path.relative_to(root))]
 
 
 @stage("import_to_godot", is_last=True)

@@ -10,7 +10,7 @@ from typing import Iterable, Literal
 AssetType = Literal["character", "tileset", "object"]
 
 STAGE_ORDER: dict[AssetType, list[str]] = {
-    "character": [
+    "character": [  # moving NPC / player (preset="player")
         "generate_8dir_base",
         "add_idle_animation",
         "add_walk_animation",
@@ -29,6 +29,22 @@ STAGE_ORDER: dict[AssetType, list[str]] = {
         "import_to_godot",
     ],
 }
+
+# Static NPC variant (preset="npc"): no walk stage, and the rotation stage
+# is named differently in npc_static.py (it generates 4 OR 8 directions but
+# the stage key is always generate_4dir_base).
+CHARACTER_STAGES_STATIC: list[str] = [
+    "generate_4dir_base",
+    "add_idle_animation",
+    "compile_spritesheet",
+    "import_to_godot",
+]
+
+
+def _stages_for(asset_type: AssetType, entry: dict) -> list[str]:
+    if asset_type == "character" and entry.get("preset") == "npc":
+        return CHARACTER_STAGES_STATIC
+    return STAGE_ORDER[asset_type]
 
 
 @dataclass
@@ -78,7 +94,7 @@ def load_assets(manifest_path: Path) -> list[AssetSummary]:
             tags = list(entry.get("tags") or [])
             stages = entry.get("stages") or {}
             completed: list[str] = list(stages.keys())
-            all_stages = STAGE_ORDER[asset_type]
+            all_stages = _stages_for(asset_type, entry)
             png_path = entry.get("game_png_path") or entry.get("local_path")
             out.append(AssetSummary(
                 name=name,

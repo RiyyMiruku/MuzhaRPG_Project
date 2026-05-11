@@ -28,12 +28,20 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
           type="button"
           onClick={async () => {
             if (!window.confirm(
-              `Delete "${asset.name}" from manifest?\n\n` +
-              `This only removes the manifest entry; PNG files on disk are kept. ` +
-              `You can rebuild later by creating a new asset with the same name.`
+              `Delete "${asset.name}"?\n\n` +
+              `This removes the manifest entry AND deletes local files:\n` +
+              `  • art_source/<bucket>/${asset.name}/ (rotations, spritesheet, etc.)\n` +
+              `  • game/assets/textures/... imported copies (PNG/JSON/tscn + .import sidecars)\n\n` +
+              `This cannot be undone. Continue?`
             )) return
             try {
-              await api.deleteAsset(asset.asset_type, asset.name)
+              const result = await api.deleteAsset(asset.asset_type, asset.name)
+              if (result.file_errors && result.file_errors.length > 0) {
+                window.alert(
+                  `Deleted "${asset.name}" with some file errors:\n\n` +
+                  result.file_errors.join("\n")
+                )
+              }
               onDeleted?.()
               onBack()
             } catch (e) {

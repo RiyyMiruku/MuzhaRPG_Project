@@ -4,7 +4,7 @@ Stages:
   1. generate_8dir_base   — create-character-with-8-directions
   2. add_idle_animation   — animate-character 4 向 idle
   3. add_walk_animation   — animate-character 8 向 walk
-  4. compile_spritesheet  — pipeline/spritesheet.py compile_character()
+  4. compile_spritesheet  — verify sheet PNG+JSON written by add_*_animation
 
 CLI:
   uv run python pipeline/orchestrators/npc_moving.py \
@@ -62,7 +62,19 @@ def parse_args() -> argparse.Namespace:
                    help="自由形 category tag (e.g. 'vendor', 'player')")
     p.add_argument("--chapter", default=None,
                    help="所屬章節 tag (e.g. '1', '2', 'prologue')")
+    p.add_argument("--only-directions", default=None,
+                   help="comma-separated direction list (e.g. 'east,north') — "
+                        "restricts animation regen to these directions only. "
+                        "compile_spritesheet 會做 partial row patch。")
     return p.parse_args()
+
+
+def _parse_only_directions(args: argparse.Namespace) -> list[str] | None:
+    raw = getattr(args, "only_directions", None)
+    if not raw:
+        return None
+    parts = [p.strip() for p in raw.split(",") if p.strip()]
+    return parts or None
 
 
 @stage("generate_8dir_base")
@@ -118,6 +130,7 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
     return run_character_animation(
         ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
         stage_name="add_idle_animation",
+        only_directions=_parse_only_directions(args),
     )
 
 
@@ -128,16 +141,26 @@ def add_walk_animation(ctx: StageContext) -> list[str]:
     return run_character_animation(
         ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count,
         stage_name="add_walk_animation",
+        only_directions=_parse_only_directions(args),
     )
 
 
 @stage("compile_spritesheet", is_last=False)
 def compile_spritesheet(ctx: StageContext) -> list[str]:
+    """Verify the sheet exists. add_*_animation stages write frames straight
+    into the sheet, so this stage is a no-op pass-through and exists only as
+    a checkpoint between animation generation and Godot import."""
     char_dir = manifest.character_dir(ctx.name)
-    # Local import — keeps top-level import surface light.
-    import spritesheet
-    spritesheet.compile_character(char_dir)
-    return [str(char_dir.relative_to(plab.project_root()))]
+    import spritesheet  # local: keep top-level import surface light
+    png_path, json_path = spritesheet._sheet_paths(char_dir)
+    if not (png_path.exists() and json_path.exists()):
+        raise SystemExit(
+            f"spritesheet missing at {png_path} — did add_idle_animation / "
+            f"add_walk_animation run successfully?"
+        )
+    print(f"[ok] sheet ready at {png_path}")
+    root = plab.project_root()
+    return [str(png_path.relative_to(root)), str(json_path.relative_to(root))]
 
 
 @stage("import_to_godot", is_last=True)
