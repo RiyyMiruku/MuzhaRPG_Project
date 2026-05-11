@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "characters": {
+    "player": {
+      "status": "base_ready",
+      "created_at": "2026-05-05T18:23:35",
+      "updated_at": "2026-05-05T18:34:11",
+      "tags": [
+        "zone:shared",
+        "category:player"
+      ],
+      "character_id": "b0b77592-e6e9-4e32-af04-effa4c462d5d",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "young taiwanese male protagonist in his early 20s, short black hair, casual modern clothes (white t-shirt, dark jeans), small backpack, friendly and curious expression, slim athletic build",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source\\characters\\player",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-05T18:25:33",
+          "paths": [
+            "art_source\\characters\\player\\rotations\\east.png",
+            "art_source\\characters\\player\\rotations\\west.png",
+            "art_source\\characters\\player\\rotations\\north.png",
+            "art_source\\characters\\player\\rotations\\south.png",
+            "art_source\\characters\\player\\rotations\\north_east.png",
+            "art_source\\characters\\player\\rotations\\north_west.png",
+            "art_source\\characters\\player\\rotations\\south_east.png",
+            "art_source\\characters\\player\\rotations\\south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-05T18:31:21",
+          "paths": [
+            "art_source\\characters\\player\\animations\\idle\\south\\frame_000.png",
+            "art_source\\characters\\player\\animations\\idle\\south\\frame_001.png",
+            "art_source\\characters\\player\\animations\\idle\\south\\frame_002.png",
+            "art_source\\characters\\player\\animations\\idle\\south\\frame_003.png",
+            "art_source\\characters\\player\\animations\\idle\\south\\frame_004.png",
+            "art_source\\characters\\player\\animations\\idle\\east\\frame_000.png",
+            "art_source\\characters\\player\\animations\\idle\\east\\frame_001.png",
+            "art_source\\characters\\player\\animations\\idle\\east\\frame_002.png",
+            "art_source\\characters\\player\\animations\\idle\\east\\frame_003.png",
+            "art_source\\characters\\player\\animations\\idle\\east\\frame_004.png",
+            "art_source\\characters\\player\\animations\\idle\\north\\frame_000.png",
+            "art_source\\characters\\player\\animations\\idle\\north\\frame_001.png",
+            "art_source\\characters\\player\\animations\\idle\\north\\frame_002.png",
+            "art_source\\characters\\player\\animations\\idle\\north\\frame_003.png",
+            "art_source\\characters\\player\\animations\\idle\\north\\frame_004.png",
+            "art_source\\characters\\player\\animations\\idle\\west\\frame_000.png",
+            "art_source\\characters\\player\\animations\\idle\\west\\frame_001.png",
+            "art_source\\characters\\player\\animations\\idle\\west\\frame_002.png",
+            "art_source\\characters\\player\\animations\\idle\\west\\frame_003.png",
+            "art_source\\characters\\player\\animations\\idle\\west\\frame_004.png"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-05T18:34:11",
+          "paths": [
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\south\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\south-east\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\east\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\north-east\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\north\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\north-west\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\west\\frame_008.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_000.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_001.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_002.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_003.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_004.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_005.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_006.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_007.png",
+            "art_source\\characters\\player\\animations\\walk\\south-west\\frame_008.png"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-05T18:34:11",
+          "paths": [
+            "art_source\\characters\\player"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-05T18:34:11",
+          "paths": [
+            "game\\assets\\textures\\characters\\player.png",
+            "game\\assets\\textures\\characters\\player.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east",
+          "north-east",
+          "north",
+          "north-west",
+          "west",
+          "south-west"
+        ]
+      },
+      "imported_at": "2026-05-05T18:34:11",
+      "game_png_path": "game\\assets\\textures\\characters\\player.png",
+      "game_json_path": "game\\assets\\textures\\characters\\player.json"
+    }
+  },
+  "tilesets": {
+    "test_autotiles": {
+      "status": "init",
+      "created_at": "2026-05-11T21:13:05",
+      "updated_at": "2026-05-11T21:13:05"
+    }
+  },
+  "objects": {
+    "test_iso": {
+      "status": "completed",
+      "created_at": "2026-05-11T19:59:06",
+      "updated_at": "2026-05-11T19:59:54",
+      "object_id": "8a8108e7-bb12-473c-b190-3b82797841f3",
+      "kind": "iso_prop",
+      "description": "a small wooden box",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-11T19:59:54",
+          "paths": [
+            "art_source\\objects\\test_iso\\test_iso.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-11T19:59:54",
+          "paths": [
+            "art_source\\objects\\test_iso\\test_iso.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-11T19:59:54",
+          "paths": [
+            "game\\assets\\textures\\props\\test_iso.png",
+            "game\\src\\maps\\props\\test_iso.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source\\objects\\test_iso\\test_iso.png",
+      "imported_at": "2026-05-11T19:59:54",
+      "game_png_path": "game\\assets\\textures\\props\\test_iso.png",
+      "game_tscn_path": "game\\src\\maps\\props\\test_iso.tscn",
+      "collision": "bottom_16x16"
+    }
+  }
+}

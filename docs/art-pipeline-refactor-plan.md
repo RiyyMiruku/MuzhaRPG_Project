@@ -122,7 +122,7 @@ art_source/pipeline/
 
 ### 3.4 Manifest 結構
 
-`art_source/pipeline/output/manifest.json`：
+`art_source/manifest.json`：
 
 ```json
 {

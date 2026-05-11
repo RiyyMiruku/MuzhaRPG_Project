@@ -87,7 +87,7 @@ uv run uvicorn tools.asset_dashboard.backend.server:app --port 8765
 ## 輸出結構
 
 ```
-pipeline/output/        # gitignored 內容（PNG / JSON），結構保留
+art_source/             # 所有美術資產（LFS 追蹤）
 ├── manifest.json                  # 所有資產索引
 ├── characters/<name>/
 │   ├── rotations/{south,east,...}.png

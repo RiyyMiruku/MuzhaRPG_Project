@@ -17,7 +17,7 @@ from .manifest_io import load_assets
 from .thumbnails import resolve_thumbnail
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-MANIFEST_PATH = REPO_ROOT / "pipeline" / "output" / "manifest.json"
+MANIFEST_PATH = REPO_ROOT / "art_source" / "manifest.json"
 
 # Make `manifest` (the pipeline module) importable in this process for prompt edits.
 sys.path.insert(0, str(REPO_ROOT / "pipeline"))
@@ -296,7 +296,7 @@ import mimetypes
 
 
 _ALLOWED_FILE_ROOTS: list[str] = [
-    "pipeline/output",
+    "art_source",
     "game/assets/textures",
 ]
 

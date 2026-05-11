@@ -57,8 +57,8 @@ def validate_asset_name(name: str) -> None:
 
 
 def manifest_path() -> Path:
-    """pipeline/output/manifest.json 的絕對路徑。"""
-    return Path(__file__).resolve().parent / "output" / "manifest.json"
+    """art_source/manifest.json 的絕對路徑。"""
+    return output_dir() / "manifest.json"
 
 
 def _empty_manifest() -> dict[str, Any]:
@@ -260,7 +260,8 @@ def get_completed_stages(asset_type: str, name: str) -> list[str]:
 
 
 def output_dir() -> Path:
-    return Path(__file__).resolve().parent / "output"
+    # Top-level art_source/ — see commit message for the centralization rationale.
+    return Path(__file__).resolve().parent.parent / "art_source"
 
 
 def character_dir(name: str) -> Path:

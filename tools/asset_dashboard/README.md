@@ -33,7 +33,7 @@ Visit http://localhost:5173/.
 
 ## What it does
 
-- Reads `pipeline/output/manifest.json`.
+- Reads `art_source/manifest.json`.
 - Lists every asset with thumbnail (south rotation / iso PNG / object PNG).
 - Filters by chapter (manifest `tags` containing `chapter:N`), asset type, status.
 - Shows per-stage prompt. Realized stages are read-only; click `Remake` to unlock.
