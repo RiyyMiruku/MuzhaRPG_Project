@@ -163,6 +163,23 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
         "--force-restart-stage", body.stage,
         "--resume-from", body.stage,
     ]
+    # prop.py requires --kind even when resuming; pull it from the manifest entry.
+    if asset_type == "object":
+        raw = _read_manifest_raw()
+        entry = (raw.get("objects") or {}).get(name) or {}
+        kind = entry.get("kind")
+        if kind:
+            cmd += ["--kind", kind]
+    # _ORCHESTRATOR_PATH points at npc_moving.py for all "character" assets, but
+    # static NPCs use npc_static.py. Detect via manifest preset and swap script.
+    if asset_type == "character":
+        raw = _read_manifest_raw()
+        entry = (raw.get("characters") or {}).get(name) or {}
+        if entry.get("preset") == "npc":
+            cmd[4] = "pipeline/orchestrators/npc_static.py"
+            directions = entry.get("directions")
+            if directions:
+                cmd += ["--directions", str(directions)]
     job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=name, stage=body.stage)
     return {"job_id": job_id, "stage": body.stage}
 
