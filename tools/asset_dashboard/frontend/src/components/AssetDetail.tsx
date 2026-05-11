@@ -1,6 +1,7 @@
-import { ArrowLeft, Check, Circle } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import type { AssetSummary } from "../types"
 import { SpritePreview } from "./SpritePreview"
+import { StageSection } from "./StageSection"
 
 interface Props {
   asset: AssetSummary
@@ -55,32 +56,20 @@ export function AssetDetail({ asset, onBack }: Props) {
       )}
 
       <section className="mb-6">
-        <h3 className="mb-3 text-sm font-semibold text-stone-300">Stages</h3>
-        <ol className="space-y-2">
-          {asset.all_stages.map((stage) => {
-            const done = completed.has(stage)
-            return (
-              <li
-                key={stage}
-                className="flex items-center gap-2 rounded border border-stone-800 bg-stone-950 px-3 py-2 text-sm"
-              >
-                {done ? (
-                  <Check className="h-4 w-4 text-emerald-400" />
-                ) : (
-                  <Circle className="h-4 w-4 text-stone-600" />
-                )}
-                <span className={done ? "text-stone-200" : "text-stone-500"}>
-                  {stage}
-                </span>
-              </li>
-            )
-          })}
-        </ol>
+        <h3 className="mb-3 text-sm font-semibold text-stone-300">
+          Stages &amp; prompts
+        </h3>
+        <div className="space-y-3">
+          {asset.all_stages.map((stage) => (
+            <StageSection
+              key={stage}
+              asset={asset}
+              stage={stage}
+              realized={completed.has(stage)}
+            />
+          ))}
+        </div>
       </section>
-
-      <p className="text-xs text-stone-500">
-        Per-stage prompt &amp; images coming in the next sub-task.
-      </p>
     </div>
   )
 }
