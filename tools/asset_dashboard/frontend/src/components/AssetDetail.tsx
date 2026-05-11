@@ -1,5 +1,6 @@
 import { ArrowLeft, Check, Circle } from "lucide-react"
 import type { AssetSummary } from "../types"
+import { SpritePreview } from "./SpritePreview"
 
 interface Props {
   asset: AssetSummary
@@ -8,6 +9,8 @@ interface Props {
 
 export function AssetDetail({ asset, onBack }: Props) {
   const completed = new Set(asset.completed_stages)
+  const hasSpritesheet =
+    asset.asset_type === "character" && completed.has("compile_spritesheet")
 
   return (
     <div>
@@ -42,6 +45,15 @@ export function AssetDetail({ asset, onBack }: Props) {
         )}
       </div>
 
+      {hasSpritesheet && (
+        <section className="mb-6">
+          <h3 className="mb-3 text-sm font-semibold text-stone-300">
+            Sprite preview
+          </h3>
+          <SpritePreview characterName={asset.name} />
+        </section>
+      )}
+
       <section className="mb-6">
         <h3 className="mb-3 text-sm font-semibold text-stone-300">Stages</h3>
         <ol className="space-y-2">
@@ -67,7 +79,7 @@ export function AssetDetail({ asset, onBack }: Props) {
       </section>
 
       <p className="text-xs text-stone-500">
-        Sprite preview + per-stage prompt &amp; images coming in the next sub-task.
+        Per-stage prompt &amp; images coming in the next sub-task.
       </p>
     </div>
   )
