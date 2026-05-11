@@ -5,7 +5,7 @@
 本資料夾放各類 Prop 的 `.tscn` 場景。
 
 **操作流程**：
-- 大批匯入（一次十幾個變體）：[scripts/import-assets-guide.md](../../../../scripts/import-assets-guide.md)（場景設計人入口：[docs/scene-design-workflow.md](../../../../docs/scene-design-workflow.md)）
+- 大批匯入（一次十幾個變體）：[docs/scene-design-workflow.md](../../../../docs/scene-design-workflow.md)（orchestrator import_to_godot stage 自動完成）
 - 單張手動建：[2-scene-design.md](../../../assets/textures/environment/2-scene-design.md)
 - 擺進 zone：[2-scene-design.md](../../../assets/textures/environment/2-scene-design.md) Step 4
 

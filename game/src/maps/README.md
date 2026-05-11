@@ -56,14 +56,9 @@ game/
 
 ### B. 新增 Prop（裝飾物）
 
-**推薦路徑（批次匯入）** — 一次處理一批同類物件：
+**推薦路徑（批次匯入）** — 透過 art-pipeline orchestrator（`import_to_godot` stage 自動完成）：
 
-1. PNG 丟 `temp/<任意子資料夾>/<物件名>/tile1.png` ~ `tileN.png`
-2. 跑 `python scripts/import_assets.py --init temp/`（或請 AI 跑）→ 產生 `temp/import.toml` 草稿
-3. 編輯 manifest 標註每個物件的 category / has_collision / collision 範圍
-4. 跑 `python scripts/import_assets.py temp/import.toml`
-5. 腳本會：重命名 PNG、搬到 `assets/.../props/<category>/`、生成對應 `.tscn` 繼承 PropTemplate
-6. 擺進 Zone 的 `YSortRoot` 底下
+見 [docs/scene-design-workflow.md](../../../docs/scene-design-workflow.md) — 美術一句話 → AI 跑 orchestrator → 直接進 Godot。
 
 **單張手動路徑**（少量素材）：
 
@@ -114,8 +109,7 @@ ZoneNCCU (Node2D)
 - **協作流程入口（場景設計人）**：[docs/scene-design-workflow.md](../../../docs/scene-design-workflow.md)
 - 給生圖人 — 素材製作：[1-asset-creation.md](../../assets/textures/environment/1-asset-creation.md)
 - 給地圖設計人 — 場景組合：[2-scene-design.md](../../assets/textures/environment/2-scene-design.md)
-- 大量 prop 匯入腳本：[scripts/import-assets-guide.md](../../../scripts/import-assets-guide.md)
-- AI prompt 範本（少用，當腳本不適用時）：[3-ai-prompt.md](../../assets/textures/environment/3-ai-prompt.md)
+- AI prompt 範本（少用，當 orchestrator 不適用時）：[3-ai-prompt.md](../../assets/textures/environment/3-ai-prompt.md)
 - 角色實裝流程：[art_source/characters/3-asset-usage.md](../../../art_source/characters/3-asset-usage.md)
 - 章節制開發：[docs/chapter-development.md](../../../docs/chapter-development.md)
 - Zone 換場機制：[ZoneManager.gd](../core/classes/ZoneManager.gd)
