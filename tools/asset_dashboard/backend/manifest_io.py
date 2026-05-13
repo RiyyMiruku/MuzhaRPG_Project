@@ -40,18 +40,13 @@ CHARACTER_STAGES_STATIC: list[str] = [
     "import_to_godot",
 ]
 
-# v2 pipeline (file-per-asset + async stages). Different stage names; tracked
-# separately so the same dashboard can render both legacy and v2 assets
-# during the migration window.
+# v2 pipeline (file-per-asset + async stages). Same stage list for moving + static;
+# animate_walk no-op-completes for 4-dir chars (still recorded as 'completed')
+# so progress counter reflects "all stages ran" uniformly.
 CHARACTER_STAGES_V2: list[str] = [
     "generate_rotations",
     "animate_idle",
     "animate_walk",
-    "import_to_godot",
-]
-CHARACTER_STAGES_V2_STATIC: list[str] = [   # 4-dir char auto-skips animate_walk
-    "generate_rotations",
-    "animate_idle",
     "import_to_godot",
 ]
 
@@ -60,9 +55,6 @@ def _stages_for(asset_type: AssetType, entry: dict) -> list[str]:
     is_v2 = int(entry.get("pipeline_version", 1)) >= 2
     if asset_type == "character":
         if is_v2:
-            # 4-dir static NPCs skip walk; everyone else gets the 4-stage v2 set.
-            if int(entry.get("directions", 8)) == 4:
-                return CHARACTER_STAGES_V2_STATIC
             return CHARACTER_STAGES_V2
         if entry.get("preset") == "npc":
             return CHARACTER_STAGES_STATIC

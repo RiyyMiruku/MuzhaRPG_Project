@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T16:56:40",
-  "updated_at": "2026-05-12T17:03:10",
+  "updated_at": "2026-05-14T03:23:36",
   "prompts": {
     "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
     "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
@@ -11,7 +11,7 @@
     "category:shopkeeper_family",
     "chapter:1"
   ],
-  "character_id": "d6469648-e284-4d4e-b0a2-36b405acd89e",
+  "character_id": "265d9c86-be1f-43dd-aba6-5bd5d0aa7a39",
   "preset": "player",
   "directions": 8,
   "view": "high_top_down",
@@ -29,46 +29,55 @@
   ],
   "local_path": "art_source/characters/chen_xiuqin",
   "stages": {
-    "generate_8dir_base": {
-      "completed_at": "2026-05-12T16:58:04",
-      "paths": [
-        "art_source/characters/chen_xiuqin/rotations/east.png",
-        "art_source/characters/chen_xiuqin/rotations/west.png",
-        "art_source/characters/chen_xiuqin/rotations/north.png",
-        "art_source/characters/chen_xiuqin/rotations/south.png",
-        "art_source/characters/chen_xiuqin/rotations/north_east.png",
-        "art_source/characters/chen_xiuqin/rotations/north_west.png",
-        "art_source/characters/chen_xiuqin/rotations/south_east.png",
-        "art_source/characters/chen_xiuqin/rotations/south_west.png"
-      ]
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:13:49",
+      "started_at": "2026-05-14T01:13:49",
+      "completed_at": "2026-05-14T01:15:36",
+      "result": {
+        "character_id": "265d9c86-be1f-43dd-aba6-5bd5d0aa7a39",
+        "rotation_paths": [
+          "art_source/characters/chen_xiuqin/rotations/east.png",
+          "art_source/characters/chen_xiuqin/rotations/west.png",
+          "art_source/characters/chen_xiuqin/rotations/north.png",
+          "art_source/characters/chen_xiuqin/rotations/south.png",
+          "art_source/characters/chen_xiuqin/rotations/north_east.png",
+          "art_source/characters/chen_xiuqin/rotations/north_west.png",
+          "art_source/characters/chen_xiuqin/rotations/south_east.png",
+          "art_source/characters/chen_xiuqin/rotations/south_west.png"
+        ]
+      },
+      "error": null
     },
-    "add_idle_animation": {
-      "completed_at": "2026-05-12T16:59:51",
-      "paths": [
-        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
-        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
-      ]
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:15:37",
+      "started_at": "2026-05-14T01:18:24",
+      "completed_at": "2026-05-14T01:19:53",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+        "sheet_json": "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+      },
+      "error": null
     },
-    "add_walk_animation": {
-      "completed_at": "2026-05-12T17:03:10",
-      "paths": [
-        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
-        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
-      ]
-    },
-    "compile_spritesheet": {
-      "completed_at": "2026-05-12T17:03:10",
-      "paths": [
-        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
-        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
-      ]
-    },
-    "import_to_godot": {
-      "completed_at": "2026-05-12T17:03:10",
-      "paths": [
-        "game/assets/textures/characters/chen_xiuqin.png",
-        "game/assets/textures/characters/chen_xiuqin.json"
-      ]
+    "animate_walk": {
+      "status": "failed",
+      "queued_at": "2026-05-14T03:18:39",
+      "started_at": "2026-05-14T03:18:39",
+      "failed_at": "2026-05-14T03:23:36",
+      "error": "RuntimeError: job 647d2717-29f0-4742-a9d6-11d35c6007e0 失敗: {'usage': {'type': 'usd', 'usd': 0.0}, 'id': '647d2717-29f0-4742-a9d6-11d35c6007e0', 'status': 'failed', 'created_at': '2026-05-13T19:20:43.193817+00:00', 'last_response': {'code': 500, 'type': 'error', 'error': \"Batch 1/1 failed: ClientPayloadError: Response payload is not completed: <TransferEncodingError: 400, message='Not enough data to satisfy transfer length header.'>\", 'trace': None, 'detail': \"ClientPayloadError: Response payload is not completed: <TransferEncodingError: 400, message='Not enough data to satisfy transfer length header.'>\", 'progress': 0.05, 'direction': 'south', 'limit_type': None, 'character_id': '265d9c86-be1f-43dd-aba6-5bd5d0aa7a39', 'animation_name': None, 'queue_position': 0, 'number_of_frames': 1, 'animation_group_id': '8d9ab839-818c-492a-a0b9-05b7825d1819', 'animation_description': 'animating', 'template_animation_id': 'walking-6-frames'}}\nTraceback (most recent call last):\n  File \"/Users/JustinCheng/Documents/GitHub/MuzhaRPG_Project/pipeline/stages/__init__.py\", line 285, in run_stage\n    result = await sd.fn(ctx)\n             ^^^^^^^^^^^^^^^^\n  File \"/Users/JustinCheng/Documents/GitHub/MuzhaRPG_Project/pipeline/stages/character.py\", line 231, in animate_walk\n    return await _run_animation(\n           ^^^^^^^^^^^^^^^^^^^^^\n        ctx, action=\"walk\", template_id=template_id, directions=list(at.DEFAULT_TEMPLATES[\"walk\"].directions),\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"/Users/JustinCheng/Documents/GitHub/MuzhaRPG_Project/pipeline/stages/character.py\", line 120, in _run_animation\n    polled = await asyncio.gather(*[\n             ^^^^^^^^^^^^^^^^^^^^^^^\n    ...<2 lines>...\n    ])\n    ^^\n  File \"/Users/JustinCheng/Documents/GitHub/MuzhaRPG_Project/pipeline/stages/character.py\", line 55, in _poll_one_direction\n    result = await plab.poll_background_job(token, job_id)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/JustinCheng/Documents/GitHub/MuzhaRPG_Project/pipeline/pixellab_async.py\", line 169, in poll_background_job\n    raise RuntimeError(f\"job {job_id} 失敗: {data}\")\nRuntimeError: job 647d2717-29f0-4742-a9d6-11d35c6007e0 失敗: {'usage': {'type': 'usd', 'usd': 0.0}, 'id': '647d2717-29f0-4742-a9d6-11d35c6007e0', 'status': 'failed', 'created_at': '2026-05-13T19:20:43.193817+00:00', 'last_response': {'code': 500, 'type': 'error', 'error': \"Batch 1/1 failed: ClientPayloadError: Response payload is not completed: <TransferEncodingError: 400, message='Not enough data to satisfy transfer length header.'>\", 'trace': None, 'detail': \"ClientPayloadError: Response payload is not completed: <TransferEncodingError: 400, message='Not enough data to satisfy transfer length header.'>\", 'progress': 0.05, 'direction': 'south', 'limit_type': None, 'character_id': '265d9c86-be1f-43dd-aba6-5bd5d0aa7a39', 'animation_name': None, 'queue_position': 0, 'number_of_frames': 1, 'animation_group_id': '8d9ab839-818c-492a-a0b9-05b7825d1819', 'animation_description': 'animating', 'template_animation_id': 'walking-6-frames'}}\n"
     }
   },
   "animations": {
@@ -90,5 +99,16 @@
   },
   "imported_at": "2026-05-12T17:03:10",
   "game_png_path": "game/assets/textures/characters/chen_xiuqin.png",
-  "game_json_path": "game/assets/textures/characters/chen_xiuqin.json"
+  "game_json_path": "game/assets/textures/characters/chen_xiuqin.json",
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "player"
+  },
+  "isometric": true
 }

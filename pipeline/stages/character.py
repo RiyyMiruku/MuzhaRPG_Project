@@ -77,6 +77,11 @@ async def _run_animation(
 
     Common body for animate_idle / animate_walk. Polls all direction jobs
     in parallel via asyncio.gather (Pixellab's quota throttles upstream).
+
+    Honors partial-direction retry: if asset.retry_requests[stage_name]
+    is set (the v2 retry endpoint stashes it when given a `directions`
+    body), narrow this run to that subset and clear the request after
+    success. Other directions keep their existing spritesheet rows.
     """
     char = ctx.asset
     char_id = char.get("character_id")
@@ -86,6 +91,20 @@ async def _run_animation(
             f"must complete before animation stages"
         )
     token = plab_sync.load_token()
+
+    stage_name = f"animate_{action}"
+    retry_req = (char.get("retry_requests") or {}).get(stage_name) or {}
+    requested = retry_req.get("directions")
+    if requested:
+        wanted = set(requested)
+        directions = [d for d in directions if d in wanted]
+        if not directions:
+            return {
+                "skipped": True,
+                "reason": f"retry_requests.{stage_name}.directions {sorted(wanted)} "
+                          f"has no overlap with template defaults",
+            }
+        print(f"[partial] {stage_name} only: {directions}", flush=True)
 
     submitted = await plab.submit_character_animation(
         token=token,
@@ -118,7 +137,15 @@ async def _run_animation(
     for d in submitted["directions"]:
         if d not in animations[action]:
             animations[action].append(d)
-    manifest.upsert_character(ctx.name, {"animations": animations})
+    fields_to_save: dict[str, Any] = {"animations": animations}
+
+    # Clear the retry_requests slot we honored so the next ordinary run
+    # doesn't re-narrow to the same partial set.
+    if requested:
+        cleared = dict(char.get("retry_requests") or {})
+        cleared.pop(stage_name, None)
+        fields_to_save["retry_requests"] = cleared
+    manifest.upsert_character(ctx.name, fields_to_save)
 
     rel_root = plab_sync.project_root()
     return {
@@ -126,6 +153,7 @@ async def _run_animation(
         "frames_per_direction": [len(f) for _, f in polled],
         "sheet_png": str(sheet_png.relative_to(rel_root)),
         "sheet_json": str(sheet_json.relative_to(rel_root)),
+        "partial": bool(requested),
     }
 
 

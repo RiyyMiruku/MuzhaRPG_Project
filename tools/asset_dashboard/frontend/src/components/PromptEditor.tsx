@@ -13,8 +13,15 @@ interface Props {
 // Direction lists per animation stage, in display order. Stages not listed
 // here have no per-direction selector. Values must match Pixellab's wire form.
 const STAGE_DIRECTIONS: Record<string, string[]> = {
+  // legacy
   add_idle_animation: ["south", "east", "north", "west"],
   add_walk_animation: [
+    "south", "east", "north", "west",
+    "south-east", "north-east", "north-west", "south-west",
+  ],
+  // v2 (same direction sets — only stage names differ)
+  animate_idle: ["south", "east", "north", "west"],
+  animate_walk: [
     "south", "east", "north", "west",
     "south-east", "north-east", "north-west", "south-west",
   ],

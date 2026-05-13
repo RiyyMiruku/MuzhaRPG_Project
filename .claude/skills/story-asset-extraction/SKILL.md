@@ -49,11 +49,25 @@ story/chapters/*.md  劇本草稿
 
 ## Stage 2 — Classify（決定 asset type）
 
+### Character classification — 嚴禁隨意抽 moving NPC
+
+Moving NPC（8-dir + walk template）成本是 static NPC（4-dir + idle template）的 **2-3 倍** Pixellab token。預設 static，**只在下面三條優先級匹配時**才升級為 moving：
+
+| 優先級 | 升 moving 的條件 | 範例 |
+|:---:|---|---|
+| **A** | 玩家控制角色（protagonist / playable） | `lin_siqian` (主角) |
+| **B** | 劇本明確寫他在某場景**走動**（不是只進進出出畫面） | 「林小威跑出店門口」「老周從後院走來」 |
+| **C** | World-building NPC，需要在地圖上**自由走動 / patrol** 增添場景動態感 | 市場攤販在攤位前後巡視、小孩在巷子追逐 |
+
+**判斷流程**：每個 character 從上到下檢查 A → B → C，**任一條成立才升 moving**，否則 static。「家族成員」「shopkeeper 主要在櫃台」這類**不是**自動升 moving 的理由。
+
+### 完整分類表
+
 | 文本中的描述 | Asset type | Orchestrator | Notes |
 |---|---|---|---|
-| 具名角色，會有走動 / 互動 | **moving NPC** | `npc_moving.py` | 8 向 walk + 4 向 idle |
-| 具名背景 NPC，劇情中只站著 | **static NPC** | `npc_static.py --directions 4` | 4 向 idle |
-| 不確定會不會走動的角色 | **static NPC** | `npc_static.py --directions 8` | 留 8 向給未來升級用 |
+| 通過上面 A/B/C 任一條 | **moving NPC** | `npc_moving.py` | 8 向 walk + 4 向 idle |
+| 具名 NPC 但都站著 / 坐著 / 偶爾移動畫面外 | **static NPC** | `npc_static.py --directions 4` | 4 向 idle，預設選擇 |
+| 不確定會不會走動但**有可能**未來章節升 moving | **static NPC** | `npc_static.py --directions 8` | 留 8 向 base，將來只補 walk animation 不重生 base |
 | 路人 / 群眾（無具名） | **static NPC** | `npc_static.py --directions 4` | 一個泛用 NPC 多次擺放 |
 | 單一場景物件（燈籠、攤車、桌、信箱） | **iso prop** | `prop.py --kind=iso_prop --size 32` | 視大小調 size |
 | 建築（店、廟、宿舍） | **building** | `prop.py --kind=building` | 用 high_top_down 視角，不投影 |
@@ -61,9 +75,13 @@ story/chapters/*.md  劇本草稿
 
 **Edge case 判斷**：
 - 「會跟玩家對話一次後消失」→ static NPC 即可（省 credit）
-- 「主線角色但短期內不會走動」→ static NPC `--directions 8`（未來升 moving 不用整支重生）
+- 「主線角色但本章不走動」→ static NPC `--directions 8`（未來升 moving 不用整支重生）
 - 「敘事中提到背影」→ 還是 8-dir base（rotation 系統設計如此）
 - 「大型建築需要走進去」→ building 是外殼；室內另開 zone
+
+### Moving 抽過頭的代價
+
+Chapter 1 第一輪抽取把家族 + 市場核心 6 個都標 moving，事後檢視只有 `lin_siqian`(A) + `lin_xiaowei`(B) 真的需要；`lin_ama` / `a_tao_yi` / `lin_rongchang` / `chen_xiuqin` 4 個都是「好像會動所以給 walk」的腦補，浪費 ~30 Pixellab generations。事後改用方案：在 game 端讓他們自由 patrol（C 條件）變成「補救合理化」而不是「原生需求」。**新章節抽取避免重蹈**。
 
 ## Stage 3 — Promptify（寫 Pixellab prompt）
 

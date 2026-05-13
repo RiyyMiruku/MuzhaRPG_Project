@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T16:56:40",
-  "updated_at": "2026-05-12T17:43:24",
+  "updated_at": "2026-05-14T02:53:32",
   "prompts": {
     "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
     "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
@@ -11,7 +11,7 @@
     "category:shopkeeper",
     "chapter:1"
   ],
-  "character_id": "963f6b4d-b466-4528-904a-2dce67a76ab6",
+  "character_id": "2a3efa0d-d25d-4d0b-8c78-8749949761c8",
   "preset": "player",
   "directions": 8,
   "view": "high_top_down",
@@ -29,53 +29,91 @@
   ],
   "local_path": "art_source/characters/lin_rongchang",
   "stages": {
-    "generate_8dir_base": {
-      "completed_at": "2026-05-12T16:58:10",
-      "paths": [
-        "art_source/characters/lin_rongchang/rotations/east.png",
-        "art_source/characters/lin_rongchang/rotations/west.png",
-        "art_source/characters/lin_rongchang/rotations/north.png",
-        "art_source/characters/lin_rongchang/rotations/south.png",
-        "art_source/characters/lin_rongchang/rotations/north_east.png",
-        "art_source/characters/lin_rongchang/rotations/north_west.png",
-        "art_source/characters/lin_rongchang/rotations/south_east.png",
-        "art_source/characters/lin_rongchang/rotations/south_west.png"
-      ]
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:13:49",
+      "started_at": "2026-05-14T01:28:17",
+      "completed_at": "2026-05-14T01:29:20",
+      "result": {
+        "character_id": "2a3efa0d-d25d-4d0b-8c78-8749949761c8",
+        "rotation_paths": [
+          "art_source/characters/lin_rongchang/rotations/east.png",
+          "art_source/characters/lin_rongchang/rotations/west.png",
+          "art_source/characters/lin_rongchang/rotations/north.png",
+          "art_source/characters/lin_rongchang/rotations/south.png",
+          "art_source/characters/lin_rongchang/rotations/north_east.png",
+          "art_source/characters/lin_rongchang/rotations/north_west.png",
+          "art_source/characters/lin_rongchang/rotations/south_east.png",
+          "art_source/characters/lin_rongchang/rotations/south_west.png"
+        ]
+      },
+      "error": null
     },
-    "add_idle_animation": {
-      "completed_at": "2026-05-12T17:00:05",
-      "paths": [
-        "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
-        "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
-      ]
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:29:22",
+      "started_at": "2026-05-14T01:29:22",
+      "completed_at": "2026-05-14T01:31:13",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
+        "sheet_json": "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
+      },
+      "error": null
     },
-    "add_walk_animation": {
-      "completed_at": "2026-05-12T17:43:24",
-      "paths": [
-        "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
-        "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
-      ]
-    },
-    "compile_spritesheet": {
-      "completed_at": "2026-05-12T17:43:24",
-      "paths": [
-        "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
-        "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
-      ]
+    "animate_walk": {
+      "status": "completed",
+      "queued_at": "2026-05-14T02:39:58",
+      "started_at": "2026-05-14T02:39:58",
+      "completed_at": "2026-05-14T02:53:32",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          6,
+          6,
+          6,
+          6
+        ],
+        "sheet_png": "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
+        "sheet_json": "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json",
+        "partial": false
+      },
+      "error": null
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:43:24",
-      "paths": [
-        "game/assets/textures/characters/lin_rongchang.png",
-        "game/assets/textures/characters/lin_rongchang.json"
-      ]
+      "status": "completed",
+      "queued_at": "2026-05-14T02:53:32",
+      "started_at": "2026-05-14T02:53:32",
+      "completed_at": "2026-05-14T02:53:32",
+      "result": {
+        "game_png": "game/assets/textures/characters/lin_rongchang.png",
+        "game_json": "game/assets/textures/characters/lin_rongchang.json"
+      },
+      "error": null
     }
   },
   "animations": {
     "idle": [
       "south",
       "east",
-      "north"
+      "north",
+      "west"
     ],
     "walk": [
       "south",
@@ -83,10 +121,22 @@
       "east",
       "north-east",
       "north",
-      "north-west"
+      "north-west",
+      "west"
     ]
   },
-  "imported_at": "2026-05-12T17:43:24",
+  "imported_at": "2026-05-14T02:53:32",
   "game_png_path": "game/assets/textures/characters/lin_rongchang.png",
-  "game_json_path": "game/assets/textures/characters/lin_rongchang.json"
+  "game_json_path": "game/assets/textures/characters/lin_rongchang.json",
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "player"
+  },
+  "isometric": true
 }

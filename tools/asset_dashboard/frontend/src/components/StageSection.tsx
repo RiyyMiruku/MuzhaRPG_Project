@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react"
-import { Check, Circle, ImageOff, Play, RotateCcw } from "lucide-react"
+import { Check, Circle, ImageOff, Play, RotateCcw, Pencil } from "lucide-react"
 import type { AssetSummary, StageDetail } from "../types"
 import { api } from "../api"
 import { PromptEditor } from "./PromptEditor"
+import { PixelEditor } from "./PixelEditor"
 
 /** Stages that send a prompt to Pixellab. Other stages are pure local processing
  *  (chroma_key / iso_project / verify_in_godot / compile_spritesheet / import_to_godot)
- *  and have no editable prompt — only a plain "re-run this stage" button. */
+ *  and have no editable prompt — only a plain "re-run this stage" button.
+ *
+ *  v2 stages: animate_idle/walk are template-driven (no prompt to edit), but
+ *  we still route them through PromptEditor to surface the per-direction
+ *  selector + Remake button. Their prompt textarea is ignored on submit. */
 const PROMPT_STAGES = new Set<string>([
   "generate_8dir_base",
   "generate_4dir_base",
@@ -14,6 +19,10 @@ const PROMPT_STAGES = new Set<string>([
   "generate_atlas",
   "add_idle_animation",
   "add_walk_animation",
+  // v2:
+  "generate_rotations",
+  "animate_idle",
+  "animate_walk",
 ])
 
 interface Props {
@@ -194,6 +203,7 @@ interface ThumbProps {
 
 function StageImageThumb({ url, path }: ThumbProps) {
   const [broken, setBroken] = useState(false)
+  const [editing, setEditing] = useState(false)
   // Per-direction row crops are returned as wide strips (N frames × 92px tall).
   // Render them in a wide container so frames stay legible; whole-sheet links
   // and rotation PNGs keep the square 80×80 thumb.
@@ -203,41 +213,63 @@ function StageImageThumb({ url, path }: ThumbProps) {
   const fragment = path.includes("#") ? path.split("#").pop() : null
   const label = fragment ?? path.split("/").pop() ?? path
 
+  // Pixel-edit only files we can address by repo path. Row crops are
+  // server-cropped on the fly; editing them would need a "patch back into
+  // sheet at offset" backend op (out of scope for v1 editor).
+  const editableRepoPath = (() => {
+    if (isRowCrop) return null
+    const match = url.match(/[?&]p=([^&]+)/)
+    return match ? decodeURIComponent(match[1]) : null
+  })()
+
   const containerCls = isRowCrop
-    ? "group block overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
-    : "group block w-20 overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
+    ? "group relative overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
+    : "group relative block w-20 overflow-hidden rounded border border-stone-800 bg-stone-950 hover:border-stone-600"
   const innerCls = isRowCrop
     ? "flex h-12 items-center justify-start bg-stone-950"
     : "flex h-20 w-20 items-center justify-center bg-stone-950"
 
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noreferrer"
-      className={containerCls}
-      title={path}
-    >
-      <div className={innerCls}>
-        {broken ? (
-          <ImageOff className="h-6 w-6 text-stone-700" />
-        ) : (
-          <img
-            src={url}
-            alt={label}
-            className={
-              isRowCrop
-                ? "h-full w-auto object-contain"
-                : "max-h-full max-w-full object-contain"
-            }
-            onError={() => setBroken(true)}
-            style={{ imageRendering: "pixelated" }}
-          />
-        )}
-      </div>
-      <div className="truncate px-1 py-0.5 text-[9px] text-stone-500 group-hover:text-stone-300">
-        {label}
-      </div>
-    </a>
+    <div className={containerCls} title={path}>
+      <a href={url} target="_blank" rel="noreferrer" className="block">
+        <div className={innerCls}>
+          {broken ? (
+            <ImageOff className="h-6 w-6 text-stone-700" />
+          ) : (
+            <img
+              src={url}
+              alt={label}
+              className={
+                isRowCrop
+                  ? "h-full w-auto object-contain"
+                  : "max-h-full max-w-full object-contain"
+              }
+              onError={() => setBroken(true)}
+              style={{ imageRendering: "pixelated" }}
+            />
+          )}
+        </div>
+        <div className="truncate px-1 py-0.5 text-[9px] text-stone-500 group-hover:text-stone-300">
+          {label}
+        </div>
+      </a>
+      {editableRepoPath && !broken && (
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditing(true) }}
+          title="Edit pixels"
+          className="absolute right-0.5 top-0.5 rounded bg-stone-900/80 p-1 text-stone-300 opacity-0 transition-opacity hover:bg-stone-700 hover:text-stone-100 group-hover:opacity-100"
+        >
+          <Pencil className="h-3 w-3" />
+        </button>
+      )}
+      {editing && editableRepoPath && (
+        <PixelEditor
+          imageUrl={url}
+          repoPath={editableRepoPath}
+          onClose={() => setEditing(false)}
+        />
+      )}
+    </div>
   )
 }

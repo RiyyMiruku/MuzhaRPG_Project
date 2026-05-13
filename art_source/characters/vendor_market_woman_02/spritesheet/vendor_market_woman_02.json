@@ -8,28 +8,28 @@
     "idle_south": {
       "row": 0,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "idle_east": {
       "row": 1,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "idle_north": {
       "row": 2,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "idle_west": {
       "row": 3,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     }

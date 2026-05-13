@@ -32,6 +32,7 @@
 | 文檔 | 行數 | 給誰看 | 內容 |
 |---|---|---|---|
 | [docs/scene-design-workflow.md](scene-design-workflow.md) | 114 | 場景設計人 | **一句話清單** — 跟 AI 說什麼、怎麼擺場景、提交流程 |
+| [docs/chapter-01-scene-automation-plan.md](chapter-01-scene-automation-plan.md) | — | 場景設計人 / 程式 | 第一章 7 個 zone 自動化擺位計畫（YAML → .tscn + TileMapDual @tool） |
 | [docs/tilemapdual-guide.md](tilemapdual-guide.md) | 155 | 場景設計人 / 程式 | TileMapDual addon 設定、地形繪製、Wang 4×4 layout |
 | [docs/asset-naming-convention.md](asset-naming-convention.md) | 96 | 美術 / 程式 | 資產命名規則、zone / category tag 規範 |
 | [pipeline/README.md](../pipeline/README.md) | 131 | 美術 / 程式 | Pipeline 架構 + CLI orchestrator + Web UI 使用方式 |

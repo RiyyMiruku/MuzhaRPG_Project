@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T17:20:50",
-  "updated_at": "2026-05-12T17:43:22",
+  "updated_at": "2026-05-14T01:28:17",
   "prompts": {
     "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
     "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
@@ -11,7 +11,7 @@
     "category:vendor",
     "chapter:1"
   ],
-  "character_id": "c32b5fb9-7c13-46ce-84e4-39545c95d186",
+  "character_id": "5cd6f4e3-6518-4491-add6-32b7dca8f1b5",
   "preset": "player",
   "directions": 8,
   "view": "high_top_down",
@@ -29,46 +29,90 @@
   ],
   "local_path": "art_source/characters/a_tao_yi",
   "stages": {
-    "generate_8dir_base": {
-      "completed_at": "2026-05-12T17:24:16",
-      "paths": [
-        "art_source/characters/a_tao_yi/rotations/east.png",
-        "art_source/characters/a_tao_yi/rotations/west.png",
-        "art_source/characters/a_tao_yi/rotations/north.png",
-        "art_source/characters/a_tao_yi/rotations/south.png",
-        "art_source/characters/a_tao_yi/rotations/north_east.png",
-        "art_source/characters/a_tao_yi/rotations/north_west.png",
-        "art_source/characters/a_tao_yi/rotations/south_east.png",
-        "art_source/characters/a_tao_yi/rotations/south_west.png"
-      ]
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:13:49",
+      "started_at": "2026-05-14T01:13:49",
+      "completed_at": "2026-05-14T01:15:13",
+      "result": {
+        "character_id": "5cd6f4e3-6518-4491-add6-32b7dca8f1b5",
+        "rotation_paths": [
+          "art_source/characters/a_tao_yi/rotations/east.png",
+          "art_source/characters/a_tao_yi/rotations/west.png",
+          "art_source/characters/a_tao_yi/rotations/north.png",
+          "art_source/characters/a_tao_yi/rotations/south.png",
+          "art_source/characters/a_tao_yi/rotations/north_east.png",
+          "art_source/characters/a_tao_yi/rotations/north_west.png",
+          "art_source/characters/a_tao_yi/rotations/south_east.png",
+          "art_source/characters/a_tao_yi/rotations/south_west.png"
+        ]
+      },
+      "error": null
     },
-    "add_idle_animation": {
-      "completed_at": "2026-05-12T17:40:32",
-      "paths": [
-        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
-        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
-      ]
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:15:13",
+      "started_at": "2026-05-14T01:15:13",
+      "completed_at": "2026-05-14T01:18:44",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+        "sheet_json": "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+      },
+      "error": null
     },
-    "add_walk_animation": {
-      "completed_at": "2026-05-12T17:43:22",
-      "paths": [
-        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
-        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
-      ]
-    },
-    "compile_spritesheet": {
-      "completed_at": "2026-05-12T17:43:22",
-      "paths": [
-        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
-        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
-      ]
+    "animate_walk": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:15:13",
+      "started_at": "2026-05-14T01:15:37",
+      "completed_at": "2026-05-14T01:28:16",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west",
+          "south-east",
+          "north-east",
+          "north-west",
+          "south-west"
+        ],
+        "frames_per_direction": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "sheet_png": "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+        "sheet_json": "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+      },
+      "error": null
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:43:22",
-      "paths": [
-        "game/assets/textures/characters/a_tao_yi.png",
-        "game/assets/textures/characters/a_tao_yi.json"
-      ]
+      "status": "completed",
+      "queued_at": "2026-05-14T01:28:17",
+      "started_at": "2026-05-14T01:28:17",
+      "completed_at": "2026-05-14T01:28:17",
+      "result": {
+        "game_png": "game/assets/textures/characters/a_tao_yi.png",
+        "game_json": "game/assets/textures/characters/a_tao_yi.json"
+      },
+      "error": null
     }
   },
   "animations": {
@@ -80,10 +124,27 @@
     ],
     "walk": [
       "south",
-      "south-east"
+      "south-east",
+      "east",
+      "north",
+      "west",
+      "north-east",
+      "north-west",
+      "south-west"
     ]
   },
-  "imported_at": "2026-05-12T17:43:22",
+  "imported_at": "2026-05-14T01:28:17",
   "game_png_path": "game/assets/textures/characters/a_tao_yi.png",
-  "game_json_path": "game/assets/textures/characters/a_tao_yi.json"
+  "game_json_path": "game/assets/textures/characters/a_tao_yi.json",
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "player"
+  },
+  "isometric": true
 }

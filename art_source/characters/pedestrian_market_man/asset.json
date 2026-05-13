@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T17:48:27",
-  "updated_at": "2026-05-12T17:51:14",
+  "updated_at": "2026-05-14T01:49:02",
   "prompts": {
     "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
   },
@@ -10,7 +10,7 @@
     "category:pedestrian",
     "chapter:1"
   ],
-  "character_id": "d4d02094-b5be-40a1-abe4-e1cc8370e3c9",
+  "character_id": "77630312-ed12-4451-aeec-003930b46b50",
   "preset": "npc",
   "directions": 4,
   "view": "high_top_down",
@@ -24,35 +24,66 @@
   ],
   "local_path": "art_source/characters/pedestrian_market_man",
   "stages": {
-    "generate_4dir_base": {
-      "completed_at": "2026-05-12T17:49:17",
-      "paths": [
-        "art_source/characters/pedestrian_market_man/rotations/east.png",
-        "art_source/characters/pedestrian_market_man/rotations/west.png",
-        "art_source/characters/pedestrian_market_man/rotations/north.png",
-        "art_source/characters/pedestrian_market_man/rotations/south.png"
-      ]
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:13:49",
+      "started_at": "2026-05-14T01:39:49",
+      "completed_at": "2026-05-14T01:40:47",
+      "result": {
+        "character_id": "77630312-ed12-4451-aeec-003930b46b50",
+        "rotation_paths": [
+          "art_source/characters/pedestrian_market_man/rotations/east.png",
+          "art_source/characters/pedestrian_market_man/rotations/west.png",
+          "art_source/characters/pedestrian_market_man/rotations/north.png",
+          "art_source/characters/pedestrian_market_man/rotations/south.png"
+        ]
+      },
+      "error": null
     },
-    "add_idle_animation": {
-      "completed_at": "2026-05-12T17:51:14",
-      "paths": [
-        "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.png",
-        "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.json"
-      ]
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:40:49",
+      "started_at": "2026-05-14T01:40:49",
+      "completed_at": "2026-05-14T01:43:06",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.png",
+        "sheet_json": "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.json"
+      },
+      "error": null
     },
-    "compile_spritesheet": {
-      "completed_at": "2026-05-12T17:51:14",
-      "paths": [
-        "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.png",
-        "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.json"
-      ]
+    "animate_walk": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:40:49",
+      "started_at": "2026-05-14T01:49:00",
+      "completed_at": "2026-05-14T01:49:00",
+      "result": {
+        "skipped": true,
+        "reason": "4-dir character (static NPC)"
+      },
+      "error": null
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:51:14",
-      "paths": [
-        "game/assets/textures/characters/pedestrian_market_man.png",
-        "game/assets/textures/characters/pedestrian_market_man.json"
-      ]
+      "status": "completed",
+      "queued_at": "2026-05-14T01:49:02",
+      "started_at": "2026-05-14T01:49:02",
+      "completed_at": "2026-05-14T01:49:02",
+      "result": {
+        "game_png": "game/assets/textures/characters/pedestrian_market_man.png",
+        "game_json": "game/assets/textures/characters/pedestrian_market_man.json"
+      },
+      "error": null
     }
   },
   "animations": {
@@ -63,7 +94,18 @@
       "west"
     ]
   },
-  "imported_at": "2026-05-12T17:51:14",
+  "imported_at": "2026-05-14T01:49:02",
   "game_png_path": "game/assets/textures/characters/pedestrian_market_man.png",
-  "game_json_path": "game/assets/textures/characters/pedestrian_market_man.json"
+  "game_json_path": "game/assets/textures/characters/pedestrian_market_man.json",
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "npc"
+  },
+  "isometric": true
 }

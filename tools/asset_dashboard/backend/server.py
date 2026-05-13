@@ -25,7 +25,7 @@ MANIFEST_PATH = REPO_ROOT / "art_source" / "manifest.json"
 # Make `manifest` (the pipeline module) importable in this process for prompt edits.
 sys.path.insert(0, str(REPO_ROOT / "pipeline"))
 import manifest as pipeline_manifest  # noqa: E402
-from .worker import worker_loop  # noqa: E402  — must follow sys.path tweak
+from .worker import worker_loop, pause as _worker_pause, resume as _worker_resume, is_paused as _worker_paused  # noqa: E402
 
 
 @asynccontextmanager
@@ -73,7 +73,8 @@ def thumbnail(asset_type: str, name: str) -> FileResponse:
     png = resolve_thumbnail(REPO_ROOT, asset_type, name, entry={})
     if png is None:
         raise HTTPException(404, "no thumbnail available")
-    return FileResponse(png, media_type="image/png")
+    # See serve_asset_file for why no-cache + revalidation matters.
+    return FileResponse(png, media_type="image/png", headers={"Cache-Control": "no-cache"})
 
 
 class PromptUpdate(BaseModel):
@@ -283,6 +284,28 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
 # ============================================================
 # v2 (file-per-asset + async stages, no subprocess)
 # ============================================================
+
+
+@app.get("/api/v2/worker/status")
+def v2_worker_status() -> dict:
+    return {"paused": _worker_paused()}
+
+
+@app.post("/api/v2/worker/pause")
+def v2_worker_pause() -> dict:
+    """Stop dispatching new stages. In-flight tasks keep running until they
+    finish or the backend stops. Asset reads/UI continue normally."""
+    _worker_pause()
+    return {"paused": True}
+
+
+@app.post("/api/v2/worker/resume")
+def v2_worker_resume() -> dict:
+    _worker_resume()
+    return {"paused": False}
+
+
+
 #
 # These endpoints skip subprocess+JobRegistry entirely and just write
 # asset.json. The worker loop (started in lifespan) sees the new entry,
@@ -363,23 +386,39 @@ def v2_create_character(name: str, body: CreateCharacterV2) -> dict:
 
 
 class V2RetryRequest(BaseModel):
-    """Optional body — empty body is fine; just POST to retry."""
-    pass
+    """Optional body. `directions` narrows partial regen for animation
+    stages (animate_idle / animate_walk); ignored otherwise."""
+    directions: list[str] | None = None
 
 
 @app.post("/api/v2/asset/character/{name}/stage/{stage}/retry")
 def v2_retry_stage(name: str, stage: str, body: V2RetryRequest | None = None) -> dict:
-    """Reset a single stage so the worker re-runs it. Caller is responsible
-    for ALSO resetting downstream stages if they want a cascade re-run."""
+    """Reset a single stage so the worker re-runs it. If `directions` is
+    given, the next run patches only those rows in the spritesheet (other
+    directions keep their existing frames). Caller is responsible for ALSO
+    resetting downstream stages if they want a cascade re-run."""
     import sys
     sys.path.insert(0, str(REPO_ROOT / "pipeline"))
     import stages as stages_mod
     if stages_mod.get_stage("character", stage) is None:
         raise HTTPException(404, f"unknown stage {stage!r}")
-    if pipeline_manifest.get_character(name) is None:
+    entry = pipeline_manifest.get_character(name)
+    if entry is None:
         raise HTTPException(404, f"character {name!r} not found")
+
+    # Stash partial-direction request before resetting the stage so the
+    # worker's next dispatch can read it. Only meaningful for animation
+    # stages; non-animation stages just ignore it.
+    if body and body.directions:
+        retry_requests = dict(entry.get("retry_requests") or {})
+        retry_requests[stage] = {"directions": list(body.directions)}
+        pipeline_manifest.upsert_character(name, {"retry_requests": retry_requests})
+
     stages_mod.reset_stage("character", name, stage)
-    return {"status": "reset", "name": name, "stage": stage}
+    return {
+        "status": "reset", "name": name, "stage": stage,
+        "directions": (list(body.directions) if body and body.directions else None),
+    }
 
 
 # ============================================================
@@ -605,14 +644,29 @@ def stage_detail(asset_type: str, name: str, stage: str) -> dict:
 
     stages = asset.get("stages") or {}
     stage_info = stages.get(stage) or {}
+    # Legacy stages stored output paths at stage_info["paths"]; v2 stages
+    # store the same data inside stage_info["result"] under named keys.
+    # Normalize so the rest of this handler doesn't care which format.
     raw_paths: list[str] = list(stage_info.get("paths") or [])
+    result = stage_info.get("result") or {}
+    if isinstance(result, dict):
+        if isinstance(result.get("rotation_paths"), list):
+            raw_paths.extend(result["rotation_paths"])
+        for key in ("sheet_png", "sheet_json", "game_png", "game_json"):
+            v = result.get(key)
+            if isinstance(v, str):
+                raw_paths.append(v)
 
     # Animation stages now save the whole spritesheet, not per-frame PNGs.
     # Expand into per-(action, direction) row crops so the dashboard can show
     # one thumbnail per direction. The crop endpoint slices on demand.
     images: list[dict] = []
-    if asset_type == "character" and stage in ("add_idle_animation", "add_walk_animation"):
-        action_filter = "idle" if stage == "add_idle_animation" else "walk"
+    is_anim_stage = stage in (
+        "add_idle_animation", "add_walk_animation",  # legacy
+        "animate_idle", "animate_walk",              # v2
+    )
+    if asset_type == "character" and is_anim_stage:
+        action_filter = "idle" if stage in ("add_idle_animation", "animate_idle") else "walk"
         sheet_path = next(
             (p for p in raw_paths if p.replace("\\", "/").endswith(".png")), None
         )
@@ -731,7 +785,62 @@ def serve_asset_file(p: str) -> FileResponse:
     if not abs_path.is_file():
         raise HTTPException(404, "file not found")
     mime, _ = mimetypes.guess_type(str(abs_path))
-    return FileResponse(abs_path, media_type=mime or "application/octet-stream")
+    # Force browser to revalidate every time. FileResponse already sets ETag
+    # + Last-Modified; the server returns 304 (cheap) when nothing changed.
+    # Without `no-cache` browsers heuristic-cache PNGs by URL — re-rendering
+    # an asset would show a stale sprite for minutes.
+    return FileResponse(
+        abs_path,
+        media_type=mime or "application/octet-stream",
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
+from fastapi import Request  # noqa: E402
+
+
+@app.put("/api/asset/file")
+async def write_asset_file(p: str, request: Request) -> dict:
+    """Atomic write of binary bytes to an existing path under allowed roots.
+
+    Used by the dashboard's pixel editor: edit → encode PNG → PUT raw bytes.
+    Refuses to create new files (path must already exist) — the editor
+    only modifies existing assets, never creates new ones via this route.
+    """
+    try:
+        abs_path = (REPO_ROOT / p).resolve()
+    except (OSError, ValueError):
+        raise HTTPException(400, "invalid path")
+    repo_root_abs = REPO_ROOT.resolve()
+    allowed = False
+    for root in _ALLOWED_FILE_ROOTS:
+        root_abs = (repo_root_abs / root).resolve()
+        try:
+            abs_path.relative_to(root_abs)
+            allowed = True
+            break
+        except ValueError:
+            continue
+    if not allowed:
+        raise HTTPException(403, "path outside allowed roots")
+    if not abs_path.is_file():
+        raise HTTPException(404, "file not found (PUT only overwrites existing)")
+    # Refuse non-image extensions to keep blast radius narrow.
+    if abs_path.suffix.lower() not in {".png", ".jpg", ".jpeg"}:
+        raise HTTPException(400, f"refusing to overwrite non-image file: {abs_path.suffix}")
+
+    body = await request.body()
+    if not body:
+        raise HTTPException(400, "empty body")
+    if len(body) > 20 * 1024 * 1024:   # 20 MB cap; sprites are < 1 MB
+        raise HTTPException(413, "body too large")
+
+    # Atomic write: temp + rename, scoped to same directory so no cross-fs.
+    import os as _os
+    tmp = abs_path.with_suffix(abs_path.suffix + f".tmp.{_os.getpid()}")
+    tmp.write_bytes(body)
+    _os.replace(tmp, abs_path)
+    return {"status": "ok", "path": p, "bytes_written": len(body)}
 
 
 from fastapi.staticfiles import StaticFiles  # noqa: E402

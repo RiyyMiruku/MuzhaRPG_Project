@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T17:48:27",
-  "updated_at": "2026-05-12T17:51:18",
+  "updated_at": "2026-05-14T01:19:57",
   "prompts": {
     "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
   },
@@ -10,7 +10,7 @@
     "category:customer",
     "chapter:1"
   ],
-  "character_id": "cb278912-b8e2-41ab-a82a-9126d6577dd3",
+  "character_id": "1ffdbbda-9228-4cd0-8ac0-67864b7da9e3",
   "preset": "npc",
   "directions": 4,
   "view": "high_top_down",
@@ -24,35 +24,66 @@
   ],
   "local_path": "art_source/characters/customer_pharmacy_woman",
   "stages": {
-    "generate_4dir_base": {
-      "completed_at": "2026-05-12T17:49:16",
-      "paths": [
-        "art_source/characters/customer_pharmacy_woman/rotations/east.png",
-        "art_source/characters/customer_pharmacy_woman/rotations/west.png",
-        "art_source/characters/customer_pharmacy_woman/rotations/north.png",
-        "art_source/characters/customer_pharmacy_woman/rotations/south.png"
-      ]
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:13:49",
+      "started_at": "2026-05-14T01:13:49",
+      "completed_at": "2026-05-14T01:14:57",
+      "result": {
+        "character_id": "1ffdbbda-9228-4cd0-8ac0-67864b7da9e3",
+        "rotation_paths": [
+          "art_source/characters/customer_pharmacy_woman/rotations/east.png",
+          "art_source/characters/customer_pharmacy_woman/rotations/west.png",
+          "art_source/characters/customer_pharmacy_woman/rotations/north.png",
+          "art_source/characters/customer_pharmacy_woman/rotations/south.png"
+        ]
+      },
+      "error": null
     },
-    "add_idle_animation": {
-      "completed_at": "2026-05-12T17:51:18",
-      "paths": [
-        "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.png",
-        "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.json"
-      ]
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:14:57",
+      "started_at": "2026-05-14T01:14:57",
+      "completed_at": "2026-05-14T01:18:22",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.png",
+        "sheet_json": "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.json"
+      },
+      "error": null
     },
-    "compile_spritesheet": {
-      "completed_at": "2026-05-12T17:51:18",
-      "paths": [
-        "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.png",
-        "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.json"
-      ]
+    "animate_walk": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:14:57",
+      "started_at": "2026-05-14T01:19:55",
+      "completed_at": "2026-05-14T01:19:55",
+      "result": {
+        "skipped": true,
+        "reason": "4-dir character (static NPC)"
+      },
+      "error": null
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:51:18",
-      "paths": [
-        "game/assets/textures/characters/customer_pharmacy_woman.png",
-        "game/assets/textures/characters/customer_pharmacy_woman.json"
-      ]
+      "status": "completed",
+      "queued_at": "2026-05-14T01:19:57",
+      "started_at": "2026-05-14T01:19:57",
+      "completed_at": "2026-05-14T01:19:57",
+      "result": {
+        "game_png": "game/assets/textures/characters/customer_pharmacy_woman.png",
+        "game_json": "game/assets/textures/characters/customer_pharmacy_woman.json"
+      },
+      "error": null
     }
   },
   "animations": {
@@ -63,7 +94,18 @@
       "west"
     ]
   },
-  "imported_at": "2026-05-12T17:51:18",
+  "imported_at": "2026-05-14T01:19:57",
   "game_png_path": "game/assets/textures/characters/customer_pharmacy_woman.png",
-  "game_json_path": "game/assets/textures/characters/customer_pharmacy_woman.json"
+  "game_json_path": "game/assets/textures/characters/customer_pharmacy_woman.json",
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "npc"
+  },
+  "isometric": true
 }

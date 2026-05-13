@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T17:48:27",
-  "updated_at": "2026-05-12T17:53:37",
+  "updated_at": "2026-05-14T02:02:54",
   "prompts": {
     "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
   },
@@ -10,7 +10,7 @@
     "category:vendor",
     "chapter:1"
   ],
-  "character_id": "6703b411-2db7-4458-b632-38b3124ea45e",
+  "character_id": "675d8baf-ab32-48a9-be95-7c14a7c4e043",
   "preset": "npc",
   "directions": 4,
   "view": "high_top_down",
@@ -24,35 +24,67 @@
   ],
   "local_path": "art_source/characters/vendor_market_woman_02",
   "stages": {
-    "generate_4dir_base": {
-      "completed_at": "2026-05-12T17:49:47",
-      "paths": [
-        "art_source/characters/vendor_market_woman_02/rotations/east.png",
-        "art_source/characters/vendor_market_woman_02/rotations/west.png",
-        "art_source/characters/vendor_market_woman_02/rotations/north.png",
-        "art_source/characters/vendor_market_woman_02/rotations/south.png"
-      ]
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:13:49",
+      "started_at": "2026-05-14T01:49:46",
+      "completed_at": "2026-05-14T01:51:13",
+      "result": {
+        "character_id": "675d8baf-ab32-48a9-be95-7c14a7c4e043",
+        "rotation_paths": [
+          "art_source/characters/vendor_market_woman_02/rotations/east.png",
+          "art_source/characters/vendor_market_woman_02/rotations/west.png",
+          "art_source/characters/vendor_market_woman_02/rotations/north.png",
+          "art_source/characters/vendor_market_woman_02/rotations/south.png"
+        ]
+      },
+      "error": null
     },
-    "add_idle_animation": {
-      "completed_at": "2026-05-12T17:53:37",
-      "paths": [
-        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
-        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json"
-      ]
+    "animate_walk": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:51:14",
+      "started_at": "2026-05-14T02:02:52",
+      "completed_at": "2026-05-14T02:02:52",
+      "result": {
+        "skipped": true,
+        "reason": "4-dir character (static NPC)"
+      },
+      "error": null
     },
-    "compile_spritesheet": {
-      "completed_at": "2026-05-12T17:53:37",
-      "paths": [
-        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
-        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json"
-      ]
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T01:56:14",
+      "started_at": "2026-05-14T01:56:16",
+      "completed_at": "2026-05-14T02:02:52",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
+        "sheet_json": "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json",
+        "partial": false
+      },
+      "error": null
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:53:37",
-      "paths": [
-        "game/assets/textures/characters/vendor_market_woman_02.png",
-        "game/assets/textures/characters/vendor_market_woman_02.json"
-      ]
+      "status": "completed",
+      "queued_at": "2026-05-14T02:02:54",
+      "started_at": "2026-05-14T02:02:54",
+      "completed_at": "2026-05-14T02:02:54",
+      "result": {
+        "game_png": "game/assets/textures/characters/vendor_market_woman_02.png",
+        "game_json": "game/assets/textures/characters/vendor_market_woman_02.json"
+      },
+      "error": null
     }
   },
   "animations": {
@@ -63,7 +95,18 @@
       "west"
     ]
   },
-  "imported_at": "2026-05-12T17:53:37",
+  "imported_at": "2026-05-14T02:02:54",
   "game_png_path": "game/assets/textures/characters/vendor_market_woman_02.png",
-  "game_json_path": "game/assets/textures/characters/vendor_market_woman_02.json"
+  "game_json_path": "game/assets/textures/characters/vendor_market_woman_02.json",
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "npc"
+  },
+  "isometric": true
 }

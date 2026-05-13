@@ -39,6 +39,27 @@ if not log.handlers:
 
 WORKER_TICK_SECONDS = 2.0
 
+# Soft-pause flag: when True, _tick() returns immediately without dispatching
+# new stages. In-flight asyncio tasks keep running until they finish (or
+# the backend stops). Toggle via /api/v2/worker/{pause,resume} endpoints.
+_paused: bool = False
+
+
+def pause() -> None:
+    global _paused
+    _paused = True
+    log.info("worker paused")
+
+
+def resume() -> None:
+    global _paused
+    _paused = False
+    log.info("worker resumed")
+
+
+def is_paused() -> bool:
+    return _paused
+
 # Track tasks dispatched in this process so a backend restart can reset
 # 'running' stages whose driving task is gone.
 _running_keys: set[tuple[str, str, str]] = set()  # (asset_type, name, stage_name)
@@ -125,7 +146,11 @@ async def _tick() -> None:
     Only considers assets opted into v2 (pipeline_version >= 2). Legacy
     assets are owned by the subprocess+JobRegistry path and are invisible
     to the v2 worker.
+
+    Paused: returns immediately. In-flight tasks keep running.
     """
+    if _paused:
+        return
     data = manifest.load()
     for bucket, asset_type in (("characters", "character"), ("tilesets", "tileset"), ("objects", "object")):
         for asset_name, entry in (data.get(bucket) or {}).items():

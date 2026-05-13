@@ -48,7 +48,10 @@ export function AssetPreview({ asset }: Props) {
     asset.asset_type === "character" &&
     (asset.completed_stages.includes("add_idle_animation") ||
       asset.completed_stages.includes("add_walk_animation") ||
-      asset.completed_stages.includes("compile_spritesheet"))
+      asset.completed_stages.includes("compile_spritesheet") ||
+      // v2 stage names
+      asset.completed_stages.includes("animate_idle") ||
+      asset.completed_stages.includes("animate_walk"))
 
   return hasAnyAnimation ? (
     <AnimatedPreview characterName={asset.name} />
@@ -147,7 +150,10 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
   const [atlas, setAtlas] = useState<Atlas | null>(null)
   const [image, setImage] = useState<HTMLImageElement | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [animationType, setAnimationType] = useState<AnimationType>("walk")
+  // Default to idle: it's the universal animation (every character has it),
+  // and 4-dir static NPCs have no walk so defaulting to walk would land on
+  // an empty preview and force a manual switch.
+  const [animationType, setAnimationType] = useState<AnimationType>("idle")
   const [direction, setDirection] = useState<string>("south")
   const [zoom, setZoom] = useState(4)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -162,12 +168,19 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
     // Read straight from art_source/ (pipeline output) so previews reflect
     // partial pipeline state — works the moment add_idle_animation or
     // add_walk_animation completes, no need to wait for import_to_godot.
+    //
+    // Cache-buster: backend already sends Cache-Control: no-cache so the
+    // browser SHOULD revalidate, but in practice browsers stash <img>-loaded
+    // bytes in memory across re-mounts and serve them without revalidating.
+    // A per-mount timestamp param guarantees the URL differs after a
+    // regen → forces a real fetch. Cheap on a local dev tool.
+    const v = Date.now()
     const png = `/api/asset/file?p=${encodeURIComponent(
       `art_source/characters/${characterName}/spritesheet/${characterName}.png`
-    )}`
+    )}&_=${v}`
     const json = `/api/asset/file?p=${encodeURIComponent(
       `art_source/characters/${characterName}/spritesheet/${characterName}.json`
-    )}`
+    )}&_=${v}`
 
     fetch(json)
       .then((r) => {
@@ -188,6 +201,23 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
       cancelled = true
     }
   }, [characterName])
+
+  // Which animation types the atlas actually contains (some characters
+  // — 4-dir static NPCs — have idle but not walk).
+  const availableTypes = useMemo<AnimationType[]>(() => {
+    if (!atlas) return []
+    const present = new Set(Object.keys(atlas.animations).map((k) => k.split("_")[0]))
+    return ANIMATION_TYPES.filter((t) => present.has(t))
+  }, [atlas])
+
+  // If the current selection isn't supported (e.g. atlas has only idle),
+  // jump to the first available so the preview never sits blank.
+  useEffect(() => {
+    if (availableTypes.length === 0) return
+    if (!availableTypes.includes(animationType)) {
+      setAnimationType(availableTypes[0])
+    }
+  }, [availableTypes, animationType])
 
   const availableDirections = useMemo(() => {
     if (!atlas) return [] as string[]
@@ -273,9 +303,14 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
                 value={animationType}
                 onChange={(e) => setAnimationType(e.target.value as AnimationType)}
               >
-                {ANIMATION_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
+                {ANIMATION_TYPES.map((t) => {
+                  const supported = availableTypes.includes(t)
+                  return (
+                    <option key={t} value={t} disabled={!supported}>
+                      {t}{!supported && " (n/a)"}
+                    </option>
+                  )
+                })}
               </select>
             </label>
             <label className="flex items-center gap-2">
