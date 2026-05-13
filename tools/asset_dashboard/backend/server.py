@@ -5,7 +5,9 @@ Run: uv run uvicorn tools.asset_dashboard.backend.server:app --reload --port 876
 """
 from __future__ import annotations
 
+import asyncio
 import sys
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -23,8 +25,25 @@ MANIFEST_PATH = REPO_ROOT / "art_source" / "manifest.json"
 # Make `manifest` (the pipeline module) importable in this process for prompt edits.
 sys.path.insert(0, str(REPO_ROOT / "pipeline"))
 import manifest as pipeline_manifest  # noqa: E402
+from .worker import worker_loop  # noqa: E402  — must follow sys.path tweak
 
-app = FastAPI(title="MuzhaRPG Asset Dashboard", version="0.1.0")
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    # v2 worker runs alongside the legacy subprocess JobRegistry.
+    # When v2 stages handle every asset path, the legacy path can retire.
+    task = asyncio.create_task(worker_loop())
+    try:
+        yield
+    finally:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
+
+app = FastAPI(title="MuzhaRPG Asset Dashboard", version="0.2.0", lifespan=_lifespan)
 
 # Vite dev server runs on 5173 by default; allow it to call the backend.
 app.add_middleware(
@@ -261,6 +280,113 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
     return {"job_id": job_id, "stage": body.stage}
 
 
+# ============================================================
+# v2 (file-per-asset + async stages, no subprocess)
+# ============================================================
+#
+# These endpoints skip subprocess+JobRegistry entirely and just write
+# asset.json. The worker loop (started in lifespan) sees the new entry,
+# resolves stage deps, and dispatches in-process async tasks under the
+# pixellab_bg_job throttle.
+
+class CreateCharacterV2(BaseModel):
+    name: str
+    description: str
+    directions: int = 8                  # 4 (static NPC) or 8 (moving)
+    view: str = "high_top_down"
+    proportions: str = "cartoon"
+    isometric: bool = False
+    idle_template_id: str | None = None  # None → registry default (breathing-idle)
+    walk_template_id: str | None = None  # None → registry default (walking-6-frames)
+    zone: str | None = None
+    category: str | None = None
+    chapter: str | None = None
+    preset: str = "player"               # 'player' (moving) | 'npc' (static)
+
+
+@app.post("/api/v2/asset/character/{name}")
+def v2_create_character(name: str, body: CreateCharacterV2) -> dict:
+    """Create or upsert a character; the worker loop picks up and runs
+    its stages asynchronously. Returns immediately with the asset's
+    current state (status of each stage).
+
+    Re-posting overwrites params + clears stage state so the worker
+    re-runs from scratch. Use /api/v2/asset/character/{name}/stage/{stage}/retry
+    to re-run a single stage instead.
+    """
+    if name != body.name:
+        raise HTTPException(400, f"path name {name!r} != body name {body.name!r}")
+    try:
+        pipeline_manifest.validate_asset_name(name)
+    except ValueError as e:
+        raise HTTPException(400, f"invalid name: {e}") from e
+    if body.directions not in (4, 8):
+        raise HTTPException(400, "directions must be 4 or 8")
+
+    fields = {
+        "asset_type": "character",
+        # Opt-in marker — without this the v2 worker leaves the asset alone.
+        # Critical: legacy-pipeline assets share the manifest but use
+        # different stage names; mixing them up overwrites real work.
+        "pipeline_version": 2,
+        "description": body.description,
+        "directions": body.directions,
+        "preset": body.preset,
+        "params": {
+            "view": body.view,
+            "proportions": body.proportions,
+            "isometric": body.isometric,
+            "idle_template_id": body.idle_template_id,
+            "walk_template_id": body.walk_template_id,
+            "preset": body.preset,
+        },
+        # Clear stage state so worker re-runs from generate_rotations.
+        "stages": {},
+    }
+    pipeline_manifest.upsert_character(name, fields)
+
+    # Tags. Same vocabulary as legacy /create.
+    tags = []
+    if body.zone:     tags.append(f"zone:{body.zone}")
+    if body.category: tags.append(f"category:{body.category}")
+    if body.chapter:  tags.append(f"chapter:{body.chapter}")
+    if tags:
+        pipeline_manifest.add_tags("character", name, tags)
+
+    entry = pipeline_manifest.get_character(name) or {}
+    return {
+        "status": "queued",
+        "asset_type": "character",
+        "name": name,
+        "stages": entry.get("stages", {}),
+    }
+
+
+class V2RetryRequest(BaseModel):
+    """Optional body — empty body is fine; just POST to retry."""
+    pass
+
+
+@app.post("/api/v2/asset/character/{name}/stage/{stage}/retry")
+def v2_retry_stage(name: str, stage: str, body: V2RetryRequest | None = None) -> dict:
+    """Reset a single stage so the worker re-runs it. Caller is responsible
+    for ALSO resetting downstream stages if they want a cascade re-run."""
+    import sys
+    sys.path.insert(0, str(REPO_ROOT / "pipeline"))
+    import stages as stages_mod
+    if stages_mod.get_stage("character", stage) is None:
+        raise HTTPException(404, f"unknown stage {stage!r}")
+    if pipeline_manifest.get_character(name) is None:
+        raise HTTPException(404, f"character {name!r} not found")
+    stages_mod.reset_stage("character", name, stage)
+    return {"status": "reset", "name": name, "stage": stage}
+
+
+# ============================================================
+# legacy (subprocess + JobRegistry) — still in use for object/tileset
+# ============================================================
+
+
 @app.post("/api/asset/create")
 def create_asset(body: CreateAssetRequest) -> dict:
     # 1. validate name via pipeline_manifest.validate_asset_name
@@ -370,9 +496,51 @@ def create_asset(body: CreateAssetRequest) -> dict:
     return {"job_id": job_id, "asset_name": body.name, "asset_type": body.asset_type}
 
 
+def _v2_active_stages_as_jobs() -> list[dict]:
+    """Synthesize 'job' entries from v2 stages currently queued/running so
+    they show up in dashboard /api/jobs alongside legacy subprocess jobs.
+    Read straight from manifest each call — no separate registry to keep
+    in sync with the actual on-disk state."""
+    out: list[dict] = []
+    data = pipeline_manifest.load()
+    for bucket, asset_type in (("characters", "character"), ("tilesets", "tileset"), ("objects", "object")):
+        for asset_name, entry in (data.get(bucket) or {}).items():
+            if int(entry.get("pipeline_version", 1)) < 2:
+                continue
+            for stage_name, st in (entry.get("stages") or {}).items():
+                status = st.get("status")
+                if status not in ("queued", "running", "failed"):
+                    continue
+                out.append({
+                    "id": f"v2:{asset_type}/{asset_name}/{stage_name}",
+                    "asset_name": asset_name,
+                    "stage": stage_name,
+                    "status": status,
+                    "exit_code": None,
+                    "started_at": _ts_to_epoch(st.get("started_at") or st.get("queued_at")),
+                    "finished_at": _ts_to_epoch(st.get("failed_at")) if status == "failed" else None,
+                    "cmd": [],
+                    "source": "v2",   # so frontend can badge differently if it wants
+                })
+    return out
+
+
+def _ts_to_epoch(iso: str | None) -> float | None:
+    if not iso:
+        return None
+    import datetime as _dt
+    try:
+        return _dt.datetime.fromisoformat(iso).timestamp()
+    except ValueError:
+        return None
+
+
 @app.get("/api/jobs")
 def list_jobs() -> dict:
-    return {"jobs": [j.to_dict() for j in _jobs.list()]}
+    legacy = [j.to_dict() for j in _jobs.list()]
+    for j in legacy:
+        j.setdefault("source", "legacy")
+    return {"jobs": legacy + _v2_active_stages_as_jobs()}
 
 
 @app.get("/api/jobs/{job_id}")

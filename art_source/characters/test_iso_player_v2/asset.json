@@ -1,0 +1,146 @@
+{
+  "asset_type": "character",
+  "pipeline_version": 2,
+  "description": "young taiwanese man, slim build, dark grey t-shirt, indigo jeans, white sneakers, short black hair side part, calm focused expression, canvas messenger bag",
+  "directions": 8,
+  "preset": "player",
+  "params": {
+    "view": "high_top_down",
+    "proportions": "cartoon",
+    "isometric": true,
+    "idle_template_id": null,
+    "walk_template_id": null,
+    "preset": "player"
+  },
+  "stages": {
+    "generate_rotations": {
+      "status": "completed",
+      "queued_at": "2026-05-14T00:40:06",
+      "started_at": "2026-05-14T00:40:06",
+      "completed_at": "2026-05-14T00:41:32",
+      "result": {
+        "character_id": "8dfb58e4-697a-4925-a19a-87a599fda5bf",
+        "rotation_paths": [
+          "art_source/characters/test_iso_player_v2/rotations/east.png",
+          "art_source/characters/test_iso_player_v2/rotations/west.png",
+          "art_source/characters/test_iso_player_v2/rotations/north.png",
+          "art_source/characters/test_iso_player_v2/rotations/south.png",
+          "art_source/characters/test_iso_player_v2/rotations/north_east.png",
+          "art_source/characters/test_iso_player_v2/rotations/north_west.png",
+          "art_source/characters/test_iso_player_v2/rotations/south_east.png",
+          "art_source/characters/test_iso_player_v2/rotations/south_west.png"
+        ]
+      },
+      "error": null
+    },
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-14T00:41:32",
+      "started_at": "2026-05-14T00:41:32",
+      "completed_at": "2026-05-14T00:43:03",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "frames_per_direction": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "sheet_png": "art_source/characters/test_iso_player_v2/spritesheet/test_iso_player_v2.png",
+        "sheet_json": "art_source/characters/test_iso_player_v2/spritesheet/test_iso_player_v2.json"
+      },
+      "error": null
+    },
+    "animate_walk": {
+      "status": "completed",
+      "queued_at": "2026-05-14T00:45:33",
+      "started_at": "2026-05-14T00:45:33",
+      "completed_at": "2026-05-14T00:52:15",
+      "result": {
+        "directions": [
+          "south",
+          "east",
+          "north",
+          "west",
+          "south-east",
+          "north-east",
+          "north-west",
+          "south-west"
+        ],
+        "frames_per_direction": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "sheet_png": "art_source/characters/test_iso_player_v2/spritesheet/test_iso_player_v2.png",
+        "sheet_json": "art_source/characters/test_iso_player_v2/spritesheet/test_iso_player_v2.json"
+      },
+      "error": null
+    },
+    "import_to_godot": {
+      "status": "completed",
+      "queued_at": "2026-05-14T00:52:17",
+      "started_at": "2026-05-14T00:52:17",
+      "completed_at": "2026-05-14T00:52:17",
+      "result": {
+        "game_png": "game/assets/textures/characters/test_iso_player_v2.png",
+        "game_json": "game/assets/textures/characters/test_iso_player_v2.json"
+      },
+      "error": null
+    }
+  },
+  "created_at": "2026-05-14T00:40:05",
+  "updated_at": "2026-05-14T00:52:17",
+  "tags": [
+    "zone:test",
+    "category:player",
+    "chapter:test"
+  ],
+  "character_id": "8dfb58e4-697a-4925-a19a-87a599fda5bf",
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "isometric": true,
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/test_iso_player_v2",
+  "status": "base_ready",
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ],
+    "walk": [
+      "south",
+      "east",
+      "north",
+      "west",
+      "south-east",
+      "north-east",
+      "north-west",
+      "south-west"
+    ]
+  },
+  "imported_at": "2026-05-14T00:52:17",
+  "game_png_path": "game/assets/textures/characters/test_iso_player_v2.png",
+  "game_json_path": "game/assets/textures/characters/test_iso_player_v2.json"
+}

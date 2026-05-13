@@ -40,10 +40,32 @@ CHARACTER_STAGES_STATIC: list[str] = [
     "import_to_godot",
 ]
 
+# v2 pipeline (file-per-asset + async stages). Different stage names; tracked
+# separately so the same dashboard can render both legacy and v2 assets
+# during the migration window.
+CHARACTER_STAGES_V2: list[str] = [
+    "generate_rotations",
+    "animate_idle",
+    "animate_walk",
+    "import_to_godot",
+]
+CHARACTER_STAGES_V2_STATIC: list[str] = [   # 4-dir char auto-skips animate_walk
+    "generate_rotations",
+    "animate_idle",
+    "import_to_godot",
+]
+
 
 def _stages_for(asset_type: AssetType, entry: dict) -> list[str]:
-    if asset_type == "character" and entry.get("preset") == "npc":
-        return CHARACTER_STAGES_STATIC
+    is_v2 = int(entry.get("pipeline_version", 1)) >= 2
+    if asset_type == "character":
+        if is_v2:
+            # 4-dir static NPCs skip walk; everyone else gets the 4-stage v2 set.
+            if int(entry.get("directions", 8)) == 4:
+                return CHARACTER_STAGES_V2_STATIC
+            return CHARACTER_STAGES_V2
+        if entry.get("preset") == "npc":
+            return CHARACTER_STAGES_STATIC
     return STAGE_ORDER[asset_type]
 
 
@@ -103,7 +125,15 @@ def load_assets(manifest_data: dict | Path) -> list[AssetSummary]:
         for name, entry in section.items():
             tags = list(entry.get("tags") or [])
             stages = entry.get("stages") or {}
-            completed: list[str] = list(stages.keys())
+            # A stage counts as 'completed' if v2-style status=='completed',
+            # OR (legacy: status field absent but completed_at recorded).
+            completed: list[str] = [
+                n for n, st in stages.items()
+                if isinstance(st, dict) and (
+                    st.get("status") == "completed"
+                    or ("status" not in st and st.get("completed_at"))
+                )
+            ]
             all_stages = _stages_for(asset_type, entry)
             png_path = entry.get("game_png_path") or entry.get("local_path")
             out.append(AssetSummary(
