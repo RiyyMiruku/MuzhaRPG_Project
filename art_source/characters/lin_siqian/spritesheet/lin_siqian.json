@@ -1,0 +1,23 @@
+{
+  "character_name": "lin_siqian",
+  "frame_size": [
+    92,
+    92
+  ],
+  "animations": {
+    "idle_south": {
+      "row": 0,
+      "start": 0,
+      "end": 5,
+      "fps": 6.0,
+      "loop": true
+    },
+    "walk_south": {
+      "row": 1,
+      "start": 0,
+      "end": 9,
+      "fps": 6.0,
+      "loop": true
+    }
+  }
+}

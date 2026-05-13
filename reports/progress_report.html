@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>木境傳說 · 第二組 · AI 實務專案進度報告</title>
+<style>
+:root {
+  --bg: #f7f4ec;
+  --paper: #ffffff;
+  --ink: #232323;
+  --ink-soft: #4a4a4a;
+  --muted: #7a7a7a;
+  --accent: #5a7d57;
+  --accent-dark: #3d5b3b;
+  --accent-light: #eaf0e6;
+  --warn: #c97b50;
+  --warn-light: #fbf0e7;
+  --info: #5a7a9c;
+  --info-light: #e7eef5;
+  --danger: #a05454;
+  --danger-light: #f5e7e7;
+  --gold: #c8a14d;
+  --gold-light: #fcf6e7;
+  --grid: #e6e1d4;
+  --shadow: rgba(40,30,10,0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 10% 10%, #efeadb 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, #ece4cf 0%, transparent 40%),
+    var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "Helvetica Neue", sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 24px;
+}
+
+.slide {
+  width: min(96vw, 1280px);
+  height: min(92vh, 720px);
+  background: var(--paper);
+  border-radius: 16px;
+  box-shadow: 0 30px 80px var(--shadow), 0 2px 6px rgba(0,0,0,0.04);
+  padding: 56px 68px 64px;
+  display: none;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide.active { display: flex; }
+
+.slide::before {
+  content: attr(data-num) " / 13";
+  position: absolute;
+  top: 22px;
+  right: 32px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  font-family: monospace;
+}
+
+.slide::after {
+  content: "木境傳說 · 第二組 · AI 實務專案 · 2026 春";
+  position: absolute;
+  bottom: 22px;
+  left: 68px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+.brand-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+}
+
+h1, h2, h3, h4, h5 { font-weight: 700; line-height: 1.3; }
+h1 { font-size: 52px; color: var(--ink); }
+h2 { font-size: 32px; color: var(--accent-dark); margin-bottom: 18px; letter-spacing: 0.01em; }
+h3 { font-size: 20px; color: var(--ink); margin-bottom: 10px; }
+h4 { font-size: 16px; color: var(--accent-dark); margin-bottom: 8px; }
+h5 { font-size: 13px; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+
+.divider {
+  width: 56px;
+  height: 4px;
+  background: var(--accent);
+  margin: 0 0 22px 0;
+  border-radius: 2px;
+}
+
+p { font-size: 16px; line-height: 1.7; color: var(--ink-soft); }
+.lead { font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
+
+ul { list-style: none; padding: 0; }
+li {
+  font-size: 15px;
+  line-height: 1.7;
+  padding-left: 20px;
+  position: relative;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+li::before {
+  content: "▸";
+  color: var(--accent);
+  position: absolute;
+  left: 0;
+  font-size: 14px;
+}
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; flex: 1; min-height: 0; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.col-3-7 { display: grid; grid-template-columns: 3fr 7fr; gap: 36px; flex: 1; min-height: 0; }
+.col-5-7 { display: grid; grid-template-columns: 5fr 7fr; gap: 36px; flex: 1; min-height: 0; }
+
+.card {
+  background: var(--accent-light);
+  padding: 18px 22px;
+  border-radius: 10px;
+  border-left: 4px solid var(--accent);
+}
+.card.warn { background: var(--warn-light); border-left-color: var(--warn); }
+.card.info { background: var(--info-light); border-left-color: var(--info); }
+.card.gold { background: var(--gold-light); border-left-color: var(--gold); }
+.card.dark { background: #2b2b2b; color: #e8e3d5; border-left-color: var(--accent); }
+.card.dark h4, .card.dark h5 { color: #b9c9b3; }
+.card.dark li { color: #d4cfc2; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--grid); color: var(--ink-soft); }
+th { background: var(--accent-light); color: var(--accent-dark); font-weight: 600; font-size: 13px; }
+td.tag-cell { font-weight: 600; color: var(--ink); }
+
+.tag {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.tag.warn { background: var(--warn); }
+.tag.muted { background: var(--muted); }
+.tag.info { background: var(--info); }
+.tag.gold { background: var(--gold); color: #4a3a10; }
+
+.nav {
+  position: fixed;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 24px;
+  box-shadow: 0 6px 24px var(--shadow);
+  z-index: 100;
+}
+.nav button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.nav button:hover:not(:disabled) { background: var(--accent-dark); }
+.nav button:disabled { background: var(--muted); opacity: 0.4; cursor: not-allowed; }
+.nav .counter { font-size: 12px; color: var(--ink); min-width: 46px; text-align: center; font-family: monospace; }
+
+/* ====== COVER ====== */
+.cover { padding: 80px 80px 64px; justify-content: space-between; }
+.cover .group-tag {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 5px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 18px;
+}
+.cover h1 { font-size: 78px; margin-bottom: 4px; letter-spacing: 0.02em; }
+.cover .en-title {
+  font-size: 18px;
+  color: var(--accent-dark);
+  letter-spacing: 0.4em;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.cover .subtitle {
+  font-size: 20px;
+  color: var(--ink-soft);
+  margin-top: 16px;
+  margin-bottom: 28px;
+}
+.cover .slogan {
+  font-size: 22px;
+  color: var(--ink);
+  font-style: italic;
+  border-left: 4px solid var(--accent);
+  padding: 4px 0 4px 18px;
+  margin: 20px 0;
+  line-height: 1.5;
+}
+.team-block { font-size: 14px; }
+.team-block h5 { margin-bottom: 10px; }
+.team-block .member { display: flex; gap: 14px; align-items: baseline; margin-bottom: 4px; color: var(--ink-soft); }
+.team-block .id { color: var(--muted); font-family: monospace; font-size: 13px; min-width: 90px; }
+.team-block .dept { color: var(--accent-dark); min-width: 72px; font-weight: 500; }
+.team-block .name { color: var(--ink); font-weight: 600; }
+
+.cover .meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+}
+.cover .repo {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: monospace;
+}
+
+/* ====== METRICS ====== */
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 8px 0 16px; }
+.metric {
+  padding: 14px 18px;
+  background: #fafaf6;
+  border-radius: 10px;
+  border: 1px solid var(--grid);
+}
+.metric .val {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--accent-dark);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.metric .lbl {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 6px;
+}
+
+/* ====== STATUS GRID ====== */
+.status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+.status-card {
+  padding: 16px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--grid);
+  display: flex;
+  flex-direction: column;
+}
+.status-card.done { background: #eef5ec; border-left: 4px solid var(--accent); }
+.status-card.wip  { background: var(--gold-light); border-left: 4px solid var(--gold); }
+.status-card.todo { background: #f3f0eb; border-left: 4px solid var(--muted); }
+.status-card .head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.status-card .head .label { font-size: 14px; font-weight: 700; letter-spacing: 0.02em; }
+.status-card .head .count { font-size: 12px; color: var(--muted); margin-left: auto; }
+.status-card ul li { font-size: 13px; line-height: 1.5; padding-left: 14px; margin-bottom: 5px; }
+.status-card ul li::before { font-size: 11px; }
+
+/* ====== SWOT ====== */
+.swot {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 14px;
+  flex: 1;
+  min-height: 0;
+}
+.swot-box { padding: 16px 20px; border-radius: 10px; overflow: hidden; }
+.swot-box .head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.swot-box .letter { font-size: 22px; font-weight: 800; }
+.swot-box h4 { font-size: 16px; }
+.swot-box ul li { font-size: 12px; line-height: 1.45; padding-left: 12px; margin-bottom: 4px; }
+.swot-box ul li::before { font-size: 10px; }
+.swot-s { background: #eef5ec; border-top: 4px solid var(--accent); }
+.swot-s .letter, .swot-s h4 { color: var(--accent-dark); }
+.swot-w { background: var(--warn-light); border-top: 4px solid var(--warn); }
+.swot-w .letter, .swot-w h4 { color: #8a4f2c; }
+.swot-o { background: var(--info-light); border-top: 4px solid var(--info); }
+.swot-o .letter, .swot-o h4 { color: #3e597a; }
+.swot-t { background: var(--danger-light); border-top: 4px solid var(--danger); }
+.swot-t .letter, .swot-t h4 { color: #7a3a3a; }
+
+.tows {
+  background: #2b2b2b;
+  color: #d4cfc2;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+.tows .label { color: var(--gold); font-weight: 700; }
+
+/* ====== BMC ====== */
+.bmc {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 1fr 1fr 0.7fr;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+}
+.bmc-cell {
+  background: #fafaf6;
+  border: 1px solid var(--grid);
+  padding: 9px 11px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.bmc-cell h5 { font-size: 11px; margin-bottom: 5px; }
+.bmc-cell li { font-size: 11px; line-height: 1.4; padding-left: 10px; margin-bottom: 2px; }
+.bmc-cell li::before { content: "·"; font-weight: 900; left: 2px; top: -1px; }
+.kp  { grid-column: 1; grid-row: 1 / span 2; }
+.ka  { grid-column: 2; grid-row: 1; }
+.vp  { grid-column: 3; grid-row: 1 / span 2; background: var(--accent-light); border-color: var(--accent); }
+.cr  { grid-column: 4; grid-row: 1; }
+.cs  { grid-column: 5; grid-row: 1 / span 2; }
+.kr  { grid-column: 2; grid-row: 2; }
+.ch  { grid-column: 4; grid-row: 2; }
+.bcost { grid-column: 1 / span 2; grid-row: 3; background: var(--warn-light); border-color: var(--warn); }
+.brev  { grid-column: 3 / span 3; grid-row: 3; background: #eef5ec; border-color: var(--accent); }
+
+/* ====== FLOW ====== */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+.flow-step {
+  background: var(--accent-light);
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-dark);
+  border: 1px solid var(--accent);
+}
+.flow-step.alt { background: var(--info-light); color: #3e597a; border-color: var(--info); }
+.flow-step.out { background: var(--gold-light); color: #6b540d; border-color: var(--gold); }
+.flow-arrow { color: var(--accent); font-size: 16px; }
+
+/* ====== TIMELINE ====== */
+.timeline { display: flex; gap: 12px; margin-top: 14px; }
+.tl-block {
+  flex: 1;
+  background: #fafaf6;
+  border-radius: 8px;
+  padding: 14px 16px;
+  border-top: 4px solid var(--accent);
+}
+.tl-block .when { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.tl-block .what { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.tl-block ul li { font-size: 12px; padding-left: 12px; margin-bottom: 2px; }
+
+.persona-card {
+  background: #fafaf6;
+  border: 1px solid var(--grid);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.persona-card .avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.highlight {
+  background: linear-gradient(180deg, transparent 60%, var(--accent-light) 60%);
+  padding: 0 4px;
+  font-weight: 600;
+  color: var(--accent-dark);
+}
+
+.kpi-row { display: flex; gap: 10px; margin-top: 10px; }
+.kpi-row .kpi {
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.qna {
+  text-align: center;
+  margin: auto 0;
+}
+.qna .big {
+  font-size: 96px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.qna .sub { font-size: 22px; color: var(--ink-soft); }
+
+@media print {
+  body { background: #fff; overflow: visible; }
+  .app { display: block; height: auto; padding: 0; }
+  .slide {
+    display: flex !important;
+    page-break-after: always;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+  }
+  .nav { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ====== SLIDE 1 · COVER ====== -->
+<section class="slide cover active" data-num="01">
+  <div class="brand-stripe"></div>
+  <div>
+    <div class="group-tag">第二組 · GROUP 02</div>
+    <div class="en-title">PROJECT&nbsp;&nbsp;MUZHA</div>
+    <h1>木 境 傳 說</h1>
+    <p class="subtitle">結合本地端輕量 LLM 與 2.5D 像素美術的微型開放世界 RPG</p>
+    <p class="slogan">「在木柵的每一條巷子，<br>遇見一段你沒聽過的故事。」</p>
+  </div>
+
+  <div class="meta">
+    <div class="team-block">
+      <h5>團 隊 成 員</h5>
+      <div class="member"><span class="id">114703023</span><span class="dept">資訊一</span><span class="name">李侑霖</span></div>
+      <div class="member"><span class="id">111308011</span><span class="dept">風管四</span><span class="name">翁睿承</span></div>
+      <div class="member"><span class="id">111701003</span><span class="dept">應數四</span><span class="name">鄭翔云</span></div>
+    </div>
+    <div class="repo">github.com/RiyyMiruku/MuzhaRPG_Project</div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 2 · 理念動機 ====== -->
+<section class="slide" data-num="02">
+  <div class="brand-stripe"></div>
+  <h2>理念動機</h2>
+  <div class="divider"></div>
+
+  <div class="col-5-7">
+    <div>
+      <h4>問題分析</h4>
+      <p style="font-size:14px;">在台北唸書／生活、對所在地不熟的年輕族群，對「自己每天經過的街區」缺乏情感連結與在地知識。在地故事散落在長輩記憶、市場攤販的日常裡，沒有被轉成年輕人會主動接觸的媒介。</p>
+      <br>
+      <h4>5W1H · POV</h4>
+      <ul>
+        <li><b>Who</b>：政大學生、文山區通勤族、木柵居民</li>
+        <li><b>When</b>：等放榜、課後、通勤的空白時段</li>
+        <li><b>Where</b>：木柵市場、政大、指南宮、河濱、貓空</li>
+        <li><b>POV</b>：「我每天經過這條街，但我不知道這裡發生過什麼事。」</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="persona-card" style="margin-bottom:14px;">
+        <h5>使用者歷程地圖 · PERSONA</h5>
+        <h3 style="margin-top:4px;">王同學，22 歲</h3>
+        <p style="font-size:13px;margin-top:4px;">政大研究所考生，剛考完研究所、等放榜。住木柵 4 年，每天經過木柵市場去學校，但只去過 3 家店。喜歡敘事型獨立遊戲，會主動關注獨立工作室。</p>
+        <div class="kpi-row">
+          <span class="kpi">焦慮空白期</span>
+          <span class="kpi">在地疏離感</span>
+          <span class="kpi">敘事 RPG 受眾</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h5>HMW · How might we...</h5>
+        <p style="font-size:16px;color:var(--ink);line-height:1.6;">我們能不能用一款 RPG，讓年輕人在等放榜的空白時間裡，<span class="highlight">重新認識自己生活的這個區</span>？</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 3 · 解決方案 ====== -->
+<section class="slide" data-num="03">
+  <div class="brand-stripe"></div>
+  <h2>解決方案</h2>
+  <div class="divider"></div>
+
+  <p class="lead" style="margin-bottom:18px;">以<span class="highlight">三條 AI 軸線</span>解構傳統 RPG 開發的成本牆，讓三人團隊也能撐起在地題材的長篇敘事。</p>
+
+  <div class="three-col" style="margin-bottom:18px;">
+    <div class="card">
+      <h5>01 · 在地化敘事</h5>
+      <h3 style="margin-top:6px;">真實木柵為舞台</h3>
+      <p style="font-size:13px;margin-top:6px;">以政大、市場、指南宮、河濱、貓空 5 個真實場景重建，玩家認得出每一條巷弄。</p>
+    </div>
+    <div class="card info">
+      <h5>02 · 本地端 SLM 對話</h5>
+      <h3 style="margin-top:6px;">每個 NPC 都會聊天</h3>
+      <p style="font-size:13px;margin-top:6px;">Qwen3.5-0.8B 量化後 531MB，玩家離線可玩，無 API 費用、保護隱私。</p>
+    </div>
+    <div class="card gold">
+      <h5>03 · AI 美術 PIPELINE</h5>
+      <h3 style="margin-top:6px;">三人撐起 RPG 量級</h3>
+      <p style="font-size:13px;margin-top:6px;">Pixellab + 自製 orchestrator + Godot 自動 import，1 個 NPC 從 prompt 到入庫 &lt; 10 分鐘。</p>
+    </div>
+  </div>
+
+  <h4 style="margin-top:8px;">資產生產流程圖</h4>
+  <div class="flow">
+    <span class="flow-step">劇本草稿</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step alt">story-asset-extraction (AI)</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">資產清單 JSON</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step alt">art-pipeline · Pixellab API</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step">spritesheet + 動畫</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step out">Godot 場景</span>
+  </div>
+</section>
+
+<!-- ====== SLIDE 4 · 文獻探討 ====== -->
+<section class="slide" data-num="04">
+  <div class="brand-stripe"></div>
+  <h2>文獻探討</h2>
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h4>背景 · 在地題材 RPG 的可行性</h4>
+      <ul>
+        <li><b>《返校》</b>（赤燭, 2017）— 證明台灣在地題材在 Steam 商業可行</li>
+        <li><b>《九日》</b>（赤燭, 2024）— 武俠 + 在地神話的二次驗證</li>
+        <li><b>《廟不可言》</b>— 民俗題材獨立 RPG 經驗</li>
+      </ul>
+      <p style="font-size:13px;margin-top:10px;color:var(--muted);">→ 既有作品多為<b>線性敘事</b>，動態 NPC 對話尚未在商業 RPG 大規模嘗試。</p>
+
+      <br>
+      <h4>SLM 端側部署</h4>
+      <ul>
+        <li>Qwen3 系列技術報告（Alibaba, 2025）</li>
+        <li>llama.cpp · GGUF 量化格式（ggml-org）</li>
+        <li>Q4_K_M 量化策略：精度 / 大小平衡</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>可行性驗證（量化指標）</h4>
+      <table>
+        <thead>
+          <tr><th>項目</th><th>結果</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Qwen3.5-0.8B Q4_K_M</td><td><span class="tag">531 MB</span></td></tr>
+          <tr><td>CPU 純推論</td><td><span class="tag">可行</span></td></tr>
+          <tr><td>消費級 GPU (RTX 3060)</td><td><span class="tag">&lt;1GB VRAM</span></td></tr>
+          <tr><td>Godot 4.x HTTP client</td><td><span class="tag">已驗證</span></td></tr>
+          <tr><td>Pixellab v2 API 8 方向角色</td><td><span class="tag">已驗證</span></td></tr>
+        </tbody>
+      </table>
+
+      <br>
+      <h4>差異化定位</h4>
+      <div class="card">
+        <p style="font-size:14px;">vs.《返校》→ 我們是<b>日常型</b>非驚悚<br>
+        vs.《九日》→ 我們是<b>寫實在地</b>非武俠奇幻<br>
+        vs. AI Dungeon →我們是<b>本地端</b>非雲端付費</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 5 · 資料來源 · 方法 ====== -->
+<section class="slide" data-num="05">
+  <div class="brand-stripe"></div>
+  <h2>資料來源 · 方法</h2>
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h4>資料蒐集</h4>
+      <table>
+        <thead><tr><th>類型</th><th>來源</th></tr></thead>
+        <tbody>
+          <tr><td class="tag-cell">在地素材</td><td>木柵實地田調、政大校友社群、Google 街景</td></tr>
+          <tr><td class="tag-cell">語言模型</td><td>Hugging Face · Qwen3.5-0.8B-GGUF</td></tr>
+          <tr><td class="tag-cell">推論引擎</td><td>llama.cpp release b8583</td></tr>
+          <tr><td class="tag-cell">美術生成</td><td>Pixellab v2 API（角色 / prop / autotile）</td></tr>
+          <tr><td class="tag-cell">遊戲引擎</td><td>Godot 4.x · 自製 manifest 系統</td></tr>
+          <tr><td class="tag-cell">市場分析</td><td>Steam 中文獨立 RPG 銷售榜、4Gamers</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h4>AI 工作流程</h4>
+      <div class="card info" style="margin-bottom:10px;">
+        <h5>A · 對話系統</h5>
+        <p style="font-size:13px;margin-top:4px;">三層架構：authored beats（劇本鎖定）→ constrained free chat（角色約束）→ fallback。Prompt 最佳化使用 chatml + assistant prefill <code>&lt;think&gt;&lt;/think&gt;</code>。</p>
+      </div>
+      <div class="card gold" style="margin-bottom:10px;">
+        <h5>B · 美術 PIPELINE</h5>
+        <p style="font-size:13px;margin-top:4px;">Pixellab API → 4 種 orchestrator（autotile / prop / NPC static / NPC moving）→ frame-bake spritesheet → Godot .import + .tres 自動產出。</p>
+      </div>
+      <div class="card">
+        <h5>C · WEB DASHBOARD</h5>
+        <p style="font-size:13px;margin-top:4px;">React + Vite + FastAPI。建立、預覽、重生成、批次任務管理，三人團隊共用協作。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 6 · 結果 / 進度 ====== -->
+<section class="slide" data-num="06">
+  <div class="brand-stripe"></div>
+  <h2>結果 · 進度概況</h2>
+  <div class="divider"></div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="val">128</div>
+      <div class="lbl">Git Commits</div>
+    </div>
+    <div class="metric">
+      <div class="val">89</div>
+      <div class="lbl">本月衝刺數</div>
+    </div>
+    <div class="metric">
+      <div class="val">4</div>
+      <div class="lbl">資產 Pipeline 類型</div>
+    </div>
+    <div class="metric">
+      <div class="val">2</div>
+      <div class="lbl">AI Workflow Skill</div>
+    </div>
+  </div>
+
+  <div class="status-grid">
+    <div class="status-card done">
+      <div class="head"><span class="tag">已完成</span><span class="label">DONE</span></div>
+      <ul>
+        <li>AI 美術 pipeline（4 類資產 × Godot 自動 import）</li>
+        <li>Web Dashboard：建立 / 預覽 / 重生成 / 批次任務</li>
+        <li>Godot 引擎基建：8 方向角色移動、Zone Loading</li>
+        <li>對話系統三層架構 + Schema 設計</li>
+        <li>章節 1 劇本草稿《鐵門後的那個人》</li>
+        <li>story-asset-extraction skill</li>
+        <li>art-pipeline skill</li>
+        <li>frame-bake spritesheet 重構</li>
+      </ul>
+    </div>
+    <div class="status-card wip">
+      <div class="head"><span class="tag gold">進行中</span><span class="label">WIP</span></div>
+      <ul>
+        <li>章節 1 美術素材量產（阿謙、林榮昌等）</li>
+        <li>LLM 對話系統 ↔ Godot 整合測試</li>
+        <li>場景 TileMap 取代色塊背景</li>
+        <li>NPC 角色設計擴充至 4 個區域</li>
+        <li>章節 1 場景關卡製作</li>
+      </ul>
+    </div>
+    <div class="status-card todo">
+      <div class="head"><span class="tag muted">待開始</span><span class="label">TODO</span></div>
+      <ul>
+        <li>章節 1 完整可玩 Demo</li>
+        <li>章節 2–4 劇本撰寫</li>
+        <li>環境音效</li>
+        <li>一鍵打包發佈（Godot + llama.cpp + 模型）</li>
+        <li>跨平台支援（Win / macOS / Linux）</li>
+        <li>Steam Wishlist 頁面</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 7 · 本週工作重點 ====== -->
+<section class="slide" data-num="07">
+  <div class="brand-stripe"></div>
+  <h2>本週工作重點 · WEEK SPRINT</h2>
+  <div class="divider"></div>
+
+  <div style="display:flex; gap:12px; margin-bottom:18px; align-items:center; flex-wrap:wrap;">
+    <span style="font-size:14px; color:var(--muted); letter-spacing:0.08em; font-family:monospace;">2026 / 05 / 05  →  2026 / 05 / 12</span>
+    <span class="tag gold">89 commits</span>
+    <span class="tag">4 大里程碑</span>
+    <span class="tag info">原型 → 產品線</span>
+  </div>
+
+  <div class="two-col" style="margin-bottom:14px;">
+    <div class="card">
+      <h5>里程碑 01</h5>
+      <h3 style="margin-top:4px;">AI 美術 PIPELINE 從 0 到 1</h3>
+      <ul style="margin-top:6px;">
+        <li>4 種 orchestrator：autotile / prop / npc_static / npc_moving</li>
+        <li>Pixellab v2 API 整合 + Godot .import / .tres 自動產出</li>
+        <li>單一 NPC：prompt → 8 方向 spritesheet → 入庫 &lt; 10 分鐘</li>
+      </ul>
+    </div>
+    <div class="card info">
+      <h5>里程碑 02</h5>
+      <h3 style="margin-top:4px;">WEB DASHBOARD 上線</h3>
+      <ul style="margin-top:6px;">
+        <li>React + Vite + TS + Tailwind 前端、FastAPI 後端</li>
+        <li>CreateAssetModal · AssetDetail · PromptEditor · JobLogPanel</li>
+        <li>三人團隊用同一個 web UI 協作、批次任務管理</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:14px;">
+    <div class="card gold">
+      <h5>里程碑 03</h5>
+      <h3 style="margin-top:4px;">章節敘事架構 + 策略轉向</h3>
+      <ul style="margin-top:6px;">
+        <li>從「開放世界 4 NPC」轉為「章節 MVP」（SWOT WT 策略）</li>
+        <li>per-chapter workspace：draft.md + assets.json + assets.md</li>
+        <li>章節 1《鐵門後的那個人》劇本草稿完成</li>
+      </ul>
+    </div>
+    <div class="card warn">
+      <h5>里程碑 04</h5>
+      <h3 style="margin-top:4px;">AI 工作流 SKILL 化</h3>
+      <ul style="margin-top:6px;">
+        <li>story-asset-extraction：劇本 → 結構化資產清單</li>
+        <li>art-pipeline：清單 → Dashboard 批次任務</li>
+        <li>三人共用同一套 prompt，產出風格一致</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4 style="margin-top:auto;">技術突破</h4>
+  <div class="kpi-row" style="flex-wrap:wrap;">
+    <span class="kpi">frame-bake spritesheet</span>
+    <span class="kpi">MCP server 退役 → CLI/Dashboard 統一介面</span>
+    <span class="kpi">manifest per-stage prompts</span>
+    <span class="kpi">8 方向角色含對角線動畫</span>
+  </div>
+</section>
+
+<!-- ====== SLIDE 8 · 章節 1 展示 ====== -->
+<section class="slide" data-num="08">
+  <div class="brand-stripe"></div>
+  <h2>章節 1 · 鐵門後的那個人</h2>
+  <div class="divider"></div>
+
+  <div class="col-5-7">
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h5>故事 LOGLINE</h5>
+        <p style="font-size:15px;color:var(--ink);margin-top:6px;line-height:1.65;">阿謙繼承木柵市場深處一間關了 40 年的中藥行，整理時觸發了一張舊地圖，把他<b>穿越回 1983 年</b>，與從未謀面的親祖父林榮昌相遇。</p>
+      </div>
+
+      <h4>核心角色</h4>
+      <table>
+        <thead><tr><th>角色</th><th>身份</th></tr></thead>
+        <tbody>
+          <tr><td class="tag-cell">阿謙</td><td>主角 / 繼承中藥行的學生</td></tr>
+          <tr><td class="tag-cell">林榮昌</td><td>祖父 / 1983 年的中藥行老闆</td></tr>
+          <tr><td class="tag-cell">陳阿姨</td><td>市場菜販</td></tr>
+          <tr><td class="tag-cell">王伯伯</td><td>麵店老闆</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h4>章節 1 進度檢核</h4>
+      <table>
+        <thead><tr><th>階段</th><th>狀態</th></tr></thead>
+        <tbody>
+          <tr><td>劇情草稿（draft.md）</td><td><span class="tag">✓ 完成</span></td></tr>
+          <tr><td>資產清單抽取（assets.json）</td><td><span class="tag gold">進行中</span></td></tr>
+          <tr><td>美術生成（pipeline）</td><td><span class="tag gold">進行中</span></td></tr>
+          <tr><td>Godot 端實作（events.gd）</td><td><span class="tag muted">待開始</span></td></tr>
+          <tr><td>對話系統整合</td><td><span class="tag muted">待開始</span></td></tr>
+        </tbody>
+      </table>
+
+      <br>
+      <h4>已生成資產</h4>
+      <div class="kpi-row" style="flex-wrap:wrap;">
+        <span class="kpi">player（8 方向 + walk/idle）</span>
+        <span class="kpi">lin_xiaoyu（NPC）</span>
+        <span class="kpi">test_iso prop</span>
+        <span class="kpi">test_well</span>
+        <span class="kpi">test autotiles</span>
+        <span class="kpi">moving / static NPC 範本</span>
+      </div>
+
+      <div class="card warn" style="margin-top:12px;">
+        <h5>WEEK 7 → 現在的關鍵演進</h5>
+        <p style="font-size:13px;margin-top:4px;">從「開放世界 4 NPC 動態對話」原型，<b>轉型為章節 MVP 策略</b>。原因：SWOT 顯示三人團隊產能受限，先以首章節上架累積 Wishlist，再延展全區。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 9 · 商業模式 ====== -->
+<section class="slide" data-num="09">
+  <div class="brand-stripe"></div>
+  <h2>商業模式 · BUSINESS MODEL CANVAS</h2>
+  <div class="divider"></div>
+
+  <div class="bmc">
+    <div class="bmc-cell kp">
+      <h5>Key Partners</h5>
+      <ul>
+        <li>木柵在地商家</li>
+        <li>在地文史單位<br>（文山社大、政大相關系所）</li>
+        <li>中文獨立遊戲發行商<br>（Gamera Games 等）</li>
+      </ul>
+    </div>
+    <div class="bmc-cell ka">
+      <h5>Key Activities</h5>
+      <ul>
+        <li>RPG 開發</li>
+        <li>田野調查</li>
+        <li>劇本撰寫</li>
+        <li>Steam 上架</li>
+        <li>社群行銷</li>
+      </ul>
+    </div>
+    <div class="bmc-cell vp">
+      <h5>Value Proposition</h5>
+      <ul style="margin-top:4px;">
+        <li><b>以木柵真實場景出發的 RPG</b></li>
+        <li>玩遊戲也像逛社區</li>
+        <li>本地端 SLM 對話<br>無需網路、保護隱私</li>
+        <li>AI 美術三人團隊也能撐起 RPG 量級</li>
+      </ul>
+    </div>
+    <div class="bmc-cell cr">
+      <h5>Customer Relationships</h5>
+      <ul>
+        <li>玩家反饋表</li>
+        <li>社群互動</li>
+        <li>讓玩家投稿劇本（徵稿）</li>
+      </ul>
+    </div>
+    <div class="bmc-cell cs">
+      <h5>Customer Segments</h5>
+      <ul>
+        <li>Gamers</li>
+        <li>想了解木柵在地風情的玩家</li>
+        <li>政大校友 / 文山區居民</li>
+        <li>敘事獨立遊戲愛好者</li>
+      </ul>
+    </div>
+    <div class="bmc-cell kr">
+      <h5>Key Resources</h5>
+      <ul>
+        <li>開發工具：Godot</li>
+        <li>美術、音效</li>
+        <li>木柵在地素材資源</li>
+        <li>Pixellab API</li>
+      </ul>
+    </div>
+    <div class="bmc-cell ch">
+      <h5>Channels</h5>
+      <ul>
+        <li>Steam</li>
+        <li>社群（巴哈、4Gamers）</li>
+        <li>實況主合作</li>
+      </ul>
+    </div>
+    <div class="bmc-cell bcost">
+      <h5>Cost Structure</h5>
+      <ul>
+        <li>Pixellab API 費用 · 人力成本</li>
+        <li>Steam 上架費 · 行銷成本</li>
+        <li>美術、音效外包預算</li>
+      </ul>
+    </div>
+    <div class="bmc-cell brev">
+      <h5>Revenue Streams</h5>
+      <ul>
+        <li>Steam 買斷銷售（無內購、長尾）</li>
+        <li>IP 衍生：聯名活動、實景走讀、周邊</li>
+        <li>文化部遊戲輔導金（潛在）</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 10 · SWOT ====== -->
+<section class="slide" data-num="10">
+  <div class="brand-stripe"></div>
+  <h2>SWOT 分析</h2>
+  <div class="divider"></div>
+
+  <div class="swot">
+    <div class="swot-box swot-s">
+      <div class="head"><span class="letter">S</span><h4>優勢（內部）</h4></div>
+      <ul>
+        <li><b>在地題材獨特性</b>：木柵寫實 RPG 為中文 RPG 高度差異化題材</li>
+        <li><b>在地共鳴形成天然行銷</b>：政大校友、文山區居民構成核心客群</li>
+        <li><b>在地商家合作護城河</b>：後進者難複製，可延伸實體聯名</li>
+        <li><b>三人團隊決策快速</b>：無大團隊溝通成本</li>
+        <li><b>買斷制商業模式單純</b>：無內購、無營運壓力</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-w">
+      <div class="head"><span class="letter">W</span><h4>劣勢（內部）</h4></div>
+      <ul>
+        <li><b>資金來源有限</b>：自籌資金限制開發週期與美術品質</li>
+        <li><b>三人團隊產能受限</b>：RPG 內容量極大，週期可能拉長</li>
+        <li><b>題材天花板偏低</b>：非台北玩家、海外玩家共鳴有限</li>
+        <li><b>缺乏成功 IP 經驗</b>：玩家對品牌信任需從零建立</li>
+        <li><b>商家合作協調成本高</b>：授權、形象使用需大量時間</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-o">
+      <div class="head"><span class="letter">O</span><h4>機會（外部）</h4></div>
+      <ul>
+        <li><b>台灣獨立遊戲市場成熟</b>：返校、九日證明商業可行</li>
+        <li><b>在地文化題材正當紅</b>：華語市場偏好「文化記憶」題材</li>
+        <li><b>補助與發行支持可能</b>：文化部輔導金、Gamera Games</li>
+        <li><b>在地商家有 PR 動機合作</b>：免費行銷接觸年輕客群</li>
+        <li><b>實況／影音傳播紅利</b>：敘事 RPG 是實況主偏好類型</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-t">
+      <div class="head"><span class="letter">T</span><h4>威脅（外部）</h4></div>
+      <ul>
+        <li><b>Steam 平台競爭激烈</b>：每日新作多，Wishlist 表現關鍵</li>
+        <li><b>台灣獨立 RPG 賽道擁擠</b>：需明確差異化才能搶占注意力</li>
+        <li><b>玩家對寫實還原期待高</b>：店家還原度、美術質感標準嚴苛</li>
+        <li><b>在地商家異動風險</b>：店家可能結束營業、易主</li>
+        <li><b>授權與肖像權爭議</b>：未取得書面授權可能法律糾紛</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tows">
+    <span class="label">WT 策略（本期採用）：</span>章節 MVP — 首章節先上架／釋出 Demo，前期收入支撐後續章節，每章完成即備份商家素材，分散資金、產能、商家異動的疊加風險。
+  </div>
+</section>
+
+<!-- ====== SLIDE 11 · 永續性評估 ====== -->
+<section class="slide" data-num="11">
+  <div class="brand-stripe"></div>
+  <h2>永續性評估</h2>
+  <div class="divider"></div>
+
+  <div class="two-col" style="margin-bottom:16px;">
+    <div>
+      <h4>社會影響力</h4>
+      <ul>
+        <li>把長輩記憶、舊店家故事，轉成年輕人會主動接觸的媒介</li>
+        <li>玩家走讀活動 → 帶動實體商家流量</li>
+        <li>提供政大、文山區師生的在地文化教材</li>
+      </ul>
+    </div>
+    <div>
+      <h4>永續連結性</h4>
+      <ul>
+        <li><b>玩家徵稿機制</b>：社群持續產出劇本，遊戲內容可長期擴張</li>
+        <li>與在地商家建立的關係可延伸至未來章節 / 作品</li>
+        <li>AI pipeline 開源化潛力：技術可回饋獨立遊戲社群</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4>未來展望 · 短長期目標</h4>
+  <div class="timeline">
+    <div class="tl-block" style="border-top-color:var(--accent);">
+      <div class="when">SHORT · 6 個月</div>
+      <div class="what">章節 1 Demo 釋出</div>
+      <ul>
+        <li>Steam Wishlist 頁面開啟</li>
+        <li>申請文化部遊戲輔導金</li>
+        <li>政大校友社群預熱</li>
+      </ul>
+    </div>
+    <div class="tl-block" style="border-top-color:var(--gold);">
+      <div class="when">MID · 12 個月</div>
+      <div class="what">Early Access 上架</div>
+      <ul>
+        <li>章節 1-2 完整版上架</li>
+        <li>與發行商合作洽談</li>
+        <li>實況主合作曝光</li>
+      </ul>
+    </div>
+    <div class="tl-block" style="border-top-color:var(--info);">
+      <div class="when">LONG · 24 個月</div>
+      <div class="what">完整版發行</div>
+      <ul>
+        <li>4 章節完整版上架 Steam</li>
+        <li>木柵實景走讀活動</li>
+        <li>跨平台 + 海外中文圈推廣</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 12 · 討論 + 結論 ====== -->
+<section class="slide" data-num="12">
+  <div class="brand-stripe"></div>
+  <h2>討論 · 結論</h2>
+  <div class="divider"></div>
+
+  <div class="two-col">
+    <div>
+      <h4>討論 · 待釐清議題</h4>
+      <ul>
+        <li><b>0.8B 模型對話品質</b>：是否升級到 1.7B？權衡記憶體佔用與在地玩家機器普及度</li>
+        <li><b>商家授權流程</b>：合作備忘錄 + 書面同意書的範本制定</li>
+        <li><b>美術一致性</b>：Pixellab 不同批次的風格漂移如何治理</li>
+        <li><b>定價策略</b>：章節 MVP 採 Early Access 還是全價買斷？</li>
+      </ul>
+
+      <br>
+      <h4>挑戰與解決</h4>
+      <table>
+        <thead><tr><th>挑戰</th><th>解決</th></tr></thead>
+        <tbody>
+          <tr><td>0.8B 模型回覆品質有限</td><td>精簡 prompt + 限制長度</td></tr>
+          <tr><td>Godot 不支援 HTTP streaming</td><td>「思考中」動畫替代</td></tr>
+          <tr><td>AI 生成素材一致性</td><td>manifest + 統一命名 + 後製</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h4>結論 · 亮點 Recap</h4>
+      <div class="card" style="margin-bottom:10px;">
+        <h5>01 · AI 美術 PIPELINE 完成</h5>
+        <p style="font-size:13px;margin-top:4px;">4 類資產 × 自動 Godot import，三人團隊產能瓶頸已突破。</p>
+      </div>
+      <div class="card info" style="margin-bottom:10px;">
+        <h5>02 · 本地端 SLM 對話架構就緒</h5>
+        <p style="font-size:13px;margin-top:4px;">離線可玩、無 API 成本，差異化定位明確。</p>
+      </div>
+      <div class="card gold" style="margin-bottom:10px;">
+        <h5>03 · 章節 MVP 策略確立</h5>
+        <p style="font-size:13px;margin-top:4px;">以 SWOT 為基礎、用首章節分散三重風險，符合三人團隊體質。</p>
+      </div>
+      <div class="card warn">
+        <h5>04 · 下一里程碑</h5>
+        <p style="font-size:13px;margin-top:4px;"><b>章節 1 可玩 Demo</b> — 對話、美術、Godot 三軸合流，預計 6 個月內完成。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SLIDE 13 · Q&A ====== -->
+<section class="slide" data-num="13">
+  <div class="brand-stripe"></div>
+  <div class="qna">
+    <div class="big">Q &amp; A</div>
+    <p class="sub">「在木柵的每一條巷子，遇見一段你沒聽過的故事。」</p>
+  </div>
+
+  <div style="margin-top:auto;">
+    <div class="two-col">
+      <div>
+        <h5>團 隊 成 員</h5>
+        <div class="team-block" style="margin-top:8px;">
+          <div class="member"><span class="id">114703023</span><span class="dept">資訊一</span><span class="name">李侑霖</span></div>
+          <div class="member"><span class="id">111308011</span><span class="dept">風管四</span><span class="name">翁睿承</span></div>
+          <div class="member"><span class="id">111701003</span><span class="dept">應數四</span><span class="name">鄭翔云</span></div>
+        </div>
+      </div>
+      <div>
+        <h5>專 案 資 訊</h5>
+        <p style="font-size:13px;margin-top:8px;color:var(--ink-soft);">
+          <b>專案名稱</b>：木境傳說 Project Muzha<br>
+          <b>GitHub</b>：github.com/RiyyMiruku/MuzhaRPG_Project<br>
+          <b>引擎</b>：Godot 4.x · llama.cpp · Pixellab<br>
+          <b>本期報告</b>：第二組 · AI 實務專案進度
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" aria-label="上一頁">‹</button>
+  <span class="counter"><span id="cur">1</span> / <span id="tot">12</span></span>
+  <button id="next" aria-label="下一頁">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const tot = slides.length;
+  document.getElementById('tot').textContent = tot;
+  let idx = 0;
+  function show(i) {
+    idx = Math.max(0, Math.min(tot - 1, i));
+    slides.forEach((s, k) => s.classList.toggle('active', k === idx));
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('prev').disabled = idx === 0;
+    document.getElementById('next').disabled = idx === tot - 1;
+  }
+  document.getElementById('prev').onclick = () => show(idx - 1);
+  document.getElementById('next').onclick = () => show(idx + 1);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(idx - 1);
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(idx + 1); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(tot - 1);
+  });
+  show(0);
+</script>
+</body>
+</html>

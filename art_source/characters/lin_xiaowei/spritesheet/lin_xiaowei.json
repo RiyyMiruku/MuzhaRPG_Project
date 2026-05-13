@@ -1,0 +1,58 @@
+{
+  "character_name": "lin_xiaowei",
+  "frame_size": [
+    92,
+    92
+  ],
+  "animations": {
+    "idle_south": {
+      "row": 0,
+      "start": 0,
+      "end": 5,
+      "fps": 6.0,
+      "loop": true
+    },
+    "idle_east": {
+      "row": 1,
+      "start": 0,
+      "end": 5,
+      "fps": 6.0,
+      "loop": true
+    },
+    "idle_north": {
+      "row": 2,
+      "start": 0,
+      "end": 5,
+      "fps": 6.0,
+      "loop": true
+    },
+    "idle_west": {
+      "row": 3,
+      "start": 0,
+      "end": 5,
+      "fps": 6.0,
+      "loop": true
+    },
+    "walk_south": {
+      "row": 4,
+      "start": 0,
+      "end": 9,
+      "fps": 6.0,
+      "loop": true
+    },
+    "walk_south-east": {
+      "row": 5,
+      "start": 0,
+      "end": 9,
+      "fps": 6.0,
+      "loop": true
+    },
+    "walk_east": {
+      "row": 6,
+      "start": 0,
+      "end": 9,
+      "fps": 6.0,
+      "loop": true
+    }
+  }
+}

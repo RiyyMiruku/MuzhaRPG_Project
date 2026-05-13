@@ -4,17 +4,19 @@
     "player": {
       "status": "base_ready",
       "created_at": "2026-05-05T18:23:35",
-      "updated_at": "2026-05-05T18:34:11",
+      "updated_at": "2026-05-14T00:01:40",
       "tags": [
         "zone:shared",
-        "category:player"
+        "category:player",
+        "category:protagonist",
+        "chapter:1"
       ],
-      "character_id": "b0b77592-e6e9-4e32-af04-effa4c462d5d",
+      "character_id": "98b0ff8a-043a-4ac6-ac0d-db4dfc25f62d",
       "preset": "player",
       "directions": 8,
       "view": "high_top_down",
       "proportions": "cartoon",
-      "description": "young taiwanese male protagonist in his early 20s, short black hair, casual modern clothes (white t-shirt, dark jeans), small backpack, friendly and curious expression, slim athletic build",
+      "description": "young taiwanese man in his late twenties, slim build, plain charcoal grey t-shirt, fitted dark indigo jeans, white low-top sneakers, short tidy black hair with side part, calm focused expression, simple silver wristwatch, small canvas messenger bag strap across chest, arms relaxed at sides",
       "rotations": [
         "east",
         "west",
@@ -25,47 +27,47 @@
         "south-east",
         "south-west"
       ],
-      "local_path": "art_source\\characters\\player",
+      "local_path": "art_source/characters/player",
       "stages": {
         "generate_8dir_base": {
-          "completed_at": "2026-05-05T18:25:33",
+          "completed_at": "2026-05-13T23:53:07",
           "paths": [
-            "art_source\\characters\\player\\rotations\\east.png",
-            "art_source\\characters\\player\\rotations\\west.png",
-            "art_source\\characters\\player\\rotations\\north.png",
-            "art_source\\characters\\player\\rotations\\south.png",
-            "art_source\\characters\\player\\rotations\\north_east.png",
-            "art_source\\characters\\player\\rotations\\north_west.png",
-            "art_source\\characters\\player\\rotations\\south_east.png",
-            "art_source\\characters\\player\\rotations\\south_west.png"
+            "art_source/characters/player/rotations/east.png",
+            "art_source/characters/player/rotations/west.png",
+            "art_source/characters/player/rotations/north.png",
+            "art_source/characters/player/rotations/south.png",
+            "art_source/characters/player/rotations/north_east.png",
+            "art_source/characters/player/rotations/north_west.png",
+            "art_source/characters/player/rotations/south_east.png",
+            "art_source/characters/player/rotations/south_west.png"
           ]
         },
         "add_idle_animation": {
-          "completed_at": "2026-05-05T18:31:21",
+          "completed_at": "2026-05-13T23:56:44",
           "paths": [
-            "art_source\\characters\\player\\spritesheet\\player.png",
-            "art_source\\characters\\player\\spritesheet\\player.json"
+            "art_source/characters/player/spritesheet/player.png",
+            "art_source/characters/player/spritesheet/player.json"
           ]
         },
         "add_walk_animation": {
-          "completed_at": "2026-05-05T18:34:11",
+          "completed_at": "2026-05-14T00:01:40",
           "paths": [
-            "art_source\\characters\\player\\spritesheet\\player.png",
-            "art_source\\characters\\player\\spritesheet\\player.json"
+            "art_source/characters/player/spritesheet/player.png",
+            "art_source/characters/player/spritesheet/player.json"
           ]
         },
         "compile_spritesheet": {
-          "completed_at": "2026-05-05T18:34:11",
+          "completed_at": "2026-05-14T00:01:40",
           "paths": [
-            "art_source\\characters\\player\\spritesheet\\player.png",
-            "art_source\\characters\\player\\spritesheet\\player.json"
+            "art_source/characters/player/spritesheet/player.png",
+            "art_source/characters/player/spritesheet/player.json"
           ]
         },
         "import_to_godot": {
-          "completed_at": "2026-05-05T18:34:11",
+          "completed_at": "2026-05-14T00:01:40",
           "paths": [
-            "game\\assets\\textures\\characters\\player.png",
-            "game\\assets\\textures\\characters\\player.json"
+            "game/assets/textures/characters/player.png",
+            "game/assets/textures/characters/player.json"
           ]
         }
       },
@@ -87,9 +89,10 @@
           "south-west"
         ]
       },
-      "imported_at": "2026-05-05T18:34:11",
-      "game_png_path": "game\\assets\\textures\\characters\\player.png",
-      "game_json_path": "game\\assets\\textures\\characters\\player.json"
+      "imported_at": "2026-05-14T00:01:40",
+      "game_png_path": "game/assets/textures/characters/player.png",
+      "game_json_path": "game/assets/textures/characters/player.json",
+      "isometric": true
     },
     "test_moving_npc": {
       "status": "base_ready",
@@ -347,6 +350,1059 @@
       "imported_at": "2026-05-12T00:36:56",
       "game_png_path": "game\\assets\\textures\\characters\\test_static_npc.png",
       "game_json_path": "game\\assets\\textures\\characters\\test_static_npc.json"
+    },
+    "lin_siqian": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T16:56:40",
+      "updated_at": "2026-05-12T17:03:07",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:shared",
+        "category:protagonist",
+        "chapter:1"
+      ],
+      "character_id": "5101215b-800c-46dd-9cbe-84a51daa9e0e",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "young taiwanese man in his late twenties, slim build, plain charcoal grey t-shirt, fitted dark indigo jeans, white low-top sneakers, short tidy black hair with side part, calm focused expression, simple silver wristwatch, small canvas messenger bag strap across chest, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/lin_siqian",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T16:58:50",
+          "paths": [
+            "art_source/characters/lin_siqian/rotations/east.png",
+            "art_source/characters/lin_siqian/rotations/west.png",
+            "art_source/characters/lin_siqian/rotations/north.png",
+            "art_source/characters/lin_siqian/rotations/south.png",
+            "art_source/characters/lin_siqian/rotations/north_east.png",
+            "art_source/characters/lin_siqian/rotations/north_west.png",
+            "art_source/characters/lin_siqian/rotations/south_east.png",
+            "art_source/characters/lin_siqian/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:00:44",
+          "paths": [
+            "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+            "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T17:03:07",
+          "paths": [
+            "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+            "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:03:07",
+          "paths": [
+            "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+            "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:03:07",
+          "paths": [
+            "game/assets/textures/characters/lin_siqian.png",
+            "game/assets/textures/characters/lin_siqian.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south"
+        ],
+        "walk": [
+          "south"
+        ]
+      },
+      "imported_at": "2026-05-12T17:03:07",
+      "game_png_path": "game/assets/textures/characters/lin_siqian.png",
+      "game_json_path": "game/assets/textures/characters/lin_siqian.json"
+    },
+    "lin_rongchang": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T16:56:40",
+      "updated_at": "2026-05-12T17:43:24",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:shopkeeper",
+        "chapter:1"
+      ],
+      "character_id": "963f6b4d-b466-4528-904a-2dce67a76ab6",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "middle-aged taiwanese man in his mid-forties, lean upright build, off-white short-sleeved button-up shirt with rolled sleeves, beige cotton apron from chest down, dark brown trousers, black cloth shoes, short combed-back black hair with grey at temples, calm reserved expression, reading glasses tucked in chest pocket, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/lin_rongchang",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T16:58:10",
+          "paths": [
+            "art_source/characters/lin_rongchang/rotations/east.png",
+            "art_source/characters/lin_rongchang/rotations/west.png",
+            "art_source/characters/lin_rongchang/rotations/north.png",
+            "art_source/characters/lin_rongchang/rotations/south.png",
+            "art_source/characters/lin_rongchang/rotations/north_east.png",
+            "art_source/characters/lin_rongchang/rotations/north_west.png",
+            "art_source/characters/lin_rongchang/rotations/south_east.png",
+            "art_source/characters/lin_rongchang/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:00:05",
+          "paths": [
+            "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
+            "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T17:43:24",
+          "paths": [
+            "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
+            "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:43:24",
+          "paths": [
+            "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
+            "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:43:24",
+          "paths": [
+            "game/assets/textures/characters/lin_rongchang.png",
+            "game/assets/textures/characters/lin_rongchang.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east",
+          "north-east",
+          "north",
+          "north-west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:43:24",
+      "game_png_path": "game/assets/textures/characters/lin_rongchang.png",
+      "game_json_path": "game/assets/textures/characters/lin_rongchang.json"
+    },
+    "chen_xiuqin": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T16:56:40",
+      "updated_at": "2026-05-12T17:03:10",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:shopkeeper_family",
+        "chapter:1"
+      ],
+      "character_id": "d6469648-e284-4d4e-b0a2-36b405acd89e",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "middle-aged taiwanese woman in her early forties, average build, pale pink short-sleeved blouse with small floral pattern, beige cotton apron, dark grey trousers, brown flat sandals, shoulder-length permed black hair tied back, practical warm expression, small gold stud earrings, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/chen_xiuqin",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T16:58:04",
+          "paths": [
+            "art_source/characters/chen_xiuqin/rotations/east.png",
+            "art_source/characters/chen_xiuqin/rotations/west.png",
+            "art_source/characters/chen_xiuqin/rotations/north.png",
+            "art_source/characters/chen_xiuqin/rotations/south.png",
+            "art_source/characters/chen_xiuqin/rotations/north_east.png",
+            "art_source/characters/chen_xiuqin/rotations/north_west.png",
+            "art_source/characters/chen_xiuqin/rotations/south_east.png",
+            "art_source/characters/chen_xiuqin/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T16:59:51",
+          "paths": [
+            "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+            "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T17:03:10",
+          "paths": [
+            "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+            "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:03:10",
+          "paths": [
+            "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+            "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:03:10",
+          "paths": [
+            "game/assets/textures/characters/chen_xiuqin.png",
+            "game/assets/textures/characters/chen_xiuqin.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east",
+          "north-east",
+          "north",
+          "north-west",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:03:10",
+      "game_png_path": "game/assets/textures/characters/chen_xiuqin.png",
+      "game_json_path": "game/assets/textures/characters/chen_xiuqin.json"
+    },
+    "lin_ama": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:20:50",
+      "updated_at": "2026-05-12T17:26:38",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:elder_family",
+        "chapter:1"
+      ],
+      "character_id": "9b1524af-aa11-4ff6-9ea9-c9d271c1f1f1",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "elderly taiwanese woman in her early seventies, small slender build slightly stooped, dark navy traditional minnan blouse with mandarin collar, loose black trousers, black cloth slip-on shoes, silver-grey hair pulled back in a small bun, stern weathered expression with deep wrinkles, jade bangle on left wrist, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/lin_ama",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T17:22:00",
+          "paths": [
+            "art_source/characters/lin_ama/rotations/east.png",
+            "art_source/characters/lin_ama/rotations/west.png",
+            "art_source/characters/lin_ama/rotations/north.png",
+            "art_source/characters/lin_ama/rotations/south.png",
+            "art_source/characters/lin_ama/rotations/north_east.png",
+            "art_source/characters/lin_ama/rotations/north_west.png",
+            "art_source/characters/lin_ama/rotations/south_east.png",
+            "art_source/characters/lin_ama/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:23:49",
+          "paths": [
+            "art_source/characters/lin_ama/spritesheet/lin_ama.png",
+            "art_source/characters/lin_ama/spritesheet/lin_ama.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T17:26:38",
+          "paths": [
+            "art_source/characters/lin_ama/spritesheet/lin_ama.png",
+            "art_source/characters/lin_ama/spritesheet/lin_ama.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:26:38",
+          "paths": [
+            "art_source/characters/lin_ama/spritesheet/lin_ama.png",
+            "art_source/characters/lin_ama/spritesheet/lin_ama.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:26:38",
+          "paths": [
+            "game/assets/textures/characters/lin_ama.png",
+            "game/assets/textures/characters/lin_ama.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east",
+          "north-east",
+          "north",
+          "north-west",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:26:38",
+      "game_png_path": "game/assets/textures/characters/lin_ama.png",
+      "game_json_path": "game/assets/textures/characters/lin_ama.json"
+    },
+    "lin_xiaowei": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:20:50",
+      "updated_at": "2026-05-12T17:41:28",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:teen_family",
+        "chapter:1"
+      ],
+      "character_id": "9414af16-b79d-4680-889c-e29b2cd1941c",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "taiwanese teenage boy around sixteen, lanky build, faded blue short-sleeved school polo shirt untucked, dark navy school trousers, white canvas sneakers slightly worn, short messy black hair with overgrown fringe, mildly sullen expression, simple plastic digital wristwatch, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/lin_xiaowei",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T17:22:00",
+          "paths": [
+            "art_source/characters/lin_xiaowei/rotations/east.png",
+            "art_source/characters/lin_xiaowei/rotations/west.png",
+            "art_source/characters/lin_xiaowei/rotations/north.png",
+            "art_source/characters/lin_xiaowei/rotations/south.png",
+            "art_source/characters/lin_xiaowei/rotations/north_east.png",
+            "art_source/characters/lin_xiaowei/rotations/north_west.png",
+            "art_source/characters/lin_xiaowei/rotations/south_east.png",
+            "art_source/characters/lin_xiaowei/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:23:49",
+          "paths": [
+            "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.png",
+            "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T17:41:28",
+          "paths": [
+            "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.png",
+            "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:41:28",
+          "paths": [
+            "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.png",
+            "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:41:28",
+          "paths": [
+            "game/assets/textures/characters/lin_xiaowei.png",
+            "game/assets/textures/characters/lin_xiaowei.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east"
+        ]
+      },
+      "imported_at": "2026-05-12T17:41:28",
+      "game_png_path": "game/assets/textures/characters/lin_xiaowei.png",
+      "game_json_path": "game/assets/textures/characters/lin_xiaowei.json"
+    },
+    "a_tao_yi": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:20:50",
+      "updated_at": "2026-05-12T17:43:22",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:vendor",
+        "chapter:1"
+      ],
+      "character_id": "c32b5fb9-7c13-46ce-84e4-39545c95d186",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "middle-aged taiwanese market vendor woman in her mid-fifties, plump sturdy build, faded red floral short-sleeved shirt with rolled sleeves, dark green canvas vendor apron, loose dark trousers, black rubber market boots, short permed black hair under straw conical hat, gossipy warm expression, small jade pendant necklace, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/a_tao_yi",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T17:24:16",
+          "paths": [
+            "art_source/characters/a_tao_yi/rotations/east.png",
+            "art_source/characters/a_tao_yi/rotations/west.png",
+            "art_source/characters/a_tao_yi/rotations/north.png",
+            "art_source/characters/a_tao_yi/rotations/south.png",
+            "art_source/characters/a_tao_yi/rotations/north_east.png",
+            "art_source/characters/a_tao_yi/rotations/north_west.png",
+            "art_source/characters/a_tao_yi/rotations/south_east.png",
+            "art_source/characters/a_tao_yi/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:40:32",
+          "paths": [
+            "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+            "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T17:43:22",
+          "paths": [
+            "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+            "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:43:22",
+          "paths": [
+            "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+            "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:43:22",
+          "paths": [
+            "game/assets/textures/characters/a_tao_yi.png",
+            "game/assets/textures/characters/a_tao_yi.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "walk": [
+          "south",
+          "south-east"
+        ]
+      },
+      "imported_at": "2026-05-12T17:43:22",
+      "game_png_path": "game/assets/textures/characters/a_tao_yi.png",
+      "game_json_path": "game/assets/textures/characters/a_tao_yi.json"
+    },
+    "lao_zhou": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:30:26",
+      "updated_at": "2026-05-12T17:32:53",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:elder",
+        "chapter:1"
+      ],
+      "character_id": "f2a0b745-f655-48c4-9b94-47912672d238",
+      "preset": "npc",
+      "directions": 4,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "elderly taiwanese man in his early eighties, thin frail build slightly hunched, light beige short-sleeved button-up shirt, loose grey trousers held by cloth belt, brown cloth slip-on shoes, sparse white hair and a thin white beard, weathered contemplative expression, a folded paper fan in one hand, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south"
+      ],
+      "local_path": "art_source/characters/lao_zhou",
+      "stages": {
+        "generate_4dir_base": {
+          "completed_at": "2026-05-12T17:31:16",
+          "paths": [
+            "art_source/characters/lao_zhou/rotations/east.png",
+            "art_source/characters/lao_zhou/rotations/west.png",
+            "art_source/characters/lao_zhou/rotations/north.png",
+            "art_source/characters/lao_zhou/rotations/south.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:32:53",
+          "paths": [
+            "art_source/characters/lao_zhou/spritesheet/lao_zhou.png",
+            "art_source/characters/lao_zhou/spritesheet/lao_zhou.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:32:53",
+          "paths": [
+            "art_source/characters/lao_zhou/spritesheet/lao_zhou.png",
+            "art_source/characters/lao_zhou/spritesheet/lao_zhou.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:32:53",
+          "paths": [
+            "game/assets/textures/characters/lao_zhou.png",
+            "game/assets/textures/characters/lao_zhou.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:32:53",
+      "game_png_path": "game/assets/textures/characters/lao_zhou.png",
+      "game_json_path": "game/assets/textures/characters/lao_zhou.json"
+    },
+    "lawyer_muzha": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:30:26",
+      "updated_at": "2026-05-12T17:34:01",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:professional",
+        "chapter:1"
+      ],
+      "character_id": "879b3135-ddf9-4497-a88b-1bfd59c31489",
+      "preset": "npc",
+      "directions": 4,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "elderly taiwanese man in his late sixties, average build, dark grey two-piece business suit slightly old-fashioned, white shirt with dark red tie, polished black leather shoes, neatly combed grey hair, round wire-rimmed reading glasses, formal reserved expression, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south"
+      ],
+      "local_path": "art_source/characters/lawyer_muzha",
+      "stages": {
+        "generate_4dir_base": {
+          "completed_at": "2026-05-12T17:31:34",
+          "paths": [
+            "art_source/characters/lawyer_muzha/rotations/east.png",
+            "art_source/characters/lawyer_muzha/rotations/west.png",
+            "art_source/characters/lawyer_muzha/rotations/north.png",
+            "art_source/characters/lawyer_muzha/rotations/south.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:34:01",
+          "paths": [
+            "art_source/characters/lawyer_muzha/spritesheet/lawyer_muzha.png",
+            "art_source/characters/lawyer_muzha/spritesheet/lawyer_muzha.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:34:01",
+          "paths": [
+            "art_source/characters/lawyer_muzha/spritesheet/lawyer_muzha.png",
+            "art_source/characters/lawyer_muzha/spritesheet/lawyer_muzha.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:34:01",
+          "paths": [
+            "game/assets/textures/characters/lawyer_muzha.png",
+            "game/assets/textures/characters/lawyer_muzha.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:34:01",
+      "game_png_path": "game/assets/textures/characters/lawyer_muzha.png",
+      "game_json_path": "game/assets/textures/characters/lawyer_muzha.json"
+    },
+    "vendor_market_oldman_01": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:30:26",
+      "updated_at": "2026-05-12T17:34:55",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:vendor",
+        "chapter:1"
+      ],
+      "character_id": "e0746492-c240-45fd-8710-c4c4d9b1428d",
+      "preset": "npc",
+      "directions": 4,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "elderly taiwanese male vendor in his late sixties, thin build, faded blue cotton short-sleeved shirt, dark trousers with canvas belt, brown cloth shoes, sparse grey hair under faded baseball cap, weathered patient expression, towel draped over shoulder, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south"
+      ],
+      "local_path": "art_source/characters/vendor_market_oldman_01",
+      "stages": {
+        "generate_4dir_base": {
+          "completed_at": "2026-05-12T17:31:24",
+          "paths": [
+            "art_source/characters/vendor_market_oldman_01/rotations/east.png",
+            "art_source/characters/vendor_market_oldman_01/rotations/west.png",
+            "art_source/characters/vendor_market_oldman_01/rotations/north.png",
+            "art_source/characters/vendor_market_oldman_01/rotations/south.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:34:55",
+          "paths": [
+            "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.png",
+            "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:34:55",
+          "paths": [
+            "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.png",
+            "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:34:55",
+          "paths": [
+            "game/assets/textures/characters/vendor_market_oldman_01.png",
+            "game/assets/textures/characters/vendor_market_oldman_01.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:34:55",
+      "game_png_path": "game/assets/textures/characters/vendor_market_oldman_01.png",
+      "game_json_path": "game/assets/textures/characters/vendor_market_oldman_01.json"
+    },
+    "vendor_market_woman_02": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:48:27",
+      "updated_at": "2026-05-12T17:53:37",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:vendor",
+        "chapter:1"
+      ],
+      "character_id": "6703b411-2db7-4458-b632-38b3124ea45e",
+      "preset": "npc",
+      "directions": 4,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "middle-aged taiwanese female vendor in her late forties, sturdy build, light blue checkered short-sleeved shirt, brown canvas apron, dark trousers, black rubber boots, short permed hair, brisk neutral expression, sleeve guards on both forearms, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south"
+      ],
+      "local_path": "art_source/characters/vendor_market_woman_02",
+      "stages": {
+        "generate_4dir_base": {
+          "completed_at": "2026-05-12T17:49:47",
+          "paths": [
+            "art_source/characters/vendor_market_woman_02/rotations/east.png",
+            "art_source/characters/vendor_market_woman_02/rotations/west.png",
+            "art_source/characters/vendor_market_woman_02/rotations/north.png",
+            "art_source/characters/vendor_market_woman_02/rotations/south.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:53:37",
+          "paths": [
+            "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
+            "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:53:37",
+          "paths": [
+            "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
+            "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:53:37",
+          "paths": [
+            "game/assets/textures/characters/vendor_market_woman_02.png",
+            "game/assets/textures/characters/vendor_market_woman_02.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:53:37",
+      "game_png_path": "game/assets/textures/characters/vendor_market_woman_02.png",
+      "game_json_path": "game/assets/textures/characters/vendor_market_woman_02.json"
+    },
+    "customer_pharmacy_woman": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:48:27",
+      "updated_at": "2026-05-12T17:51:18",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:customer",
+        "chapter:1"
+      ],
+      "character_id": "cb278912-b8e2-41ab-a82a-9126d6577dd3",
+      "preset": "npc",
+      "directions": 4,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "middle-aged taiwanese woman in her early fifties, average build, simple cream short-sleeved blouse, dark grey skirt below knee, beige flat shoes, shoulder-length straight black hair with light streaks of grey, mild concerned expression, small handbag held in front, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south"
+      ],
+      "local_path": "art_source/characters/customer_pharmacy_woman",
+      "stages": {
+        "generate_4dir_base": {
+          "completed_at": "2026-05-12T17:49:16",
+          "paths": [
+            "art_source/characters/customer_pharmacy_woman/rotations/east.png",
+            "art_source/characters/customer_pharmacy_woman/rotations/west.png",
+            "art_source/characters/customer_pharmacy_woman/rotations/north.png",
+            "art_source/characters/customer_pharmacy_woman/rotations/south.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:51:18",
+          "paths": [
+            "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.png",
+            "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:51:18",
+          "paths": [
+            "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.png",
+            "art_source/characters/customer_pharmacy_woman/spritesheet/customer_pharmacy_woman.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:51:18",
+          "paths": [
+            "game/assets/textures/characters/customer_pharmacy_woman.png",
+            "game/assets/textures/characters/customer_pharmacy_woman.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:51:18",
+      "game_png_path": "game/assets/textures/characters/customer_pharmacy_woman.png",
+      "game_json_path": "game/assets/textures/characters/customer_pharmacy_woman.json"
+    },
+    "pedestrian_market_man": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T17:48:27",
+      "updated_at": "2026-05-12T17:51:14",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+      },
+      "tags": [
+        "zone:market",
+        "category:pedestrian",
+        "chapter:1"
+      ],
+      "character_id": "d4d02094-b5be-40a1-abe4-e1cc8370e3c9",
+      "preset": "npc",
+      "directions": 4,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "young taiwanese man in his late twenties, average build, plain light grey t-shirt, faded blue jeans, white canvas sneakers, short black hair, casual neutral expression, small shoulder bag, arms relaxed at sides",
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south"
+      ],
+      "local_path": "art_source/characters/pedestrian_market_man",
+      "stages": {
+        "generate_4dir_base": {
+          "completed_at": "2026-05-12T17:49:17",
+          "paths": [
+            "art_source/characters/pedestrian_market_man/rotations/east.png",
+            "art_source/characters/pedestrian_market_man/rotations/west.png",
+            "art_source/characters/pedestrian_market_man/rotations/north.png",
+            "art_source/characters/pedestrian_market_man/rotations/south.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T17:51:14",
+          "paths": [
+            "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.png",
+            "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T17:51:14",
+          "paths": [
+            "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.png",
+            "art_source/characters/pedestrian_market_man/spritesheet/pedestrian_market_man.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:51:14",
+          "paths": [
+            "game/assets/textures/characters/pedestrian_market_man.png",
+            "game/assets/textures/characters/pedestrian_market_man.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ]
+      },
+      "imported_at": "2026-05-12T17:51:14",
+      "game_png_path": "game/assets/textures/characters/pedestrian_market_man.png",
+      "game_json_path": "game/assets/textures/characters/pedestrian_market_man.json"
+    },
+    "test_iso_player": {
+      "status": "base_ready",
+      "created_at": "2026-05-12T18:35:33",
+      "updated_at": "2026-05-12T18:57:30",
+      "prompts": {
+        "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+        "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+      },
+      "tags": [
+        "zone:test",
+        "category:player",
+        "chapter:test"
+      ],
+      "character_id": "4b7fdf7d-178c-496c-abed-0fee0652924c",
+      "preset": "player",
+      "directions": 8,
+      "view": "high_top_down",
+      "proportions": "cartoon",
+      "description": "young taiwanese male protagonist in his early 20s, short black hair, casual modern clothes (white t-shirt, dark jeans), small backpack, friendly and curious expression, slim athletic build",
+      "isometric": true,
+      "rotations": [
+        "east",
+        "west",
+        "north",
+        "south",
+        "north-east",
+        "north-west",
+        "south-east",
+        "south-west"
+      ],
+      "local_path": "art_source/characters/test_iso_player",
+      "stages": {
+        "generate_8dir_base": {
+          "completed_at": "2026-05-12T18:36:53",
+          "paths": [
+            "art_source/characters/test_iso_player/rotations/east.png",
+            "art_source/characters/test_iso_player/rotations/west.png",
+            "art_source/characters/test_iso_player/rotations/north.png",
+            "art_source/characters/test_iso_player/rotations/south.png",
+            "art_source/characters/test_iso_player/rotations/north_east.png",
+            "art_source/characters/test_iso_player/rotations/north_west.png",
+            "art_source/characters/test_iso_player/rotations/south_east.png",
+            "art_source/characters/test_iso_player/rotations/south_west.png"
+          ]
+        },
+        "add_idle_animation": {
+          "completed_at": "2026-05-12T18:57:30",
+          "paths": [
+            "art_source/characters/test_iso_player/spritesheet/test_iso_player.png",
+            "art_source/characters/test_iso_player/spritesheet/test_iso_player.json"
+          ]
+        },
+        "add_walk_animation": {
+          "completed_at": "2026-05-12T18:53:17",
+          "paths": [
+            "art_source/characters/test_iso_player/spritesheet/test_iso_player.png",
+            "art_source/characters/test_iso_player/spritesheet/test_iso_player.json"
+          ]
+        },
+        "compile_spritesheet": {
+          "completed_at": "2026-05-12T18:41:59",
+          "paths": [
+            "art_source/characters/test_iso_player/spritesheet/test_iso_player.png",
+            "art_source/characters/test_iso_player/spritesheet/test_iso_player.json"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T18:41:59",
+          "paths": [
+            "game/assets/textures/characters/test_iso_player.png",
+            "game/assets/textures/characters/test_iso_player.json"
+          ]
+        }
+      },
+      "animations": {
+        "idle": [
+          "south",
+          "east",
+          "north",
+          "west"
+        ],
+        "walk": [
+          "south",
+          "south-east",
+          "east",
+          "north-east",
+          "north",
+          "north-west",
+          "west",
+          "south-west"
+        ]
+      },
+      "imported_at": "2026-05-12T18:41:59",
+      "game_png_path": "game/assets/textures/characters/test_iso_player.png",
+      "game_json_path": "game/assets/textures/characters/test_iso_player.json"
     }
   },
   "tilesets": {
@@ -393,6 +1449,138 @@
       "iso_path": "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png",
       "imported_at": "2026-05-11T22:58:39",
       "game_png_path": "game\\assets\\textures\\tilesets\\test_autotiles.png"
+    },
+    "market_concrete_tile": {
+      "status": "completed",
+      "created_at": "2026-05-12T14:55:01",
+      "updated_at": "2026-05-12T14:56:19",
+      "tags": [
+        "zone:market",
+        "category:terrain",
+        "chapter:1"
+      ],
+      "tileset_id": "fa3acc97-493f-4b90-9af9-6fb9fe892025",
+      "lower": "weathered grey concrete pavement with cracks and stains from years of market use",
+      "upper": "small red square ceramic floor tiles laid in grid pattern, traditional taiwanese market walkway",
+      "tile_size": 16,
+      "topdown_path": "art_source/tilesets/market_concrete_tile/market_concrete_tile_topdown.png",
+      "stages": {
+        "generate_atlas": {
+          "completed_at": "2026-05-12T14:56:19",
+          "paths": [
+            "art_source/tilesets/market_concrete_tile/market_concrete_tile_topdown.png"
+          ]
+        },
+        "iso_project": {
+          "completed_at": "2026-05-12T14:56:19",
+          "paths": [
+            "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png"
+          ]
+        },
+        "verify_in_godot": {
+          "completed_at": "2026-05-12T14:56:19",
+          "paths": [
+            "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T14:56:19",
+          "paths": [
+            "game/assets/textures/tilesets/market_concrete_tile.png"
+          ]
+        }
+      },
+      "iso_path": "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png",
+      "imported_at": "2026-05-12T14:56:19",
+      "game_png_path": "game/assets/textures/tilesets/market_concrete_tile.png"
+    },
+    "courtyard_dirt_grass": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:20:37",
+      "updated_at": "2026-05-12T17:21:46",
+      "tags": [
+        "zone:market",
+        "category:terrain",
+        "chapter:1"
+      ],
+      "tileset_id": "dc197e22-0150-4ef6-b611-0034f1ccd767",
+      "lower": "compacted brown earth ground with small pebbles, traditional taiwanese back courtyard",
+      "upper": "patchy green grass with small wildflowers and weeds",
+      "tile_size": 16,
+      "topdown_path": "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_topdown.png",
+      "stages": {
+        "generate_atlas": {
+          "completed_at": "2026-05-12T17:21:46",
+          "paths": [
+            "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_topdown.png"
+          ]
+        },
+        "iso_project": {
+          "completed_at": "2026-05-12T17:21:46",
+          "paths": [
+            "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_iso.png"
+          ]
+        },
+        "verify_in_godot": {
+          "completed_at": "2026-05-12T17:21:46",
+          "paths": [
+            "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_iso.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:21:46",
+          "paths": [
+            "game/assets/textures/tilesets/courtyard_dirt_grass.png"
+          ]
+        }
+      },
+      "iso_path": "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_iso.png",
+      "imported_at": "2026-05-12T17:21:46",
+      "game_png_path": "game/assets/textures/tilesets/courtyard_dirt_grass.png"
+    },
+    "street_asphalt_sidewalk": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:38:20",
+      "updated_at": "2026-05-12T17:40:18",
+      "tags": [
+        "zone:market",
+        "category:terrain",
+        "chapter:1"
+      ],
+      "tileset_id": "c03e4702-b811-40a5-bd17-ed1e31edb853",
+      "lower": "worn dark grey asphalt road surface with faded white line markings",
+      "upper": "light grey concrete sidewalk slab with expansion joint lines",
+      "tile_size": 16,
+      "topdown_path": "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_topdown.png",
+      "stages": {
+        "generate_atlas": {
+          "completed_at": "2026-05-12T17:40:18",
+          "paths": [
+            "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_topdown.png"
+          ]
+        },
+        "iso_project": {
+          "completed_at": "2026-05-12T17:40:18",
+          "paths": [
+            "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_iso.png"
+          ]
+        },
+        "verify_in_godot": {
+          "completed_at": "2026-05-12T17:40:18",
+          "paths": [
+            "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_iso.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:40:18",
+          "paths": [
+            "game/assets/textures/tilesets/street_asphalt_sidewalk.png"
+          ]
+        }
+      },
+      "iso_path": "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_iso.png",
+      "imported_at": "2026-05-12T17:40:18",
+      "game_png_path": "game/assets/textures/tilesets/street_asphalt_sidewalk.png"
     }
   },
   "objects": {
@@ -472,6 +1660,988 @@
       "game_png_path": "game\\assets\\textures\\props\\test_well.png",
       "game_tscn_path": "game\\src\\maps\\props\\test_well.tscn",
       "collision": "bottom_16x16"
+    },
+    "family_photo_blacked": {
+      "status": "completed",
+      "created_at": "2026-05-12T14:55:01",
+      "updated_at": "2026-05-12T14:55:44",
+      "tags": [
+        "zone:market",
+        "category:key_item",
+        "chapter:1"
+      ],
+      "object_id": "16316cb0-ad1a-4985-ba8e-4797a3a32aed",
+      "kind": "iso_prop",
+      "description": "framed sepia-toned taiwanese family photograph from the 1970s, wooden frame slightly weathered, six figures arranged in two rows, one face on the back row completely blacked out with dark ink, glass slightly dusty",
+      "size": {
+        "width": 24,
+        "height": 24
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T14:55:44",
+          "paths": [
+            "art_source/objects/family_photo_blacked/family_photo_blacked.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T14:55:44",
+          "paths": [
+            "art_source/objects/family_photo_blacked/family_photo_blacked.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T14:55:44",
+          "paths": [
+            "game/assets/textures/props/family_photo_blacked.png",
+            "game/src/maps/props/family_photo_blacked.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/family_photo_blacked/family_photo_blacked.png",
+      "imported_at": "2026-05-12T14:55:44",
+      "game_png_path": "game/assets/textures/props/family_photo_blacked.png",
+      "game_tscn_path": "game/src/maps/props/family_photo_blacked.tscn",
+      "collision": "bottom_16x16"
+    },
+    "incense_burner_brass": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:24:11",
+      "updated_at": "2026-05-12T17:25:32",
+      "tags": [
+        "zone:market",
+        "category:ritual",
+        "chapter:1"
+      ],
+      "object_id": "848b2763-3843-424a-b79e-e6c10b06861e",
+      "kind": "iso_prop",
+      "description": "small round brass incense burner with three short legs, traditional taiwanese ancestral worship style, three thin red incense sticks standing in grey ash, faint wisp of smoke",
+      "size": {
+        "width": 24,
+        "height": 24
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:25:32",
+          "paths": [
+            "art_source/objects/incense_burner_brass/incense_burner_brass.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:25:32",
+          "paths": [
+            "art_source/objects/incense_burner_brass/incense_burner_brass.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:25:32",
+          "paths": [
+            "game/assets/textures/props/incense_burner_brass.png",
+            "game/src/maps/props/incense_burner_brass.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/incense_burner_brass/incense_burner_brass.png",
+      "imported_at": "2026-05-12T17:25:32",
+      "game_png_path": "game/assets/textures/props/incense_burner_brass.png",
+      "game_tscn_path": "game/src/maps/props/incense_burner_brass.tscn",
+      "collision": "bottom_16x16"
+    },
+    "medicine_cabinet_dusty": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:33:16",
+      "updated_at": "2026-05-12T17:34:08",
+      "tags": [
+        "zone:market",
+        "category:furniture",
+        "chapter:1"
+      ],
+      "object_id": "df2f5dec-f05f-4c4d-b4c7-a987609f7b13",
+      "kind": "iso_prop",
+      "description": "tall traditional chinese pharmacy wooden herb cabinet with many small square drawers, dark stained wood faded by time, thick layer of grey dust on every surface, cobwebs in corners, brass drawer handles tarnished and dull, abandoned forty years",
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:34:08",
+          "paths": [
+            "art_source/objects/medicine_cabinet_dusty/medicine_cabinet_dusty.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:34:08",
+          "paths": [
+            "art_source/objects/medicine_cabinet_dusty/medicine_cabinet_dusty.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:34:08",
+          "paths": [
+            "game/assets/textures/props/medicine_cabinet_dusty.png",
+            "game/src/maps/props/medicine_cabinet_dusty.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/medicine_cabinet_dusty/medicine_cabinet_dusty.png",
+      "imported_at": "2026-05-12T17:34:08",
+      "game_png_path": "game/assets/textures/props/medicine_cabinet_dusty.png",
+      "game_tscn_path": "game/src/maps/props/medicine_cabinet_dusty.tscn",
+      "collision": "bottom_16x16"
+    },
+    "medicine_cabinet_new": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:34:01",
+      "updated_at": "2026-05-12T17:34:59",
+      "tags": [
+        "zone:market",
+        "category:furniture",
+        "chapter:1"
+      ],
+      "object_id": "884c129d-3629-4360-ac3a-c1a2cc322c14",
+      "kind": "iso_prop",
+      "description": "tall traditional chinese pharmacy wooden herb cabinet with many small square drawers, polished dark stained wood with warm sheen, brass drawer handles bright and clean, handwritten paper labels neatly pasted on each drawer, well-kept operational shop fixture",
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:34:59",
+          "paths": [
+            "art_source/objects/medicine_cabinet_new/medicine_cabinet_new.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:34:59",
+          "paths": [
+            "art_source/objects/medicine_cabinet_new/medicine_cabinet_new.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:34:59",
+          "paths": [
+            "game/assets/textures/props/medicine_cabinet_new.png",
+            "game/src/maps/props/medicine_cabinet_new.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/medicine_cabinet_new/medicine_cabinet_new.png",
+      "imported_at": "2026-05-12T17:34:59",
+      "game_png_path": "game/assets/textures/props/medicine_cabinet_new.png",
+      "game_tscn_path": "game/src/maps/props/medicine_cabinet_new.tscn",
+      "collision": "bottom_16x16"
+    },
+    "shop_counter_wood": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:34:08",
+      "updated_at": "2026-05-12T17:34:34",
+      "tags": [
+        "zone:market",
+        "category:furniture",
+        "chapter:1"
+      ],
+      "object_id": "e10342f4-e68f-4f82-a851-25ace32502fe",
+      "kind": "iso_prop",
+      "description": "long wooden chinese pharmacy counter with worn smooth surface, dark stained wood, small brass weighing scale on top, abacus on side, paper prescription pad and ink brush stand, traditional taiwanese shop style",
+      "size": {
+        "width": 48,
+        "height": 48
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:34:34",
+          "paths": [
+            "art_source/objects/shop_counter_wood/shop_counter_wood.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:34:34",
+          "paths": [
+            "art_source/objects/shop_counter_wood/shop_counter_wood.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:34:34",
+          "paths": [
+            "game/assets/textures/props/shop_counter_wood.png",
+            "game/src/maps/props/shop_counter_wood.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/shop_counter_wood/shop_counter_wood.png",
+      "imported_at": "2026-05-12T17:34:34",
+      "game_png_path": "game/assets/textures/props/shop_counter_wood.png",
+      "game_tscn_path": "game/src/maps/props/shop_counter_wood.tscn",
+      "collision": "bottom_16x16"
+    },
+    "old_map_paper": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:34:34",
+      "updated_at": "2026-05-12T17:35:17",
+      "tags": [
+        "zone:market",
+        "category:key_item",
+        "chapter:1"
+      ],
+      "object_id": "24812576-5926-427e-ad01-03a0e9286ff6",
+      "kind": "iso_prop",
+      "description": "old folded paper map of muzha market area yellowed with age, hand-drawn lines and small red dots marking locations, brush-written chinese characters on the back, edges slightly frayed, mysterious aged artifact",
+      "size": {
+        "width": 24,
+        "height": 24
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:35:17",
+          "paths": [
+            "art_source/objects/old_map_paper/old_map_paper.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:35:17",
+          "paths": [
+            "art_source/objects/old_map_paper/old_map_paper.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:35:17",
+          "paths": [
+            "game/assets/textures/props/old_map_paper.png",
+            "game/src/maps/props/old_map_paper.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/old_map_paper/old_map_paper.png",
+      "imported_at": "2026-05-12T17:35:17",
+      "game_png_path": "game/assets/textures/props/old_map_paper.png",
+      "game_tscn_path": "game/src/maps/props/old_map_paper.tscn",
+      "collision": "bottom_16x16"
+    },
+    "cathay_calendar_1983": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:34:56",
+      "updated_at": "2026-05-12T17:35:33",
+      "tags": [
+        "zone:market",
+        "category:decoration",
+        "chapter:1"
+      ],
+      "object_id": "cb5eb094-fa02-4bda-92c7-756ce1e7f575",
+      "kind": "iso_prop",
+      "description": "traditional taiwanese wall calendar from 1983 with cathay life insurance branding at top, large red year numbers, monthly grid with lunar dates, small colour photograph in upper portion, paper slightly faded",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:35:33",
+          "paths": [
+            "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:35:33",
+          "paths": [
+            "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:35:33",
+          "paths": [
+            "game/assets/textures/props/cathay_calendar_1983.png",
+            "game/src/maps/props/cathay_calendar_1983.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png",
+      "imported_at": "2026-05-12T17:35:33",
+      "game_png_path": "game/assets/textures/props/cathay_calendar_1983.png",
+      "game_tscn_path": "game/src/maps/props/cathay_calendar_1983.tscn",
+      "collision": "bottom_16x16"
+    },
+    "lantern_paper_red": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:34:59",
+      "updated_at": "2026-05-12T17:35:31",
+      "tags": [
+        "zone:market",
+        "category:decoration",
+        "chapter:1"
+      ],
+      "object_id": "2908f36e-5708-4e0c-bcfe-edd97edf42c2",
+      "kind": "iso_prop",
+      "description": "traditional taiwanese round red paper lantern with gold tassel hanging below, simple bamboo frame, soft warm glow from within, suspended from wooden beam",
+      "size": {
+        "width": 32,
+        "height": 32
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:35:31",
+          "paths": [
+            "art_source/objects/lantern_paper_red/lantern_paper_red.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:35:31",
+          "paths": [
+            "art_source/objects/lantern_paper_red/lantern_paper_red.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:35:31",
+          "paths": [
+            "game/assets/textures/props/lantern_paper_red.png",
+            "game/src/maps/props/lantern_paper_red.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/lantern_paper_red/lantern_paper_red.png",
+      "imported_at": "2026-05-12T17:35:31",
+      "game_png_path": "game/assets/textures/props/lantern_paper_red.png",
+      "game_tscn_path": "game/src/maps/props/lantern_paper_red.tscn",
+      "collision": "bottom_16x16"
+    },
+    "vegetable_stall": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:35:17",
+      "updated_at": "2026-05-12T17:35:46",
+      "tags": [
+        "zone:market",
+        "category:vendor_stall",
+        "chapter:1"
+      ],
+      "object_id": "c4eab65c-fba1-426a-ad41-d0304c6d1294",
+      "kind": "iso_prop",
+      "description": "traditional taiwanese open-air market vegetable stall, wooden plank counter on trestles, woven bamboo baskets piled with leafy greens cabbage and root vegetables, hand-written paper price tags, simple canvas awning above in faded green",
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:35:46",
+          "paths": [
+            "art_source/objects/vegetable_stall/vegetable_stall.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:35:46",
+          "paths": [
+            "art_source/objects/vegetable_stall/vegetable_stall.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:35:46",
+          "paths": [
+            "game/assets/textures/props/vegetable_stall.png",
+            "game/src/maps/props/vegetable_stall.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/vegetable_stall/vegetable_stall.png",
+      "imported_at": "2026-05-12T17:35:46",
+      "game_png_path": "game/assets/textures/props/vegetable_stall.png",
+      "game_tscn_path": "game/src/maps/props/vegetable_stall.tscn",
+      "collision": "bottom_16x16"
+    },
+    "market_basket_produce": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:35:31",
+      "updated_at": "2026-05-12T17:36:03",
+      "tags": [
+        "zone:market",
+        "category:decoration",
+        "chapter:1"
+      ],
+      "object_id": "a655dd76-1ff5-48dc-a26e-9f8d92b10cdd",
+      "kind": "iso_prop",
+      "description": "woven bamboo market basket filled with assorted taiwanese produce, sweet potatoes scallions and bok choy spilling out, well-used worn rim",
+      "size": {
+        "width": 24,
+        "height": 24
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:36:03",
+          "paths": [
+            "art_source/objects/market_basket_produce/market_basket_produce.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:36:03",
+          "paths": [
+            "art_source/objects/market_basket_produce/market_basket_produce.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:36:03",
+          "paths": [
+            "game/assets/textures/props/market_basket_produce.png",
+            "game/src/maps/props/market_basket_produce.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/market_basket_produce/market_basket_produce.png",
+      "imported_at": "2026-05-12T17:36:03",
+      "game_png_path": "game/assets/textures/props/market_basket_produce.png",
+      "game_tscn_path": "game/src/maps/props/market_basket_produce.tscn",
+      "collision": "bottom_16x16"
+    },
+    "wooden_stool_old": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:35:34",
+      "updated_at": "2026-05-12T17:35:59",
+      "tags": [
+        "zone:market",
+        "category:furniture",
+        "chapter:1"
+      ],
+      "object_id": "732c19f2-a56c-4854-849d-2724c0997401",
+      "kind": "iso_prop",
+      "description": "small low wooden taiwanese market stool, dark stained wood worn smooth, four simple legs, the kind elders sit on to chat at market entrances",
+      "size": {
+        "width": 16,
+        "height": 16
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:35:59",
+          "paths": [
+            "art_source/objects/wooden_stool_old/wooden_stool_old.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:35:59",
+          "paths": [
+            "art_source/objects/wooden_stool_old/wooden_stool_old.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:35:59",
+          "paths": [
+            "game/assets/textures/props/wooden_stool_old.png",
+            "game/src/maps/props/wooden_stool_old.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/wooden_stool_old/wooden_stool_old.png",
+      "imported_at": "2026-05-12T17:35:59",
+      "game_png_path": "game/assets/textures/props/wooden_stool_old.png",
+      "game_tscn_path": "game/src/maps/props/wooden_stool_old.tscn",
+      "collision": "bottom_16x16"
+    },
+    "id_card_old": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:35:46",
+      "updated_at": "2026-05-12T17:36:17",
+      "tags": [
+        "zone:shared",
+        "category:key_item",
+        "chapter:1"
+      ],
+      "object_id": "3102e7c2-e0e0-42bc-94ec-b427d5d40ed9",
+      "kind": "iso_prop",
+      "description": "old taiwanese paper identification card from the early 1980s, yellowed white background, small black-and-white portrait photo, handwritten chinese name field, official red seal, slightly creased from years in wallet",
+      "size": {
+        "width": 16,
+        "height": 16
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:36:17",
+          "paths": [
+            "art_source/objects/id_card_old/id_card_old.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:36:17",
+          "paths": [
+            "art_source/objects/id_card_old/id_card_old.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:36:17",
+          "paths": [
+            "game/assets/textures/props/id_card_old.png",
+            "game/src/maps/props/id_card_old.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/id_card_old/id_card_old.png",
+      "imported_at": "2026-05-12T17:36:17",
+      "game_png_path": "game/assets/textures/props/id_card_old.png",
+      "game_tscn_path": "game/src/maps/props/id_card_old.tscn",
+      "collision": "bottom_16x16"
+    },
+    "notebook_leather": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:35:59",
+      "updated_at": "2026-05-12T17:36:46",
+      "tags": [
+        "zone:market",
+        "category:key_item",
+        "chapter:1"
+      ],
+      "object_id": "3e6606cd-09ef-4fa6-a02a-39abe9c12cec",
+      "kind": "iso_prop",
+      "description": "small worn dark brown leather pocket notebook, cover slightly cracked, elastic band closure, yellowed pages peeking, the kind a young man would keep private thoughts in",
+      "size": {
+        "width": 24,
+        "height": 24
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:36:46",
+          "paths": [
+            "art_source/objects/notebook_leather/notebook_leather.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:36:46",
+          "paths": [
+            "art_source/objects/notebook_leather/notebook_leather.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:36:46",
+          "paths": [
+            "game/assets/textures/props/notebook_leather.png",
+            "game/src/maps/props/notebook_leather.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/notebook_leather/notebook_leather.png",
+      "imported_at": "2026-05-12T17:36:46",
+      "game_png_path": "game/assets/textures/props/notebook_leather.png",
+      "game_tscn_path": "game/src/maps/props/notebook_leather.tscn",
+      "collision": "bottom_16x16"
+    },
+    "fountain_pen_old": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:36:03",
+      "updated_at": "2026-05-12T17:36:53",
+      "tags": [
+        "zone:market",
+        "category:key_item",
+        "chapter:1"
+      ],
+      "object_id": "181c452c-0338-4204-b23d-9d3d929e72f7",
+      "kind": "iso_prop",
+      "description": "old black resin fountain pen with tarnished silver clip, slightly scratched, cap on, classic late-1970s taiwanese style",
+      "size": {
+        "width": 16,
+        "height": 16
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:36:53",
+          "paths": [
+            "art_source/objects/fountain_pen_old/fountain_pen_old.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:36:53",
+          "paths": [
+            "art_source/objects/fountain_pen_old/fountain_pen_old.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:36:53",
+          "paths": [
+            "game/assets/textures/props/fountain_pen_old.png",
+            "game/src/maps/props/fountain_pen_old.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/fountain_pen_old/fountain_pen_old.png",
+      "imported_at": "2026-05-12T17:36:53",
+      "game_png_path": "game/assets/textures/props/fountain_pen_old.png",
+      "game_tscn_path": "game/src/maps/props/fountain_pen_old.tscn",
+      "collision": "bottom_16x16"
+    },
+    "photograph_old": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:36:18",
+      "updated_at": "2026-05-12T17:36:43",
+      "tags": [
+        "zone:market",
+        "category:key_item",
+        "chapter:1"
+      ],
+      "object_id": "ca7cd909-d125-4163-b76a-783050007961",
+      "kind": "iso_prop",
+      "description": "small unframed black-and-white photograph from the 1970s, slightly curled at corners, faded greyscale tones, portrait of a young man not visible from this angle",
+      "size": {
+        "width": 16,
+        "height": 16
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:36:43",
+          "paths": [
+            "art_source/objects/photograph_old/photograph_old.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:36:43",
+          "paths": [
+            "art_source/objects/photograph_old/photograph_old.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:36:43",
+          "paths": [
+            "game/assets/textures/props/photograph_old.png",
+            "game/src/maps/props/photograph_old.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/photograph_old/photograph_old.png",
+      "imported_at": "2026-05-12T17:36:43",
+      "game_png_path": "game/assets/textures/props/photograph_old.png",
+      "game_tscn_path": "game/src/maps/props/photograph_old.tscn",
+      "collision": "bottom_16x16"
+    },
+    "iron_gate_rusted": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:36:43",
+      "updated_at": "2026-05-12T17:38:13",
+      "tags": [
+        "zone:market",
+        "category:structure",
+        "chapter:1"
+      ],
+      "object_id": "ea3d9727-8555-4a5b-86e1-eced85517c18",
+      "kind": "iso_prop",
+      "description": "old vertical roller iron security gate of a taiwanese shopfront, painted dark green with heavy rust streaks, large brass padlock and chain at bottom, faded chinese signboard above partially visible, abandoned for decades",
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:38:13",
+          "paths": [
+            "art_source/objects/iron_gate_rusted/iron_gate_rusted.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:38:13",
+          "paths": [
+            "art_source/objects/iron_gate_rusted/iron_gate_rusted.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:38:13",
+          "paths": [
+            "game/assets/textures/props/iron_gate_rusted.png",
+            "game/src/maps/props/iron_gate_rusted.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/iron_gate_rusted/iron_gate_rusted.png",
+      "imported_at": "2026-05-12T17:38:13",
+      "game_png_path": "game/assets/textures/props/iron_gate_rusted.png",
+      "game_tscn_path": "game/src/maps/props/iron_gate_rusted.tscn",
+      "collision": "bottom_16x16"
+    },
+    "pharmacy_rongchang_modern": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:36:47",
+      "updated_at": "2026-05-12T17:37:30",
+      "tags": [
+        "zone:market",
+        "category:building",
+        "chapter:1"
+      ],
+      "object_id": "9af3c089-25d7-4fd1-989e-ff70fd2283a7",
+      "kind": "building",
+      "description": "traditional taiwanese two-story shophouse in deep market alley, lower floor sealed by rusted dark green roller iron gate with heavy chain padlock, weathered white plastered upper floor with peeling paint, dark grey tile roof with moss patches, faded chinese signboard reading rongchang chinese medicine almost illegible, abandoned forty years",
+      "view": "high_top_down",
+      "size": {
+        "width": 128,
+        "height": 128
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:37:30",
+          "paths": [
+            "art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:37:30",
+          "paths": [
+            "art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:37:30",
+          "paths": [
+            "game/assets/textures/props/pharmacy_rongchang_modern.png",
+            "game/src/maps/props/pharmacy_rongchang_modern.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png",
+      "imported_at": "2026-05-12T17:37:30",
+      "game_png_path": "game/assets/textures/props/pharmacy_rongchang_modern.png",
+      "game_tscn_path": "game/src/maps/props/pharmacy_rongchang_modern.tscn",
+      "collision": "bottom_16x16"
+    },
+    "pharmacy_rongchang_1983": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:36:53",
+      "updated_at": "2026-05-12T17:37:30",
+      "tags": [
+        "zone:market",
+        "category:building",
+        "chapter:1"
+      ],
+      "object_id": "44e400c6-b134-4acf-a934-4c1e50d52d69",
+      "kind": "building",
+      "description": "traditional taiwanese two-story shophouse in busy market alley, open shopfront with raised wooden roll-up shutter showing pharmacy interior, polished red brick lower floor, freshly painted white upper floor with wooden window shutters, dark grey tile roof in good condition, bright red chinese signboard with gold characters reading rongchang chinese medicine, red paper lanterns hanging at entrance",
+      "view": "high_top_down",
+      "size": {
+        "width": 128,
+        "height": 128
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:37:30",
+          "paths": [
+            "art_source/objects/pharmacy_rongchang_1983/pharmacy_rongchang_1983.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:37:30",
+          "paths": [
+            "art_source/objects/pharmacy_rongchang_1983/pharmacy_rongchang_1983.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:37:30",
+          "paths": [
+            "game/assets/textures/props/pharmacy_rongchang_1983.png",
+            "game/src/maps/props/pharmacy_rongchang_1983.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/pharmacy_rongchang_1983/pharmacy_rongchang_1983.png",
+      "imported_at": "2026-05-12T17:37:30",
+      "game_png_path": "game/assets/textures/props/pharmacy_rongchang_1983.png",
+      "game_tscn_path": "game/src/maps/props/pharmacy_rongchang_1983.tscn",
+      "collision": "bottom_16x16"
+    },
+    "old_apartment_muzha": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:37:30",
+      "updated_at": "2026-05-12T17:38:19",
+      "tags": [
+        "zone:market",
+        "category:building",
+        "chapter:1"
+      ],
+      "object_id": "fc13dbce-62a1-4497-8a2c-8c3349e325a3",
+      "kind": "building",
+      "description": "post-war four-story taiwanese walk-up apartment building, weathered exposed concrete facade with faded yellow paint, small balconies with rusty iron railings and hanging laundry, window-mounted air conditioner units, narrow side stairway, ground-floor metal door with small mailbox cluster",
+      "view": "high_top_down",
+      "size": {
+        "width": 96,
+        "height": 128
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:38:19",
+          "paths": [
+            "art_source/objects/old_apartment_muzha/old_apartment_muzha.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:38:19",
+          "paths": [
+            "art_source/objects/old_apartment_muzha/old_apartment_muzha.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:38:19",
+          "paths": [
+            "game/assets/textures/props/old_apartment_muzha.png",
+            "game/src/maps/props/old_apartment_muzha.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/old_apartment_muzha/old_apartment_muzha.png",
+      "imported_at": "2026-05-12T17:38:19",
+      "game_png_path": "game/assets/textures/props/old_apartment_muzha.png",
+      "game_tscn_path": "game/src/maps/props/old_apartment_muzha.tscn",
+      "collision": "bottom_16x16"
+    },
+    "law_office_muzha": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:37:31",
+      "updated_at": "2026-05-12T17:38:14",
+      "tags": [
+        "zone:market",
+        "category:building",
+        "chapter:1"
+      ],
+      "object_id": "0f34bc9b-a49c-4d4c-ad4c-93cabc3189fd",
+      "kind": "building",
+      "description": "modest taiwanese street-level law office in an older concrete building, large window with frosted lower half and gold chinese characters reading law office, dark wooden entry door with brass handle, small plant pot beside entrance, faded vertical signboard on wall",
+      "view": "high_top_down",
+      "size": {
+        "width": 96,
+        "height": 96
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:38:13",
+          "paths": [
+            "art_source/objects/law_office_muzha/law_office_muzha.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:38:14",
+          "paths": [
+            "art_source/objects/law_office_muzha/law_office_muzha.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:38:14",
+          "paths": [
+            "game/assets/textures/props/law_office_muzha.png",
+            "game/src/maps/props/law_office_muzha.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/law_office_muzha/law_office_muzha.png",
+      "imported_at": "2026-05-12T17:38:14",
+      "game_png_path": "game/assets/textures/props/law_office_muzha.png",
+      "game_tscn_path": "game/src/maps/props/law_office_muzha.tscn",
+      "collision": "bottom_16x16"
+    },
+    "market_shophouse_minnan": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:38:14",
+      "updated_at": "2026-05-12T17:38:45",
+      "tags": [
+        "zone:market",
+        "category:building",
+        "chapter:1"
+      ],
+      "object_id": "e949c9b7-0bf5-483d-8691-7f2cfba0afd7",
+      "kind": "building",
+      "description": "traditional taiwanese minnan two-story shophouse, red brick lower floor with arched doorway and wooden roll-up shutter, white plastered upper floor with wooden window shutters, dark grey tile roof with curved eaves, weathered wooden signboard, small balcony with iron railing",
+      "view": "high_top_down",
+      "size": {
+        "width": 128,
+        "height": 128
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:38:45",
+          "paths": [
+            "art_source/objects/market_shophouse_minnan/market_shophouse_minnan.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:38:45",
+          "paths": [
+            "art_source/objects/market_shophouse_minnan/market_shophouse_minnan.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:38:45",
+          "paths": [
+            "game/assets/textures/props/market_shophouse_minnan.png",
+            "game/src/maps/props/market_shophouse_minnan.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/market_shophouse_minnan/market_shophouse_minnan.png",
+      "imported_at": "2026-05-12T17:38:45",
+      "game_png_path": "game/assets/textures/props/market_shophouse_minnan.png",
+      "game_tscn_path": "game/src/maps/props/market_shophouse_minnan.tscn",
+      "collision": "bottom_16x16"
+    },
+    "market_shophouse_concrete": {
+      "status": "completed",
+      "created_at": "2026-05-12T17:38:14",
+      "updated_at": "2026-05-12T17:39:03",
+      "tags": [
+        "zone:market",
+        "category:building",
+        "chapter:1"
+      ],
+      "object_id": "7ac39d34-8505-4ec2-90bd-6bbacdabd42e",
+      "kind": "building",
+      "description": "post-war taiwanese two-story concrete shophouse, light grey exposed concrete facade slightly weathered, metal roll-up shutter on ground floor, simple rectangular windows on upper floor with aluminum frames, flat concrete roof with utility pipes, faded plastic signboard",
+      "view": "high_top_down",
+      "size": {
+        "width": 128,
+        "height": 128
+      },
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T17:39:03",
+          "paths": [
+            "art_source/objects/market_shophouse_concrete/market_shophouse_concrete.png"
+          ]
+        },
+        "chroma_key": {
+          "completed_at": "2026-05-12T17:39:03",
+          "paths": [
+            "art_source/objects/market_shophouse_concrete/market_shophouse_concrete.png"
+          ]
+        },
+        "import_to_godot": {
+          "completed_at": "2026-05-12T17:39:03",
+          "paths": [
+            "game/assets/textures/props/market_shophouse_concrete.png",
+            "game/src/maps/props/market_shophouse_concrete.tscn"
+          ]
+        }
+      },
+      "local_path": "art_source/objects/market_shophouse_concrete/market_shophouse_concrete.png",
+      "imported_at": "2026-05-12T17:39:03",
+      "game_png_path": "game/assets/textures/props/market_shophouse_concrete.png",
+      "game_tscn_path": "game/src/maps/props/market_shophouse_concrete.tscn",
+      "collision": "bottom_16x16"
+    },
+    "test_pharmacy_iso": {
+      "status": "completed",
+      "kind": "building",
+      "description": "traditional taiwanese two-story shophouse, rusted iron gate, weathered upper floor, mossy tile roof, faded chinese signboard \"rongchang\", abandoned forty years",
+      "view": "isometric",
+      "size": {
+        "width": 128,
+        "height": 128
+      },
+      "tags": [
+        "zone:test",
+        "category:building",
+        "chapter:test",
+        "method:pixflux_iso"
+      ],
+      "method": "create-image-pixflux",
+      "isometric": true,
+      "no_background": true,
+      "note": "Test render of pharmacy_rongchang_modern via /v2/create-image-pixflux with isometric=true. Compare against art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png (which used /v2/map-objects + view=high_top_down → elevation only).",
+      "created_at": "2026-05-12T18:27:59",
+      "updated_at": "2026-05-12T18:27:59",
+      "stages": {
+        "generate_object": {
+          "completed_at": "2026-05-12T18:27:59",
+          "paths": [
+            "art_source/objects/test_pharmacy_iso/test_pharmacy_iso.png"
+          ]
+        }
+      }
     }
   }
 }
