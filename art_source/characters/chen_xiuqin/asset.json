@@ -1,0 +1,94 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T16:56:40",
+  "updated_at": "2026-05-12T17:03:10",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "tags": [
+    "zone:market",
+    "category:shopkeeper_family",
+    "chapter:1"
+  ],
+  "character_id": "d6469648-e284-4d4e-b0a2-36b405acd89e",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "middle-aged taiwanese woman in her early forties, average build, pale pink short-sleeved blouse with small floral pattern, beige cotton apron, dark grey trousers, brown flat sandals, shoulder-length permed black hair tied back, practical warm expression, small gold stud earrings, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/chen_xiuqin",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T16:58:04",
+      "paths": [
+        "art_source/characters/chen_xiuqin/rotations/east.png",
+        "art_source/characters/chen_xiuqin/rotations/west.png",
+        "art_source/characters/chen_xiuqin/rotations/north.png",
+        "art_source/characters/chen_xiuqin/rotations/south.png",
+        "art_source/characters/chen_xiuqin/rotations/north_east.png",
+        "art_source/characters/chen_xiuqin/rotations/north_west.png",
+        "art_source/characters/chen_xiuqin/rotations/south_east.png",
+        "art_source/characters/chen_xiuqin/rotations/south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T16:59:51",
+      "paths": [
+        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T17:03:10",
+      "paths": [
+        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:03:10",
+      "paths": [
+        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.png",
+        "art_source/characters/chen_xiuqin/spritesheet/chen_xiuqin.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:03:10",
+      "paths": [
+        "game/assets/textures/characters/chen_xiuqin.png",
+        "game/assets/textures/characters/chen_xiuqin.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ],
+    "walk": [
+      "south",
+      "south-east",
+      "east",
+      "north-east",
+      "north",
+      "north-west",
+      "west"
+    ]
+  },
+  "imported_at": "2026-05-12T17:03:10",
+  "game_png_path": "game/assets/textures/characters/chen_xiuqin.png",
+  "game_json_path": "game/assets/textures/characters/chen_xiuqin.json"
+}

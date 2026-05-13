@@ -1,0 +1,69 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T17:30:26",
+  "updated_at": "2026-05-12T17:34:55",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+  },
+  "tags": [
+    "zone:market",
+    "category:vendor",
+    "chapter:1"
+  ],
+  "character_id": "e0746492-c240-45fd-8710-c4c4d9b1428d",
+  "preset": "npc",
+  "directions": 4,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "elderly taiwanese male vendor in his late sixties, thin build, faded blue cotton short-sleeved shirt, dark trousers with canvas belt, brown cloth shoes, sparse grey hair under faded baseball cap, weathered patient expression, towel draped over shoulder, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south"
+  ],
+  "local_path": "art_source/characters/vendor_market_oldman_01",
+  "stages": {
+    "generate_4dir_base": {
+      "completed_at": "2026-05-12T17:31:24",
+      "paths": [
+        "art_source/characters/vendor_market_oldman_01/rotations/east.png",
+        "art_source/characters/vendor_market_oldman_01/rotations/west.png",
+        "art_source/characters/vendor_market_oldman_01/rotations/north.png",
+        "art_source/characters/vendor_market_oldman_01/rotations/south.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T17:34:55",
+      "paths": [
+        "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.png",
+        "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:34:55",
+      "paths": [
+        "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.png",
+        "art_source/characters/vendor_market_oldman_01/spritesheet/vendor_market_oldman_01.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:34:55",
+      "paths": [
+        "game/assets/textures/characters/vendor_market_oldman_01.png",
+        "game/assets/textures/characters/vendor_market_oldman_01.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ]
+  },
+  "imported_at": "2026-05-12T17:34:55",
+  "game_png_path": "game/assets/textures/characters/vendor_market_oldman_01.png",
+  "game_json_path": "game/assets/textures/characters/vendor_market_oldman_01.json"
+}

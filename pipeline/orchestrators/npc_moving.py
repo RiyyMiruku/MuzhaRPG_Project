@@ -25,11 +25,9 @@ import pixellab_client as plab
 import post_process as pp
 import zones
 from orchestrators._common import (
-    ALL_8_DIRECTIONS,
-    CARDINAL_DIRECTIONS,
     StageContext,
     make_context,
-    run_character_animation,
+    run_character_animation_template,
     stage,
 )
 
@@ -66,6 +64,17 @@ def parse_args() -> argparse.Namespace:
                    help="comma-separated direction list (e.g. 'east,north') — "
                         "restricts animation regen to these directions only. "
                         "compile_spritesheet 會做 partial row patch。")
+    p.add_argument("--isometric", action="store_true",
+                   help="Render at true isometric angle. Forwards isometric=true "
+                        "to /create-character-with-8-directions and /animate-character.")
+    p.add_argument("--idle-template-id", default=None,
+                   help="Override the default Pixellab idle template "
+                        "(see pipeline.animation_templates.DEFAULT_TEMPLATES). "
+                        "Default: 'breathing-idle'.")
+    p.add_argument("--walk-template-id", default=None,
+                   help="Override the default Pixellab walk template "
+                        "(see pipeline.animation_templates.DEFAULT_TEMPLATES). "
+                        "Default: 'walking-6-frames'.")
     return p.parse_args()
 
 
@@ -88,6 +97,7 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
     char_id, images = plab.submit_character_8dir(
         token=token, description=args.description,
         view=args.view, proportions_preset=args.proportions,
+        isometric=args.isometric,
     )
     manifest.upsert_character(
         name=ctx.name,
@@ -98,6 +108,7 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
             "view": args.view,
             "proportions": args.proportions,
             "description": args.description,
+            "isometric": args.isometric,
             "status": "pending",
         },
     )
@@ -127,10 +138,11 @@ def generate_8dir_base(ctx: StageContext) -> list[str]:
 def add_idle_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    return run_character_animation(
-        ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
-        stage_name="add_idle_animation",
+    return run_character_animation_template(
+        ctx, "idle",
+        override_template_id=args.idle_template_id,
         only_directions=_parse_only_directions(args),
+        isometric=args.isometric,
     )
 
 
@@ -138,10 +150,11 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
 def add_walk_animation(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
-    return run_character_animation(
-        ctx, "walk", ALL_8_DIRECTIONS, args.walk_frame_count,
-        stage_name="add_walk_animation",
+    return run_character_animation_template(
+        ctx, "walk",
+        override_template_id=args.walk_template_id,
         only_directions=_parse_only_directions(args),
+        isometric=args.isometric,
     )
 
 

@@ -1,0 +1,85 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-11T23:06:48",
+  "updated_at": "2026-05-11T23:45:37",
+  "tags": [
+    "zone:test",
+    "category:npc",
+    "chapter:test"
+  ],
+  "character_id": "32aedff9-6327-40e7-a35d-db153a7377ae",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "young taiwanese university student, plain white t-shirt, dark blue jeans,\nblack low-top sneakers, short tidy black hair, slim build,\nneutral expression, arms relaxed at sides, no accessories, no bag",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source\\characters\\test_moving_npc",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-11T23:08:24",
+      "paths": [
+        "art_source\\characters\\test_moving_npc\\rotations\\east.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\west.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\north.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\south.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\north_east.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\north_west.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\south_east.png",
+        "art_source\\characters\\test_moving_npc\\rotations\\south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-11T23:32:55",
+      "paths": [
+        "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.png",
+        "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-11T23:27:46",
+      "paths": [
+        "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.png",
+        "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-11T23:45:37",
+      "paths": [
+        "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.png",
+        "art_source\\characters\\test_moving_npc\\spritesheet\\test_moving_npc.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-11T23:27:46",
+      "paths": [
+        "game\\assets\\textures\\characters\\test_moving_npc.png",
+        "game\\assets\\textures\\characters\\test_moving_npc.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ]
+  },
+  "prompts": {
+    "add_idle_animation": "standing in place, head held perfectly still and facing the camera-relative\nforward direction the same as the body, eyes looking straight ahead,\nno head turning, no looking around, no rubbernecking, gentle breathing only\n— shoulders rise and fall subtly, arms remain at sides, feet planted",
+    "add_walk_animation": "walking forward in the same direction the body is facing, head locked\nforward and aligned with torso, eyes fixed straight ahead in the walking\ndirection, no head turning, no looking sideways, no glancing around,\nnatural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "imported_at": "2026-05-11T23:27:46",
+  "game_png_path": "game\\assets\\textures\\characters\\test_moving_npc.png",
+  "game_json_path": "game\\assets\\textures\\characters\\test_moving_npc.json"
+}

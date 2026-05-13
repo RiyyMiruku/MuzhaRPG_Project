@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:34:01",
+  "updated_at": "2026-05-12T17:34:59",
+  "tags": [
+    "zone:market",
+    "category:furniture",
+    "chapter:1"
+  ],
+  "object_id": "884c129d-3629-4360-ac3a-c1a2cc322c14",
+  "kind": "iso_prop",
+  "description": "tall traditional chinese pharmacy wooden herb cabinet with many small square drawers, polished dark stained wood with warm sheen, brass drawer handles bright and clean, handwritten paper labels neatly pasted on each drawer, well-kept operational shop fixture",
+  "size": {
+    "width": 64,
+    "height": 64
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:34:59",
+      "paths": [
+        "art_source/objects/medicine_cabinet_new/medicine_cabinet_new.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:34:59",
+      "paths": [
+        "art_source/objects/medicine_cabinet_new/medicine_cabinet_new.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:34:59",
+      "paths": [
+        "game/assets/textures/props/medicine_cabinet_new.png",
+        "game/src/maps/props/medicine_cabinet_new.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/medicine_cabinet_new/medicine_cabinet_new.png",
+  "imported_at": "2026-05-12T17:34:59",
+  "game_png_path": "game/assets/textures/props/medicine_cabinet_new.png",
+  "game_tscn_path": "game/src/maps/props/medicine_cabinet_new.tscn",
+  "collision": "bottom_16x16"
+}

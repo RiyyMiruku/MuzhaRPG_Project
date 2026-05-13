@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "kind": "building",
+  "description": "traditional taiwanese two-story shophouse, rusted iron gate, weathered upper floor, mossy tile roof, faded chinese signboard \"rongchang\", abandoned forty years",
+  "view": "isometric",
+  "size": {
+    "width": 128,
+    "height": 128
+  },
+  "tags": [
+    "zone:test",
+    "category:building",
+    "chapter:test",
+    "method:pixflux_iso"
+  ],
+  "method": "create-image-pixflux",
+  "isometric": true,
+  "no_background": true,
+  "note": "Test render of pharmacy_rongchang_modern via /v2/create-image-pixflux with isometric=true. Compare against art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png (which used /v2/map-objects + view=high_top_down → elevation only).",
+  "created_at": "2026-05-12T18:27:59",
+  "updated_at": "2026-05-12T18:27:59",
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T18:27:59",
+      "paths": [
+        "art_source/objects/test_pharmacy_iso/test_pharmacy_iso.png"
+      ]
+    }
+  }
+}

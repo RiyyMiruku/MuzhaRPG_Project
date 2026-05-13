@@ -1,0 +1,96 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T18:35:33",
+  "updated_at": "2026-05-12T18:57:30",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "tags": [
+    "zone:test",
+    "category:player",
+    "chapter:test"
+  ],
+  "character_id": "4b7fdf7d-178c-496c-abed-0fee0652924c",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "young taiwanese male protagonist in his early 20s, short black hair, casual modern clothes (white t-shirt, dark jeans), small backpack, friendly and curious expression, slim athletic build",
+  "isometric": true,
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/test_iso_player",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T18:36:53",
+      "paths": [
+        "art_source/characters/test_iso_player/rotations/east.png",
+        "art_source/characters/test_iso_player/rotations/west.png",
+        "art_source/characters/test_iso_player/rotations/north.png",
+        "art_source/characters/test_iso_player/rotations/south.png",
+        "art_source/characters/test_iso_player/rotations/north_east.png",
+        "art_source/characters/test_iso_player/rotations/north_west.png",
+        "art_source/characters/test_iso_player/rotations/south_east.png",
+        "art_source/characters/test_iso_player/rotations/south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T18:57:30",
+      "paths": [
+        "art_source/characters/test_iso_player/spritesheet/test_iso_player.png",
+        "art_source/characters/test_iso_player/spritesheet/test_iso_player.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T18:53:17",
+      "paths": [
+        "art_source/characters/test_iso_player/spritesheet/test_iso_player.png",
+        "art_source/characters/test_iso_player/spritesheet/test_iso_player.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T18:41:59",
+      "paths": [
+        "art_source/characters/test_iso_player/spritesheet/test_iso_player.png",
+        "art_source/characters/test_iso_player/spritesheet/test_iso_player.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T18:41:59",
+      "paths": [
+        "game/assets/textures/characters/test_iso_player.png",
+        "game/assets/textures/characters/test_iso_player.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ],
+    "walk": [
+      "south",
+      "south-east",
+      "east",
+      "north-east",
+      "north",
+      "north-west",
+      "west",
+      "south-west"
+    ]
+  },
+  "imported_at": "2026-05-12T18:41:59",
+  "game_png_path": "game/assets/textures/characters/test_iso_player.png",
+  "game_json_path": "game/assets/textures/characters/test_iso_player.json"
+}

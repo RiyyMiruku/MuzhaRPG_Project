@@ -1,0 +1,495 @@
+Open Search
+Search
+KEYBOARD SHORTCUT:
+COMMAND
+⌘ K
+Introduction
+Open Introduction
+Create Image
+Close Group
+Generate image (Pro)
+HTTP METHOD: 
+POST
+Generate with style (Pro)
+HTTP METHOD: 
+POST
+Generate UI (Pro)
+HTTP METHOD: 
+POST
+Create image (pixflux)
+HTTP METHOD: 
+POST
+Create image (pixen)
+HTTP METHOD: 
+POST
+Create image (bitforge)
+HTTP METHOD: 
+POST
+Image Operations
+Close Group
+Convert image to pixel art
+HTTP METHOD: 
+POST
+Resize pixel art image
+HTTP METHOD: 
+POST
+Remove background
+HTTP METHOD: 
+POST
+Animate
+Close Group
+Edit animation (Pro)
+HTTP METHOD: 
+POST
+Interpolate (Pro)
+HTTP METHOD: 
+POST
+Transfer outfit (Pro)
+HTTP METHOD: 
+POST
+Animate with skeleton
+HTTP METHOD: 
+POST
+Animate with text
+HTTP METHOD: 
+POST
+Animate with text (pro)
+HTTP METHOD: 
+POST
+Animate with text v3
+HTTP METHOD: 
+POST
+Estimate skeleton
+HTTP METHOD: 
+POST
+Rotate
+Close Group
+Generate 8 rotations (Pro)
+HTTP METHOD: 
+POST
+Generate 8 rotations v3
+HTTP METHOD: 
+POST
+Rotate character or object
+HTTP METHOD: 
+POST
+Inpaint
+Close Group
+Inpaint image (Pro)
+HTTP METHOD: 
+POST
+Inpaint image
+HTTP METHOD: 
+POST
+Edit
+Close Group
+Edit images (Pro)
+HTTP METHOD: 
+POST
+Edit image
+HTTP METHOD: 
+POST
+Create map
+Close Group
+Create a tileset asynchronously
+HTTP METHOD: 
+POST
+List user's tilesets
+HTTP METHOD: 
+GET
+Create top-down tileset (async processing)
+HTTP METHOD: 
+POST
+Get generated tileset by ID
+HTTP METHOD: 
+GET
+Create a sidescroller tileset asynchronously
+HTTP METHOD: 
+POST
+Create sidescroller tileset (async processing)
+HTTP METHOD: 
+POST
+Create isometric tile (async processing)
+HTTP METHOD: 
+POST
+Get generated isometric tile by ID
+HTTP METHOD: 
+GET
+List user's isometric tiles
+HTTP METHOD: 
+GET
+Create tiles pro (async processing)
+HTTP METHOD: 
+POST
+Get generated tiles pro by ID
+HTTP METHOD: 
+GET
+Map Objects
+Close Group
+Create map object
+HTTP METHOD: 
+POST
+Account
+Close Group
+Get balance
+HTTP METHOD: 
+GET
+Character from template
+Close Group
+Create character with 4 directions
+HTTP METHOD: 
+POST
+Create character with 8 directions
+HTTP METHOD: 
+POST
+Create character with Pro mode (8 directions)
+HTTP METHOD: 
+POST
+Create character with v3 model (8 rotations)
+HTTP METHOD: 
+POST
+Create Character Animation
+HTTP METHOD: 
+POST
+Animate character
+HTTP METHOD: 
+POST
+Character Management
+Close Group
+List user's characters
+HTTP METHOD: 
+GET
+Get character details
+HTTP METHOD: 
+GET
+Delete a character and all associated data
+HTTP METHOD: 
+DEL
+Export character as ZIP
+HTTP METHOD: 
+GET
+Update character tags
+HTTP METHOD: 
+PATCH
+Background Jobs
+Close Group
+Get background job status
+HTTP METHOD: 
+GET
+Objects
+Close Group
+Create object (1-direction consistent-style or 8-direction)
+HTTP METHOD: 
+POST
+Animate an existing object
+HTTP METHOD: 
+POST
+Create a variation of an existing object
+HTTP METHOD: 
+POST
+Promote selected frames of a review object to completed objects
+HTTP METHOD: 
+POST
+Dismiss a review object without saving any frames
+HTTP METHOD: 
+POST
+Object Management
+Close Group
+List user's objects
+HTTP METHOD: 
+GET
+Get object details
+HTTP METHOD: 
+GET
+Delete an object and all associated data
+HTTP METHOD: 
+DEL
+Update object tags
+HTTP METHOD: 
+PATCH
+Documentation
+Close Group
+Get LLM-friendly API documentation
+HTTP METHOD: 
+GET
+Open API Client
+Powered by Scalar
+dev
+OAS 3.1.0
+Pixel Lab API
+
+The API provides endpoints for creating AI-generated pixel art images, rotations, animations, and more. Making it easy for applications to integrate pixel art generation capabilities.
+
+AI Assistant Integration
+
+For use with AI assistants (Claude Code, ChatGPT, Cursor, etc.), use the auto-generated documentation:
+
+https://api.pixellab.ai/v2/llms.txt
+
+Python Client
+
+For convenience, a Python client library is available to simplify integration with your applications. Visit our GitHub repository for installation instructions and examples.
+
+pip install pixellab
+
+Authentication
+
+The API uses a simple token based authentication system. After creating an account, you can find your API token in your account settings. Include this token in all API requests using the Bearer authentication scheme:
+
+curl -X POST https://api.pixellab.ai/v2/create-image-pixflux \
+    -H "Authorization: Bearer YOUR_API_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "description": "cute dragon",
+        "image_size": {"width": 128, "height": 128}
+    }'
+
+
+Or use the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+client.create_image_pixflux(
+    description="cute dragon",
+    image_size=dict(width=128, height=128),
+)
+
+Image Generation
+Create image Bitforge: Apply custom art styles using reference images.
+Create image Pixflux: Generate pixel art from text descriptions.
+Image to pixel art: Convert regular images to pixel art style.
+
+Pro:
+
+Generate image (Pro): Generate multiple pixel art images from text (improved quality).
+Generate with style (Pro): Generate new images matching the style of reference images.
+Generate UI (Pro): Generate pixel art UI elements (buttons, health bars, etc.).
+Generate 8 rotations (Pro): Generate 8 directional views of a character or object.
+Animation
+Animate with skeleton: Generate 4 frames of an animation from skeleton poses.
+Animate with text: Generate animation from text descriptions.
+Animate with text v2: Generate animation from text (improved quality).
+
+Pro:
+
+Edit animation (Pro): Apply text-based edits consistently across animation frames.
+Interpolate (Pro): Generate intermediate frames between two keyframe images.
+Transfer outfit (Pro): Transfer outfit/appearance from a reference to animation frames.
+Editing
+Inpaint: Edit and modify existing pixel art.
+Edit image: Edit an existing pixel art image based on a text description.
+Resize: Intelligently upscale or downscale pixel art while preserving style.
+Rotate: Rotate an object or a character.
+
+Pro:
+
+Edit images (Pro): Edit multiple pixel art images using text or reference images (improved quality).
+Inpaint image (Pro): AI-powered inpainting with mask-based editing.
+Tilesets & Objects
+Create tileset: Create complete top-down tilesets for game development with seamless connections.
+Create tileset sidescroller: Create sidescroller platform tilesets for 2D platformer games.
+Create isometric tile: Create isometric tiles in various shapes (thick tile, thin tile, block).
+Create map object: Generate transparent map objects (trees, items, buildings) for game development.
+Character Creation & Management (New)
+Create character with 4 directions: Create persistent characters with 4 directional rotations stored for reuse.
+Create character with 8 directions: Create persistent characters with 8 directional rotations stored for reuse.
+Animate character: Add animations to existing characters with automatic multi-direction processing.
+List characters: View all your created characters with metadata and preview images.
+Get character details: Access complete character information and all rotation image URLs.
+Export character: Download characters as ZIP files with rotations, animations, and keypoint metadata.
+Background job status: Monitor the progress of character creation and animation jobs.
+Server
+Server:
+https://api.pixellab.ai/v2
+Authentication
+Select
+Auth Type
+No authentication selected
+Client Libraries
+Shell
+Ruby
+Node.js
+PHP
+Python
+More
+Select from all clients
+Shell Curl
+Create Image ​
+Copy link
+Create Image
+Operations
+POST
+/generate-image-v2
+POST
+/generate-with-style-v2
+POST
+/generate-ui-v2
+POST
+/create-image-pixflux
+POST
+/create-image-pixen
+POST
+/create-image-bitforge
+Image Operations ​
+Copy link
+Image Operations
+Operations
+POST
+/image-to-pixelart
+POST
+/resize
+POST
+/remove-background
+Animate ​
+Copy link
+Animate
+Operations
+POST
+/edit-animation-v2
+POST
+/interpolation-v2
+POST
+/transfer-outfit-v2
+POST
+/animate-with-skeleton
+POST
+/animate-with-text
+POST
+/animate-with-text-v2
+POST
+/animate-with-text-v3
+POST
+/estimate-skeleton
+Rotate ​
+Copy link
+Rotate
+Operations
+POST
+/generate-8-rotations-v2
+POST
+/generate-8-rotations-v3
+POST
+/rotate
+Inpaint ​
+Copy link
+Inpaint
+Operations
+POST
+/inpaint-v3
+POST
+/inpaint
+Edit ​
+Copy link
+Edit
+Operations
+POST
+/edit-images-v2
+POST
+/edit-image
+Create map ​
+Copy link
+Create map
+Operations
+POST
+/tilesets
+GET
+/tilesets
+POST
+/create-tileset
+GET
+/tilesets/{tileset_id}
+POST
+/tilesets-sidescroller
+POST
+/create-tileset-sidescroller
+POST
+/create-isometric-tile
+GET
+/isometric-tiles/{tile_id}
+GET
+/isometric-tiles
+POST
+/create-tiles-pro
+GET
+/tiles-pro/{tile_id}
+Map Objects ​
+Copy link
+Map Objects
+Operations
+POST
+/map-objects
+Account ​
+Copy link
+Account
+Operations
+GET
+/balance
+Character from template ​
+Copy link
+Character from template
+Operations
+POST
+/create-character-with-4-directions
+POST
+/create-character-with-8-directions
+POST
+/create-character-pro
+POST
+/create-character-v3
+POST
+/characters/animations
+POST
+/animate-character
+Character Management ​
+Copy link
+Character Management
+Operations
+GET
+/characters
+GET
+/characters/{character_id}
+DELETE
+/characters/{character_id}
+GET
+/characters/{character_id}/zip
+PATCH
+/characters/{character_id}/tags
+Background Jobs ​
+Copy link
+Background Jobs
+Operations
+GET
+/background-jobs/{job_id}
+Objects ​
+Copy link
+Objects
+Operations
+POST
+/objects
+POST
+/animate-object
+POST
+/vary-object
+POST
+/objects/{object_id}/select-frames
+POST
+/objects/{object_id}/dismiss-review
+Object Management ​
+Copy link
+Object Management
+Operations
+GET
+/objects
+GET
+/objects/{object_id}
+DELETE
+/objects/{object_id}
+PATCH
+/objects/{object_id}/tags
+Documentation ​
+Copy link
+Documentation
+Operations
+GET
+/llms.txt

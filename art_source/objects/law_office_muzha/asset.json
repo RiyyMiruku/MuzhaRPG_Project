@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:37:31",
+  "updated_at": "2026-05-12T17:38:14",
+  "tags": [
+    "zone:market",
+    "category:building",
+    "chapter:1"
+  ],
+  "object_id": "0f34bc9b-a49c-4d4c-ad4c-93cabc3189fd",
+  "kind": "building",
+  "description": "modest taiwanese street-level law office in an older concrete building, large window with frosted lower half and gold chinese characters reading law office, dark wooden entry door with brass handle, small plant pot beside entrance, faded vertical signboard on wall",
+  "view": "high_top_down",
+  "size": {
+    "width": 96,
+    "height": 96
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:38:13",
+      "paths": [
+        "art_source/objects/law_office_muzha/law_office_muzha.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:38:14",
+      "paths": [
+        "art_source/objects/law_office_muzha/law_office_muzha.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:38:14",
+      "paths": [
+        "game/assets/textures/props/law_office_muzha.png",
+        "game/src/maps/props/law_office_muzha.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/law_office_muzha/law_office_muzha.png",
+  "imported_at": "2026-05-12T17:38:14",
+  "game_png_path": "game/assets/textures/props/law_office_muzha.png",
+  "game_tscn_path": "game/src/maps/props/law_office_muzha.tscn",
+  "collision": "bottom_16x16"
+}

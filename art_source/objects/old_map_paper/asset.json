@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:34:34",
+  "updated_at": "2026-05-12T17:35:17",
+  "tags": [
+    "zone:market",
+    "category:key_item",
+    "chapter:1"
+  ],
+  "object_id": "24812576-5926-427e-ad01-03a0e9286ff6",
+  "kind": "iso_prop",
+  "description": "old folded paper map of muzha market area yellowed with age, hand-drawn lines and small red dots marking locations, brush-written chinese characters on the back, edges slightly frayed, mysterious aged artifact",
+  "size": {
+    "width": 24,
+    "height": 24
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:35:17",
+      "paths": [
+        "art_source/objects/old_map_paper/old_map_paper.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:35:17",
+      "paths": [
+        "art_source/objects/old_map_paper/old_map_paper.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:35:17",
+      "paths": [
+        "game/assets/textures/props/old_map_paper.png",
+        "game/src/maps/props/old_map_paper.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/old_map_paper/old_map_paper.png",
+  "imported_at": "2026-05-12T17:35:17",
+  "game_png_path": "game/assets/textures/props/old_map_paper.png",
+  "game_tscn_path": "game/src/maps/props/old_map_paper.tscn",
+  "collision": "bottom_16x16"
+}

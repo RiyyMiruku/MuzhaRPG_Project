@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:36:43",
+  "updated_at": "2026-05-12T17:38:13",
+  "tags": [
+    "zone:market",
+    "category:structure",
+    "chapter:1"
+  ],
+  "object_id": "ea3d9727-8555-4a5b-86e1-eced85517c18",
+  "kind": "iso_prop",
+  "description": "old vertical roller iron security gate of a taiwanese shopfront, painted dark green with heavy rust streaks, large brass padlock and chain at bottom, faded chinese signboard above partially visible, abandoned for decades",
+  "size": {
+    "width": 64,
+    "height": 64
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:38:13",
+      "paths": [
+        "art_source/objects/iron_gate_rusted/iron_gate_rusted.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:38:13",
+      "paths": [
+        "art_source/objects/iron_gate_rusted/iron_gate_rusted.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:38:13",
+      "paths": [
+        "game/assets/textures/props/iron_gate_rusted.png",
+        "game/src/maps/props/iron_gate_rusted.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/iron_gate_rusted/iron_gate_rusted.png",
+  "imported_at": "2026-05-12T17:38:13",
+  "game_png_path": "game/assets/textures/props/iron_gate_rusted.png",
+  "game_tscn_path": "game/src/maps/props/iron_gate_rusted.tscn",
+  "collision": "bottom_16x16"
+}

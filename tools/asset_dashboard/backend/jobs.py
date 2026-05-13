@@ -56,9 +56,16 @@ class JobInfo:
 
 
 class JobRegistry:
-    def __init__(self) -> None:
+    # Pixellab caps concurrent background jobs at 3 (HTTP 429 above that).
+    # Throttle subprocess spawns so we never exceed it, regardless of how many
+    # /api/asset/create calls land in a burst.
+    DEFAULT_MAX_CONCURRENT = 3
+
+    def __init__(self, max_concurrent: int | None = None) -> None:
         self._jobs: dict[str, JobInfo] = {}
+        self._pending: list[str] = []  # FIFO queue of job_ids waiting for a slot
         self._lock = threading.Lock()
+        self._max_concurrent = max_concurrent or self.DEFAULT_MAX_CONCURRENT
 
     def start(
         self,
@@ -75,11 +82,26 @@ class JobRegistry:
             cmd=list(cmd),
             cwd=cwd or Path.cwd(),
             log_path=log_path,
-            status=JobStatus.RUNNING,
+            status=JobStatus.PENDING,
             asset_name=asset_name,
             stage=stage,
         )
-        log_fh = log_path.open("ab", buffering=0)
+        with self._lock:
+            self._jobs[job_id] = info
+            should_spawn = self._running_count_unlocked() < self._max_concurrent
+            if not should_spawn:
+                self._pending.append(job_id)
+        if should_spawn:
+            self._spawn(job_id)
+        return job_id
+
+    def _running_count_unlocked(self) -> int:
+        return sum(1 for j in self._jobs.values() if j.status == JobStatus.RUNNING)
+
+    def _spawn(self, job_id: str) -> None:
+        """Actually launch the subprocess for a job. Caller must NOT hold the lock."""
+        info = self._jobs[job_id]
+        log_fh = info.log_path.open("ab", buffering=0)
         # Detach subprocess from the uvicorn worker's process group so that
         # `--reload` (which kills the worker on code change) doesn't take the
         # orchestrator with it. Without this, a 10-minute Pixellab job dies the
@@ -100,15 +122,13 @@ class JobRegistry:
             )
         else:
             popen_kwargs["start_new_session"] = True
-        proc = subprocess.Popen(cmd, **popen_kwargs)
+        proc = subprocess.Popen(info.cmd, **popen_kwargs)
         info._process = proc
-        with self._lock:
-            self._jobs[job_id] = info
-
+        info.status = JobStatus.RUNNING
+        info.started_at = time.time()
         threading.Thread(
             target=self._reaper, args=(job_id, log_fh), daemon=True
         ).start()
-        return job_id
 
     def _reaper(self, job_id: str, log_fh) -> None:
         info = self._jobs[job_id]
@@ -118,6 +138,13 @@ class JobRegistry:
         info.finished_at = time.time()
         info.exit_code = rc
         info.status = JobStatus.COMPLETED if rc == 0 else JobStatus.FAILED
+        # Promote the next pending job if the rate-limit slot is now free.
+        next_id: str | None = None
+        with self._lock:
+            if self._pending and self._running_count_unlocked() < self._max_concurrent:
+                next_id = self._pending.pop(0)
+        if next_id is not None:
+            self._spawn(next_id)
 
     def get(self, job_id: str) -> JobInfo | None:
         with self._lock:

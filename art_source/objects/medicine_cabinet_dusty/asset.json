@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:33:16",
+  "updated_at": "2026-05-12T17:34:08",
+  "tags": [
+    "zone:market",
+    "category:furniture",
+    "chapter:1"
+  ],
+  "object_id": "df2f5dec-f05f-4c4d-b4c7-a987609f7b13",
+  "kind": "iso_prop",
+  "description": "tall traditional chinese pharmacy wooden herb cabinet with many small square drawers, dark stained wood faded by time, thick layer of grey dust on every surface, cobwebs in corners, brass drawer handles tarnished and dull, abandoned forty years",
+  "size": {
+    "width": 64,
+    "height": 64
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:34:08",
+      "paths": [
+        "art_source/objects/medicine_cabinet_dusty/medicine_cabinet_dusty.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:34:08",
+      "paths": [
+        "art_source/objects/medicine_cabinet_dusty/medicine_cabinet_dusty.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:34:08",
+      "paths": [
+        "game/assets/textures/props/medicine_cabinet_dusty.png",
+        "game/src/maps/props/medicine_cabinet_dusty.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/medicine_cabinet_dusty/medicine_cabinet_dusty.png",
+  "imported_at": "2026-05-12T17:34:08",
+  "game_png_path": "game/assets/textures/props/medicine_cabinet_dusty.png",
+  "game_tscn_path": "game/src/maps/props/medicine_cabinet_dusty.tscn",
+  "collision": "bottom_16x16"
+}

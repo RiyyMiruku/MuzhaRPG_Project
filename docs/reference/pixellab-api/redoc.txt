@@ -1,0 +1,8440 @@
+Create Image
+Image Operations
+Animate
+Rotate
+Inpaint
+Edit
+Create map
+Map Objects
+Account
+Character from template
+Character Management
+Background Jobs
+Objects
+Object Management
+Documentation
+API docs by Redocly
+Pixel Lab API (dev)
+
+Download OpenAPI specification:Download
+
+The API provides endpoints for creating AI-generated pixel art images, rotations, animations, and more. Making it easy for applications to integrate pixel art generation capabilities.
+
+AI Assistant Integration
+
+For use with AI assistants (Claude Code, ChatGPT, Cursor, etc.), use the auto-generated documentation:
+
+https://api.pixellab.ai/v2/llms.txt
+
+Python Client
+
+For convenience, a Python client library is available to simplify integration with your applications. Visit our GitHub repository for installation instructions and examples.
+
+pip install pixellab
+
+Authentication
+
+The API uses a simple token based authentication system. After creating an account, you can find your API token in your account settings. Include this token in all API requests using the Bearer authentication scheme:
+
+curl -X POST https://api.pixellab.ai/v2/create-image-pixflux \
+    -H "Authorization: Bearer YOUR_API_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "description": "cute dragon",
+        "image_size": {"width": 128, "height": 128}
+    }'
+
+
+Or use the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+client.create_image_pixflux(
+    description="cute dragon",
+    image_size=dict(width=128, height=128),
+)
+
+Image Generation
+Create image Bitforge: Apply custom art styles using reference images.
+Create image Pixflux: Generate pixel art from text descriptions.
+Image to pixel art: Convert regular images to pixel art style.
+
+Pro:
+
+Generate image (Pro): Generate multiple pixel art images from text (improved quality).
+Generate with style (Pro): Generate new images matching the style of reference images.
+Generate UI (Pro): Generate pixel art UI elements (buttons, health bars, etc.).
+Generate 8 rotations (Pro): Generate 8 directional views of a character or object.
+Animation
+Animate with skeleton: Generate 4 frames of an animation from skeleton poses.
+Animate with text: Generate animation from text descriptions.
+Animate with text v2: Generate animation from text (improved quality).
+
+Pro:
+
+Edit animation (Pro): Apply text-based edits consistently across animation frames.
+Interpolate (Pro): Generate intermediate frames between two keyframe images.
+Transfer outfit (Pro): Transfer outfit/appearance from a reference to animation frames.
+Editing
+Inpaint: Edit and modify existing pixel art.
+Edit image: Edit an existing pixel art image based on a text description.
+Resize: Intelligently upscale or downscale pixel art while preserving style.
+Rotate: Rotate an object or a character.
+
+Pro:
+
+Edit images (Pro): Edit multiple pixel art images using text or reference images (improved quality).
+Inpaint image (Pro): AI-powered inpainting with mask-based editing.
+Tilesets & Objects
+Create tileset: Create complete top-down tilesets for game development with seamless connections.
+Create tileset sidescroller: Create sidescroller platform tilesets for 2D platformer games.
+Create isometric tile: Create isometric tiles in various shapes (thick tile, thin tile, block).
+Create map object: Generate transparent map objects (trees, items, buildings) for game development.
+Character Creation & Management (New)
+Create character with 4 directions: Create persistent characters with 4 directional rotations stored for reuse.
+Create character with 8 directions: Create persistent characters with 8 directional rotations stored for reuse.
+Animate character: Add animations to existing characters with automatic multi-direction processing.
+List characters: View all your created characters with metadata and preview images.
+Get character details: Access complete character information and all rotation image URLs.
+Export character: Download characters as ZIP files with rotations, animations, and keypoint metadata.
+Background job status: Monitor the progress of character creation and animation jobs.
+Create Image
+Generate image (Pro)
+
+Generate pixel art images from text description.
+
+This endpoint creates multiple pixel art images based on a text description, with optional reference images for style and subject guidance. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Text-to-image pixel art generation
+Optional reference images for subject guidance (up to 4)
+Optional style image for consistent pixel art style
+Automatic background removal
+Non-blocking: returns job ID immediately
+
+Output Counts by Size (by max dimension):
+
+Up to 42px: 64 images (8x8 grid)
+43-85px: 16 images (4x4 grid)
+86-170px: 4 images (2x2 grid)
+Above 170px: 1 image
+
+Supported Sizes:
+
+Minimum 16x16. Maximum depends on aspect ratio (e.g. 512x512 for square, 688x384 for 16:9).
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, images are in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.generate_image_v2(
+    description="cute wizard character",
+    image_size=dict(width=64, height=64)
+)
+
+# Access generated images
+for i, image in enumerate(response.images):
+    image.pil_image().save(f"image_{i}.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the image to generate
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__generate_image_v2__ImageSize)
+
+Size of the output image
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Remove background from generated images
+
+
+reference_images	
+Array of Reference Images (objects) or Reference Images (null) (Reference Images)
+
+Optional reference images for subject guidance (up to 4)
+
+
+style_image	
+ReferenceImage (object) or null
+
+Optional style image for pixel size and style reference
+
+
+style_options	
+object (StyleOptions)
+
+Options for what to copy from the style image
+
+Responses
+202 
+
+Image generation job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/generate-image-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "a cute wizard character",
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": true,
+"seed": 42
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Generate with style (Pro)
+
+Generate new pixel art images that match the style of reference images.
+
+This endpoint creates new pixel art based on a text description while matching the visual style (colors, shading, detail level) of provided style reference images. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Style-consistent generation from reference images
+Multiple style references supported (1-4 images)
+Optional style description for fine-tuning
+Automatic background removal
+Non-blocking: returns job ID immediately
+
+Output Counts by Size:
+
+16 pixels: Returns 64 images (8x8 grid)
+17-32 pixels: Returns 64 images (8x8 grid)
+33-64 pixels: Returns 16 images (4x4 grid)
+65-128 pixels: Returns 4 images (2x2 grid)
+129-512 pixels: Returns 1 image
+
+Supported Sizes:
+
+Any square size from 16x16 to 512x512 pixels
+Non-standard sizes are internally padded to the nearest fitting size (16, 32, 64, 128, 256, 512)
+Output images match your requested size
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, images are in last_response
+
+Example:
+
+response = client.generate_with_style_v2(
+    style_images=[{"image": style_img, "width": 64, "height": 64}],
+    description="a wizard casting a spell",
+    style_description="16-bit RPG style with bright colors",
+    image_size={"width": 64, "height": 64}
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+style_images
+required
+	
+Array of objects (Style Images) [ 1 .. 4 ] items
+
+Style reference images (1-4 images)
+
+
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of what to generate
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__generate_with_style_v2__ImageSize)
+
+Size of the output images
+
+
+style_description	
+Style Description (string) or Style Description (null) (Style Description)
+
+Description of the style to match
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Remove background from generated images
+
+Responses
+202 
+
+Style generation job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/generate-with-style-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "a warrior with a sword",
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": true,
+"seed": 42,
+"style_description": "16-bit RPG style",
+"style_images": 
+[
+{}
+]
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Generate UI (Pro)
+
+Generate pixel art UI elements from text description.
+
+This endpoint creates pixel art UI elements such as buttons, health bars, inventory slots, dialogue boxes, and other game interface components. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Text-to-image UI generation
+Optional concept image for design guidance
+Optional color palette specification
+Automatic background removal
+Optimized for game UI assets
+Non-blocking: returns job ID immediately
+
+Supported Sizes:
+
+Minimum 16x16. Maximum depends on aspect ratio (e.g. 512x512 for square, 688x384 for 16:9).
+
+Example Descriptions:
+
+"medieval stone button with gold trim"
+"sci-fi health bar with neon glow"
+"wooden inventory slot with metal corners"
+"pixel art dialogue box with decorative border"
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, images are in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.generate_ui_v2(
+    description="medieval stone button",
+    image_size=dict(width=256, height=256),
+    color_palette="brown and gold"
+)
+
+response.images[0].pil_image().save("button.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the UI element to generate (e.g., 'medieval stone button', 'sci-fi health bar')
+
+
+image_size	
+object (app__endpoints__external__v2__generate_ui_v2__ImageSize)
+
+Output image size (16 to aspect-ratio max, e.g. 512x512 square)
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Remove background from generated UI element
+
+
+concept_image	
+ConceptImage (object) or null
+
+Optional concept image to guide the UI design
+
+
+color_palette	
+Color Palette (string) or Color Palette (null) (Color Palette)
+
+Optional color palette specification (e.g., 'brown and gold', 'blue and silver')
+
+Responses
+202 
+
+UI generation job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/generate-ui-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"color_palette": "brown and gold",
+"description": "medieval stone button with gold trim",
+"image_size": 
+{
+"height": 256,
+"width": 256
+},
+"no_background": true,
+"seed": 42
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Create image (pixflux)
+
+Creates a pixel art image based on the provided parameters. Called "Create image (new)" in the plugin.
+
+Supported image size:
+
+Minimum area 32x32 and maximum area 400x400
+
+Supported features:
+
+Init image
+Forced palette
+Transparent background
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.generate_image_pixflux(
+    description="cute dragon",
+    image_size=dict(width=128, height=128),
+)
+response.image.pil_image()
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description)
+
+Text description of the image to generate
+
+
+negative_description	
+string (Negative Description)
+Default: ""
+
+(Deprecated)
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__create_image_pixflux__ImageSize)
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text description
+
+
+outline	
+Outline (string) or null
+
+Outline style reference (weakly guiding)
+
+
+shading	
+Shading (string) or null
+
+Shading style reference (weakly guiding)
+
+
+detail	
+Detail (string) or null
+
+Detail style reference (weakly guiding)
+
+
+view	
+CameraView (string) or null
+
+Camera view angle (weakly guiding)
+
+
+direction	
+Direction (string) or null
+
+Subject direction (weakly guiding)
+
+
+isometric	
+boolean (Isometric)
+Default: false
+
+Generate in isometric view (weakly guiding)
+
+
+no_background	
+boolean (No Background)
+Default: false
+
+Generate with transparent background, (blank background over 200x200 area)
+
+
+background_removal_task	
+string (Background Removal Task)
+Default: "remove_simple_background"
+Enum: "remove_simple_background" "remove_complex_background"
+
+Background removal complexity. 'remove_simple_background' is faster, 'remove_complex_background' handles complex edges better
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/create-image-pixflux
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute dragon",
+"image_size": 
+{
+"height": 128,
+"width": 128
+},
+"no_background": true
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Create image (pixen)
+
+Generates a pixel art image using the Pixen model.
+
+Supported image size:
+
+Minimum area 32x32 and maximum area 512x512
+
+Supported features:
+
+Transparent background
+Outline and detail style controls
+View and direction
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.generate_image_pixen(
+    description="cute wizard",
+    image_size=dict(width=64, height=64),
+    no_background=True,
+)
+response.image.pil_image()
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description)
+
+Text description of the image to generate
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__create_image_pixen__ImageSize)
+
+outline	
+Outline (string) or null
+
+Outline style
+
+
+detail	
+Detail (string) or null
+Default: "highly detailed"
+
+Detail level (default: highly detailed)
+
+
+view	
+CameraView (string) or null
+
+Camera view angle
+
+
+direction	
+Direction (string) or null
+
+Subject direction
+
+
+no_background	
+boolean (No Background)
+Default: false
+
+Generate with transparent background
+
+
+background_removal_task	
+string (Background Removal Task)
+Default: "remove_simple_background"
+Enum: "remove_simple_background" "remove_complex_background"
+
+Background removal complexity. 'remove_simple_background' is faster, 'remove_complex_background' handles complex edges better
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/create-image-pixen
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute wizard",
+"detail": "highly detailed",
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": true
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Create image (bitforge)
+
+Generates a pixel art image based on the provided parameters. Called "Create S-M image" in the plugin.
+
+Supported image size:
+
+Maximum area 200x200
+
+Supported features:
+
+Style image
+Inpainting
+Init image
+Forced palette
+Transparent background
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.generate_image_bitforge(
+    description="cute dragon",
+    image_size=dict(width=128, height=128),
+)
+response.image.pil_image()
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description)
+
+Text description of the image to generate
+
+
+negative_description	
+string (Negative Description)
+Default: ""
+
+Text description of what to avoid in the generated image
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__create_image_bitforge__ImageSize)
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text description
+
+
+extra_guidance_scale	
+number (Extra Guidance Scale) [ 0 .. 20 ]
+Default: 3
+
+(Deprecated)
+
+
+style_strength	
+number (Style Strength) [ 0 .. 100 ]
+Default: 0
+
+Strength of the style transfer (0-100)
+
+
+outline	
+Outline (string) or null
+
+Outline style reference
+
+
+shading	
+Shading (string) or null
+
+Shading style reference
+
+
+detail	
+Detail (string) or null
+
+Detail style reference
+
+
+view	
+CameraView (string) or null
+
+Camera view angle
+
+
+direction	
+Direction (string) or null
+
+Subject direction
+
+
+isometric	
+boolean (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+oblique_projection	
+boolean (Oblique Projection)
+Default: false
+
+Generate in oblique projection
+
+
+no_background	
+boolean (No Background)
+Default: false
+
+Generate with transparent background
+
+
+coverage_percentage	
+Coverage Percentage (number) or Coverage Percentage (null) (Coverage Percentage)
+
+Percentage of the canvas to cover
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+style_image	
+Base64Image (object) or null
+
+Reference image for style transfer
+
+
+inpainting_image	
+Base64Image (object) or null
+
+Reference image which is inpainted
+
+
+mask_image	
+Base64Image (object) or null
+
+Inpainting / mask image (black and white image, where the white is where the model should inpaint)
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+skeleton_guidance_scale	
+number (Skeleton Guidance Scale) [ 0 .. 5 ]
+Default: 1
+
+How closely to follow the skeleton keypoints
+
+
+skeleton_keypoints	
+Array of Skeleton Keypoints (objects) or Skeleton Keypoints (null) (Skeleton Keypoints)
+
+Skeleton points. Warning! Sizes that are not 16x16, 32x32 and 64x64 can cause the generations to be lower quality
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/create-image-bitforge
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute dragon",
+"image_size": 
+{
+"height": 128,
+"width": 128
+},
+"no_background": true,
+"style_guidance_scale": 3,
+"style_strength": 20,
+"text_guidance_scale": 3
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Image Operations
+Convert image to pixel art
+
+Convert regular images to pixel art style.
+
+Supported image sizes:
+
+Input: Minimum 16x16, maximum 1280x1280
+Output: Minimum 16x16, maximum 320x320
+
+Best practices:
+
+Recommended output sizes is 1/4 of the input size
+Keep the same aspect ratio as the input image
+
+Using the Python client:
+
+import pixellab
+from PIL import Image
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+source_img = Image.open("photo.png")
+
+result = client.image_to_pixelart(
+    image=source_img,
+    image_size=dict(width=256, height=256),
+    output_size=dict(width=64, height=64),
+)
+result.image.pil_image().save("pixelart.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image
+required
+	
+object (Base64Image)
+
+Image to convert to pixel art
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__image_to_pixelart__ImageSize)
+
+Size of the input image
+
+
+output_size
+required
+	
+object (OutputSize)
+
+Desired output size
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow pixel art style
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Successfully converted image
+
+400 
+
+Invalid image size constraints
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/image-to-pixelart
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"base64": "iVBORw0KGgoAAAANS..."
+},
+"image_size": 
+{
+"height": 256,
+"width": 256
+},
+"output_size": 
+{
+"height": 64,
+"width": 64
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+Resize pixel art image
+
+Intelligently resize pixel art images while maintaining pixel art aesthetics.
+
+Supported image sizes:
+
+Minimum area 16x16 and maximum area 200x200 (both source and target)
+
+Supported features:
+
+Init image
+Forced palette
+Transparent background
+
+Best practices:
+
+For best results, resize iteratively in small steps
+Recommended: At most 50% decrease or 2x increase per resize
+Example: 32x32 → 64x64 (2x) is good, 32x32 → 128x128 (4x) should be done in two steps
+
+Using the Python client:
+
+import pixellab
+from PIL import Image
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+source_img = Image.open("character_32x32.png")
+
+result = client.resize(
+    description="cute wizard with blue robe",
+    reference_image=source_img,
+    reference_image_size=dict(width=32, height=32),
+    target_size=dict(width=64, height=64),
+)
+result.image.pil_image().save("character_64x64.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of your character
+
+
+reference_image
+required
+	
+object (Base64Image)
+
+Image to resize
+
+
+reference_image_size
+required
+	
+object (app__endpoints__external__v2__resize__ImageSize)
+
+Original size of the reference image
+
+
+target_size
+required
+	
+object (app__endpoints__external__v2__resize__ImageSize)
+
+Desired output size
+
+
+view	
+CameraView (string) or null
+
+Camera view angle
+
+
+direction	
+Direction (string) or null
+
+Directional view
+
+
+isometric	
+Isometric (boolean) or Isometric (null) (Isometric)
+Default: false
+
+Isometric perspective
+
+
+oblique_projection	
+Oblique Projection (boolean) or Oblique Projection (null) (Oblique Projection)
+Default: false
+
+Oblique projection (beta)
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: false
+
+Remove background
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+Init Image Strength (number) or Init Image Strength (null) (Init Image Strength)
+Default: 150
+
+Strength of initial image influence
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Successfully resized image
+
+400 
+
+Invalid image size constraints
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/resize
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute wizard with blue robe",
+"reference_image": 
+{
+"base64": "iVBORw0KGgoAAAANS..."
+},
+"reference_image_size": 
+{
+"height": 32,
+"width": 32
+},
+"target_size": 
+{
+"height": 64,
+"width": 64
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+Remove background
+
+Remove the background from a pixel art image, producing a transparent PNG.
+
+Supported image size:
+
+Maximum area 400x400
+
+Background Removal Tasks:
+
+remove_simple_background (default) — Faster, works well for simple/solid backgrounds
+remove_complex_background — Slower, better for complex edges and detailed backgrounds
+
+Optional text hint: Provide a description of the foreground object to improve accuracy.
+
+Using the Python client:
+
+import pixellab
+from PIL import Image
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+source_img = Image.open("character.png")
+
+result = client.remove_background(
+    image=source_img,
+    image_size=dict(width=64, height=64),
+)
+result.image.pil_image().save("character_no_bg.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image
+required
+	
+object (Base64Image)
+
+The image to remove the background from (PNG or JPEG base64)
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__remove_background__ImageSize)
+
+Size of the input image
+
+
+background_removal_task	
+string (Background Removal Task)
+Default: "remove_simple_background"
+Enum: "remove_simple_background" "remove_complex_background"
+
+Background removal complexity. 'remove_simple_background' is faster, 'remove_complex_background' handles complex edges better
+
+
+text	
+Text (string) or Text (null) (Text)
+
+Optional description of the foreground object to help with removal
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Successfully removed background
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/remove-background
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_removal_task": "remove_simple_background",
+"image": 
+{
+"base64": "iVBORw0KGgoAAAANS..."
+},
+"image_size": 
+{
+"height": 64,
+"width": 64
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.01
+}
+}
+Animate
+Edit animation (Pro)
+
+Edit multiple animation frames with a text description.
+
+This endpoint applies a consistent edit across all animation frames, maintaining temporal coherence while transforming the animation. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Apply text-based edits to animation sequences
+Maintains frame-to-frame consistency
+Supports 2-16 frames per request
+Optional background removal
+Non-blocking: returns job ID immediately
+
+Example Edits:
+
+"add a red cape"
+"make it glow blue"
+"add armor plating"
+"change to ice theme"
+
+Supported Sizes:
+
+Frame sizes from 16x16 to 256x256 pixels (model supports up to 256x256)
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, edited frames are in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Load your animation frames
+frames = [...]  # List of FrameImage objects
+
+response = client.edit_animation_v2(
+    description="add a glowing sword",
+    frames=frames,
+    image_size=dict(width=64, height=64)
+)
+
+# Save edited frames
+for i, image in enumerate(response.images):
+    image.pil_image().save(f"frame_{i}.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the edit to apply (e.g., 'add a red cape', 'make it glow blue')
+
+
+frames
+required
+	
+Array of objects (Frames) [ 2 .. 16 ] items
+
+Animation frames to edit (2-16 frames)
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__edit_animation_v2__ImageSize)
+
+Size of the output frames
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: false
+
+Remove background from edited frames
+
+Responses
+202 
+
+Animation edit job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/edit-animation-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "add a glowing red aura",
+"frames": 
+[
+{},
+{}
+],
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": false,
+"seed": 42
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Interpolate (Pro)
+
+Generate intermediate animation frames between two keyframe images.
+
+This endpoint creates smooth transitions between a start and end image, generating intermediate frames that animate the transformation. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Generates intermediate frames between two keyframes
+Text-guided interpolation with action descriptions
+Maintains visual consistency across frames
+Optional background removal
+Non-blocking: returns job ID immediately
+
+Example Actions:
+
+"morphing"
+"transforming into a werewolf"
+"powering up with energy"
+"dissolving into particles"
+"walking forward"
+
+Output:
+
+Returns multiple interpolated frames (typically 4-8 frames)
+
+Supported Sizes:
+
+Frame sizes from 16x16 to 128x128 pixels
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, interpolated frames are in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.interpolation_v2(
+    start_image=start_keyframe,
+    end_image=end_keyframe,
+    action="transforming",
+    image_size=dict(width=64, height=64)
+)
+
+# Save interpolated frames
+for i, image in enumerate(response.images):
+    image.pil_image().save(f"frame_{i}.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+start_image
+required
+	
+object (KeyframeImage)
+
+Starting keyframe image
+
+
+end_image
+required
+	
+object (KeyframeImage)
+
+Ending keyframe image
+
+
+action
+required
+	
+string (Action) [ 1 .. 500 ] characters
+
+Description of the transition (e.g., 'morphing', 'transforming', 'powering up')
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__interpolation_v2__ImageSize)
+
+Size of the output frames
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Remove background from output frames
+
+Responses
+202 
+
+Interpolation job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/interpolation-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"action": "transforming into a werewolf",
+"end_image": 
+{
+"image": 
+{},
+"size": 
+{}
+},
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": true,
+"seed": 42,
+"start_image": 
+{
+"image": 
+{},
+"size": 
+{}
+}
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Transfer outfit (Pro)
+
+Transfer an outfit/appearance from a reference image to animation frames.
+
+This endpoint takes a reference image containing a desired outfit or appearance and applies it consistently across multiple animation frames. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Transfer outfit/appearance from reference to animation
+Maintains animation motion while changing appearance
+Supports 2-16 frames per request
+Optional background removal
+Non-blocking: returns job ID immediately
+
+Use Cases:
+
+Apply armor/clothing to walking animation
+Change character skin/color across animation
+Transfer weapon or equipment to action sequence
+Consistent reskin of sprite animations
+
+Supported Sizes:
+
+Frame sizes from 32x32 to 256x256 pixels
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, frames are in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.transfer_outfit_v2(
+    reference_image=outfit_reference,  # Image with desired outfit
+    frames=animation_frames,           # Animation to apply outfit to
+    image_size=dict(width=64, height=64)
+)
+
+# Save frames with transferred outfit
+for i, image in enumerate(response.images):
+    image.pil_image().save(f"frame_{i}.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+reference_image
+required
+	
+object (app__endpoints__external__v2__transfer_outfit_v2__ReferenceImage)
+
+Reference image containing the outfit/appearance to transfer
+
+
+frames
+required
+	
+Array of objects (Frames) [ 2 .. 16 ] items
+
+Animation frames to apply the outfit to (2-16 frames)
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__transfer_outfit_v2__ImageSize)
+
+Size of the output frames
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: false
+
+Remove background from output frames
+
+Responses
+202 
+
+Outfit transfer job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/transfer-outfit-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"frames": 
+[
+{},
+{}
+],
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": false,
+"reference_image": 
+{
+"image": 
+{},
+"size": 
+{}
+},
+"seed": 42
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Animate with skeleton
+
+Creates a pixel art animation based on the provided parameters. Called "Animate with skeleton" in the plugin.
+
+Supported image sizes:
+
+16x16
+32x32
+64x64
+128x128
+256x256
+
+Supported features:
+
+Inpainting
+Init image
+Forced palette
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.animate_with_skeleton(
+    view="side",
+    direction="south",
+    image_size=dict(width=64, height=64),
+    reference_image=reference_image,
+    inpainting_images=existing_animation_frames,
+    mask_images=mask_images,
+    skeleton_keypoints=skeleton_keypoints,
+)
+images = [image.pil_image() for image in response.images]
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image_size
+required
+	
+object (app__endpoints__external__v2__animate_with_skeleton__ImageSize)
+
+guidance_scale	
+number (Guidance Scale) [ 1 .. 20 ]
+Default: 4
+
+How closely to follow the reference image and skeleton keypoints
+
+
+view	
+string (CameraView)
+Default: "side"
+Enum: "side" "low top-down" "high top-down"
+
+Camera view angle
+
+
+direction	
+string (Direction)
+Default: "east"
+Enum: "north" "north-east" "east" "south-east" "south" "south-west" "west" "north-west"
+
+Subject direction
+
+
+isometric	
+boolean (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+oblique_projection	
+boolean (Oblique Projection)
+Default: false
+
+Generate in oblique projection
+
+
+init_images	
+Array of Init Images (objects) or Init Images (null) (Init Images)
+
+Initial images to start the generation from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+skeleton_keypoints	
+Array of objects (Skeleton Keypoints) [ items ]
+
+Skeleton points
+
+
+reference_image
+required
+	
+object (Base64Image)
+
+Reference image
+
+
+inpainting_images	
+Array of Base64Image (object) or null (Inpainting Images)
+Default: [null,null,null]
+
+Images used for showing the model with connected skeleton
+
+
+mask_images	
+Array of Base64Image (object) or null (Mask Images)
+
+Inpainting / mask image (black and white image, where the white is where the model should inpaint)
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/animate-with-skeleton
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image_size": 
+{
+"height": 64,
+"width": 64
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"images": 
+[
+{},
+{},
+{}
+],
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Animate with text
+
+Creates a pixel art animation based on text description and parameters.
+
+Supported image sizes:
+
+64x64
+
+Supported features:
+
+Text-guided animation generation
+Inpainting
+Init image
+Forced palette
+Multiple frames
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.animate_with_text(
+    description="human mage",
+    action="walk",
+    view="side",
+    direction="south",
+    image_size=dict(width=64, height=64),
+    reference_image=reference_image,
+    n_frames=4
+)
+images = [image.pil_image() for image in response.images]
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image_size
+required
+	
+object (app__endpoints__external__v2__animate_with_text__ImageSize)
+
+description
+required
+	
+string (Description)
+
+Character description
+
+
+negative_description	
+Negative Description (string) or Negative Description (null) (Negative Description)
+Default: ""
+
+Negative prompt to guide what not to generate
+
+
+action
+required
+	
+string (Action)
+
+Action description
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow the text prompts
+
+
+image_guidance_scale	
+Image Guidance Scale (number) or Image Guidance Scale (null) (Image Guidance Scale)
+Default: 1.4
+
+How closely to follow the reference image
+
+
+n_frames	
+N Frames (integer) or N Frames (null) (N Frames)
+Default: 4
+
+Length of full animation (the model will always generate 4 frames)
+
+
+start_frame_index	
+Start Frame Index (integer) or Start Frame Index (null) (Start Frame Index)
+Default: 0
+
+Starting frame index of the full animation
+
+
+view	
+string (CameraView)
+Default: "side"
+Enum: "side" "low top-down" "high top-down"
+
+Camera view angle
+
+
+direction	
+string (Direction)
+Default: "east"
+Enum: "north" "north-east" "east" "south-east" "south" "south-west" "west" "north-west"
+
+Subject direction
+
+
+init_images	
+Array of Init Images (objects) or Init Images (null) (Init Images)
+
+Initial images to start the generation from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+reference_image
+required
+	
+object (Base64Image)
+
+Reference image
+
+
+inpainting_images	
+Array of Base64Image (object) or null (Inpainting Images)
+Default: [null,null,null,null]
+
+Existing animation frames to guide the generation
+
+
+mask_images	
+(Array of Mask Images (Base64Image (object) or null)) or Mask Images (null) (Mask Images)
+Default: [null,null,null,null]
+
+Inpainting / mask image (black and white image, where the white is where the model should inpaint)
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+Default: 0
+
+Seed for reproducible results (0 for random)
+
+Responses
+200 
+
+Successfully generated animation
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/animate-with-text
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"action": "walk",
+"description": "human mage",
+"direction": "south",
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"view": "side"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"images": 
+[
+{},
+{},
+{},
+{}
+],
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Animate with text (pro)
+
+Generate pixel art animation from text.
+
+This endpoint creates animations from a reference image and action description. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+Text-guided animation generation
+Automatic background removal
+Non-blocking: returns job ID immediately
+
+Frame Counts by Size:
+
+32x32 pixels: Returns 16 animation frames
+64x64 pixels: Returns 16 animation frames
+128x128 pixels: Returns 4 animation frames
+170x170 pixels: Returns 4 animation frames
+256x256 pixels: Returns 4 animation frames
+
+Supported Actions:
+
+Simple actions: walk, run, jump, attack
+Complex actions: cast spell, dance, celebrate
+Any action description in natural language
+
+Camera Views:
+
+none: No camera hint (default)
+low top-down: Classic 3/4 RPG view (~20 degrees from horizontal)
+high top-down: Steeper overhead angle (~35 degrees)
+side: Side scroller, eye level view
+
+Directions:
+
+none: No direction hint (default)
+south: Front visible, north: Back visible
+east: Facing right, west: Facing left
+Also: south-east, south-west, north-east, north-west
+
+Image Size Limits:
+
+Supported sizes: 32x32 to 256x256 pixels for both reference and output images
+Recommended: 64x64 for best quality/performance balance
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, animation frames are in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.animate_with_text_v2(
+    reference_image=reference_image,
+    reference_image_size=dict(width=64, height=64),
+    action="walk",
+    image_size=dict(width=64, height=64),
+    view="low top-down",
+    direction="south",
+)
+
+# Access individual frames
+for i, frame in enumerate(response.images):
+    frame.pil_image().save(f"frame_{i}.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+reference_image
+required
+	
+object (Base64Image)
+
+Reference image (character/object to animate) as base64 PNG/JPEG
+
+
+reference_image_size
+required
+	
+object (app__endpoints__external__v2__animate_with_text_v2__ReferenceImageSize)
+
+Size of the reference image
+
+
+action
+required
+	
+string (Action) [ 1 .. 500 ] characters
+
+Action description (e.g., 'walk', 'jump', 'attack')
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__animate_with_text_v2__ImageSize)
+
+Size of each animation frame
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation (0 for random)
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Remove background from generated frames
+
+
+view	
+string (View)
+Default: "none"
+Enum: "none" "low top-down" "high top-down" "side"
+
+Camera perspective angle. ('none', 'low top-down', 'high top-down', 'side')
+
+
+direction	
+string (Direction)
+Default: "none"
+Enum: "none" "south" "east" "west" "north" "south-east" "south-west" "north-east" "north-west"
+
+Direction the character faces during the animation.
+
+Responses
+202 
+
+Animation job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/animate-with-text-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"action": "walk",
+"direction": "south",
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": true,
+"reference_image": 
+{
+"base64": "data:image/png;base64,..."
+},
+"reference_image_size": 
+{
+"height": 64,
+"width": 64
+},
+"seed": 42,
+"view": "low top-down"
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Animate with text v3
+
+Generate an animation from a reference frame and a text action description.
+
+Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to retrieve results when generation completes.
+
+How it works:
+
+Submit the first frame and action description; receive a background_job_id immediately.
+Poll GET /v2/background-jobs/{background_job_id} every 2-5 seconds.
+When status is completed, the generated frames are available at last_response.images.
+
+Size Limits:
+
+Maximum image dimension: 256x256 pixels
+Total pixel budget: width × height × frame_count ≤ 524,288
+
+Frame Count Guidelines:
+
+4 frames: Simple loops (idle, breathing)
+8 frames: Standard animations (walk, run)
+16 frames: Complex animations (attack combos)
+
+Typical generation time: 30-180 seconds.
+
+Using the Python client:
+
+import pixellab, time
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+job = client.animate_with_text_v3(
+    first_frame=first_frame_image,
+    action="walking forward",
+    frame_count=8,
+)
+
+while True:
+    result = client.get_background_job(job.background_job_id)
+    if result.status == "completed":
+        images = [img.pil_image() for img in result.last_response["images"]]
+        break
+    if result.status == "failed":
+        raise RuntimeError(result.last_response["detail"])
+    time.sleep(2)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+first_frame
+required
+	
+object (Base64Image)
+
+First frame to animate (PNG/JPEG base64, max 256x256 pixels)
+
+
+last_frame	
+Base64Image (object) or null
+
+Optional last frame to guide the animation endpoint (PNG/JPEG base64, max 256x256 pixels)
+
+
+action
+required
+	
+string (Action) [ 1 .. 500 ] characters
+
+Action description (e.g., 'walking', 'jumping', 'attacking')
+
+
+frame_count	
+integer (Frame Count) [ 4 .. 16 ]
+Default: 8
+
+Number of animation frames (4-16, must be even)
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+Default: 0
+
+Seed for reproducible generation (0 for random)
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+
+Remove background from generated frames
+
+Responses
+200 
+
+Background job accepted
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent background jobs
+
+POST
+/animate-with-text-v3
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"action": "walking forward",
+"first_frame": 
+{
+"base64": "data:image/png;base64,..."
+},
+"frame_count": 8,
+"no_background": true,
+"seed": 42
+}
+Response samples
+200
+Content type
+application/json
+Copy
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing"
+}
+Estimate skeleton
+
+Estimates the skeleton of a character, returning a list of keypoints to use with the skeleton animation tool.
+
+Supported image sizes:
+
+16x16
+32x32
+64x64
+128x128
+256x256
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.estimate_skeleton(
+    image=image_of_the_character_on_a_transparent_background,
+)
+response.keypoints
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image	
+object (Base64Image)
+
+Image for which to estimate the skeleton
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/estimate-skeleton
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "string",
+"format": "png"
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Rotate
+Generate 8 rotations (Pro)
+
+Generate 8 rotational views of a character or object.
+
+This endpoint creates 8 directional views from a reference image, useful for game sprites that need to face multiple directions. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Methods:
+
+rotate_character: Rotate existing sprite to 8 directions (reference_image)
+create_with_style: Create new character from description (requires description)
+create_from_concept: Create rotations from concept art (requires concept_image)
+
+Output: Returns 8 images in order: South, South-West, West, North-West, North, North-East, East, South-East
+
+View Angles:
+
+low top-down: ~20 degree angle (most common for RPGs)
+high top-down: ~35 degree angle
+side: Side-scroller eye level
+
+Supported Sizes:
+
+image_size: 32x32 to 168x168 (matches reference_to_8_rotations). reference_image max 168x168, concept_image max 1024x1024.
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, rotations are in last_response
+
+rotate_character Example:
+
+response = client.generate_8_rotations_v2(
+    method="rotate_character",
+    reference_image={"image": char_img, "width": 64, "height": 64},
+    image_size={"width": 64, "height": 64},
+    view="low top-down"
+)
+
+
+create_with_style Example:
+
+response = client.generate_8_rotations_v2(
+    method="create_with_style",
+    description="a knight in armor",
+    image_size={"width": 64, "height": 64}
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+method	
+string (Method)
+Default: "rotate_character"
+Enum: "rotate_character" "create_with_style" "create_from_concept"
+
+Generation method: 'rotate_character' rotates an existing character, 'create_with_style' creates new character matching style, 'create_from_concept' creates from concept art
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__generate_8_rotations_v2__ImageSize)
+
+Size of the output images
+
+
+reference_image	
+ReferenceImage (object) or null
+
+Image to rotate (rotate_character) or style reference
+
+
+concept_image	
+ReferenceImage (object) or null
+
+Concept art image (only for create_from_concept method)
+
+
+description	
+Description (string) or Description (null) (Description)
+
+Description of the character/item
+
+
+style_description	
+Style Description (string) or Style Description (null) (Style Description)
+
+Description of the visual style
+
+
+view	
+string (View)
+Default: "low top-down"
+Enum: "low top-down" "high top-down" "side"
+
+Camera perspective angle
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Remove background from generated images
+
+Responses
+202 
+
+8 rotations job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/generate-8-rotations-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"method": "rotate_character",
+"no_background": true,
+"reference_image": 
+{
+"height": 64,
+"image": 
+{},
+"width": 64
+},
+"seed": 42,
+"view": "low top-down"
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Generate 8 rotations v3
+
+Generate 8 directional rotations from a reference frame.
+
+Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to retrieve results when generation completes.
+
+How it works:
+
+Submit the reference frame; receive a background_job_id immediately.
+Poll GET /v2/background-jobs/{background_job_id} every 2-5 seconds.
+When status is completed, the 8 rotation frames are available at last_response.images.
+
+Size Limits:
+
+Maximum image dimension: 256x256 pixels
+
+Typical generation time: 30-180 seconds.
+
+Using the Python client:
+
+import pixellab, time
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+job = client.generate_8_rotations_v3(
+    first_frame=reference_image,
+)
+
+while True:
+    result = client.get_background_job(job.background_job_id)
+    if result.status == "completed":
+        images = [img.pil_image() for img in result.last_response["images"]]
+        break
+    if result.status == "failed":
+        raise RuntimeError(result.last_response["detail"])
+    time.sleep(2)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+first_frame
+required
+	
+object (Base64Image)
+
+Reference frame to generate 8 rotations from (PNG/JPEG base64, max 256x256 pixels)
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+
+Remove background from generated frames
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+Default: 0
+
+Seed for reproducible generation (0 for random)
+
+Responses
+200 
+
+Background job accepted
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent background jobs
+
+POST
+/generate-8-rotations-v3
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"first_frame": 
+{
+"base64": "data:image/png;base64,..."
+},
+"no_background": true,
+"seed": 42
+}
+Response samples
+200
+Content type
+application/json
+Copy
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing"
+}
+Rotate character or object
+
+Rotates a pixel art image based on the provided parameters. Called "Rotate" in the plugin.
+
+Supported image sizes:
+
+16x16
+32x32
+64x64
+128x128
+
+Supported features:
+
+Init image
+Forced palette
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.rotate(
+    from_view="side",
+    to_view="side",
+    from_direction="south",
+    to_direction="east",
+    image_size=dict(width=16, height=16),
+    from_image=image_of_subject_facing_south,
+)
+response.image.pil_image()
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image_size
+required
+	
+object (app__endpoints__external__v2__rotate__ImageSize)
+
+image_guidance_scale	
+number (Image Guidance Scale) [ 1 .. 20 ]
+Default: 3
+
+How closely to follow the reference image
+
+
+view_change	
+View Change (integer) or View Change (null) (View Change)
+
+How many degrees to tilt the subject
+
+
+direction_change	
+Direction Change (integer) or Direction Change (null) (Direction Change)
+
+How many degrees to rotate the subject
+
+
+from_view	
+CameraView (string) or null
+Default: "side"
+
+From camera view angle
+
+
+to_view	
+CameraView (string) or null
+Default: "side"
+
+To camera view angle
+
+
+from_direction	
+Direction (string) or null
+Default: "south"
+
+From subject direction
+
+
+to_direction	
+Direction (string) or null
+Default: "east"
+
+From subject direction
+
+
+isometric	
+boolean (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+oblique_projection	
+boolean (Oblique Projection)
+Default: false
+
+Generate in oblique projection
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+mask_image	
+Base64Image (object) or null
+
+Inpainting / mask image. Requires init image! (black and white image, where the white is where the model should inpaint)
+
+
+from_image
+required
+	
+object (Base64Image)
+
+Reference image to rotate
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/rotate
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute dragon",
+"from_direction": "south",
+"from_view": "side",
+"image_guidance_scale": 7.5,
+"image_size": 
+{
+"height": 128,
+"width": 128
+},
+"to_direction": "east",
+"to_view": "side"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Inpaint
+Inpaint image (Pro)
+
+Inpaint/edit pixel art images using AI.
+
+This endpoint uses AI-powered inpainting for high-quality results. It allows you to edit specific areas of an image based on a text description. Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Key Features:
+
+AI-powered inpainting with text descriptions
+Optional context image for style guidance
+Bounding box support for precise editing
+Background removal option
+Mask-based editing (white = generate, black = preserve)
+Non-blocking: returns job ID immediately
+
+Image Sizes:
+
+Inpainting image: 32x32 to 512x512 pixels
+Context image: up to 1024x1024 pixels (optional)
+
+Mask Format:
+
+White pixels = areas to generate/replace
+Black pixels = areas to preserve
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, inpainted image is in last_response
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.inpaint_v3(
+    description="add a glowing sword",
+    inpainting_image=character_image,
+    mask_image=sword_area_mask,
+)
+
+response.images[0].pil_image().save("edited.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of what to generate in the masked area
+
+
+inpainting_image
+required
+	
+object (InpaintImage)
+
+Image to inpaint (32x32 to 512x512)
+
+
+mask_image
+required
+	
+object (InpaintImage)
+
+Mask for the image (same dimensions as inpainting_image). White = generate, Black = preserve
+
+
+context_image	
+InpaintImage (object) or null
+Deprecated
+
+Context image (deprecated)
+
+
+bounding_box	
+BoundingBox (object) or null
+Deprecated
+
+Bounding box (deprecated)
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: false
+
+Remove background from generated content
+
+
+crop_to_mask	
+Crop To Mask (boolean) or Crop To Mask (null) (Crop To Mask)
+Default: true
+
+Whether to crop generated content to mask boundary (ensures clean edges)
+
+Responses
+202 
+
+Inpainting job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/inpaint-v3
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "add a glowing sword",
+"inpainting_image": 
+{
+"image": 
+{},
+"size": 
+{}
+},
+"mask_image": 
+{
+"image": 
+{},
+"size": 
+{}
+},
+"no_background": false,
+"seed": 42
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Inpaint image
+
+Creates a pixel art image based on the provided parameters. Called "Inpaint" in the plugin.
+
+Supported image size:
+
+Maximum area 200x200
+
+Supported features:
+
+Inpainting
+Init image
+Forced palette
+Transparent background
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.inpaint(
+    description="boy with wings",
+    image_size=dict(width=16, height=16),
+    inpainting_image=image_of_boy_without_wings,
+    mask_image=mask_image,
+)
+response.image.pil_image()
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description)
+
+Text description of the image to generate
+
+
+negative_description	
+string (Negative Description)
+Default: ""
+
+Text description of what to avoid in the generated image
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__inpaint__ImageSize)
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 10 ]
+Default: 3
+
+How closely to follow the text description
+
+
+extra_guidance_scale	
+number (Extra Guidance Scale) [ 0 .. 20 ]
+Default: 3
+
+(Deprecated)
+
+
+outline	
+Outline (string) or null
+
+Outline style reference
+
+
+shading	
+Shading (string) or null
+
+Shading style reference
+
+
+detail	
+Detail (string) or null
+
+Detail style reference
+
+
+view	
+CameraView (string) or null
+
+Camera view angle
+
+
+direction	
+Direction (string) or null
+
+Subject direction
+
+
+isometric	
+boolean (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+oblique_projection	
+boolean (Oblique Projection)
+Default: false
+
+Generate in oblique projection
+
+
+no_background	
+boolean (No Background)
+Default: false
+
+Generate with transparent background
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+inpainting_image
+required
+	
+object (Base64Image)
+
+Reference image which is inpainted
+
+
+mask_image
+required
+	
+object (Base64Image)
+
+Inpainting / mask image. (black and white image, where the white is where the model should inpaint).
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/inpaint
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute dragon",
+"image_size": 
+{
+"height": 128,
+"width": 128
+},
+"no_background": true
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Edit
+Edit images (Pro)
+
+Edit pixel art images using text or reference image.
+
+This endpoint supports two editing methods:
+
+edit_with_text: Apply edits based on a text description
+edit_with_reference: Match the style of a reference image
+
+Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Output sizes (image_size):
+
+Range: 32x32 to 512x512 pixels. Each returned image has the dimensions you set in image_size.
+Input images (edit_images, reference_image) must be at most 256x256 each.
+
+Key Features:
+
+Edit multiple images consistently
+Text-guided or reference-guided editing
+Preserves original structure and poses
+Optional background removal
+Non-blocking: returns job ID immediately
+
+Frame limits by output size (image_size):
+
+32-64px: Up to 16 frames (4x4 grid), 15 with reference
+65-80px: Up to 9 frames (3x3 grid), 8 with reference
+81-128px: Up to 4 frames (2x2 grid), 3 with reference
+129-512px: 1 frame only (text method only)
+
+Usage Pattern:
+
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, edited images are in last_response
+
+edit_with_text Example:
+
+response = client.edit_images_v2(
+    method="edit_with_text",
+    edit_images=[{"image": img, "width": 64, "height": 64}],
+    image_size={"width": 64, "height": 64},
+    description="add a wizard hat"
+)
+
+
+edit_with_reference Example:
+
+response = client.edit_images_v2(
+    method="edit_with_reference",
+    edit_images=[{"image": img, "width": 64, "height": 64}],
+    image_size={"width": 64, "height": 64},
+    reference_image={"image": ref_img, "width": 64, "height": 64}
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+method	
+string (Method)
+Default: "edit_with_text"
+Enum: "edit_with_text" "edit_with_reference"
+
+Edit method: 'edit_with_text' or 'edit_with_reference'
+
+
+edit_images
+required
+	
+Array of objects (Edit Images) [ 1 .. 16 ] items
+
+Images to edit (1-16 images depending on size)
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__edit_images_v2__ImageSize)
+
+Size of output images
+
+
+description	
+Description (string) or Description (null) (Description)
+
+Edit description (required for edit_with_text method)
+
+
+reference_image	
+ReferenceImage (object) or null
+
+Reference image (required for edit_with_reference method)
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: false
+
+Remove background from edited images
+
+Responses
+202 
+
+Image edit job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/edit-images-v2
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "add a red hat",
+"edit_images": 
+[
+{}
+],
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"method": "edit_with_text",
+"no_background": false,
+"seed": 42
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Edit image
+
+Edit an existing pixel art image based on a text description.
+
+Returns immediately with a background job ID. Poll GET /v2/background-jobs/{job_id} to check status and retrieve results.
+
+Supported Image Sizes
+Reference image: 16x16 to 400x400 pixels (minimum 16x16 area)
+Target canvas: 16x16 to 400x400 pixels (minimum 16x16 area)
+Free tier limit: Maximum 200x200 pixels for target canvas
+Output
+
+Returns a single edited image matching the target canvas dimensions.
+
+Usage Pattern
+POST to this endpoint (returns background_job_id)
+Poll GET /v2/background-jobs/{background_job_id} every 5-10 seconds
+When status is completed, edited image is in last_response
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+image
+required
+	
+object (Base64Image)
+
+Reference image to edit as base64 PNG/JPEG
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__edit_image__ImageSize)
+
+Size of the reference image
+
+
+description
+required
+	
+string (Description) [ 1 .. 500 ] characters
+
+Text description of the edit to apply
+
+
+width
+required
+	
+integer (Width) [ 16 .. 400 ]
+
+Target canvas width in pixels (16-400)
+
+
+height
+required
+	
+integer (Height) [ 16 .. 400 ]
+
+Target canvas height in pixels (16-400)
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation (0 for random)
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Generate with transparent background
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow the text description (1.0-10.0)
+
+
+color_image	
+Base64Image (object) or null
+
+Color reference image for style guidance
+
+Responses
+202 
+
+Edit image job accepted and processing
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many concurrent jobs
+
+POST
+/edit-image
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "make it more colorful",
+"height": 128,
+"image": 
+{
+"base64": "data:image/png;base64,..."
+},
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"no_background": true,
+"seed": 42,
+"text_guidance_scale": 8,
+"width": 128
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "processing",
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Create map
+Create a tileset asynchronously
+
+Creates a Wang tileset (16 tiles for standard, 23 for transition_size=1.0) in the background and returns immediately with job ID
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+lower_description
+required
+	
+string (Lower Description) non-empty
+
+Description of the lower/base terrain level (e.g., 'ocean', 'grass', 'lava')
+
+
+upper_description
+required
+	
+string (Upper Description) non-empty
+
+Description of the upper/elevated terrain level (e.g., 'sand', 'stone', 'snow')
+
+
+transition_description	
+string (Transition Description)
+Default: ""
+
+Optional description of transition area between lower and upper
+
+
+lower_base_tile_id	
+Lower Base Tile Id (string) or Lower Base Tile Id (null) (Lower Base Tile Id)
+
+Optional ID to identify the lower base tile in metadata
+
+
+upper_base_tile_id	
+Upper Base Tile Id (string) or Upper Base Tile Id (null) (Upper Base Tile Id)
+
+Optional ID to identify the upper base tile in metadata
+
+
+tile_size	
+object (TileSize)
+Default: {"width":16,"height":16}
+
+Size of individual tiles within the tileset
+
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text descriptions (default: 8.0)
+
+
+outline	
+Outline (string) or null
+
+Outline style reference
+
+
+shading	
+Shading (string) or null
+
+Shading style reference
+
+
+detail	
+Detail (string) or null
+
+Detail style reference
+
+
+view	
+string (TilesetCameraView)
+Default: "high top-down"
+Enum: "low top-down" "high top-down"
+
+Camera view angle for tileset
+
+
+tile_strength	
+number (Tile Strength) [ 0.1 .. 2 ]
+Default: 1
+
+Strength of tile pattern adherence
+
+
+tileset_adherence_freedom	
+number (Tileset Adherence Freedom) [ 0 .. 900 ]
+Default: 500
+
+How flexible it will be when following tileset structure, higher values means more flexibility
+
+
+tileset_adherence	
+number (Tileset Adherence) [ 0 .. 500 ]
+Default: 100
+
+How much it will follow the reference/texture image and follow tileset structure
+
+
+transition_size	
+number (Transition Size)
+Default: 0
+Enum: 0 0.25 0.5 1
+
+Size of transition area (0 = no transition, 0.25 = quarter tile, 0.5 = half tile, 1.0 = full tile)
+
+
+lower_reference_image	
+Base64Image (object) or null
+
+Reference image for lower terrain style
+
+
+upper_reference_image	
+Base64Image (object) or null
+
+Reference image for upper terrain style
+
+
+transition_reference_image	
+Base64Image (object) or null
+
+Reference image for transition area style
+
+
+color_image	
+Base64Image (object) or null
+
+Reference image for color palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+202 
+
+Tileset creation started, returns job ID
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/tilesets
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"lower_description": "deep blue ocean water with gentle waves",
+"tile_size": 
+{
+"height": 16,
+"width": 16
+},
+"transition_description": "wet sand with foam",
+"transition_size": 0.5,
+"upper_description": "golden sandy beach",
+"view": "high top-down"
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"metadata": 
+{
+"created_at": "2024-01-15T10:30:45Z",
+"edge_types": 
+[],
+"generation_parameters": 
+{},
+"terrain_ids": 
+{},
+"terrain_prompts": 
+{},
+"transition_size": 0.5,
+"view": "high top-down"
+},
+"tileset": 
+{
+"terrain_types": 
+[],
+"tile_size": 
+{},
+"tiles": 
+[],
+"total_tiles": 16
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+List user's tilesets
+
+List all tilesets (top-down and sidescroller) created by the authenticated user.
+
+This endpoint returns a paginated list of all tilesets you've created.
+
+Pagination:
+
+Use limit to control how many tilesets to return (1-100)
+Use offset to skip tilesets for pagination
+Total count is included in response for pagination UI
+AUTHORIZATIONS:
+HTTPBearer
+QUERY PARAMETERS
+limit	
+integer (Limit) [ 1 .. 100 ]
+Default: 50
+
+Maximum number of tilesets to return
+
+
+offset	
+integer (Offset) >= 0
+Default: 0
+
+Number of tilesets to skip
+
+Responses
+200 
+
+Successfully retrieved tileset list
+
+401 
+
+Invalid API token
+
+422 
+
+Invalid pagination parameters
+
+GET
+/tilesets
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"tilesets": 
+[
+{}
+],
+"total": 0
+}
+Create top-down tileset (async processing)
+
+Creates a complete tileset for game development with seamlessly connecting tiles.
+
+A tileset is a collection of individual tiles (16 for standard, 23 for transition_size=1.0) that can be combined to create larger maps and environments. This endpoint generates tiles representing two terrain levels - "lower" and "upper" - that connect seamlessly when placed adjacent to each other.
+
+Understanding Lower and Upper Terrain:
+
+Lower terrain: The base level terrain (e.g., water, grass, lava)
+Upper terrain: The elevated terrain level (e.g., beach, dirt path, rock)
+Transition size: Controls the visual height difference between levels. Larger transitions (0.25-0.5) create a more pronounced elevation effect, making it appear as if the upper terrain is on a higher plane
+
+Features:
+
+Returns individual tiles with unique IDs (16 for standard, 23 for transition_size=1.0)
+Corner-based terrain classification (NW, NE, SW, SE)
+Pre-calculated connection compatibility between tiles
+Lower and upper terrain levels for elevation variety
+Tile sizes: 16x16 or 32x32 pixels
+Seamless tile connections for map creation
+Vertical transitions support with transition_size=1.0
+Style control via outline, shading, and detail parameters
+Reference images for style guidance
+Color palette control
+
+Response format:
+
+Each tile includes: UUID, name, description, base64 image, corner data, connections
+Corner data specifies "lower", "upper", or "transition" terrain for each corner (NW, NE, SW, SE)
+Connection data lists UUIDs of compatible adjacent tiles in each direction
+Metadata includes terrain prompts and creation timestamp
+
+Common use cases:
+
+Beach environments: water/sand with wet sand transitions
+Forest paths: grass/dirt with muddy transitions
+Dungeon floors: stone floor/walls with cracked stone transitions
+Snow landscapes: snow/rock with icy transitions
+Desert oases: sand/water with muddy bank transitions
+Lava caves: rock/lava with molten rock transitions
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Generate a beach/ocean tileset
+response = client.generate_tileset(
+    lower_description="deep blue ocean water with gentle waves",
+    upper_description="golden sandy beach",
+    transition_description="wet sand with foam",
+    tile_size=dict(width=16, height=16),
+    transition_size=0.5,
+    view="high top-down"
+)
+
+# Access individual tiles
+for tile in response.tileset.tiles:
+    print(f"Tile {tile.name}: {tile.description}")
+    print(f"  Corners: NW={tile.corners.NW}, NE={tile.corners.NE}, SW={tile.corners.SW}, SE={tile.corners.SE}")
+    print(f"  Can connect to {len(tile.connections)} other tiles")
+    
+    # Save individual tile images
+    import base64
+    with open(f"tile_{tile.id[:8]}.png", "wb") as f:
+        f.write(base64.b64decode(tile.image.base64))
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+lower_description
+required
+	
+string (Lower Description) non-empty
+
+Description of the lower/base terrain level (e.g., 'ocean', 'grass', 'lava')
+
+
+upper_description
+required
+	
+string (Upper Description) non-empty
+
+Description of the upper/elevated terrain level (e.g., 'sand', 'stone', 'snow')
+
+
+transition_description	
+string (Transition Description)
+Default: ""
+
+Optional description of transition area between lower and upper
+
+
+lower_base_tile_id	
+Lower Base Tile Id (string) or Lower Base Tile Id (null) (Lower Base Tile Id)
+
+Optional ID to identify the lower base tile in metadata
+
+
+upper_base_tile_id	
+Upper Base Tile Id (string) or Upper Base Tile Id (null) (Upper Base Tile Id)
+
+Optional ID to identify the upper base tile in metadata
+
+
+tile_size	
+object (TileSize)
+Default: {"width":16,"height":16}
+
+Size of individual tiles within the tileset
+
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text descriptions (default: 8.0)
+
+
+outline	
+Outline (string) or null
+
+Outline style reference
+
+
+shading	
+Shading (string) or null
+
+Shading style reference
+
+
+detail	
+Detail (string) or null
+
+Detail style reference
+
+
+view	
+string (TilesetCameraView)
+Default: "high top-down"
+Enum: "low top-down" "high top-down"
+
+Camera view angle for tileset
+
+
+tile_strength	
+number (Tile Strength) [ 0.1 .. 2 ]
+Default: 1
+
+Strength of tile pattern adherence
+
+
+tileset_adherence_freedom	
+number (Tileset Adherence Freedom) [ 0 .. 900 ]
+Default: 500
+
+How flexible it will be when following tileset structure, higher values means more flexibility
+
+
+tileset_adherence	
+number (Tileset Adherence) [ 0 .. 500 ]
+Default: 100
+
+How much it will follow the reference/texture image and follow tileset structure
+
+
+transition_size	
+number (Transition Size)
+Default: 0
+Enum: 0 0.25 0.5 1
+
+Size of transition area (0 = no transition, 0.25 = quarter tile, 0.5 = half tile, 1.0 = full tile)
+
+
+lower_reference_image	
+Base64Image (object) or null
+
+Reference image for lower terrain style
+
+
+upper_reference_image	
+Base64Image (object) or null
+
+Reference image for upper terrain style
+
+
+transition_reference_image	
+Base64Image (object) or null
+
+Reference image for transition area style
+
+
+color_image	
+Base64Image (object) or null
+
+Reference image for color palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Successfully generated tileset
+
+202 
+
+Successful Response
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/create-tileset
+Request samples
+Payload
+Content type
+application/json
+Example
+Basic tileset
+Forest path tileset
+Basic tileset
+
+Simple beach/ocean tileset with default settings
+
+Copy
+Expand allCollapse all
+{
+"lower_description": "deep blue ocean water with gentle waves",
+"upper_description": "golden sandy beach",
+"transition_description": "wet sand with foam",
+"tile_size": 
+{
+"width": 16,
+"height": 16
+},
+"transition_size": 0.5,
+"view": "high top-down"
+}
+Response samples
+200202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"tileset": 
+{
+"total_tiles": 16,
+"tile_size": 
+{},
+"terrain_types": 
+[],
+"tiles": 
+[]
+},
+"metadata": 
+{
+"edge_types": 
+[],
+"terrain_prompts": 
+{},
+"terrain_ids": 
+{},
+"transition_size": 0.5,
+"view": "high top-down",
+"generation_parameters": 
+{},
+"created_at": "2024-01-15T10:30:45Z"
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+Get generated tileset by ID
+
+Retrieve a completed tileset by its UUID.
+
+This endpoint returns the complete tileset data including all tiles (16 for standard, 23 for transition_size=1.0) with their images, corner data, connections, and metadata. Use this after background processing completes.
+
+The tileset ID is returned immediately when you submit a tileset generation request. Check the background job status first to ensure generation is complete.
+
+Response includes:
+
+All tiles with base64 PNG images (16 for standard, 23 for transition_size=1.0)
+Corner classifications (NW, NE, SW, SE) for each tile
+Connection compatibility data for seamless placement
+Generation metadata and parameters
+Terrain descriptions and style settings
+
+Example usage:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Get completed tileset
+tileset = client.get_tileset("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+
+# Access tiles
+for tile in tileset.tileset.tiles:
+    print(f"Tile {tile.name}: {tile.description}")
+    # Save tile image
+    with open(f"tile_{tile.id[:8]}.png", "wb") as f:
+        f.write(base64.b64decode(tile.image.base64))
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+tileset_id
+required
+	
+string (Tileset Id)
+Responses
+200 
+
+Successfully retrieved tileset
+
+401 
+
+Invalid API token
+
+404 
+
+Tileset not found
+
+422 
+
+Validation Error
+
+423 
+
+Tileset is still being generated
+
+GET
+/tilesets/{tileset_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"tileset": 
+{
+"total_tiles": 16,
+"tile_size": 
+{},
+"terrain_types": 
+[],
+"tiles": 
+[]
+},
+"metadata": 
+{
+"edge_types": 
+[],
+"terrain_prompts": 
+{},
+"terrain_ids": 
+{},
+"transition_size": 0,
+"view": "string",
+"generation_parameters": { },
+"created_at": "string"
+}
+}
+Create a sidescroller tileset asynchronously
+
+Creates a sidescroller platform tileset in the background and returns immediately with job ID. Retrieve results with GET /tilesets/{tileset_id}.
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+lower_description
+required
+	
+string (Lower Description) non-empty
+
+Description of the main terrain/platform material (e.g., 'stone bricks', 'grass ground', 'metal grating')
+
+
+transition_description	
+string (Transition Description)
+Default: ""
+
+Optional description of decorative layer on top of platform (e.g., 'moss and vines', 'snow cover', 'rust stains')
+
+
+lower_base_tile_id	
+Lower Base Tile Id (string) or Lower Base Tile Id (null) (Lower Base Tile Id)
+
+Optional ID to identify the lower base tile in metadata (for connected tilesets)
+
+
+tile_size	
+object (SidescrollerTileSize)
+Default: {"width":16,"height":16}
+
+Size of individual tiles within the tileset
+
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text descriptions (default: 8.0)
+
+
+outline	
+Outline (string) or null
+
+Outline style reference
+
+
+shading	
+Shading (string) or null
+
+Shading style reference
+
+
+detail	
+Detail (string) or null
+
+Detail style reference
+
+
+tile_strength	
+number (Tile Strength) [ 0.1 .. 2 ]
+Default: 1
+
+Strength of tile pattern adherence
+
+
+tileset_adherence_freedom	
+number (Tileset Adherence Freedom) [ 0 .. 900 ]
+Default: 500
+
+How flexible it will be when following tileset structure, higher values means more flexibility
+
+
+tileset_adherence	
+number (Tileset Adherence) [ 0 .. 500 ]
+Default: 100
+
+How much it will follow the reference/texture image and follow tileset structure
+
+
+transition_size	
+number (Transition Size)
+Default: 0
+Enum: 0 0.25 0.5 1
+
+Size of transition area (0 = no transition, 0.25 = quarter tile, 0.5 = half tile, 1.0 = full tile)
+
+
+lower_reference_image	
+Base64Image (object) or null
+
+Reference image for platform terrain style
+
+
+transition_reference_image	
+Base64Image (object) or null
+
+Reference image for transition area style
+
+
+color_image	
+Base64Image (object) or null
+
+Reference image for color palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+202 
+
+Tileset creation started, returns job ID
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/tilesets-sidescroller
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"lower_description": "stone brick platform with carved details",
+"tile_size": 
+{
+"height": 16,
+"width": 16
+},
+"transition_description": "moss and small green plants",
+"transition_size": 0.25
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"metadata": 
+{
+"created_at": "2024-01-15T10:30:45Z",
+"edge_types": 
+[],
+"generation_parameters": 
+{},
+"terrain_ids": 
+{},
+"terrain_prompts": 
+{},
+"transition_size": 0.5,
+"view": "high top-down"
+},
+"tileset": 
+{
+"terrain_types": 
+[],
+"tile_size": 
+{},
+"tiles": 
+[],
+"total_tiles": 16
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+Create sidescroller tileset (async processing)
+
+Creates a complete sidescroller tileset for 2D platformer game development.
+
+A sidescroller tileset is a collection of individual tiles designed for side-view platformer games. The tiles represent floating platforms with transparent backgrounds, allowing them to be placed over any game background.
+
+Key differences from top-down tilesets:
+
+View: Always "side" perspective (fixed, cannot be changed)
+Background: Always transparent (no background terrain)
+Use case: 2D platformer games, side-scrolling adventures
+No slopes: Only flat horizontal platform surfaces
+
+Understanding the layers:
+
+Lower terrain: The main platform/ground material (e.g., stone, grass, metal)
+Transition: Optional decorative layer on top of the platform (e.g., moss, snow, rust)
+Background: Automatically transparent (not configurable)
+
+Features:
+
+Returns individual tiles with unique IDs
+Transparent background for easy overlay on game scenes
+Tile sizes: 16x16 or 32x32 pixels
+Seamless tile connections for platform creation
+Optional transition layer for surface details
+Style control via outline, shading, and detail parameters
+Reference images for style guidance
+Color palette control
+
+Retrieving results: After submission, use GET /tilesets/{tileset_id} to retrieve the completed tileset. The same endpoint is used for both top-down and sidescroller tilesets.
+
+Common use cases:
+
+Stone platforms: stone bricks with moss transitions
+Grass ground: green grass with flower decorations
+Metal grating: industrial platforms with rust details
+Ice platforms: frozen surfaces with snow cover
+Wood platforms: wooden planks with vine overgrowth
+Candy platforms: colorful candy blocks with frosting
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Generate a stone platform tileset
+response = client.generate_tileset_sidescroller(
+    lower_description="stone brick platform with carved details",
+    transition_description="moss and small green plants",
+    tile_size=dict(width=16, height=16),
+    transition_size=0.25,
+)
+
+# Retrieve completed tileset using the tileset_id
+tileset = client.get_tileset(response.tileset_id)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+lower_description
+required
+	
+string (Lower Description) non-empty
+
+Description of the main terrain/platform material (e.g., 'stone bricks', 'grass ground', 'metal grating')
+
+
+transition_description	
+string (Transition Description)
+Default: ""
+
+Optional description of decorative layer on top of platform (e.g., 'moss and vines', 'snow cover', 'rust stains')
+
+
+lower_base_tile_id	
+Lower Base Tile Id (string) or Lower Base Tile Id (null) (Lower Base Tile Id)
+
+Optional ID to identify the lower base tile in metadata (for connected tilesets)
+
+
+tile_size	
+object (SidescrollerTileSize)
+Default: {"width":16,"height":16}
+
+Size of individual tiles within the tileset
+
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text descriptions (default: 8.0)
+
+
+outline	
+Outline (string) or null
+
+Outline style reference
+
+
+shading	
+Shading (string) or null
+
+Shading style reference
+
+
+detail	
+Detail (string) or null
+
+Detail style reference
+
+
+tile_strength	
+number (Tile Strength) [ 0.1 .. 2 ]
+Default: 1
+
+Strength of tile pattern adherence
+
+
+tileset_adherence_freedom	
+number (Tileset Adherence Freedom) [ 0 .. 900 ]
+Default: 500
+
+How flexible it will be when following tileset structure, higher values means more flexibility
+
+
+tileset_adherence	
+number (Tileset Adherence) [ 0 .. 500 ]
+Default: 100
+
+How much it will follow the reference/texture image and follow tileset structure
+
+
+transition_size	
+number (Transition Size)
+Default: 0
+Enum: 0 0.25 0.5 1
+
+Size of transition area (0 = no transition, 0.25 = quarter tile, 0.5 = half tile, 1.0 = full tile)
+
+
+lower_reference_image	
+Base64Image (object) or null
+
+Reference image for platform terrain style
+
+
+transition_reference_image	
+Base64Image (object) or null
+
+Reference image for transition area style
+
+
+color_image	
+Base64Image (object) or null
+
+Reference image for color palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+202 
+
+Tileset creation started, returns job ID
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/create-tileset-sidescroller
+Request samples
+Payload
+Content type
+application/json
+Example
+Basic stone platform
+Grass platform with moss
+Detailed metal platform
+Basic stone platform
+
+Simple stone platform tileset for a 2D platformer
+
+Copy
+Expand allCollapse all
+{
+"lower_description": "stone brick platform with carved details",
+"tile_size": 
+{
+"width": 16,
+"height": 16
+}
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"metadata": 
+{
+"created_at": "2024-01-15T10:30:45Z",
+"edge_types": 
+[],
+"generation_parameters": 
+{},
+"terrain_ids": 
+{},
+"terrain_prompts": 
+{},
+"transition_size": 0.5,
+"view": "high top-down"
+},
+"tileset": 
+{
+"terrain_types": 
+[],
+"tile_size": 
+{},
+"tiles": 
+[],
+"total_tiles": 16
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+Create isometric tile (async processing)
+
+Creates a isometric tile based on the provided parameters.
+
+Supported image size:
+
+Minimum area 16x16 and maximum area 64x64
+Sizes above 24x24 often produce better quality results
+
+Supported features:
+
+Init image
+Forced palette
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.generate_isometric_tile(
+    description="grass on top of dirt",
+    image_size=dict(width=32, height=32),
+)
+response.image.pil_image()
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description)
+
+Text description of the image to generate
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__create_isometric_tile__ImageSize)
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the text description
+
+
+outline	
+Outline (string) or Outline (null) (Outline)
+Default: "lineless"
+
+Outline style for the tile
+
+
+shading	
+Shading (string) or Shading (null) (Shading)
+Default: "basic shading"
+
+Shading complexity
+
+
+detail	
+Detail (string) or Detail (null) (Detail)
+Default: "medium detail"
+
+Level of detail in the tile
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of the initial image influence
+
+
+isometric_tile_size	
+Isometric Tile Size (integer) or Isometric Tile Size (null) (Isometric Tile Size)
+Default: 16
+
+Size of the isometric tile. Recommended sizes: 16, 32. Can be omitted for default.
+
+
+isometric_tile_shape	
+string (Isometric Tile Shape)
+Default: "block"
+Enum: "thick tile" "thin tile" "block"
+
+Tile thickness. Thicker tiles allow more height variation in game maps. thin tile: ~15% canvas height, thick tile: ~25% height, block: ~50% height
+
+
+color_image	
+Base64Image (object) or null
+
+Forced color palette, image containing colors used for palette
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed decides the starting noise
+
+Responses
+200 
+
+Successfully generated image
+
+202 
+
+Successful Response
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+529 
+
+Rate limit exceeded
+
+POST
+/create-isometric-tile
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "grass on top of dirt",
+"image_size": 
+{
+"height": 32,
+"width": 32
+}
+}
+Response samples
+200202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"image": 
+{
+"type": "base64",
+"base64": "data:image/png;base64,..."
+},
+"usage": 
+{
+"type": "credits",
+"credits": 1
+}
+}
+Get generated isometric tile by ID
+
+Retrieve a completed isometric tile by its UUID.
+
+This endpoint returns the isometric tile image after background processing completes. Use this after the tile generation is finished.
+
+The tile ID is returned immediately when you submit a tile generation request. Check the background job status first to ensure generation is complete.
+
+Response includes:
+
+Base64 PNG image with transparent background
+Usage information
+
+Example usage:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Get completed tile
+tile = client.get_isometric_tile("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+
+# Save tile image
+tile.image.pil_image().save("tile.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+tile_id
+required
+	
+string (Tile Id)
+Responses
+200 
+
+Successfully retrieved tile
+
+401 
+
+Invalid API token
+
+404 
+
+Tile not found
+
+422 
+
+Validation Error
+
+423 
+
+Tile still processing
+
+GET
+/isometric-tiles/{tile_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"image": 
+{
+"type": "base64",
+"base64": "string",
+"format": "png"
+}
+}
+List user's isometric tiles
+
+List all isometric tiles created by the authenticated user.
+
+This endpoint returns a paginated list of all isometric tiles you've created.
+
+Pagination:
+
+Use limit to control how many tiles to return (1-100)
+Use offset to skip tiles for pagination
+Total count is included in response for pagination UI
+AUTHORIZATIONS:
+HTTPBearer
+QUERY PARAMETERS
+limit	
+integer (Limit) [ 1 .. 100 ]
+Default: 50
+
+Maximum number of tiles to return
+
+
+offset	
+integer (Offset) >= 0
+Default: 0
+
+Number of tiles to skip
+
+Responses
+200 
+
+Successfully retrieved isometric tile list
+
+401 
+
+Invalid API token
+
+422 
+
+Invalid pagination parameters
+
+GET
+/isometric-tiles
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"tiles": 
+[
+{}
+],
+"total": 0
+}
+Create tiles pro (async processing)
+
+Creates pixel art tiles based on the provided parameters.
+
+Generates multiple tile variations by drawing tile shape outlines and having AI fill them with pixel art. Supports hexagonal, isometric, and square top-down tile types.
+
+Supported tile types:
+
+hex: Flat-top hexagonal tiles
+hex_pointy: Pointy-top hexagonal tiles
+isometric: Diamond/rhombus tiles
+octagon: 8-sided polygon tiles
+square_topdown: Square tiles at angle
+
+Supported tile sizes: 16-128px (32px recommended)
+
+Generation time: ~15-30 seconds (async processing)
+
+Prompting tip: For best control over each tile variation, number each tile in the description: "1). grass tile 2). dirt tile 3). stone tile 4). water tile" — the number of tiles is auto-computed based on tile size.
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.create_tiles_pro(
+    description="1). grass tile 2). dirt tile 3). stone tile 4). water tile 5). sand tile 6). lava tile",
+    tile_type="isometric",
+    tile_size=32,
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description)
+
+Text description of the tiles. For best control, number each tile variation: '1). grass tile 2). stone tile 3). lava tile'.
+
+
+tile_type	
+string (Tile Type)
+Default: "isometric"
+Enum: "hex" "hex_pointy" "isometric" "octagon" "square_topdown"
+
+Shape of the tiles. hex: flat-top hexagonal, hex_pointy: pointy-top hexagonal, isometric: diamond/rhombus, octagon: 8-sided polygon, square_topdown: square at angle.
+
+
+tile_size	
+integer (Tile Size) [ 16 .. 256 ]
+Default: 32
+
+Tile size in pixels (16-256). 32px is recommended for most use cases.
+
+
+tile_height	
+Tile Height (integer) or Tile Height (null) (Tile Height)
+
+Tile height in pixels for non-square tiles (e.g., 128 for 64x128 tiles). When omitted, height is computed from tile_type geometry and view angle.
+
+
+tile_view	
+string (Tile View)
+Default: "low top-down"
+Enum: "top-down" "high top-down" "low top-down" "side"
+
+View angle controlling tile depth. top-down: no depth, high top-down: ~15%, low top-down: ~30%, side: ~50%.
+
+
+tile_view_angle	
+Tile View Angle (number) or Tile View Angle (null) (Tile View Angle)
+
+Continuous view angle in degrees (0-90). Overrides tile_view when provided. 0=side, 90=top-down.
+
+
+tile_depth_ratio	
+Tile Depth Ratio (number) or Tile Depth Ratio (null) (Tile Depth Ratio)
+
+Tile depth/thickness ratio (0.0-1.0). Controls how much vertical depth the tile has. Overrides the default computed from tile_view.
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+style_images	
+Array of Style Images (objects) or Style Images (null) (Style Images)
+
+Style reference tiles. When provided, generated tiles will match these tiles' style and dimensions. The tile_type, tile_size, tile_view, tile_view_angle, and tile_depth_ratio are ignored — the style tiles define the shape.
+
+
+style_options	
+TilesProStyleOptions (object) or null
+
+Options for what to copy from the style images. Only used when style_images is provided.
+
+Responses
+202 
+
+Generation started successfully
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/create-tiles-pro
+Request samples
+Payload
+Content type
+application/json
+Copy
+{
+"description": "1). grass tile 2). dirt tile 3). stone tile 4). water tile 5). sand tile 6). lava tile",
+"tile_size": 32,
+"tile_type": "isometric",
+"tile_view": "low top-down"
+}
+Response samples
+202
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"background_job_id": "string",
+"tile_id": "string",
+"status": "processing"
+}
+Get generated tiles pro by ID
+
+Retrieve completed tiles pro by their UUID.
+
+This endpoint returns the tile images after background processing completes. Use this after the tile generation is finished.
+
+The tile ID is returned immediately when you submit a tile generation request.
+
+Response includes:
+
+List of base64 PNG tile variation images
+Usage information
+
+Example usage:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Get completed tiles
+tiles = client.get_tiles_pro("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+
+# Save tile images
+for tile in tiles.tiles:
+    save_base64_image(tile.base64, f"tile_{tile.index}.png")
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+tile_id
+required
+	
+string (Tile Id)
+Responses
+200 
+
+Successfully retrieved tiles
+
+401 
+
+Invalid API token
+
+404 
+
+Tiles not found
+
+422 
+
+Validation Error
+
+423 
+
+Tiles still processing
+
+GET
+/tiles-pro/{tile_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"storage_urls": { }
+}
+Map Objects
+Create map object
+
+Creates a pixel art object with transparent background for game maps.
+
+Returns immediately with job ID. Processing takes ~15-30 seconds.
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.create_map_object(
+    description="wooden treasure chest",
+    image_size={"width": 128, "height": 128}
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Object description (e.g., 'wooden barrel', 'stone fountain')
+
+
+image_size	
+object (app__endpoints__external__v2__create_map_object__ImageSize)
+Default: {"width":128,"height":128}
+
+Object dimensions
+
+
+view	
+string (View)
+Default: "high top-down"
+Enum: "low top-down" "high top-down" "side"
+
+Camera angle
+
+
+outline	
+Outline (string) or Outline (null) (Outline)
+Default: "single color outline"
+
+Outline style
+
+
+shading	
+Shading (string) or Shading (null) (Shading)
+Default: "medium shading"
+
+Shading complexity
+
+
+detail	
+Detail (string) or Detail (null) (Detail)
+Default: "medium detail"
+
+Level of detail
+
+
+text_guidance_scale	
+number (Text Guidance Scale) [ 1 .. 20 ]
+Default: 8
+
+How closely to follow the description
+
+
+init_image	
+Base64Image (object) or null
+
+Initial image to start from
+
+
+init_image_strength	
+integer (Init Image Strength) [ 1 .. 999 ]
+Default: 300
+
+Strength of initial image influence
+
+
+color_image	
+Base64Image (object) or null
+
+Image containing colors for forced palette
+
+
+background_image	
+Base64Image (object) or null
+
+Background/map image for style matching. Required when using inpainting.
+
+
+inpainting	
+MaskInpainting (object) or OvalInpainting (object) or RectangleInpainting (object) or Inpainting (null) (Inpainting)
+
+Inpainting configuration for style matching. Options: mask (custom), oval (auto-generated), rectangle (auto-generated)
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Object generation queued
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/map-objects
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "wooden treasure chest",
+"detail": "medium detail",
+"image_size": 
+{
+"height": 128,
+"width": 128
+},
+"outline": "single color outline",
+"shading": "medium shading",
+"view": "high top-down"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"object_id": "456e7890-e89b-12d3-a456-426614174001",
+"status": "queued"
+}
+Account
+Get balance
+
+Returns the current balance for your account, including both USD credits and remaining subscription generations.
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+balance = client.get_balance()
+print(f"Credits: ${balance.credits.usd}")
+print(f"Generations remaining: {balance.subscription.generations}/{balance.subscription.total}")
+
+AUTHORIZATIONS:
+HTTPBearer
+Responses
+200 
+
+Successfully retrieved balance
+
+401 
+
+Invalid API token
+
+GET
+/balance
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"credits": 
+{
+"type": "usd",
+"usd": 10.5
+},
+"subscription": 
+{
+"type": "generations",
+"generations": 450,
+"total": 2000
+}
+}
+Character from template
+Create character with 4 directions
+
+Generate a character or object facing 4 cardinal directions (south, west, east, north).
+
+This endpoint creates 4 separate rotation images plus a combined spritesheet in a 4x1 layout. Perfect for game development where you need character sprites facing all directions.
+
+Key Features:
+
+Fixed 4-rotation layout (south, west, east, north)
+Individual rotation images + combined spritesheet
+Style customization (outline, shading, detail)
+Color palette support
+Character proportions customization
+Optimized for game sprites and character assets
+
+Character Proportions:
+
+Use preset proportions: chibi, cartoon, stylized, realistic_male, realistic_female, heroic
+Or customize individual body proportions: head size, arm/leg length, shoulder/hip width
+All characters use the advanced mannequin template with bone scaling
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Example: With preset proportions
+response = client.generate_4_rotations(
+    description="futuristic robot warrior",
+    image_size=dict(width=96, height=96),
+    view="low_top_down",
+    proportions=dict(
+        type="preset",
+        name="heroic"
+    )
+)
+
+# Access individual images by direction
+south_facing = response.images["south"]
+west_facing = response.images["west"]
+east_facing = response.images["east"]
+north_facing = response.images["north"]
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the character or object to generate
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__create_character_with_4_directions__ImageSize)
+
+Size of each rotation image
+
+
+async_mode	
+true (boolean) or Async Mode (null) (Async Mode)
+Default: true
+
+Process asynchronously (always true for character creation)
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow the text description (higher = more faithful)
+
+
+outline	
+Outline (string) or Outline (null) (Outline)
+Default: "single color black outline"
+
+Outline style (thin, medium, thick, none)
+
+
+shading	
+Shading (string) or Shading (null) (Shading)
+Default: "basic shading"
+
+Shading style (soft, hard, flat, none)
+
+
+detail	
+Detail (string) or Detail (null) (Detail)
+Default: "medium detail"
+
+Detail level (low, medium, high)
+
+
+view	
+View (string) or View (null) (View)
+Default: "low top-down"
+
+Camera view angle (side, low top-down, high top-down, perspective)
+
+
+isometric	
+Isometric (boolean) or Isometric (null) (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+color_image	
+Base64Image (object) or null
+
+Color palette reference image
+
+
+force_colors	
+Force Colors (boolean) or Force Colors (null) (Force Colors)
+Default: false
+
+Force the use of colors from color_image
+
+
+proportions	
+Proportions (any) or Proportions (null) (Proportions)
+
+Character body proportions (preset or custom values). Only applies to humanoid characters.
+
+
+template_id	
+Template Id (string) or Template Id (null) (Template Id)
+
+Template ID to use (e.g., 'mannequin' for humanoid, 'bear'/'cat'/'dog'/'horse'/'lion' for quadrupeds). Defaults to 'mannequin'.
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+output_type	
+"dict" (string) or Output Type (null) (Output Type)
+Default: "dict"
+
+Output format (always dict for external API)
+
+Responses
+200 
+
+Successfully generated 4-rotation images
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/create-character-with-4-directions
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute pixel art wizard with blue robes",
+"image_size": 
+{
+"height": 64,
+"width": 64
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"images": 
+{
+"south": 
+{},
+"west": 
+{},
+"east": 
+{},
+"north": 
+{}
+}
+}
+Create character with 8 directions
+
+Generate a character or object facing 8 directions (all cardinal and diagonal directions).
+
+This endpoint creates 8 rotation images in a dictionary format for easy access by direction name. Perfect for detailed movement systems in games where smooth directional changes are important.
+
+Two Generation Modes:
+
+standard (default): Template-based skeleton generation. Costs 1 generation. Uses all style parameters.
+pro: AI reference-based generation for higher quality. Costs 20-40 generations depending on size. Ignores outline, shading, detail, proportions, and text_guidance_scale.
+
+The 8 Directions:
+
+south (facing down)
+south-east (diagonal down-right)
+east (facing right)
+north-east (diagonal up-right)
+north (facing up)
+north-west (diagonal up-left)
+west (facing left)
+south-west (diagonal down-left)
+
+Key Features:
+
+Fixed 8-rotation layout in clockwise order starting from south
+Returns dictionary of images by direction name
+Style customization (outline, shading, detail) - standard mode only
+Color palette support
+Character proportions customization - standard mode only
+Optimized for games requiring smooth directional movement
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Standard mode (default)
+response = client.create_character_with_8_directions(
+    description="futuristic robot warrior",
+    image_size=dict(width=96, height=96),
+    view="low top-down",
+    proportions=dict(type="preset", name="heroic")
+)
+
+# Pro mode (higher quality, costs more)
+response = client.create_character_with_8_directions(
+    description="futuristic robot warrior",
+    image_size=dict(width=48, height=48),
+    view="low top-down",
+    mode="pro"
+)
+
+# Access individual images by direction
+south_facing = response.images["south"]
+east_facing = response.images["east"]
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the character or object to generate
+
+
+image_size
+required
+	
+object (app__endpoints__external__v2__create_character_with_8_directions__ImageSize)
+
+Size of each rotation image
+
+
+mode	
+Mode (string) or Mode (null) (Mode)
+Default: "standard"
+
+Generation mode. "standard" uses template-based skeleton generation (1 generation). "pro" uses AI reference-based generation for higher quality (costs 20-40 generations depending on size). Pro mode ignores outline, shading, detail, proportions, and text_guidance_scale.
+
+
+async_mode	
+true (boolean) or Async Mode (null) (Async Mode)
+Default: true
+
+Process asynchronously (always true - no synchronous processing yet)
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow the text description (higher = more faithful)
+
+
+outline	
+Outline (string) or Outline (null) (Outline)
+Default: "single color black outline"
+
+Outline style (thin, medium, thick, none)
+
+
+shading	
+Shading (string) or Shading (null) (Shading)
+Default: "basic shading"
+
+Shading style (soft, hard, flat, none)
+
+
+detail	
+Detail (string) or Detail (null) (Detail)
+Default: "medium detail"
+
+Detail level (low, medium, high)
+
+
+view	
+View (string) or View (null) (View)
+Default: "low top-down"
+
+Camera view angle (side, low top-down, high top-down, perspective)
+
+
+isometric	
+Isometric (boolean) or Isometric (null) (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+color_image	
+Base64Image (object) or null
+
+Color palette reference image
+
+
+force_colors	
+Force Colors (boolean) or Force Colors (null) (Force Colors)
+Default: false
+
+Force the use of colors from color_image
+
+
+proportions	
+Proportions (any) or Proportions (null) (Proportions)
+
+Character body proportions (preset or custom values). Only applies to humanoid characters.
+
+
+template_id	
+Template Id (string) or Template Id (null) (Template Id)
+
+Template ID to use (e.g., 'mannequin' for humanoid, 'bear'/'cat'/'dog'/'horse'/'lion' for quadrupeds). Defaults to 'mannequin'.
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+
+output_type	
+"dict" (string) or Output Type (null) (Output Type)
+Default: "dict"
+
+Output format (always dict for external API)
+
+Responses
+200 
+
+Successfully generated 8-rotation images
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/create-character-with-8-directions
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "cute pixel art wizard with blue robes",
+"image_size": 
+{
+"height": 64,
+"width": 64
+}
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"images": 
+{
+"south": 
+{},
+"south-east": 
+{},
+"east": 
+{},
+"north-east": 
+{},
+"north": 
+{},
+"north-west": 
+{},
+"west": 
+{},
+"south-west": 
+{}
+}
+}
+Create character with Pro mode (8 directions)
+
+Create a character with 8 directional rotations using Pro mode.
+
+Pro mode uses a reference-based generator for higher quality and finer style control than template-based standard mode. The result is persisted as a character — same system as /v2/create-character-with-8-directions — so it can be animated, downloaded, and listed alongside template-created characters.
+
+Three methods (controlled by the method field):
+
+create_with_style (default): text + optional style reference image.
+create_from_concept: text + concept image (e.g. a sketch/mood board) + optional style reference.
+rotate_character: rotate an existing character image into 8 directions.
+
+Sizes:
+
+image_size: 32-168 pixels (output frame). Canvas is padded ~2x for animation room.
+reference_image: max 168x168.
+concept_image: max 1024x1024.
+
+Cost: dynamic — typically 20-40 generations depending on output size.
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+# Style-guided creation
+response = client.create_character_pro(
+    description="cyberpunk samurai with red coat",
+    image_size=dict(width=96, height=96),
+    method="create_with_style",
+)
+
+# Rotate an existing character
+response = client.create_character_pro(
+    description="cyberpunk samurai",
+    image_size=dict(width=96, height=96),
+    method="rotate_character",
+    reference_image=dict(base64=existing_character_b64),
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the character or object to generate.
+
+
+image_size
+required
+	
+object (ProImageSize)
+
+Output frame size for each of the 8 rotations. The persisted character canvas is padded to ~2x for animation room.
+
+
+method	
+string (Method)
+Default: "create_with_style"
+Enum: "create_with_style" "create_from_concept" "rotate_character"
+
+How the reference inputs are used:
+
+create_with_style: text-driven generation; reference_image (if provided) is treated as a style reference. If omitted, a default style for the chosen view and template body type is used.
+create_from_concept: concept_image (required) seeds the design; reference_image (optional) provides additional style guidance.
+rotate_character: reference_image (required) is an existing character to rotate into 8 directions. description is still used as guidance.
+
+view	
+string (View)
+Default: "low top-down"
+Enum: "low top-down" "high top-down" "side"
+
+Camera view angle.
+
+
+template_id	
+string (Template Id)
+Default: "mannequin"
+
+Body type for skeleton reconstruction. Picks the 3D template the skeleton estimator fits to the generated frames so the character can be animated. Use mannequin for bipedal subjects or one of bear/cat/dog/horse/lion for quadrupeds. Quadruped templates also append ", on all fours" to the description so generated frames match the chosen skeleton.
+
+
+concept_image	
+Base64Image (object) or null
+
+Optional concept image (max 1024x1024). Used with method=create_from_concept.
+
+
+reference_image	
+Base64Image (object) or null
+
+Optional reference image (max 168x168). Used as style reference for create_with_style / create_from_concept, or as the character to rotate for rotate_character.
+
+
+style_description	
+Style Description (string) or Style Description (null) (Style Description)
+
+Free-text style hint to layer on top of the description.
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation.
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Generate with transparent background.
+
+Responses
+200 
+
+Generation job submitted
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error (bad dimensions, missing required image)
+
+429 
+
+Concurrency limit reached
+
+POST
+/create-character-pro
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "wizard with blue robes and silver staff",
+"image_size": 
+{
+"height": 96,
+"width": 96
+},
+"method": "create_with_style",
+"template_id": "mannequin",
+"view": "low top-down"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"character_id": "456e7890-e89b-12d3-a456-426614174001",
+"status": "processing"
+}
+Create character with v3 model (8 rotations)
+
+Create a character with 8 directional rotations using the v3 model.
+
+Currently takes a south-facing reference_image and rotates it into 8 directional views. From-scratch generation (no reference image) is planned and will be added to this same endpoint so it covers the full v3 character-creation surface.
+
+The result is persisted as a character — same system as /v2/create-character-with-8-directions — so it can be animated, downloaded, and listed alongside template-created characters.
+
+Reference image must be south-facing for best results. The frontend Character Creator enforces this and the v3 model is trained around a south-facing input. Other orientations work but produce noticeably worse results.
+
+How it works:
+
+Submit a south-facing reference_image.
+The v3 model generates 8 frames in the canonical south, south-east, east, ..., south-west order.
+Frames are padded for animation, uploaded to storage, a 3D skeleton is estimated, and the character row is marked completed.
+
+Sizes:
+
+reference_image: max 256x256 pixels.
+image_size: advisory; final canvas is determined by the v3 model output + pad-for-animation (capped at 256).
+
+Cost: 1 generation (charged in the inner v3 job).
+
+Using the Python client:
+
+import pixellab
+
+client = pixellab.Client(secret="YOUR_API_TOKEN")
+
+response = client.create_character_v3(
+    description="cyberpunk samurai",
+    reference_image=dict(base64=south_facing_image_b64),
+)
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+Description of the character (used as prompt + display name).
+
+
+reference_image
+required
+	
+object (Base64Image)
+
+Reference image of the character (PNG/JPEG base64). Must be south-facing (character viewed from the front) and max 256x256 pixels.
+
+
+image_size	
+V3OutputImageSize (object) or null
+
+Advisory output frame size. The model picks its own output size; this is the initial canvas size recorded on the character row. The final canvas is padded ~2x by the persistence step for animation room (capped at 256).
+
+
+view	
+string (View)
+Default: "low top-down"
+Enum: "low top-down" "high top-down" "side"
+
+Camera view angle. Used by skeleton reconstruction.
+
+
+template_id	
+string (Template Id)
+Default: "mannequin"
+
+Body type for skeleton reconstruction. Picks the 3D template the skeleton estimator fits to the generated frames so the character can be animated. Use mannequin for bipedal subjects or one of bear/cat/dog/horse/lion for quadrupeds. Must match the body type in reference_image.
+
+
+name	
+Name (string) or Name (null) (Name)
+
+Display name. Defaults to first 50 chars of description.
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation.
+
+
+no_background	
+No Background (boolean) or No Background (null) (No Background)
+Default: true
+
+Generate frames with transparent background.
+
+Responses
+200 
+
+Generation job submitted
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+422 
+
+Validation error (bad dimensions, invalid image)
+
+429 
+
+Concurrency limit reached
+
+POST
+/create-character-v3
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "knight in golden armor",
+"reference_image": 
+{
+"base64": "data:image/png;base64,..."
+},
+"template_id": "mannequin",
+"view": "low top-down"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"character_id": "456e7890-e89b-12d3-a456-426614174001",
+"status": "processing"
+}
+Create Character Animation
+
+Animate an existing character (background processing).
+
+Three modes:
+
+template: Provide template_animation_id for skeleton-based animation (1 gen/direction).
+v3 (default when no template): Custom animation from action text. Supports frame_count (4-16). One job per direction.
+pro: Custom animation that generates directions sequentially, using completed sides as reference (20-40 gen/direction).
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+character_id
+required
+	
+string (Character Id)
+
+ID of existing character to animate
+
+
+animation_name	
+Animation Name (string) or Animation Name (null) (Animation Name)
+
+Name for this animation (defaults to action_description if not provided)
+
+
+description	
+Description (string) or Description (null) (Description)
+
+Description of the character or object to animate (uses character's original if not specified)
+
+
+action_description	
+Action Description (string) or Action Description (null) (Action Description)
+
+Action description (e.g., 'walking', 'running', 'jumping'). Required for custom mode (when template_animation_id is omitted). For template mode, defaults to a description based on the template.
+
+
+async_mode	
+true (boolean) or Async Mode (null) (Async Mode)
+Default: true
+
+Process in background (always true - no foreground processing yet)
+
+
+mode	
+Mode (string) or Mode (null) (Mode)
+
+Animation mode. "template": skeleton-based from template_animation_id (1 gen/direction). "v3": custom animation from action_description with frame_count control. "pro": custom animation that generates directions sequentially, using completed sides as reference (20-40 gen/direction). Auto-detected: template if template_animation_id is provided, v3 otherwise.
+
+
+template_animation_id	
+Template Animation Id (string) or Template Animation Id (null) (Template Animation Id)
+
+Animation template ID. Required for template mode. Available: angry, attack, attack-back, attack-left, attack-right, backflip, bark, breathing-idle, cross-punch, crouched-walking, ...
+
+
+frame_count	
+Frame Count (integer) or Frame Count (null) (Frame Count)
+Default: 8
+
+Number of animation frames (4-16, must be even). Only used in v3 mode.
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow the text description (higher = more faithful). Template mode only.
+
+
+outline	
+Outline (string) or Outline (null) (Outline)
+
+Outline style (uses character's original if not specified). Template mode only.
+
+
+shading	
+Shading (string) or Shading (null) (Shading)
+
+Shading style (uses character's original if not specified). Template mode only.
+
+
+detail	
+Detail (string) or Detail (null) (Detail)
+
+Detail level (uses character's original if not specified). Template mode only.
+
+
+directions	
+Array of Directions (strings) or Directions (null) (Directions)
+
+List of directions to animate (south, north, east, west, etc.). Template mode: defaults to all character directions. Custom mode: defaults to south only.
+
+
+isometric	
+Isometric (boolean) or Isometric (null) (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+color_image	
+Base64Image (object) or null
+
+Color palette reference image
+
+
+force_colors	
+Force Colors (boolean) or Force Colors (null) (Force Colors)
+Default: false
+
+Force the use of colors from color_image
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Successful Response
+
+422 
+
+Validation Error
+
+POST
+/characters/animations
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"character_id": "123e4567-e89b-12d3-a456-426614174000",
+"directions": 
+[
+"south",
+"north"
+],
+"template_animation_id": "walking-4-frames"
+}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_ids": 
+[
+"123e4567-e89b-12d3-a456-426614174000",
+"223e4567-e89b-12d3-a456-426614174001"
+],
+"directions": 
+[
+"south",
+"north"
+],
+"status": "processing"
+}
+Animate character
+
+Animate an existing character with multiple frames showing movement or action.
+
+This endpoint creates animation sequences for characters that were previously created using the create-character-with-4-directions or create-character-with-8-directions endpoints.
+
+Key Features:
+
+Animate existing characters by character_id
+Support for multiple directions (or all character directions)
+Flexible frame count (2-12 frames)
+Template-based animations for consistent motion
+Asynchronous processing for multiple directions
+Automatic storage and organization
+
+Character Requirements:
+
+Character must exist and belong to the authenticated user
+Character must have been created with 4 or 8 directions
+Animation will use the same template and settings as the character
+
+Direction Handling:
+
+Multiple directions per request (specify via directions field)
+If directions field is None/empty, animates all available directions
+Each direction creates a separate background job
+Returns list of job IDs (one per direction)
+
+AI Freedom Parameter:
+
+ai_freedom controls how closely the AI follows the template (0=strict, 1000=creative)
+Lower values produce more consistent animations
+Higher values allow more creative variations
+
+Style Settings:
+
+Uses the same style settings (outline, shading, detail) as the original character by default
+Can override individual style settings in the request
+
+Frame Count:
+
+Determined by the animation template (not configurable in request)
+Typically 4-6 frames for most animations
+
+Image Size:
+
+Uses the same image size as the original character
+All frames have consistent dimensions
+Stored in organized folder structure
+
+Pricing:
+
+Template mode: 1 generation per direction
+Custom mode: 20-40 generations per direction (depending on character size)
+
+V3 Mode (default when no template): Custom animation. Provide action_description and optionally frame_count (4-16, default 8).
+
+One job per direction, directions independent
+Directions default to south only if not specified
+Best for: single-direction animations, frame count control
+
+Pro Mode: Custom animation with sequential direction generation. Set mode="pro" with action_description.
+
+Generates directions one-by-one, using completed sides as reference
+20-40 generations per direction depending on character size
+Directions default to south only if not specified
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+character_id
+required
+	
+string (Character Id)
+
+ID of existing character to animate
+
+
+animation_name	
+Animation Name (string) or Animation Name (null) (Animation Name)
+
+Name for this animation (defaults to action_description if not provided)
+
+
+description	
+Description (string) or Description (null) (Description)
+
+Description of the character or object to animate (uses character's original if not specified)
+
+
+action_description	
+Action Description (string) or Action Description (null) (Action Description)
+
+Action description (e.g., 'walking', 'running', 'jumping'). Required for custom mode (when template_animation_id is omitted). For template mode, defaults to a description based on the template.
+
+
+async_mode	
+true (boolean) or Async Mode (null) (Async Mode)
+Default: true
+
+Process in background (always true - no foreground processing yet)
+
+
+mode	
+Mode (string) or Mode (null) (Mode)
+
+Animation mode. "template": skeleton-based from template_animation_id (1 gen/direction). "v3": custom animation from action_description with frame_count control. "pro": custom animation that generates directions sequentially, using completed sides as reference (20-40 gen/direction). Auto-detected: template if template_animation_id is provided, v3 otherwise.
+
+
+template_animation_id	
+Template Animation Id (string) or Template Animation Id (null) (Template Animation Id)
+
+Animation template ID. Required for template mode. Available: angry, attack, attack-back, attack-left, attack-right, backflip, bark, breathing-idle, cross-punch, crouched-walking, ...
+
+
+frame_count	
+Frame Count (integer) or Frame Count (null) (Frame Count)
+Default: 8
+
+Number of animation frames (4-16, must be even). Only used in v3 mode.
+
+
+text_guidance_scale	
+Text Guidance Scale (number) or Text Guidance Scale (null) (Text Guidance Scale)
+Default: 8
+
+How closely to follow the text description (higher = more faithful). Template mode only.
+
+
+outline	
+Outline (string) or Outline (null) (Outline)
+
+Outline style (uses character's original if not specified). Template mode only.
+
+
+shading	
+Shading (string) or Shading (null) (Shading)
+
+Shading style (uses character's original if not specified). Template mode only.
+
+
+detail	
+Detail (string) or Detail (null) (Detail)
+
+Detail level (uses character's original if not specified). Template mode only.
+
+
+directions	
+Array of Directions (strings) or Directions (null) (Directions)
+
+List of directions to animate (south, north, east, west, etc.). Template mode: defaults to all character directions. Custom mode: defaults to south only.
+
+
+isometric	
+Isometric (boolean) or Isometric (null) (Isometric)
+Default: false
+
+Generate in isometric view
+
+
+color_image	
+Base64Image (object) or null
+
+Color palette reference image
+
+
+force_colors	
+Force Colors (boolean) or Force Colors (null) (Force Colors)
+Default: false
+
+Force the use of colors from color_image
+
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+Seed for reproducible generation
+
+Responses
+200 
+
+Successfully started character animation in background
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient credits
+
+404 
+
+Character not found
+
+422 
+
+Validation error
+
+429 
+
+Too many requests
+
+POST
+/animate-character
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"character_id": "123e4567-e89b-12d3-a456-426614174000",
+"directions": 
+[
+"south",
+"north"
+],
+"template_animation_id": "walking-4-frames"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"background_job_ids": 
+[
+"123e4567-e89b-12d3-a456-426614174000",
+"223e4567-e89b-12d3-a456-426614174001",
+"323e4567-e89b-12d3-a456-426614174002",
+"423e4567-e89b-12d3-a456-426614174003"
+],
+"directions": 
+[
+"south",
+"east",
+"north",
+"west"
+],
+"status": "processing"
+}
+Character Management
+List user's characters
+
+List all characters created by the authenticated user.
+
+This endpoint returns a paginated list of all characters you've created using the create-character-with-4-directions or create-character-with-8-directions endpoints.
+
+Features:
+
+Pagination support with limit and offset parameters
+Animation count for each character
+Preview URLs for quick character identification
+Complete character metadata
+
+Authentication: Requires a valid API token in the Authorization header.
+
+Response includes:
+
+Character basic info (name, prompt, size, directions)
+Creation timestamp and template used
+Number of animations created for each character
+Preview URL for the south-facing rotation
+
+Pagination:
+
+Use limit to control how many characters to return (1-100)
+Use offset to skip characters for pagination
+Total count is included in response for pagination UI
+AUTHORIZATIONS:
+HTTPBearer
+QUERY PARAMETERS
+limit	
+integer (Limit) [ 1 .. 100 ]
+Default: 50
+
+Maximum number of characters to return
+
+
+offset	
+integer (Offset) >= 0
+Default: 0
+
+Number of characters to skip
+
+Responses
+200 
+
+Successfully retrieved character list
+
+401 
+
+Invalid API token
+
+422 
+
+Invalid pagination parameters
+
+429 
+
+Too many requests
+
+GET
+/characters
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"characters": 
+[
+{}
+],
+"total": 15,
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Get character details
+
+Get detailed information about a specific character.
+
+This endpoint returns complete character information including all rotation image URLs, generation settings, and metadata.
+
+Features:
+
+Complete character information and settings
+URLs for all rotation images (4 or 8 directions)
+Animation count and template information
+Generation parameters used during creation
+
+Authentication: Requires a valid API token. You can only access characters you created.
+
+Response includes:
+
+Basic character info (name, prompt, size, directions)
+All rotation image URLs (publicly accessible)
+Style settings and generation parameters
+Template information and view settings
+Animation count for this character
+
+URL Format: All rotation URLs follow the pattern: https://supabase.pixellab.ai/storage/v1/object/public/pixellab-characters/{user_id}/{character_id}/rotations/{direction}.png
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+character_id
+required
+	
+string (Character Id)
+Responses
+200 
+
+Successfully retrieved character details
+
+401 
+
+Invalid API token
+
+403 
+
+Character belongs to another user
+
+404 
+
+Character not found
+
+422 
+
+Validation Error
+
+429 
+
+Too many requests
+
+GET
+/characters/{character_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"id": "123e4567-e89b-12d3-a456-426614174000",
+"name": "Fire Wizard",
+"prompt": "A powerful wizard with fire magic",
+"size": 
+{
+"width": 64,
+"height": 64
+},
+"directions": 8,
+"created_at": "2024-01-15T10:30:00Z",
+"animation_count": 3,
+"template_id": "mannequin",
+"view": "low top-down",
+"rotation_urls": 
+{
+"south": "https://supabase.pixellab.ai/.../rotations/south.png",
+"west": "https://supabase.pixellab.ai/.../rotations/west.png",
+"east": "https://supabase.pixellab.ai/.../rotations/east.png",
+"north": "https://supabase.pixellab.ai/.../rotations/north.png",
+"south-east": "https://supabase.pixellab.ai/.../rotations/south-east.png",
+"north-east": "https://supabase.pixellab.ai/.../rotations/north-east.png",
+"north-west": "https://supabase.pixellab.ai/.../rotations/north-west.png",
+"south-west": "https://supabase.pixellab.ai/.../rotations/south-west.png"
+},
+"style_settings": 
+{
+"outline": "medium",
+"shading": "soft"
+},
+"guidance": 8,
+"ai_freedom": 650,
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Delete a character and all associated data
+
+Delete a character (v2 API for external customers).
+
+Uses the same internal logic as JWT and MCP endpoints, providing fast storage deletion by using service_role internally (avoiding the slow storage.search_legacy_v1 function).
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+character_id
+required
+	
+string (Character Id)
+Responses
+200 
+
+Successful Response
+
+422 
+
+Validation Error
+
+DELETE
+/characters/{character_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"success": true,
+"character_id": "string",
+"files_deleted": 0,
+"animations_deleted": 0,
+"error": "string"
+}
+Export character as ZIP
+
+Download a character with all animations as a ZIP file.
+
+This endpoint creates a ZIP file containing all rotation images, animation frames, and metadata for a character. Perfect for using characters in external tools, game engines, or archiving your creations.
+
+ZIP Contents:
+
+rotations/ - All character rotation images (4 or 8 directions)
+animations/ - All animation frames organized by animation type and direction
+metadata.json - Complete character information with keypoints for all frames
+
+Collision Detection: Includes keypoints for all frames + PNG transparency for pixel-perfect collision detection.
+
+File Structure:
+
+character_name.zip
+├── rotations/
+│   ├── south.png
+│   ├── west.png
+│   ├── east.png
+│   ├── north.png
+│   └── [8-direction files if applicable]
+├── animations/
+│   └── {animation_type}/
+│       └── {direction}/
+│           ├── frame_000.png
+│           ├── frame_001.png
+│           └── ...
+└── metadata.json
+
+
+Metadata Structure: The metadata.json includes:
+
+Character information (name, prompt, size, template)
+File organization structure
+Keypoints data for template-based characters
+Export version and timestamp
+
+Keypoints Data: For characters created with templates, keypoints are included with:
+
+x,y coordinates for each body part
+Labels (nose, left_arm, etc.)
+Scaled to character's actual size
+Available for all rotations and animation frames
+
+Authentication: No authentication required - the random character ID serves as the access key.
+
+File Size: ZIP files are uncompressed for faster generation and compatibility. File size depends on character image size and number of animations.
+
+Status Codes:
+
+200: ZIP file ready for download
+423: Character or animations still being generated (check status later)
+404: Character not found
+PATH PARAMETERS
+character_id
+required
+	
+string (Character Id)
+Responses
+200 
+
+ZIP file download containing character data
+
+404 
+
+Character not found
+
+422 
+
+Validation Error
+
+423 
+
+Character or animations still being generated
+
+GET
+/characters/{character_id}/zip
+Response samples
+200422
+Content type
+application/json
+application/zip
+application/json
+Copy
+null
+Update character tags
+
+Update the tags for a specific character.
+
+This endpoint replaces all tags for a character with the provided list. Tags are used for filtering and organizing your characters.
+
+Features:
+
+Replace all tags at once (set operation)
+Automatic normalization (trim whitespace)
+Case-insensitive duplicate detection
+Maximum 20 tags per character
+Maximum 50 characters per tag
+
+Tag Validation:
+
+Empty strings are ignored
+Duplicate tags (case-insensitive) are removed
+Leading/trailing whitespace is trimmed
+Tags longer than 50 characters are rejected
+
+Common Use Cases:
+
+Organize characters by game genre: ["rpg", "fantasy"]
+Mark character types: ["npc", "enemy", "boss"]
+Track creation status: ["finished", "needs-animation"]
+Group by visual style: ["cute", "pixel-art", "8-bit"]
+
+Authentication: Requires a valid API token. You can only update tags for characters you created.
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+character_id
+required
+	
+string (Character Id)
+REQUEST BODY SCHEMA: application/json
+required
+tags
+required
+	
+Array of strings (Tags) <= 20 items
+
+List of tags to assign to the character
+
+Responses
+200 
+
+Tags updated successfully
+
+400 
+
+Invalid tag format or validation error
+
+401 
+
+Invalid API token
+
+403 
+
+Character belongs to another user
+
+404 
+
+Character not found
+
+422 
+
+Validation Error
+
+429 
+
+Too many requests
+
+PATCH
+/characters/{character_id}/tags
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"tags": 
+[
+"wizard",
+"magic",
+"fire",
+"rpg"
+]
+}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"tags": 
+[
+"wizard",
+"magic",
+"fire"
+],
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Background Jobs
+Get background job status
+
+Check the status and results of a background job.
+
+This endpoint allows you to monitor the progress of background operations like character creation and animation generation. Background jobs are used for expensive operations that take time to complete.
+
+Job Statuses:
+
+processing - Job is currently running
+completed - Job finished successfully
+failed - Job encountered an error
+
+Usage Pattern:
+
+Create a character or animation (returns background_job_id)
+Poll this endpoint periodically to check status
+When status is completed, access results in last_response
+
+Response Data:
+
+For character creation: character_id, directions_count, character info
+For animations: animation_id, frame_count, animation details
+Storage information and file organization details
+
+Authentication: Requires a valid API token. You can only access jobs you created.
+
+Error Handling:
+
+404: Job not found or doesn't belong to you
+Jobs are automatically cleaned up after completion
+
+Polling Recommendations:
+
+Poll every 5-10 seconds while status is processing
+Stop polling once status is completed or failed
+Character creation typically takes 30-60 seconds
+Animations may take longer depending on frame count and directions
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+job_id
+required
+	
+string (Job Id)
+Responses
+200 
+
+Successfully retrieved job status
+
+401 
+
+Invalid API token
+
+404 
+
+Job not found or doesn't belong to user
+
+422 
+
+Validation Error
+
+429 
+
+Too many requests
+
+GET
+/background-jobs/{job_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"id": "123e4567-e89b-12d3-a456-426614174000",
+"status": "completed",
+"created_at": "2024-01-15T10:30:00Z",
+"last_response": 
+{
+"character_id": "456e7890-e89b-12d3-a456-426614174001",
+"saved_to_storage": true,
+"uploaded_directions": 
+[],
+"directions_count": 4
+},
+"usage": 
+{
+"type": "usd",
+"usd": 0
+}
+}
+Objects
+Create object (1-direction consistent-style or 8-direction)
+
+Queues an object generation job. Returns immediately with a background_job_id and object_id. Poll GET /v2/objects/{object_id} for status. 1-direction mode uses the consistent-style pipeline. 8-direction mode uses the rotations pipeline. The legacy pipeline lives at POST /v2/map-objects.
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+description
+required
+	
+string (Description) [ 1 .. 2000 ] characters
+
+directions	
+integer (Directions)
+Default: 8
+Enum: 1 8
+
+Number of directional views. 1 routes to the consistent-style pipeline (useful for static map/decoration objects). 8 routes to the rotations pipeline (useful for items the player rotates around).
+
+
+image_size	
+object (ObjectImageSize)
+Default: {"width":64,"height":64}
+
+Square or rectangular image size for object generation.
+
+
+view	
+string (View)
+Default: "low top-down"
+Enum: "low top-down" "high top-down" "side"
+
+n_frames	
+integer (N Frames)
+Default: 1
+
+Only used when directions=1. Number of candidate frames to generate. Must be one of {1, 4, 16, 64}; the natural value depends on image_size (≤42px → 64, ≤85px → 16, ≤170px → 4, else 1). n_frames=1 returns a completed single-direction object directly. n_frames>1 returns an object with status='review' for the caller to select frames via POST /v2/objects/{id}/select-frames.
+
+
+style_images	
+Array of objects (Style Images)
+
+Style reference images (consistent-style mode only, max 8). When empty, the pipeline uses default style references for the chosen object_view.
+
+
+object_view	
+Object View (string) or Object View (null) (Object View)
+
+Default-style category for consistent-style mode when style_images is empty.
+
+
+item_descriptions	
+Array of Item Descriptions (strings) or Item Descriptions (null) (Item Descriptions)
+
+Per-frame descriptions for consistent-style multi-frame packs.
+
+
+reference_image	
+Base64Image (object) or null
+
+Reference image for 8-direction generation. Used as the south view.
+
+
+no_background	
+boolean (No Background)
+Default: true
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+
+variation_of	
+Variation Of (string) or Variation Of (null) (Variation Of)
+
+Object ID this is a variation of (groups them).
+
+
+group_id	
+Group Id (string) or Group Id (null) (Group Id)
+
+Group ID for related objects.
+
+Responses
+200 
+
+Object generation queued
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient generations or credits
+
+422 
+
+Validation error
+
+429 
+
+Concurrent job limit reached
+
+POST
+/objects
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"description": "string",
+"directions": 1,
+"image_size": 
+{
+"height": 64,
+"width": 64
+},
+"view": "low top-down",
+"n_frames": 1,
+"style_images": 
+[
+{}
+],
+"object_view": "top-down",
+"item_descriptions": 
+[
+"string"
+],
+"reference_image": 
+{
+"type": "base64",
+"base64": "string",
+"format": "png"
+},
+"no_background": true,
+"seed": 0,
+"variation_of": "string",
+"group_id": "string"
+}
+Response samples
+200
+Content type
+application/json
+Copy
+{
+"background_job_id": "123e4567-e89b-12d3-a456-426614174000",
+"directions": 8,
+"object_id": "456e7890-e89b-12d3-a456-426614174001",
+"status": "queued",
+"success": true
+}
+Animate an existing object
+
+Queues an animation generation job. Returns immediately with a background_job_id and animation_id. If wait_for_source is True (default), polls up to 30s for the source object to complete generation before queueing.
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+object_id
+required
+	
+string (Object Id)
+
+ID of a completed object to animate
+
+
+direction
+required
+	
+string (Direction)
+Enum: "south" "south-west" "west" "north-west" "north" "north-east" "east" "south-east" "unknown"
+
+Direction to animate
+
+
+animation_description
+required
+	
+string (Animation Description) [ 1 .. 1000 ] characters
+
+frame_count	
+integer (Frame Count) [ 4 .. 16 ]
+Default: 8
+
+Even number 4-16
+
+
+no_background	
+boolean (No Background)
+Default: true
+
+animation_name	
+Animation Name (string) or Animation Name (null) (Animation Name)
+
+wait_for_source	
+boolean (Wait For Source)
+Default: true
+
+When True, the API polls up to 30s waiting for the source object to reach status='completed'. When False, returns 400 immediately if the source object is not yet completed.
+
+Responses
+200 
+
+Animation queued
+
+400 
+
+Source object not completed
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient generations
+
+404 
+
+Source object not found
+
+422 
+
+Validation Error
+
+429 
+
+Concurrent job limit reached
+
+POST
+/animate-object
+Request samples
+Payload
+Content type
+application/json
+Copy
+{
+"animation_description": "floating gently",
+"direction": "south",
+"frame_count": 8,
+"object_id": "456e7890-e89b-12d3-a456-426614174001"
+}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"background_job_id": "string",
+"animation_id": "string",
+"object_id": "string",
+"status": "queued"
+}
+Create a variation of an existing object
+
+Queues a variation generation job that applies a text edit to an existing object's image(s). The new object is grouped with the source.
+
+AUTHORIZATIONS:
+HTTPBearer
+REQUEST BODY SCHEMA: application/json
+required
+object_id
+required
+	
+string (Object Id)
+
+ID of the source object
+
+
+edit_description
+required
+	
+string (Edit Description) [ 1 .. 1000 ] characters
+
+no_background	
+boolean (No Background)
+Default: true
+
+seed	
+Seed (integer) or Seed (null) (Seed)
+Responses
+200 
+
+Variation queued
+
+400 
+
+Source object is not completed
+
+401 
+
+Invalid API token
+
+402 
+
+Insufficient generations
+
+404 
+
+Source object not found
+
+422 
+
+Validation Error
+
+429 
+
+Concurrent job limit reached
+
+POST
+/vary-object
+Request samples
+Payload
+Content type
+application/json
+Copy
+{
+"edit_description": "add moss and lichen",
+"object_id": "456e7890-e89b-12d3-a456-426614174001"
+}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"background_job_id": "string",
+"object_id": "string",
+"status": "queued"
+}
+Promote selected frames of a review object to completed objects
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+object_id
+required
+	
+string (Object Id)
+REQUEST BODY SCHEMA: application/json
+required
+indices
+required
+	
+Array of integers (Indices)
+
+Frame indices (0-based) to keep as completed individual objects.
+
+
+common_tag	
+Common Tag (string) or Common Tag (null) (Common Tag)
+
+Optional tag applied to every newly-created object.
+
+Responses
+200 
+
+Frames promoted
+
+400 
+
+Object not in review status / invalid indices
+
+401 
+
+Invalid API token
+
+404 
+
+Object not found
+
+422 
+
+Validation Error
+
+POST
+/objects/{object_id}/select-frames
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"common_tag": "forest-pack",
+"indices": 
+[
+0,
+3,
+7
+]
+}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"created_object_ids": 
+[
+"string"
+]
+}
+Dismiss a review object without saving any frames
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+object_id
+required
+	
+string (Object Id)
+Responses
+200 
+
+Review dismissed
+
+400 
+
+Object not in review status
+
+401 
+
+Invalid API token
+
+404 
+
+Object not found
+
+422 
+
+Validation Error
+
+POST
+/objects/{object_id}/dismiss-review
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+}
+}
+Object Management
+List user's objects
+
+List all objects created by the authenticated user.
+
+This endpoint returns a paginated list of all objects you've created.
+
+Features:
+
+Pagination support with limit and offset parameters
+Preview URLs for quick object identification
+Complete object metadata
+
+Authentication: Requires a valid API token in the Authorization header.
+
+Pagination:
+
+Use limit to control how many objects to return (1-100)
+Use offset to skip objects for pagination
+Total count is included in response for pagination UI
+AUTHORIZATIONS:
+HTTPBearer
+QUERY PARAMETERS
+limit	
+integer (Limit) [ 1 .. 100 ]
+Default: 50
+
+Maximum number of objects to return
+
+
+offset	
+integer (Offset) >= 0
+Default: 0
+
+Number of objects to skip
+
+Responses
+200 
+
+Successfully retrieved object list
+
+401 
+
+Invalid API token
+
+422 
+
+Invalid pagination parameters
+
+GET
+/objects
+Response samples
+200
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"objects": 
+[
+{}
+],
+"total": 1
+}
+Get object details
+
+Get detailed information about a specific object.
+
+This endpoint returns complete object information including all rotation image URLs and metadata.
+
+Features:
+
+Complete object information and settings
+URLs for all rotation images (4 directions)
+Generation parameters used during creation
+
+Authentication: Requires a valid API token. You can only access objects you created.
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+object_id
+required
+	
+string (Object Id)
+Responses
+200 
+
+Successfully retrieved object details
+
+401 
+
+Invalid API token
+
+403 
+
+Object belongs to another user
+
+404 
+
+Object not found
+
+422 
+
+Validation Error
+
+GET
+/objects/{object_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"created_at": "2024-01-15T10:30:00Z",
+"directions": 4,
+"id": "123e4567-e89b-12d3-a456-426614174000",
+"name": "Treasure Chest",
+"prompt": "wooden treasure chest with gold trim",
+"rotation_urls": 
+{
+"east": "https://cdn.pixellab.ai/objects/user-id/obj-id/rotations/east.png",
+"north": "https://cdn.pixellab.ai/objects/user-id/obj-id/rotations/north.png",
+"south": "https://cdn.pixellab.ai/objects/user-id/obj-id/rotations/south.png",
+"west": "https://cdn.pixellab.ai/objects/user-id/obj-id/rotations/west.png"
+},
+"size": 
+{
+"height": 64,
+"width": 64
+},
+"status": "completed",
+"style_settings": 
+{
+"detail": "medium detail",
+"outline": "single color black outline",
+"shading": "basic shading"
+},
+"tags": 
+[
+"item",
+"treasure",
+"rpg"
+],
+"view": "low top-down"
+}
+Delete an object and all associated data
+
+Delete an object and all its rotation images.
+
+This permanently deletes:
+
+The object record from the database
+All rotation images from storage
+All associated tags
+
+Authentication: Requires a valid API token. You can only delete objects you created.
+
+Warning: This action cannot be undone.
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+object_id
+required
+	
+string (Object Id)
+Responses
+200 
+
+Object deleted successfully
+
+401 
+
+Invalid API token
+
+403 
+
+Object belongs to another user
+
+404 
+
+Object not found
+
+422 
+
+Validation Error
+
+DELETE
+/objects/{object_id}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"usage": 
+{
+"type": "usd",
+"usd": 0.02
+},
+"success": true,
+"object_id": "string",
+"error": "string"
+}
+Update object tags
+
+Update the tags for a specific object.
+
+This endpoint replaces all tags for an object with the provided list. Tags are used for filtering and organizing your objects.
+
+Features:
+
+Replace all tags at once (set operation)
+Automatic normalization (trim whitespace)
+Case-insensitive duplicate detection
+Maximum 20 tags per object
+Maximum 50 characters per tag
+
+Authentication: Requires a valid API token. You can only update tags for objects you created.
+
+AUTHORIZATIONS:
+HTTPBearer
+PATH PARAMETERS
+object_id
+required
+	
+string (Object Id)
+REQUEST BODY SCHEMA: application/json
+required
+tags
+required
+	
+Array of strings (Tags) <= 20 items
+
+List of tags to assign to the object
+
+Responses
+200 
+
+Tags updated successfully
+
+400 
+
+Invalid tag format or validation error
+
+401 
+
+Invalid API token
+
+403 
+
+Object belongs to another user
+
+404 
+
+Object not found
+
+422 
+
+Validation Error
+
+PATCH
+/objects/{object_id}/tags
+Request samples
+Payload
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"tags": 
+[
+"item",
+"treasure",
+"rpg"
+]
+}
+Response samples
+200422
+Content type
+application/json
+Copy
+Expand allCollapse all
+{
+"tags": 
+[
+"item",
+"treasure",
+"rpg"
+]
+}
+Documentation
+Get LLM-friendly API documentation
+
+Returns API documentation formatted for Large Language Models (LLMs).
+
+This endpoint provides a text-based overview of all v2 API endpoints,
+formatted in a way that's easily parseable by AI assistants like Claude,
+GPT-4, and other LLMs.
+
+## Usage
+
+You can reference this documentation in AI prompts:
+- `@api.pixellab.ai/v2/llms.txt` in Claude
+- Direct URL access for other tools
+
+## Format
+
+The documentation includes:
+- Endpoint paths and methods
+- Required and optional parameters
+- Authentication requirements
+- Response formats
+- Usage examples
+
+## Auto-Generation
+
+This documentation is auto-generated from the OpenAPI specification,
+ensuring it stays in sync with the actual API implementation.
+
+Responses
+200 
+
+LLM-friendly API documentation
+
+GET
+/llms.txt
+Response samples
+200
+Content type
+text/plain
+Copy
+# PixelLab v2 API Documentation
+
+...

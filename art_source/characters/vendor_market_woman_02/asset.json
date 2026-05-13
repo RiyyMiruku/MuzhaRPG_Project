@@ -1,0 +1,69 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T17:48:27",
+  "updated_at": "2026-05-12T17:53:37",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
+  },
+  "tags": [
+    "zone:market",
+    "category:vendor",
+    "chapter:1"
+  ],
+  "character_id": "6703b411-2db7-4458-b632-38b3124ea45e",
+  "preset": "npc",
+  "directions": 4,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "middle-aged taiwanese female vendor in her late forties, sturdy build, light blue checkered short-sleeved shirt, brown canvas apron, dark trousers, black rubber boots, short permed hair, brisk neutral expression, sleeve guards on both forearms, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south"
+  ],
+  "local_path": "art_source/characters/vendor_market_woman_02",
+  "stages": {
+    "generate_4dir_base": {
+      "completed_at": "2026-05-12T17:49:47",
+      "paths": [
+        "art_source/characters/vendor_market_woman_02/rotations/east.png",
+        "art_source/characters/vendor_market_woman_02/rotations/west.png",
+        "art_source/characters/vendor_market_woman_02/rotations/north.png",
+        "art_source/characters/vendor_market_woman_02/rotations/south.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T17:53:37",
+      "paths": [
+        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
+        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:53:37",
+      "paths": [
+        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.png",
+        "art_source/characters/vendor_market_woman_02/spritesheet/vendor_market_woman_02.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:53:37",
+      "paths": [
+        "game/assets/textures/characters/vendor_market_woman_02.png",
+        "game/assets/textures/characters/vendor_market_woman_02.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ]
+  },
+  "imported_at": "2026-05-12T17:53:37",
+  "game_png_path": "game/assets/textures/characters/vendor_market_woman_02.png",
+  "game_json_path": "game/assets/textures/characters/vendor_market_woman_02.json"
+}

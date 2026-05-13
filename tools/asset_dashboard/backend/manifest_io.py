@@ -83,10 +83,20 @@ def _parse_tag(tags: list[str], key: str) -> str | None:
     return None
 
 
-def load_assets(manifest_path: Path) -> list[AssetSummary]:
-    if not manifest_path.exists():
-        return []
-    raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+def load_assets(manifest_data: dict | Path) -> list[AssetSummary]:
+    """Project manifest into flat asset summaries for the dashboard.
+
+    Accepts either:
+      - a dict (the modern path: pass `pipeline_manifest.load()`)
+      - a Path (legacy: aggregated manifest.json file). Kept for tests +
+        any caller still using the v1 file directly.
+    """
+    if isinstance(manifest_data, Path):
+        if not manifest_data.exists():
+            return []
+        raw = json.loads(manifest_data.read_text(encoding="utf-8"))
+    else:
+        raw = manifest_data
     out: list[AssetSummary] = []
     for bucket, asset_type in _BUCKETS.items():
         section = raw.get(bucket) or {}

@@ -75,3 +75,10 @@ CLAUDE.md
 .claude.json
 .claude.local.json
 
+
+# manifest debug / runtime artifacts (do not track)
+art_source/manifest.json.lock
+art_source/manifest.json.broken-bak
+art_source/manifest.json.bak-*
+art_source/manifest.json.tmp.*
+art_source/**/asset.json.tmp.*

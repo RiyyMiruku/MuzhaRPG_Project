@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:35:31",
+  "updated_at": "2026-05-12T17:36:03",
+  "tags": [
+    "zone:market",
+    "category:decoration",
+    "chapter:1"
+  ],
+  "object_id": "a655dd76-1ff5-48dc-a26e-9f8d92b10cdd",
+  "kind": "iso_prop",
+  "description": "woven bamboo market basket filled with assorted taiwanese produce, sweet potatoes scallions and bok choy spilling out, well-used worn rim",
+  "size": {
+    "width": 24,
+    "height": 24
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:36:03",
+      "paths": [
+        "art_source/objects/market_basket_produce/market_basket_produce.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:36:03",
+      "paths": [
+        "art_source/objects/market_basket_produce/market_basket_produce.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:36:03",
+      "paths": [
+        "game/assets/textures/props/market_basket_produce.png",
+        "game/src/maps/props/market_basket_produce.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/market_basket_produce/market_basket_produce.png",
+  "imported_at": "2026-05-12T17:36:03",
+  "game_png_path": "game/assets/textures/props/market_basket_produce.png",
+  "game_tscn_path": "game/src/maps/props/market_basket_produce.tscn",
+  "collision": "bottom_16x16"
+}

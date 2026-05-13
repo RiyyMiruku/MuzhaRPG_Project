@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:36:03",
+  "updated_at": "2026-05-12T17:36:53",
+  "tags": [
+    "zone:market",
+    "category:key_item",
+    "chapter:1"
+  ],
+  "object_id": "181c452c-0338-4204-b23d-9d3d929e72f7",
+  "kind": "iso_prop",
+  "description": "old black resin fountain pen with tarnished silver clip, slightly scratched, cap on, classic late-1970s taiwanese style",
+  "size": {
+    "width": 16,
+    "height": 16
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:36:53",
+      "paths": [
+        "art_source/objects/fountain_pen_old/fountain_pen_old.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:36:53",
+      "paths": [
+        "art_source/objects/fountain_pen_old/fountain_pen_old.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:36:53",
+      "paths": [
+        "game/assets/textures/props/fountain_pen_old.png",
+        "game/src/maps/props/fountain_pen_old.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/fountain_pen_old/fountain_pen_old.png",
+  "imported_at": "2026-05-12T17:36:53",
+  "game_png_path": "game/assets/textures/props/fountain_pen_old.png",
+  "game_tscn_path": "game/src/maps/props/fountain_pen_old.tscn",
+  "collision": "bottom_16x16"
+}

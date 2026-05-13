@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T14:55:01",
+  "updated_at": "2026-05-12T14:56:19",
+  "tags": [
+    "zone:market",
+    "category:terrain",
+    "chapter:1"
+  ],
+  "tileset_id": "fa3acc97-493f-4b90-9af9-6fb9fe892025",
+  "lower": "weathered grey concrete pavement with cracks and stains from years of market use",
+  "upper": "small red square ceramic floor tiles laid in grid pattern, traditional taiwanese market walkway",
+  "tile_size": 16,
+  "topdown_path": "art_source/tilesets/market_concrete_tile/market_concrete_tile_topdown.png",
+  "stages": {
+    "generate_atlas": {
+      "completed_at": "2026-05-12T14:56:19",
+      "paths": [
+        "art_source/tilesets/market_concrete_tile/market_concrete_tile_topdown.png"
+      ]
+    },
+    "iso_project": {
+      "completed_at": "2026-05-12T14:56:19",
+      "paths": [
+        "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png"
+      ]
+    },
+    "verify_in_godot": {
+      "completed_at": "2026-05-12T14:56:19",
+      "paths": [
+        "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T14:56:19",
+      "paths": [
+        "game/assets/textures/tilesets/market_concrete_tile.png"
+      ]
+    }
+  },
+  "iso_path": "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png",
+  "imported_at": "2026-05-12T14:56:19",
+  "game_png_path": "game/assets/textures/tilesets/market_concrete_tile.png"
+}

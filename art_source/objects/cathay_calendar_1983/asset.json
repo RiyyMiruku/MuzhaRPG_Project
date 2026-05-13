@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:34:56",
+  "updated_at": "2026-05-12T17:35:33",
+  "tags": [
+    "zone:market",
+    "category:decoration",
+    "chapter:1"
+  ],
+  "object_id": "cb5eb094-fa02-4bda-92c7-756ce1e7f575",
+  "kind": "iso_prop",
+  "description": "traditional taiwanese wall calendar from 1983 with cathay life insurance branding at top, large red year numbers, monthly grid with lunar dates, small colour photograph in upper portion, paper slightly faded",
+  "size": {
+    "width": 32,
+    "height": 32
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:35:33",
+      "paths": [
+        "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:35:33",
+      "paths": [
+        "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:35:33",
+      "paths": [
+        "game/assets/textures/props/cathay_calendar_1983.png",
+        "game/src/maps/props/cathay_calendar_1983.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png",
+  "imported_at": "2026-05-12T17:35:33",
+  "game_png_path": "game/assets/textures/props/cathay_calendar_1983.png",
+  "game_tscn_path": "game/src/maps/props/cathay_calendar_1983.tscn",
+  "collision": "bottom_16x16"
+}

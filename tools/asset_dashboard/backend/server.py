@@ -43,7 +43,7 @@ def health() -> dict:
 
 @app.get("/api/manifest")
 def manifest() -> dict:
-    assets = [a.to_dict() for a in load_assets(MANIFEST_PATH)]
+    assets = [a.to_dict() for a in load_assets(pipeline_manifest.load())]
     return {"assets": assets, "manifest_path": str(MANIFEST_PATH)}
 
 
@@ -67,7 +67,7 @@ def update_prompt(asset_type: str, name: str, body: PromptUpdate) -> dict:
     if asset_type not in ("character", "tileset", "object"):
         raise HTTPException(400, "invalid asset_type")
     # Refuse to overwrite a prompt for an already-completed stage; client must POST /remake first.
-    assets = {a.name: a for a in load_assets(MANIFEST_PATH) if a.asset_type == asset_type}
+    assets = {a.name: a for a in load_assets(pipeline_manifest.load()) if a.asset_type == asset_type}
     asset = assets.get(name)
     if asset is None:
         raise HTTPException(404, f"{asset_type} {name!r} not found")
@@ -141,15 +141,13 @@ def delete_asset(asset_type: str, name: str, keep_files: bool = False) -> dict:
     Pass ?keep_files=true to preserve files (manifest-only delete)."""
     if asset_type not in ("character", "tileset", "object"):
         raise HTTPException(400, "invalid asset_type")
-    bucket = {"character": "characters", "tileset": "tilesets", "object": "objects"}[asset_type]
-    import json as _json_del
-    if not MANIFEST_PATH.exists():
-        raise HTTPException(404, "manifest missing")
-    data = _json_del.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
-    if name not in (data.get(bucket) or {}):
+    remover = {
+        "character": pipeline_manifest.remove_character,
+        "tileset":   pipeline_manifest.remove_tileset,
+        "object":    pipeline_manifest.remove_object,
+    }[asset_type]
+    if not remover(name):
         raise HTTPException(404, f"{asset_type} {name!r} not found")
-    del data[bucket][name]
-    MANIFEST_PATH.write_text(_json_del.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
 
     deleted_files: list[str] = []
     file_errors: list[str] = []
@@ -272,7 +270,7 @@ def create_asset(body: CreateAssetRequest) -> dict:
         raise HTTPException(400, f"invalid name: {e}") from e
 
     # 2. refuse if asset already exists (caller should use /remake to redo)
-    existing = {a.name: a for a in load_assets(MANIFEST_PATH) if a.asset_type == body.asset_type}
+    existing = {a.name: a for a in load_assets(pipeline_manifest.load()) if a.asset_type == body.asset_type}
     if body.name in existing:
         raise HTTPException(409, f"{body.asset_type} {body.name!r} already exists; use /remake instead")
 
@@ -417,11 +415,12 @@ _ALLOWED_FILE_ROOTS: list[str] = [
 
 
 def _read_manifest_raw() -> dict:
-    """Direct JSON read of the manifest file. Used by stage_detail to access
-    raw stages structure (load_assets() doesn't expose stage.paths)."""
-    if not MANIFEST_PATH.exists():
-        return {}
-    return _json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    """Aggregate manifest read. Returns the same shape as the legacy v1
+    single manifest.json — `{characters, tilesets, objects}` — but in v2 it
+    walks per-asset asset.json files via `pipeline_manifest.load()`. Kept as
+    a shim because several call sites pluck raw stage paths or kind/preset
+    fields from the bucket dict directly."""
+    return pipeline_manifest.load()
 
 
 @app.get("/api/asset/{asset_type}/{name}/stage/{stage}")

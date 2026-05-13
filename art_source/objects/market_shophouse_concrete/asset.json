@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:38:14",
+  "updated_at": "2026-05-12T17:39:03",
+  "tags": [
+    "zone:market",
+    "category:building",
+    "chapter:1"
+  ],
+  "object_id": "7ac39d34-8505-4ec2-90bd-6bbacdabd42e",
+  "kind": "building",
+  "description": "post-war taiwanese two-story concrete shophouse, light grey exposed concrete facade slightly weathered, metal roll-up shutter on ground floor, simple rectangular windows on upper floor with aluminum frames, flat concrete roof with utility pipes, faded plastic signboard",
+  "view": "high_top_down",
+  "size": {
+    "width": 128,
+    "height": 128
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:39:03",
+      "paths": [
+        "art_source/objects/market_shophouse_concrete/market_shophouse_concrete.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:39:03",
+      "paths": [
+        "art_source/objects/market_shophouse_concrete/market_shophouse_concrete.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:39:03",
+      "paths": [
+        "game/assets/textures/props/market_shophouse_concrete.png",
+        "game/src/maps/props/market_shophouse_concrete.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/market_shophouse_concrete/market_shophouse_concrete.png",
+  "imported_at": "2026-05-12T17:39:03",
+  "game_png_path": "game/assets/textures/props/market_shophouse_concrete.png",
+  "game_tscn_path": "game/src/maps/props/market_shophouse_concrete.tscn",
+  "collision": "bottom_16x16"
+}

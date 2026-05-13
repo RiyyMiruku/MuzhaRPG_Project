@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:35:34",
+  "updated_at": "2026-05-12T17:35:59",
+  "tags": [
+    "zone:market",
+    "category:furniture",
+    "chapter:1"
+  ],
+  "object_id": "732c19f2-a56c-4854-849d-2724c0997401",
+  "kind": "iso_prop",
+  "description": "small low wooden taiwanese market stool, dark stained wood worn smooth, four simple legs, the kind elders sit on to chat at market entrances",
+  "size": {
+    "width": 16,
+    "height": 16
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:35:59",
+      "paths": [
+        "art_source/objects/wooden_stool_old/wooden_stool_old.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:35:59",
+      "paths": [
+        "art_source/objects/wooden_stool_old/wooden_stool_old.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:35:59",
+      "paths": [
+        "game/assets/textures/props/wooden_stool_old.png",
+        "game/src/maps/props/wooden_stool_old.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/wooden_stool_old/wooden_stool_old.png",
+  "imported_at": "2026-05-12T17:35:59",
+  "game_png_path": "game/assets/textures/props/wooden_stool_old.png",
+  "game_tscn_path": "game/src/maps/props/wooden_stool_old.tscn",
+  "collision": "bottom_16x16"
+}

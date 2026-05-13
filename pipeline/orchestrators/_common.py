@@ -139,6 +139,38 @@ ALL_8_DIRECTIONS: list[str] = [
 ]
 
 
+def run_character_animation_template(
+    ctx: StageContext,
+    action: str,
+    *,
+    override_template_id: str | None = None,
+    only_directions: list[str] | None = None,
+    isometric: bool = False,
+) -> list[str]:
+    """Run an animation stage in TEMPLATE mode (Pixellab skeleton-driven).
+
+    This is the **preferred** entry point for stock actions like idle/walk/
+    running — it always sends `mode=template` + `template_animation_id`,
+    never v3 + prompt. Stable, predictable, 1 gen/direction (cheap).
+
+    `action`: key into pipeline.animation_templates.DEFAULT_TEMPLATES.
+    `override_template_id`: swap the default template (e.g., user passed
+        --walk-template-id walking-4-frames). Directions/frame_count stay
+        from registry.
+    """
+    # Lazy import: animation_templates is light, but keeping import surface
+    # consistent with the other lazy imports in run_character_animation.
+    import animation_templates as at
+    cfg = at.get_template(action, override_template_id=override_template_id)
+    return run_character_animation(
+        ctx, action, cfg.directions, cfg.frame_count,
+        stage_name=f"add_{action}_animation",
+        only_directions=only_directions,
+        isometric=isometric,
+        template_animation_id=cfg.template_id,
+    )
+
+
 def run_character_animation(
     ctx: StageContext,
     action: str,
@@ -147,12 +179,16 @@ def run_character_animation(
     *,
     stage_name: str | None = None,
     only_directions: list[str] | None = None,
+    isometric: bool = False,
+    template_animation_id: str | None = None,
 ) -> list[str]:
     """執行 character animation:submit job → poll 每方向 → 存 frame → 寫 manifest。
 
-    `action` 是預設 prompt(供 fallback 與 Pixellab API 的 action_description 欄位)。
-    若 `stage_name` 提供且 manifest 內有該 stage 的 prompt,則用 prompt 取代 action 當作
-    送給 Pixellab 的 action_description。
+    Two paths:
+      - **v3 (default)**: action_description from manifest prompt or `action` arg
+      - **template**: pass `template_animation_id` (e.g. "breathing-idle"). Skeleton-
+        based, more stable than v3 for stock motions, 1 gen/direction (cheaper).
+        action_description still sent (some templates accept it as flavoring).
     """
     # Lazy import: pixellab_client 拉很多 transitive deps,放 module 頂層
     # 會讓 _common 的 import 變重;且 post_process 也是業務模組。
@@ -164,11 +200,17 @@ def run_character_animation(
     char_id: str = char["character_id"]
     token = plab.load_token()
 
-    action_description = action
-    if stage_name is not None:
-        from_manifest = manifest.get_prompt(ctx.asset_type, ctx.name, stage_name)
-        if from_manifest:
-            action_description = from_manifest
+    # Template mode: skeleton brings its own motion description. Skip ALL
+    # action_description plumbing including pre-seeded manifest prompts —
+    # those are written for v3's anti-drift workaround and Pixellab will
+    # silently downgrade to v3 if action_description sneaks in.
+    action_description: str | None = None
+    if not template_animation_id:
+        action_description = action
+        if stage_name is not None:
+            from_manifest = manifest.get_prompt(ctx.asset_type, ctx.name, stage_name)
+            if from_manifest:
+                action_description = from_manifest
 
     effective_directions = list(directions)
     if only_directions:
@@ -187,6 +229,8 @@ def run_character_animation(
         action_description=action_description,
         directions=effective_directions,
         frame_count=frame_count,
+        isometric=isometric,
+        template_animation_id=template_animation_id,
     )
 
     # New flow: paste frames directly into the per-character spritesheet

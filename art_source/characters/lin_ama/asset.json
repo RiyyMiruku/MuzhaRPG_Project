@@ -1,0 +1,93 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T17:20:50",
+  "updated_at": "2026-05-12T17:26:38",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "tags": [
+    "zone:market",
+    "category:elder_family",
+    "chapter:1"
+  ],
+  "character_id": "9b1524af-aa11-4ff6-9ea9-c9d271c1f1f1",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "elderly taiwanese woman in her early seventies, small slender build slightly stooped, dark navy traditional minnan blouse with mandarin collar, loose black trousers, black cloth slip-on shoes, silver-grey hair pulled back in a small bun, stern weathered expression with deep wrinkles, jade bangle on left wrist, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/lin_ama",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T17:22:00",
+      "paths": [
+        "art_source/characters/lin_ama/rotations/east.png",
+        "art_source/characters/lin_ama/rotations/west.png",
+        "art_source/characters/lin_ama/rotations/north.png",
+        "art_source/characters/lin_ama/rotations/south.png",
+        "art_source/characters/lin_ama/rotations/north_east.png",
+        "art_source/characters/lin_ama/rotations/north_west.png",
+        "art_source/characters/lin_ama/rotations/south_east.png",
+        "art_source/characters/lin_ama/rotations/south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T17:23:49",
+      "paths": [
+        "art_source/characters/lin_ama/spritesheet/lin_ama.png",
+        "art_source/characters/lin_ama/spritesheet/lin_ama.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T17:26:38",
+      "paths": [
+        "art_source/characters/lin_ama/spritesheet/lin_ama.png",
+        "art_source/characters/lin_ama/spritesheet/lin_ama.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:26:38",
+      "paths": [
+        "art_source/characters/lin_ama/spritesheet/lin_ama.png",
+        "art_source/characters/lin_ama/spritesheet/lin_ama.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:26:38",
+      "paths": [
+        "game/assets/textures/characters/lin_ama.png",
+        "game/assets/textures/characters/lin_ama.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north"
+    ],
+    "walk": [
+      "south",
+      "south-east",
+      "east",
+      "north-east",
+      "north",
+      "north-west",
+      "west"
+    ]
+  },
+  "imported_at": "2026-05-12T17:26:38",
+  "game_png_path": "game/assets/textures/characters/lin_ama.png",
+  "game_json_path": "game/assets/textures/characters/lin_ama.json"
+}

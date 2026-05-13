@@ -166,6 +166,57 @@ _RETRY_STATUS: tuple[int, ...] = (500, 502, 503, 504)
 _MAX_RETRIES: int = 4
 _BACKOFF_BASE: float = 5.0
 
+# 429 = Pixellab background-job quota (Tier 1 = 8 concurrent). Background jobs
+# take 10–30 min, so a tight retry loop is pointless. Sleep meaningful chunks
+# until a slot opens. Caller is expected to be running inside the dashboard's
+# subprocess throttle (max 3), so at most 3 of these will sleep concurrently.
+_QUOTA_BACKOFF_SECONDS: float = 60.0
+_QUOTA_MAX_WAIT_SECONDS: float = 1800.0  # give up after 30 min
+
+# When a polled background job comes back failed-due-to-quota, the only
+# remedy is to POST again (Pixellab won't restart a failed job). Each retry
+# burns a fresh character_id / object_id, so cap the attempts.
+_QUOTA_JOB_MAX_RETRIES: int = 4
+_QUOTA_JOB_BACKOFF_SECONDS: float = 60.0
+
+
+class PixellabQuotaJobError(RuntimeError):
+    """Raised when a polled background job comes back failed with a quota /
+    rate-limit reason. Caller should sleep and re-submit (this creates a new
+    Pixellab job — the failed one cannot be resumed)."""
+
+
+def _post_submit_with_quota_retry(
+    token: str,
+    url: str,
+    payload: dict[str, Any],
+    timeout: float = 60.0,
+) -> "requests.Response":
+    """POST + tolerate 429 (Pixellab quota) by sleeping and retrying.
+
+    Returns the first non-429 response (caller checks status_code as before).
+    Raises RuntimeError if 429 persists past _QUOTA_MAX_WAIT_SECONDS.
+    """
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+    waited = 0.0
+    while True:
+        r = requests.post(url, headers=headers, json=payload, timeout=timeout)
+        if r.status_code != 429:
+            return r
+        if waited >= _QUOTA_MAX_WAIT_SECONDS:
+            raise RuntimeError(
+                f"{url} → still HTTP 429 after waiting {waited:.0f}s "
+                f"({_QUOTA_MAX_WAIT_SECONDS:.0f}s budget). Pixellab background "
+                f"job quota stuck full — investigate orphan jobs."
+            )
+        print(
+            f"[quota] {url.rsplit('/',1)[-1]} 429: sleeping "
+            f"{_QUOTA_BACKOFF_SECONDS:.0f}s (waited {waited:.0f}s so far)",
+            flush=True,
+        )
+        time.sleep(_QUOTA_BACKOFF_SECONDS)
+        waited += _QUOTA_BACKOFF_SECONDS
+
 
 def _post(token: str, url: str, payload: dict[str, Any]) -> PixellabResponse:
     headers = {
@@ -239,6 +290,17 @@ def poll_background_job(
         if status == "completed":
             return data.get("last_response") or data.get("response") or data
         if status == "failed":
+            # Distinguish quota failures (transient — Pixellab couldn't queue
+            # the render due to internal limits) from real failures. Caller
+            # can retry the whole submit on PixellabQuotaJobError.
+            last = data.get("last_response") or {}
+            err_text = ""
+            if isinstance(last, dict):
+                err_text = str(last.get("error") or last.get("detail") or "")
+            if "429" in err_text or "maximum number of background jobs" in err_text.lower():
+                raise PixellabQuotaJobError(
+                    f"job {job_id} failed (quota): {err_text or data}"
+                )
             raise RuntimeError(f"job {job_id} 失敗: {data}")
     raise TimeoutError(f"job {job_id} 超過 {max_wait}s 未完成")
 
@@ -425,6 +487,7 @@ def submit_character_8dir(
     shading: str | None = "medium_shading",
     detail: str | None = "detailed",
     text_guidance_scale: float = 8.0,
+    isometric: bool = False,
 ) -> tuple[str, dict[str, Image.Image]]:
     """同步建 8 方向角色,回傳 (character_id, {direction: base64_png})。
 
@@ -450,19 +513,36 @@ def submit_character_8dir(
         payload["shading"] = shading
     if detail:
         payload["detail"] = detail
+    if isometric:
+        payload["isometric"] = True
 
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_CHAR_8DIR_URL, headers=headers, json=payload, timeout=60)
-    if r.status_code != 200:
-        raise RuntimeError(f"create-character-8dir → HTTP {r.status_code}: {r.text[:500]}")
-    data = r.json()
-    char_id = data.get("character_id", "")
-    job_id = data.get("background_job_id") or data.get("job_id")
-    if not char_id or not job_id:
-        raise RuntimeError(f"POST 回應缺 character_id 或 job_id: {data}")
-    result = poll_background_job(token, job_id)
-    images = _extract_direction_images(result, expected=8)
-    return char_id, images
+    last_err: PixellabQuotaJobError | None = None
+    for attempt in range(1, _QUOTA_JOB_MAX_RETRIES + 1):
+        r = _post_submit_with_quota_retry(token, CREATE_CHAR_8DIR_URL, payload)
+        if r.status_code != 200:
+            raise RuntimeError(f"create-character-8dir → HTTP {r.status_code}: {r.text[:500]}")
+        data = r.json()
+        char_id = data.get("character_id", "")
+        job_id = data.get("background_job_id") or data.get("job_id")
+        if not char_id or not job_id:
+            raise RuntimeError(f"POST 回應缺 character_id 或 job_id: {data}")
+        try:
+            result = poll_background_job(token, job_id)
+        except PixellabQuotaJobError as e:
+            last_err = e
+            print(
+                f"[quota] character_8dir background job failed with quota error "
+                f"(attempt {attempt}/{_QUOTA_JOB_MAX_RETRIES}, char_id={char_id} "
+                f"orphaned). Sleeping {_QUOTA_JOB_BACKOFF_SECONDS:.0f}s before re-POST.",
+                flush=True,
+            )
+            time.sleep(_QUOTA_JOB_BACKOFF_SECONDS)
+            continue
+        images = _extract_direction_images(result, expected=8)
+        return char_id, images
+    raise RuntimeError(
+        f"submit_character_8dir gave up after {_QUOTA_JOB_MAX_RETRIES} quota retries: {last_err}"
+    )
 
 
 def submit_character_4dir(
@@ -475,6 +555,7 @@ def submit_character_4dir(
     shading: str | None = "medium_shading",
     detail: str | None = "detailed",
     text_guidance_scale: float = 8.0,
+    isometric: bool = False,
 ) -> tuple[str, dict[str, Image.Image]]:
     """同步建 4 方向角色,回傳 (character_id, {direction: base64_png})。
 
@@ -497,21 +578,38 @@ def submit_character_4dir(
         payload["shading"] = shading
     if detail:
         payload["detail"] = detail
+    if isometric:
+        payload["isometric"] = True
 
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_CHAR_4DIR_URL, headers=headers, json=payload, timeout=60)
-    if r.status_code != 200:
-        raise RuntimeError(
-            f"create-character-4dir → HTTP {r.status_code}: {r.text[:500]}"
-        )
-    data = r.json()
-    char_id = data.get("character_id", "")
-    job_id = data.get("background_job_id") or data.get("job_id")
-    if not char_id or not job_id:
-        raise RuntimeError(f"POST 回應缺 character_id 或 job_id: {data}")
-    result = poll_background_job(token, job_id)
-    images = _extract_direction_images(result, expected=4)
-    return char_id, images
+    last_err: PixellabQuotaJobError | None = None
+    for attempt in range(1, _QUOTA_JOB_MAX_RETRIES + 1):
+        r = _post_submit_with_quota_retry(token, CREATE_CHAR_4DIR_URL, payload)
+        if r.status_code != 200:
+            raise RuntimeError(
+                f"create-character-4dir → HTTP {r.status_code}: {r.text[:500]}"
+            )
+        data = r.json()
+        char_id = data.get("character_id", "")
+        job_id = data.get("background_job_id") or data.get("job_id")
+        if not char_id or not job_id:
+            raise RuntimeError(f"POST 回應缺 character_id 或 job_id: {data}")
+        try:
+            result = poll_background_job(token, job_id)
+        except PixellabQuotaJobError as e:
+            last_err = e
+            print(
+                f"[quota] character_4dir background job failed with quota error "
+                f"(attempt {attempt}/{_QUOTA_JOB_MAX_RETRIES}, char_id={char_id} "
+                f"orphaned). Sleeping {_QUOTA_JOB_BACKOFF_SECONDS:.0f}s before re-POST.",
+                flush=True,
+            )
+            time.sleep(_QUOTA_JOB_BACKOFF_SECONDS)
+            continue
+        images = _extract_direction_images(result, expected=4)
+        return char_id, images
+    raise RuntimeError(
+        f"submit_character_4dir gave up after {_QUOTA_JOB_MAX_RETRIES} quota retries: {last_err}"
+    )
 
 
 def wait_for_character(
@@ -581,32 +679,63 @@ def download_character_rotations(
 def submit_character_animation(
     token: str,
     character_id: str,
-    action_description: str,
+    action_description: str | None = None,
     directions: list[str] | None = None,
     frame_count: int = 8,
-    mode: str = "v3",
+    mode: str | None = None,
     text_guidance_scale: float = 12.0,
+    isometric: bool = False,
+    template_animation_id: str | None = None,
+    ai_freedom: int | None = None,
 ) -> dict[str, Any]:
     """送出 animate-character；回傳 {job_ids, directions}。
 
-    text_guidance_scale (1-20, Pixellab 預設 8) 控制「對 action_description 的
-    服從度」: 越高越死板貼字面、不亂發揮; 越低越自由創作。idle/walk 容易出現
-    頭轉/亂甩手等「過度創意」, 所以我們預設拉到 12 比 Pixellab 官方預設嚴。
+    Two main paths:
+      1. **v3 (custom action)**: pass `action_description`. Pixellab generates
+         frames from text. text_guidance_scale tunes faithfulness (1-20,
+         official default 8, we default 12 for tighter control over creative
+         drift like head-turning).
+      2. **template (skeleton-based)**: pass `template_animation_id` (e.g.
+         "breathing-idle", "walking-4-frames"). Pixellab uses a pre-built
+         skeleton, MUCH more stable + cheaper (1 gen/direction). The template
+         brings its own motion description — we DO NOT send action_description
+         in this mode (sending it would confuse Pixellab into v3 territory
+         and re-introduce the very head-turning / arm-flailing the template
+         is meant to avoid). ai_freedom (0=strict, 1000=creative) tunes
+         template adherence.
 
-    注意: Pixellab docs 標註此參數「template mode only」, v3 mode 是否生效未
-    保證, 但 schema 接受、送了不會出錯, 留著作為可調整旋鈕。
+    `mode` defaults to auto-pick: "template" if template_animation_id is set,
+    otherwise "v3". Override only if you know what you're doing — sending
+    mode="v3" alongside a template_animation_id silently downgrades to v3.
     """
+    if not template_animation_id and not action_description:
+        raise ValueError(
+            "must provide either action_description (v3 mode) or "
+            "template_animation_id (template mode)"
+        )
+    effective_mode = mode or ("template" if template_animation_id else "v3")
     payload: dict[str, Any] = {
         "character_id": character_id,
-        "action_description": action_description,
-        "mode": mode,
+        "mode": effective_mode,
         "frame_count": frame_count,
         "text_guidance_scale": text_guidance_scale,
     }
+    if effective_mode == "template":
+        if not template_animation_id:
+            raise ValueError("mode='template' requires template_animation_id")
+        payload["template_animation_id"] = template_animation_id
+        if ai_freedom is not None:
+            payload["ai_freedom"] = ai_freedom
+        # NOTE: action_description deliberately omitted — template provides
+        # its own motion. Pre-seeded manifest prompts (long anti-drift text
+        # written for v3 mode) become irrelevant under templates.
+    else:
+        payload["action_description"] = action_description
     if directions:
         payload["directions"] = directions
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(ANIMATE_CHARACTER_URL, headers=headers, json=payload, timeout=60)
+    if isometric:
+        payload["isometric"] = True
+    r = _post_submit_with_quota_retry(token, ANIMATE_CHARACTER_URL, payload)
     if r.status_code != 200:
         raise RuntimeError(f"animate-character → HTTP {r.status_code}: {r.text[:500]}")
     data = r.json()
@@ -655,8 +784,7 @@ def submit_topdown_tileset(
     if transition_description:
         payload["transition_description"] = transition_description
 
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_TOPDOWN_TILESET_URL, headers=headers, json=payload, timeout=60)
+    r = _post_submit_with_quota_retry(token, CREATE_TOPDOWN_TILESET_URL, payload)
     if r.status_code not in (200, 202):
         raise RuntimeError(f"create-tileset → HTTP {r.status_code}: {r.text[:500]}")
     data = r.json()
@@ -776,8 +904,7 @@ def submit_map_object(
         payload["shading"] = shading
     if detail:
         payload["detail"] = detail
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_MAP_OBJECT_URL, headers=headers, json=payload, timeout=60)
+    r = _post_submit_with_quota_retry(token, CREATE_MAP_OBJECT_URL, payload)
     if r.status_code not in (200, 202):
         raise RuntimeError(f"map-objects → HTTP {r.status_code}: {r.text[:500]}")
     data = r.json()
@@ -833,8 +960,7 @@ def submit_iso_tile(
         "image_size": {"width": size, "height": size},
         "text_guidance_scale": text_guidance_scale,
     }
-    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    r = requests.post(CREATE_ISO_TILE_URL, headers=headers, json=payload, timeout=60)
+    r = _post_submit_with_quota_retry(token, CREATE_ISO_TILE_URL, payload)
     if r.status_code not in (200, 202):
         raise RuntimeError(
             f"create-isometric-tile → HTTP {r.status_code}: {r.text[:500]}"

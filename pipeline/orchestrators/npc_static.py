@@ -24,10 +24,9 @@ import pixellab_client as plab
 import post_process as pp
 import zones
 from orchestrators._common import (
-    CARDINAL_DIRECTIONS,
     StageContext,
     make_context,
-    run_character_animation,
+    run_character_animation_template,
     stage,
 )
 
@@ -59,6 +58,13 @@ def parse_args() -> argparse.Namespace:
                    help="comma-separated direction list — restricts animation "
                         "regen to these directions; compile_spritesheet patches "
                         "only those rows.")
+    p.add_argument("--isometric", action="store_true",
+                   help="Render at true isometric angle (forwards isometric=true "
+                        "to /create-character-with-{4,8}-directions and /animate-character).")
+    p.add_argument("--idle-template-id", default=None,
+                   help="Override the default Pixellab idle template "
+                        "(see pipeline.animation_templates.DEFAULT_TEMPLATES). "
+                        "Default: 'breathing-idle'.")
     return p.parse_args()
 
 
@@ -82,11 +88,13 @@ def generate_4dir_base(ctx: StageContext) -> list[str]:
         char_id, images = plab.submit_character_4dir(
             token=token, description=args.description,
             view=args.view, proportions_preset=args.proportions,
+            isometric=args.isometric,
         )
     else:
         char_id, images = plab.submit_character_8dir(
             token=token, description=args.description,
             view=args.view, proportions_preset=args.proportions,
+            isometric=args.isometric,
         )
     manifest.upsert_character(
         name=ctx.name,
@@ -129,10 +137,11 @@ def add_idle_animation(ctx: StageContext) -> list[str]:
     if args.no_idle:
         print("--no-idle 指定,略過 idle 動畫")
         return []
-    return run_character_animation(
-        ctx, "idle", CARDINAL_DIRECTIONS, args.idle_frame_count,
-        stage_name="add_idle_animation",
+    return run_character_animation_template(
+        ctx, "idle",
+        override_template_id=args.idle_template_id,
         only_directions=_parse_only_directions(args),
+        isometric=args.isometric,
     )
 
 

@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T14:55:01",
+  "updated_at": "2026-05-12T14:55:44",
+  "tags": [
+    "zone:market",
+    "category:key_item",
+    "chapter:1"
+  ],
+  "object_id": "16316cb0-ad1a-4985-ba8e-4797a3a32aed",
+  "kind": "iso_prop",
+  "description": "framed sepia-toned taiwanese family photograph from the 1970s, wooden frame slightly weathered, six figures arranged in two rows, one face on the back row completely blacked out with dark ink, glass slightly dusty",
+  "size": {
+    "width": 24,
+    "height": 24
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T14:55:44",
+      "paths": [
+        "art_source/objects/family_photo_blacked/family_photo_blacked.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T14:55:44",
+      "paths": [
+        "art_source/objects/family_photo_blacked/family_photo_blacked.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T14:55:44",
+      "paths": [
+        "game/assets/textures/props/family_photo_blacked.png",
+        "game/src/maps/props/family_photo_blacked.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/family_photo_blacked/family_photo_blacked.png",
+  "imported_at": "2026-05-12T14:55:44",
+  "game_png_path": "game/assets/textures/props/family_photo_blacked.png",
+  "game_tscn_path": "game/src/maps/props/family_photo_blacked.tscn",
+  "collision": "bottom_16x16"
+}

@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-11T22:49:28",
+  "updated_at": "2026-05-11T22:58:39",
+  "tags": [
+    "zone:test",
+    "category:terrain",
+    "chapter:test"
+  ],
+  "tileset_id": "987cad1e-eb38-474f-9383-f7524798ca2a",
+  "lower": "cobble stone",
+  "upper": "green grass",
+  "tile_size": 16,
+  "topdown_path": "art_source\\tilesets\\test_autotiles\\test_autotiles_topdown.png",
+  "stages": {
+    "generate_atlas": {
+      "completed_at": "2026-05-11T22:55:25",
+      "paths": [
+        "art_source\\tilesets\\test_autotiles\\test_autotiles_topdown.png"
+      ]
+    },
+    "iso_project": {
+      "completed_at": "2026-05-11T22:58:39",
+      "paths": [
+        "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png"
+      ]
+    },
+    "verify_in_godot": {
+      "completed_at": "2026-05-11T22:58:39",
+      "paths": [
+        "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-11T22:58:39",
+      "paths": [
+        "game\\assets\\textures\\tilesets\\test_autotiles.png"
+      ]
+    }
+  },
+  "iso_path": "art_source\\tilesets\\test_autotiles\\test_autotiles_iso.png",
+  "imported_at": "2026-05-11T22:58:39",
+  "game_png_path": "game\\assets\\textures\\tilesets\\test_autotiles.png"
+}

@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:38:20",
+  "updated_at": "2026-05-12T17:40:18",
+  "tags": [
+    "zone:market",
+    "category:terrain",
+    "chapter:1"
+  ],
+  "tileset_id": "c03e4702-b811-40a5-bd17-ed1e31edb853",
+  "lower": "worn dark grey asphalt road surface with faded white line markings",
+  "upper": "light grey concrete sidewalk slab with expansion joint lines",
+  "tile_size": 16,
+  "topdown_path": "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_topdown.png",
+  "stages": {
+    "generate_atlas": {
+      "completed_at": "2026-05-12T17:40:18",
+      "paths": [
+        "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_topdown.png"
+      ]
+    },
+    "iso_project": {
+      "completed_at": "2026-05-12T17:40:18",
+      "paths": [
+        "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_iso.png"
+      ]
+    },
+    "verify_in_godot": {
+      "completed_at": "2026-05-12T17:40:18",
+      "paths": [
+        "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_iso.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:40:18",
+      "paths": [
+        "game/assets/textures/tilesets/street_asphalt_sidewalk.png"
+      ]
+    }
+  },
+  "iso_path": "art_source/tilesets/street_asphalt_sidewalk/street_asphalt_sidewalk_iso.png",
+  "imported_at": "2026-05-12T17:40:18",
+  "game_png_path": "game/assets/textures/tilesets/street_asphalt_sidewalk.png"
+}

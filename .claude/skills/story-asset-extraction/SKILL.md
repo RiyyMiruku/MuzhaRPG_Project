@@ -76,10 +76,12 @@ story/chapters/*.md  劇本草稿
 - Iso prop：`lantern_red`、`cart_fruit`
 - **不要**在 name 裡放 zone（會走 `--zone` tag）
 
-### Zone / Category tag
-- `zone`：`market` | `nccu` | `riverside` | `zhinan` | `shared` | `test` —— 從劇本所在章節推斷
+### Zone / Category / Chapter tag
+- `zone`：`market` | `nccu` | `riverside` | `zhinan` | `shared` | `test` —— 地理空間，從劇本所在章節推斷
 - `category`：自由形 —— `vendor`, `student`, `monk`, `building`, `decoration`, `terrain`, ...
-- 不確定就先用 `shared`（共用素材）
+- `chapter`：劇情時序，**必填**。從 `draft.md` 所在資料夾名取（例：`chapter_01_arrival` → `chapter: "1"`）。下游 art-pipeline 會把它寫進 manifest 成 `chapter:1` tag，將來查「哪些素材是第幾章生的」就靠它
+- `zone` 跟 `chapter` 正交（前者是空間、後者是時序），別擇一省略
+- 不確定 zone 就先用 `shared`（共用素材）
 
 ### Prompt 寫作慣例（Pixellab v2）
 
@@ -180,6 +182,8 @@ story/chapters/<chapter_slug>/
 
 ```json
 {
+  "chapter": "1",
+  "chapter_slug": "chapter_01_arrival",
   "moving_npcs": [
     {
       "name": "chen_ayi",
@@ -194,6 +198,10 @@ story/chapters/<chapter_slug>/
   "tilesets": [...]
 }
 ```
+
+**Top-level 欄位**：
+- `chapter`：必填，art-pipeline 批次跑時會套到每筆 POST body，**不需要每個 asset 重複寫**
+- `chapter_slug`：給人類對齊 `story/chapters/<slug>/` 資料夾用，dashboard 不會讀
 ````
 
 ## Handoff 到 art-pipeline skill
@@ -204,6 +212,8 @@ story/chapters/<chapter_slug>/
 - Dashboard 沒跑？ → 退而求其次 CLI for-loop
 
 把上面的 JSON 餵進 art-pipeline 的批次範本（見 art-pipeline SKILL.md「Dashboard job API 批次模式」段落）即可。
+
+**批次腳本記得帶 top-level `chapter` 到每筆 POST**（dashboard backend 接受 `chapter` 欄位 → 轉成 orchestrator 的 `--chapter` flag → 寫進 manifest 成 `chapter:<n>` tag）。漏帶的話 manifest 就少了章節溯源，後續清理 / 重生會很痛。
 
 ## 不要做的事
 

@@ -1,0 +1,44 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:37:30",
+  "updated_at": "2026-05-12T17:38:19",
+  "tags": [
+    "zone:market",
+    "category:building",
+    "chapter:1"
+  ],
+  "object_id": "fc13dbce-62a1-4497-8a2c-8c3349e325a3",
+  "kind": "building",
+  "description": "post-war four-story taiwanese walk-up apartment building, weathered exposed concrete facade with faded yellow paint, small balconies with rusty iron railings and hanging laundry, window-mounted air conditioner units, narrow side stairway, ground-floor metal door with small mailbox cluster",
+  "view": "high_top_down",
+  "size": {
+    "width": 96,
+    "height": 128
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:38:19",
+      "paths": [
+        "art_source/objects/old_apartment_muzha/old_apartment_muzha.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:38:19",
+      "paths": [
+        "art_source/objects/old_apartment_muzha/old_apartment_muzha.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:38:19",
+      "paths": [
+        "game/assets/textures/props/old_apartment_muzha.png",
+        "game/src/maps/props/old_apartment_muzha.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/old_apartment_muzha/old_apartment_muzha.png",
+  "imported_at": "2026-05-12T17:38:19",
+  "game_png_path": "game/assets/textures/props/old_apartment_muzha.png",
+  "game_tscn_path": "game/src/maps/props/old_apartment_muzha.tscn",
+  "collision": "bottom_16x16"
+}

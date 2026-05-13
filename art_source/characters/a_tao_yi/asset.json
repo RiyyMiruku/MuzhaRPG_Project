@@ -1,0 +1,89 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T17:20:50",
+  "updated_at": "2026-05-12T17:43:22",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "tags": [
+    "zone:market",
+    "category:vendor",
+    "chapter:1"
+  ],
+  "character_id": "c32b5fb9-7c13-46ce-84e4-39545c95d186",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "middle-aged taiwanese market vendor woman in her mid-fifties, plump sturdy build, faded red floral short-sleeved shirt with rolled sleeves, dark green canvas vendor apron, loose dark trousers, black rubber market boots, short permed black hair under straw conical hat, gossipy warm expression, small jade pendant necklace, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/a_tao_yi",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T17:24:16",
+      "paths": [
+        "art_source/characters/a_tao_yi/rotations/east.png",
+        "art_source/characters/a_tao_yi/rotations/west.png",
+        "art_source/characters/a_tao_yi/rotations/north.png",
+        "art_source/characters/a_tao_yi/rotations/south.png",
+        "art_source/characters/a_tao_yi/rotations/north_east.png",
+        "art_source/characters/a_tao_yi/rotations/north_west.png",
+        "art_source/characters/a_tao_yi/rotations/south_east.png",
+        "art_source/characters/a_tao_yi/rotations/south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T17:40:32",
+      "paths": [
+        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T17:43:22",
+      "paths": [
+        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:43:22",
+      "paths": [
+        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.png",
+        "art_source/characters/a_tao_yi/spritesheet/a_tao_yi.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:43:22",
+      "paths": [
+        "game/assets/textures/characters/a_tao_yi.png",
+        "game/assets/textures/characters/a_tao_yi.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ],
+    "walk": [
+      "south",
+      "south-east"
+    ]
+  },
+  "imported_at": "2026-05-12T17:43:22",
+  "game_png_path": "game/assets/textures/characters/a_tao_yi.png",
+  "game_json_path": "game/assets/textures/characters/a_tao_yi.json"
+}

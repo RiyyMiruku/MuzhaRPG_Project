@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:36:18",
+  "updated_at": "2026-05-12T17:36:43",
+  "tags": [
+    "zone:market",
+    "category:key_item",
+    "chapter:1"
+  ],
+  "object_id": "ca7cd909-d125-4163-b76a-783050007961",
+  "kind": "iso_prop",
+  "description": "small unframed black-and-white photograph from the 1970s, slightly curled at corners, faded greyscale tones, portrait of a young man not visible from this angle",
+  "size": {
+    "width": 16,
+    "height": 16
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:36:43",
+      "paths": [
+        "art_source/objects/photograph_old/photograph_old.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:36:43",
+      "paths": [
+        "art_source/objects/photograph_old/photograph_old.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:36:43",
+      "paths": [
+        "game/assets/textures/props/photograph_old.png",
+        "game/src/maps/props/photograph_old.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/photograph_old/photograph_old.png",
+  "imported_at": "2026-05-12T17:36:43",
+  "game_png_path": "game/assets/textures/props/photograph_old.png",
+  "game_tscn_path": "game/src/maps/props/photograph_old.tscn",
+  "collision": "bottom_16x16"
+}

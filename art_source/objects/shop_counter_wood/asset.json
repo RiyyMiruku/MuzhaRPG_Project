@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T17:34:08",
+  "updated_at": "2026-05-12T17:34:34",
+  "tags": [
+    "zone:market",
+    "category:furniture",
+    "chapter:1"
+  ],
+  "object_id": "e10342f4-e68f-4f82-a851-25ace32502fe",
+  "kind": "iso_prop",
+  "description": "long wooden chinese pharmacy counter with worn smooth surface, dark stained wood, small brass weighing scale on top, abacus on side, paper prescription pad and ink brush stand, traditional taiwanese shop style",
+  "size": {
+    "width": 48,
+    "height": 48
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-12T17:34:34",
+      "paths": [
+        "art_source/objects/shop_counter_wood/shop_counter_wood.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-12T17:34:34",
+      "paths": [
+        "art_source/objects/shop_counter_wood/shop_counter_wood.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:34:34",
+      "paths": [
+        "game/assets/textures/props/shop_counter_wood.png",
+        "game/src/maps/props/shop_counter_wood.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source/objects/shop_counter_wood/shop_counter_wood.png",
+  "imported_at": "2026-05-12T17:34:34",
+  "game_png_path": "game/assets/textures/props/shop_counter_wood.png",
+  "game_tscn_path": "game/src/maps/props/shop_counter_wood.tscn",
+  "collision": "bottom_16x16"
+}

@@ -1,0 +1,90 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T17:20:50",
+  "updated_at": "2026-05-12T17:41:28",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "tags": [
+    "zone:market",
+    "category:teen_family",
+    "chapter:1"
+  ],
+  "character_id": "9414af16-b79d-4680-889c-e29b2cd1941c",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "taiwanese teenage boy around sixteen, lanky build, faded blue short-sleeved school polo shirt untucked, dark navy school trousers, white canvas sneakers slightly worn, short messy black hair with overgrown fringe, mildly sullen expression, simple plastic digital wristwatch, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/lin_xiaowei",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T17:22:00",
+      "paths": [
+        "art_source/characters/lin_xiaowei/rotations/east.png",
+        "art_source/characters/lin_xiaowei/rotations/west.png",
+        "art_source/characters/lin_xiaowei/rotations/north.png",
+        "art_source/characters/lin_xiaowei/rotations/south.png",
+        "art_source/characters/lin_xiaowei/rotations/north_east.png",
+        "art_source/characters/lin_xiaowei/rotations/north_west.png",
+        "art_source/characters/lin_xiaowei/rotations/south_east.png",
+        "art_source/characters/lin_xiaowei/rotations/south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T17:23:49",
+      "paths": [
+        "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.png",
+        "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T17:41:28",
+      "paths": [
+        "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.png",
+        "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:41:28",
+      "paths": [
+        "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.png",
+        "art_source/characters/lin_xiaowei/spritesheet/lin_xiaowei.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:41:28",
+      "paths": [
+        "game/assets/textures/characters/lin_xiaowei.png",
+        "game/assets/textures/characters/lin_xiaowei.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ],
+    "walk": [
+      "south",
+      "south-east",
+      "east"
+    ]
+  },
+  "imported_at": "2026-05-12T17:41:28",
+  "game_png_path": "game/assets/textures/characters/lin_xiaowei.png",
+  "game_json_path": "game/assets/textures/characters/lin_xiaowei.json"
+}

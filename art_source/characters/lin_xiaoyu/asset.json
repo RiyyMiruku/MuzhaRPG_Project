@@ -1,0 +1,95 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T00:05:52",
+  "updated_at": "2026-05-12T00:16:13",
+  "prompts": {
+    "add_idle_animation": "standing in place at her food stall, head held perfectly still and facing\nforward in the same direction as her torso, ponytail hanging straight down\nthe centerline of her back, eyes looking straight ahead, no head turning,\nno looking around, no rubbernecking, gentle breathing only — shoulders rise\nand fall subtly, arms remain at sides, feet planted, bandana knot stays\ncentered at the back of her head",
+    "add_walk_animation": "walking forward in the same direction her body is facing, head locked\nforward and aligned with torso, eyes fixed straight ahead in the walking\ndirection, ponytail swinging straight down behind her (not sideways), no\nhead turning, no looking sideways, no glancing around, natural arm swing\nopposite to leg stride, consistent gait and posture across all frames"
+  },
+  "tags": [
+    "zone:test",
+    "category:npc",
+    "chapter:test"
+  ],
+  "character_id": "ab93f6a2-fff9-4344-9993-28d8a9aa35a4",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "young taiwanese street-food vendor woman in her twenties, long black hair\npulled into a low ponytail straight down her back, light blue cotton bandana\ntied as a forehead headband (knot at back, no dangling ends), white\nshort-sleeved button-up shirt with sleeves rolled to elbows, navy bib apron\nwith two square front pockets, dark slim trousers, black canvas sneakers,\nslim athletic build, neutral focused expression, small silver hoop earrings,\narms relaxed at sides, no other accessories, no bag",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source\\characters\\lin_xiaoyu",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T00:08:10",
+      "paths": [
+        "art_source\\characters\\lin_xiaoyu\\rotations\\east.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\west.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\north.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\south.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\north_east.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\north_west.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\south_east.png",
+        "art_source\\characters\\lin_xiaoyu\\rotations\\south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T00:10:04",
+      "paths": [
+        "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.png",
+        "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T00:16:13",
+      "paths": [
+        "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.png",
+        "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T00:16:13",
+      "paths": [
+        "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.png",
+        "art_source\\characters\\lin_xiaoyu\\spritesheet\\lin_xiaoyu.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T00:16:13",
+      "paths": [
+        "game\\assets\\textures\\characters\\lin_xiaoyu.png",
+        "game\\assets\\textures\\characters\\lin_xiaoyu.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ],
+    "walk": [
+      "south",
+      "south-east",
+      "east",
+      "north-east",
+      "north",
+      "north-west",
+      "west",
+      "south-west"
+    ]
+  },
+  "imported_at": "2026-05-12T00:16:13",
+  "game_png_path": "game\\assets\\textures\\characters\\lin_xiaoyu.png",
+  "game_json_path": "game\\assets\\textures\\characters\\lin_xiaoyu.json"
+}

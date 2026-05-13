@@ -1,0 +1,77 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-12T00:31:25",
+  "updated_at": "2026-05-12T00:36:56",
+  "prompts": {
+    "add_idle_animation": "standing in place, head held perfectly still and facing forward in the same direction as the torso, eyes looking straight ahead, no head turning, no looking around, no rubbernecking, arms relaxed at the sides with wrists hanging naturally and motionless — no random hand or wrist movement, no finger fidgeting, gentle breathing only (shoulders rise and fall subtly), feet planted, posture consistent across all frames"
+  },
+  "tags": [
+    "zone:test",
+    "category:npc",
+    "chapter:test"
+  ],
+  "character_id": "5c0bb678-f56a-43b7-ab1d-51e45a72c592",
+  "preset": "npc",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "young taiwanese street-food vendor woman in her twenties, long black hair pulled into a low ponytail straight down her back, light blue cotton bandana tied as a forehead headband (knot at back, no dangling ends), white short-sleeved button-up shirt with sleeves rolled to elbows, navy bib apron with two square front pockets, dark slim trousers, black canvas sneakers, slim athletic build, neutral focused expression, small silver hoop earrings, arms relaxed at sides, no other accessories, no bag",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source\\characters\\test_static_npc",
+  "stages": {
+    "generate_4dir_base": {
+      "completed_at": "2026-05-12T00:32:57",
+      "paths": [
+        "art_source\\characters\\test_static_npc\\rotations\\east.png",
+        "art_source\\characters\\test_static_npc\\rotations\\west.png",
+        "art_source\\characters\\test_static_npc\\rotations\\north.png",
+        "art_source\\characters\\test_static_npc\\rotations\\south.png",
+        "art_source\\characters\\test_static_npc\\rotations\\north_east.png",
+        "art_source\\characters\\test_static_npc\\rotations\\north_west.png",
+        "art_source\\characters\\test_static_npc\\rotations\\south_east.png",
+        "art_source\\characters\\test_static_npc\\rotations\\south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T00:34:45",
+      "paths": [
+        "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.png",
+        "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T00:36:51",
+      "paths": [
+        "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.png",
+        "art_source\\characters\\test_static_npc\\spritesheet\\test_static_npc.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T00:36:56",
+      "paths": [
+        "game\\assets\\textures\\characters\\test_static_npc.png",
+        "game\\assets\\textures\\characters\\test_static_npc.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south",
+      "east",
+      "north",
+      "west"
+    ]
+  },
+  "imported_at": "2026-05-12T00:36:56",
+  "game_png_path": "game\\assets\\textures\\characters\\test_static_npc.png",
+  "game_json_path": "game\\assets\\textures\\characters\\test_static_npc.json"
+}

@@ -1,0 +1,85 @@
+{
+  "status": "base_ready",
+  "created_at": "2026-05-12T16:56:40",
+  "updated_at": "2026-05-12T17:03:07",
+  "prompts": {
+    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
+    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
+  },
+  "tags": [
+    "zone:shared",
+    "category:protagonist",
+    "chapter:1"
+  ],
+  "character_id": "5101215b-800c-46dd-9cbe-84a51daa9e0e",
+  "preset": "player",
+  "directions": 8,
+  "view": "high_top_down",
+  "proportions": "cartoon",
+  "description": "young taiwanese man in his late twenties, slim build, plain charcoal grey t-shirt, fitted dark indigo jeans, white low-top sneakers, short tidy black hair with side part, calm focused expression, simple silver wristwatch, small canvas messenger bag strap across chest, arms relaxed at sides",
+  "rotations": [
+    "east",
+    "west",
+    "north",
+    "south",
+    "north-east",
+    "north-west",
+    "south-east",
+    "south-west"
+  ],
+  "local_path": "art_source/characters/lin_siqian",
+  "stages": {
+    "generate_8dir_base": {
+      "completed_at": "2026-05-12T16:58:50",
+      "paths": [
+        "art_source/characters/lin_siqian/rotations/east.png",
+        "art_source/characters/lin_siqian/rotations/west.png",
+        "art_source/characters/lin_siqian/rotations/north.png",
+        "art_source/characters/lin_siqian/rotations/south.png",
+        "art_source/characters/lin_siqian/rotations/north_east.png",
+        "art_source/characters/lin_siqian/rotations/north_west.png",
+        "art_source/characters/lin_siqian/rotations/south_east.png",
+        "art_source/characters/lin_siqian/rotations/south_west.png"
+      ]
+    },
+    "add_idle_animation": {
+      "completed_at": "2026-05-12T17:00:44",
+      "paths": [
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
+      ]
+    },
+    "add_walk_animation": {
+      "completed_at": "2026-05-12T17:03:07",
+      "paths": [
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
+      ]
+    },
+    "compile_spritesheet": {
+      "completed_at": "2026-05-12T17:03:07",
+      "paths": [
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-12T17:03:07",
+      "paths": [
+        "game/assets/textures/characters/lin_siqian.png",
+        "game/assets/textures/characters/lin_siqian.json"
+      ]
+    }
+  },
+  "animations": {
+    "idle": [
+      "south"
+    ],
+    "walk": [
+      "south"
+    ]
+  },
+  "imported_at": "2026-05-12T17:03:07",
+  "game_png_path": "game/assets/textures/characters/lin_siqian.png",
+  "game_json_path": "game/assets/textures/characters/lin_siqian.json"
+}
