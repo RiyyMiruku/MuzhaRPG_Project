@@ -22,7 +22,7 @@ const _DIR_MAP: Dictionary = {
 }
 
 ## 從預編譯 spritesheet 載入角色 SpriteFrames。
-## character_id: 角色 ID(同 art_source/pipeline/output/characters/<id>/ 與檔名),如 "chen_ayi"、"player"
+## character_id: 角色 ID(同 art_source/pipeline/output/characters/<id>/ 與檔名),如 "chen_ayi"、"lin_siqian"
 ## 找不到時 push_error 並返回 null。
 static func load_character(character_id: String) -> SpriteFrames:
 	var char_config: Dictionary = _read_character_config(character_id)

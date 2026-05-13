@@ -24,47 +24,47 @@
     "south-east",
     "south-west"
   ],
-  "local_path": "art_source/characters/player",
+  "local_path": "art_source/characters/lin_siqian",
   "stages": {
     "generate_8dir_base": {
       "completed_at": "2026-05-13T23:53:07",
       "paths": [
-        "art_source/characters/player/rotations/east.png",
-        "art_source/characters/player/rotations/west.png",
-        "art_source/characters/player/rotations/north.png",
-        "art_source/characters/player/rotations/south.png",
-        "art_source/characters/player/rotations/north_east.png",
-        "art_source/characters/player/rotations/north_west.png",
-        "art_source/characters/player/rotations/south_east.png",
-        "art_source/characters/player/rotations/south_west.png"
+        "art_source/characters/lin_siqian/rotations/east.png",
+        "art_source/characters/lin_siqian/rotations/west.png",
+        "art_source/characters/lin_siqian/rotations/north.png",
+        "art_source/characters/lin_siqian/rotations/south.png",
+        "art_source/characters/lin_siqian/rotations/north_east.png",
+        "art_source/characters/lin_siqian/rotations/north_west.png",
+        "art_source/characters/lin_siqian/rotations/south_east.png",
+        "art_source/characters/lin_siqian/rotations/south_west.png"
       ]
     },
     "add_idle_animation": {
       "completed_at": "2026-05-13T23:56:44",
       "paths": [
-        "art_source/characters/player/spritesheet/player.png",
-        "art_source/characters/player/spritesheet/player.json"
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
       ]
     },
     "add_walk_animation": {
       "completed_at": "2026-05-14T00:01:40",
       "paths": [
-        "art_source/characters/player/spritesheet/player.png",
-        "art_source/characters/player/spritesheet/player.json"
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
       ]
     },
     "compile_spritesheet": {
       "completed_at": "2026-05-14T00:01:40",
       "paths": [
-        "art_source/characters/player/spritesheet/player.png",
-        "art_source/characters/player/spritesheet/player.json"
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.png",
+        "art_source/characters/lin_siqian/spritesheet/lin_siqian.json"
       ]
     },
     "import_to_godot": {
       "completed_at": "2026-05-14T00:01:40",
       "paths": [
-        "game/assets/textures/characters/player.png",
-        "game/assets/textures/characters/player.json"
+        "game/assets/textures/characters/lin_siqian.png",
+        "game/assets/textures/characters/lin_siqian.json"
       ]
     }
   },
@@ -87,7 +87,7 @@
     ]
   },
   "imported_at": "2026-05-14T00:01:40",
-  "game_png_path": "game/assets/textures/characters/player.png",
-  "game_json_path": "game/assets/textures/characters/player.json",
+  "game_png_path": "game/assets/textures/characters/lin_siqian.png",
+  "game_json_path": "game/assets/textures/characters/lin_siqian.json",
   "isometric": true
 }

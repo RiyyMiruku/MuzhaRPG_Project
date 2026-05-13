@@ -37,7 +37,7 @@
 |---|---|
 | 故事劇本 | ✅ [draft.md](../story/chapters/chapter_01_arrival/draft.md) 完整 71 行 |
 | 結構化資產清單 | ✅ [assets.json](../story/chapters/chapter_01_arrival/assets.json) |
-| NPC 角色（13 個） | ✅ 11 個已生成；❌ 缺主角 `lin_siqian`、`a_tao_yi` moving 版本 |
+| NPC 角色（13 個） | ✅ 主角 `lin_siqian`（原 `player` folder，已改名以對齊 lore）+ 11 個 NPC 已生成；❌ 缺 `a_tao_yi` moving 變體 |
 | Props（25 個 .tscn） | ✅ 全數備齊於 [game/src/maps/props/](../game/src/maps/props/) |
 | Tileset autotile PNG | ✅ 3 張 in [game/assets/textures/tilesets/](../game/assets/textures/tilesets/)；❌ 尚未掛進 TileMapDual |
 | 建築（6 棟）PNG | ✅ 已生成且 import；⚠️ **視角不對**（見 §4） |
@@ -204,7 +204,7 @@ npcs:
 | 任務 | 執行者 | 估時 |
 |---|---|---|
 | 改 orchestrator 支援 iso building + 重生藥行外觀 | Claude | 1.5 小時 |
-| 生成 lin_siqian + a_tao_yi moving 變體 | Claude | 30 分鐘 |
+| 生成 `a_tao_yi` moving 變體 | Claude | 15 分鐘 |
 | 寫 `scripts/build_zone.py` Level 1 引擎 | Claude | 2 小時 |
 | 寫 `tools/zone_baker.gd` @tool | Claude | 1 小時 |
 | 寫 `tools/snapshot.gd` headless 截圖 | Claude | 1 小時 |

@@ -13,7 +13,7 @@ signal interaction_requested(interactable: Node)
 # ── State ────────────────────────────────────────────────────────────────────
 var _nearby_interactable: Node = null
 
-const PLAYER_ID: String = "player"
+const PLAYER_ID: String = "lin_siqian"
 
 func _ready() -> void:
 	sprite = _sprite
