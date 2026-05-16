@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-16T23:49:38",
+  "updated_at": "2026-05-17T00:00:33",
+  "tags": [
+    "zone:zone_market",
+    "category:decoration",
+    "chapter:1"
+  ],
+  "object_id": "6e525473-2074-4878-b130-5962dfe81005",
+  "kind": "iso_prop",
+  "description": "parked old taiwanese motorcycle scooter, dark green body, wire basket on front, 1980s yamaha style",
+  "size": {
+    "width": 48,
+    "height": 48
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-17T00:00:33",
+      "paths": [
+        "art_source\\objects\\motorcycle_parked\\motorcycle_parked.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-17T00:00:33",
+      "paths": [
+        "art_source\\objects\\motorcycle_parked\\motorcycle_parked.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-17T00:00:33",
+      "paths": [
+        "game\\assets\\textures\\props\\motorcycle_parked.png",
+        "game\\src\\maps\\props\\motorcycle_parked.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source\\objects\\motorcycle_parked\\motorcycle_parked.png",
+  "imported_at": "2026-05-17T00:00:33",
+  "game_png_path": "game\\assets\\textures\\props\\motorcycle_parked.png",
+  "game_tscn_path": "game\\src\\maps\\props\\motorcycle_parked.tscn",
+  "collision": "bottom_16x16"
+}

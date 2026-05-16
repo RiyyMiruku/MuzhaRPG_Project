@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="Cutscene" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/Cutscene.gd" id="1_cutscene_script"]
+
+[resource]
+script = ExtResource("1_cutscene_script")
+cutscene_id = "ch1_enter_locked_room"
+blocks_input = true
+ops = Array[Dictionary]([{
+"op": "line",
+"speaker": "narrator",
+"text": "鑰匙轉了兩圈。門鎖咔嚓一聲。"
+}, {
+"op": "wait",
+"seconds": 0.5
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "房間裡比想像中乾淨——有人定期在打掃。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "一張單人床、一張書桌、牆上貼著幾張泛黃的剪報。"
+}, {
+"op": "camera_to",
+"target_path": "YSortRoot/notebook_leather",
+"zoom": [6.0, 6.0],
+"duration": 1.0
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "書桌上放著一本棕色皮革筆記本，封面壓了兩個字——「榮華」。"
+}, {
+"op": "restore_camera"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "(榮華……這是誰？)"
+}, {
+"op": "set_flag",
+"name": "found_ronghua_relic",
+"value": true
+}, {
+"op": "emit_event",
+"name": "ch1_found_relic"
+}])

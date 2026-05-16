@@ -1,45 +1,45 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T14:55:01",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-16T22:10:41",
   "tags": [
     "category:terrain",
     "chapter:1",
     "zone:zone_market_1983",
     "zone:zone_market_modern"
   ],
-  "tileset_id": "fa3acc97-493f-4b90-9af9-6fb9fe892025",
-  "lower": "weathered grey concrete pavement with cracks and stains from years of market use",
-  "upper": "small red square ceramic floor tiles laid in grid pattern, traditional taiwanese market walkway",
+  "tileset_id": "1ac5b982-3fa3-47e5-97bc-5ba2dba66632",
+  "lower": "weathered grey concrete pavement",
+  "upper": "small red square ceramic floor tiles",
   "tile_size": 16,
-  "topdown_path": "art_source/tilesets/market_concrete_tile/market_concrete_tile_topdown.png",
+  "topdown_path": "art_source\\tilesets\\market_concrete_tile\\market_concrete_tile_topdown.png",
   "stages": {
     "generate_atlas": {
-      "completed_at": "2026-05-12T14:56:19",
+      "completed_at": "2026-05-16T21:19:30",
       "paths": [
-        "art_source/tilesets/market_concrete_tile/market_concrete_tile_topdown.png"
+        "art_source\\tilesets\\market_concrete_tile\\market_concrete_tile_topdown.png"
       ]
     },
     "iso_project": {
-      "completed_at": "2026-05-12T14:56:19",
+      "completed_at": "2026-05-16T22:10:41",
       "paths": [
-        "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png"
+        "art_source\\tilesets\\market_concrete_tile\\market_concrete_tile_iso.png"
       ]
     },
     "verify_in_godot": {
-      "completed_at": "2026-05-12T14:56:19",
+      "completed_at": "2026-05-16T21:19:30",
       "paths": [
-        "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png"
+        "art_source\\tilesets\\market_concrete_tile\\market_concrete_tile_iso.png"
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T14:56:19",
+      "completed_at": "2026-05-16T22:10:41",
       "paths": [
-        "game/assets/textures/tilesets/market_concrete_tile.png"
+        "game\\assets\\textures\\tilesets\\market_concrete_tile.png"
       ]
     }
   },
-  "iso_path": "art_source/tilesets/market_concrete_tile/market_concrete_tile_iso.png",
-  "imported_at": "2026-05-12T14:56:19",
-  "game_png_path": "game/assets/textures/tilesets/market_concrete_tile.png"
+  "iso_path": "art_source\\tilesets\\market_concrete_tile\\market_concrete_tile_iso.png",
+  "imported_at": "2026-05-16T22:10:41",
+  "game_png_path": "game\\assets\\textures\\tilesets\\market_concrete_tile.png"
 }

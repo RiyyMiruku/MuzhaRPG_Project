@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="StoryBeat" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/StoryBeat.gd" id="1_beat_script"]
+
+[resource]
+script = ExtResource("1_beat_script")
+beat_id = "ch1_lawyer_documents"
+trigger_flags = {}
+trigger_npc_id = "lawyer_muzha"
+trigger_zone = ""
+trigger_event = ""
+dialogue_lines = [{
+"speaker": "陳律師",
+"text": "林先生，請坐。您就是林思謙？"
+}, {
+"speaker": "阿謙",
+"text": "是的。我收到你們寄來的信。"
+}, {
+"speaker": "陳律師",
+"text": "好。這是繼承文件。被繼承人：林榮昌。與您的關係：祖父。"
+}, {
+"speaker": "阿謙",
+"text": "等等——祖父？但我父親從來沒提過有這個人。"
+}, {
+"speaker": "陳律師",
+"text": "文件上是這樣記載的。遺囑是二十多年前立的，指定繼承人是「林文彥之子」。"
+}, {
+"speaker": "陳律師",
+"text": "林文彥就是您的父親，對吧？"
+}, {
+"speaker": "阿謙",
+"text": "對……但林榮昌是我爸的父親嗎？我一直以為——"
+}, {
+"speaker": "陳律師",
+"text": "家族關係的部分，我只能依文件說明。其他的……您可能要自己去查了。"
+}]
+choices = [{
+"text": "好，我會自己調查。謝謝您。",
+"set_flags": { "clue_inheritance_document": true }
+}, {
+"text": "這裡面一定有什麼誤會。",
+"set_flags": { "clue_inheritance_document": true, "skeptical_of_document": true }
+}]
+on_complete_flags = { "ch1_beat_lawyer_documents_done": true }
+on_complete_event = "ch1_lawyer_visited"
+blocks_input = true

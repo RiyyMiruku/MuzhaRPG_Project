@@ -195,6 +195,251 @@
       "description": "old vertical roller iron security gate of a taiwanese shopfront, painted dark green with heavy rust streaks, large brass padlock and chain at bottom, faded chinese signboard above partially visible, abandoned for decades",
       "zones": ["zone_pharmacy_modern", "zone_market_modern"],
       "category": "structure"
+    },
+    {
+      "name": "street_lamp_old",
+      "size": 48,
+      "description": "old taiwanese street lamp post, iron pole with glass lantern head, 1980s style, warm light glow",
+      "zones": ["zone_market_1983", "zone_market_modern"],
+      "category": "decoration"
+    },
+    {
+      "name": "shop_sign_pharmacy",
+      "size": 48,
+      "description": "traditional wooden hanging shop sign with hand-painted gold chinese characters reading rongchang chinese medicine, dark stained wood board with carved border, brass hanging chains",
+      "zones": ["zone_market_1983"],
+      "category": "decoration"
+    },
+    {
+      "name": "market_awning",
+      "size": 64,
+      "description": "faded striped canvas awning canopy over market stall, metal frame, red and white stripes, taiwanese traditional market",
+      "zones": ["zone_market_1983"],
+      "category": "decoration"
+    },
+    {
+      "name": "drain_cover",
+      "size": 32,
+      "description": "rectangular cast iron drain cover grate embedded in concrete ground, criss-cross pattern, slightly rusted edges, typical taiwanese market street drainage",
+      "zones": ["zone_market_1983", "zone_market_modern"],
+      "category": "ground_detail"
+    },
+    {
+      "name": "plastic_chair_red",
+      "size": 24,
+      "description": "cheap red plastic stackable chair, slightly faded by sun, the ubiquitous taiwanese market and street food seating",
+      "zones": ["zone_market_1983"],
+      "category": "furniture"
+    },
+    {
+      "name": "motorcycle_parked",
+      "size": 48,
+      "description": "old taiwanese motorcycle parked at an angle, dark green body with chrome accents, round headlight, wire-spoke wheels, 1980s honda or yamaha style scooter",
+      "zones": ["zone_market_1983", "zone_market_modern"],
+      "category": "vehicle"
+    },
+    {
+      "name": "cobweb_corner",
+      "size": 24,
+      "description": "thick dusty cobweb stretched across a dark corner, grey strands with dust particles clinging, abandoned building interior detail",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "decay_detail"
+    },
+    {
+      "name": "dust_pile_ground",
+      "size": 16,
+      "description": "small pile of grey dust and debris on floor, scattered paper scraps and dried leaves, abandoned indoor ground detail",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "decay_detail"
+    },
+    {
+      "name": "broken_bottle_glass",
+      "size": 16,
+      "description": "shattered dark glass medicine bottle on floor, sharp shards scattered around, dried residue stain, pharmacy abandonment detail",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "decay_detail"
+    },
+    {
+      "name": "newspaper_yellowed",
+      "size": 24,
+      "description": "old yellowed chinese newspaper from 1983, partially folded on a surface, faded printed characters and small photograph visible, edges brittle and torn",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "key_item"
+    },
+    {
+      "name": "herb_jar_row",
+      "size": 48,
+      "description": "row of large clear glass jars filled with dried chinese herbs, goji berries red dates dried mushrooms, handwritten paper labels, wooden shelf rack, traditional pharmacy storage",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "furniture"
+    },
+    {
+      "name": "weighing_scale_brass",
+      "size": 24,
+      "description": "traditional chinese brass balance scale with two hanging pans, wooden base, small brass weights beside it, used for measuring herbal medicine portions",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "tool"
+    },
+    {
+      "name": "tea_set_ceramic",
+      "size": 24,
+      "description": "small white ceramic chinese tea set on round wooden tray, one teapot and three small cups, faint steam, traditional taiwanese hospitality setup",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "decoration"
+    },
+    {
+      "name": "hanging_herbs_dried",
+      "size": 32,
+      "description": "bundles of dried chinese herbs tied with twine hanging from wooden beam, various shades of brown and green, traditional pharmacy ceiling decoration",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "decoration"
+    },
+    {
+      "name": "abacus_wooden",
+      "size": 24,
+      "description": "traditional chinese wooden abacus with dark wood frame and light-coloured beads, well-worn from daily use, placed on shop counter",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "tool"
+    },
+    {
+      "name": "stone_well_old",
+      "size": 48,
+      "description": "old round stone well with low circular wall made of stacked grey stones, simple wooden crossbeam with rope and bucket hook, moss growing between stones, traditional taiwanese courtyard well",
+      "zones": ["zone_pharmacy_backyard"],
+      "category": "structure"
+    },
+    {
+      "name": "wooden_door_locked",
+      "size": 48,
+      "description": "old heavy wooden door with dark stain, large brass padlock on iron latch, slightly warped frame, mysterious locked room entrance, cobwebs on hinges",
+      "zones": ["zone_pharmacy_backyard"],
+      "category": "structure"
+    },
+    {
+      "name": "potted_plant_tropical",
+      "size": 32,
+      "description": "large clay pot with tropical fern plant, broad green fronds drooping outward, red-brown terracotta pot with water stains, typical taiwanese courtyard greenery",
+      "zones": ["zone_pharmacy_backyard", "zone_law_office"],
+      "category": "decoration"
+    },
+    {
+      "name": "clothesline_hanging",
+      "size": 64,
+      "description": "simple clothesline strung between two bamboo poles, a few pieces of laundry hanging — white shirt and dark trousers, wooden clothespins, courtyard domestic detail",
+      "zones": ["zone_pharmacy_backyard"],
+      "category": "decoration"
+    },
+    {
+      "name": "spirit_tablet_ancestor",
+      "size": 24,
+      "description": "traditional taiwanese wooden ancestral spirit tablet on small red altar shelf, gold chinese characters carved on dark lacquered wood, small offerings of fruit in front, thin incense smoke",
+      "zones": ["zone_pharmacy_backyard"],
+      "category": "ritual"
+    },
+    {
+      "name": "bucket_metal_old",
+      "size": 16,
+      "description": "old galvanized metal bucket with wire handle, slightly dented, water stains on sides, used for drawing well water",
+      "zones": ["zone_pharmacy_backyard"],
+      "category": "tool"
+    },
+    {
+      "name": "cardboard_box_stack",
+      "size": 48,
+      "description": "stack of three worn cardboard moving boxes, one partially open revealing old books and papers, packing tape peeling, labeled in marker with chinese characters, apartment clearing scene",
+      "zones": ["zone_apartment_muzha"],
+      "category": "furniture"
+    },
+    {
+      "name": "desk_lamp_small",
+      "size": 24,
+      "description": "small adjustable desk lamp with green metal shade, brass neck, round base, warm light pool, classic taiwanese study lamp from the 1990s",
+      "zones": ["zone_apartment_muzha"],
+      "category": "furniture"
+    },
+    {
+      "name": "bookshelf_old",
+      "size": 64,
+      "description": "tall narrow wooden bookshelf slightly warped, packed with old chinese books and yellowed paperbacks, some leaning sideways, a few photo frames wedged between books",
+      "zones": ["zone_apartment_muzha"],
+      "category": "furniture"
+    },
+    {
+      "name": "window_curtain_faded",
+      "size": 48,
+      "description": "simple faded beige curtain panel hanging from metal rod, thin fabric with light filtering through, slightly wrinkled, old apartment window dressing",
+      "zones": ["zone_apartment_muzha"],
+      "category": "decoration"
+    },
+    {
+      "name": "telephone_rotary",
+      "size": 16,
+      "description": "old dark green rotary dial telephone, chunky plastic body, coiled cord, typical 1980s taiwanese household phone",
+      "zones": ["zone_apartment_muzha"],
+      "category": "furniture"
+    },
+    {
+      "name": "slippers_house",
+      "size": 16,
+      "description": "pair of simple blue rubber house slippers placed neatly at entrance, well-worn with visible foot imprint, typical taiwanese indoor footwear",
+      "zones": ["zone_apartment_muzha"],
+      "category": "decoration"
+    },
+    {
+      "name": "mailbox_cluster",
+      "size": 32,
+      "description": "vertical metal mailbox cluster with four numbered slots, dented grey metal with rust spots, hand-written name tags in chinese, mounted on apartment ground floor wall",
+      "zones": ["zone_apartment_muzha"],
+      "category": "structure"
+    },
+    {
+      "name": "desk_office_wooden",
+      "size": 64,
+      "description": "large dark mahogany office desk with two side drawer stacks, polished surface with leather desk pad, pen holder and small desk clock, formal professional taiwanese style",
+      "zones": ["zone_law_office"],
+      "category": "furniture"
+    },
+    {
+      "name": "filing_cabinet_metal",
+      "size": 32,
+      "description": "tall grey metal filing cabinet with four drawers, small label holders on each drawer, slightly scratched surface, one drawer slightly ajar showing manila folders, standard office equipment",
+      "zones": ["zone_law_office"],
+      "category": "furniture"
+    },
+    {
+      "name": "bookcase_law",
+      "size": 64,
+      "description": "tall wooden bookcase filled with thick law reference books and statute compilations, dark leather spines with gold text, traditional taiwanese law office backdrop",
+      "zones": ["zone_law_office"],
+      "category": "furniture"
+    },
+    {
+      "name": "certificate_frame",
+      "size": 24,
+      "description": "framed professional certificate or license on wall, dark wood frame, official document with red seal and calligraphy, taiwanese law practice credential",
+      "zones": ["zone_law_office"],
+      "category": "decoration"
+    },
+    {
+      "name": "tea_cup_guest",
+      "size": 16,
+      "description": "small white porcelain tea cup on saucer with lid, traditional taiwanese guest tea, placed on desk edge for visitor, faint steam",
+      "zones": ["zone_law_office"],
+      "category": "decoration"
+    },
+    {
+      "name": "fan_ceiling_old",
+      "size": 48,
+      "description": "old white ceiling fan with four blades, slightly dusty, brass motor housing, pull chain, typical fixture in older taiwanese offices and shops",
+      "zones": ["zone_law_office"],
+      "category": "decoration"
+    },
+    {
+      "name": "envelope_brown_large",
+      "size": 16,
+      "description": "large brown kraft paper envelope with red confidential stamp, sealed with string-and-button closure, hand-written chinese addressee, containing legal inheritance documents",
+      "zones": ["zone_law_office"],
+      "category": "key_item"
     }
   ],
   "buildings": [

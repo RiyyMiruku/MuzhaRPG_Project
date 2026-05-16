@@ -802,8 +802,10 @@ def submit_topdown_tileset(
     return tileset_id, img
 
 
-# TileMapDual `Standard` preset layout — Wang ID (bit 1=TL, 2=TR, 4=BL, 8=BR)
-# at (col, row) in the 4×4 atlas. Source: docs/tilemapdual-guide.md
+# TileMapDual `Standard` preset layout — internal Wang ID (bit 1=TL, 2=TR,
+# 4=BL, 8=BR) at (col, row) in the 4×4 atlas.
+# Pixellab's Wang IDs use the REVERSED bit order (bit 1=BR, 2=BL, 4=TR, 8=TL),
+# so we apply _pixellab_to_standard() before lookup.
 _WANG_ID_TO_POS: dict[int, tuple[int, int]] = {
     # row 0
      4: (0, 0), 10: (1, 0), 13: (2, 0), 12: (3, 0),
@@ -814,6 +816,12 @@ _WANG_ID_TO_POS: dict[int, tuple[int, int]] = {
     # row 3
      0: (0, 3),  7: (1, 3),  6: (2, 3),  1: (3, 3),
 }
+
+
+def _pixellab_to_standard(wid: int) -> int:
+    """Reverse 4-bit Wang ID: Pixellab uses bit0=BR,1=BL,2=TR,3=TL
+    but our layout uses bit0=TL,1=TR,2=BL,3=BR."""
+    return ((wid & 1) << 3) | ((wid & 2) << 1) | ((wid & 4) >> 1) | ((wid & 8) >> 3)
 
 
 def _assemble_wang_atlas(
@@ -834,9 +842,10 @@ def _assemble_wang_atlas(
             wid = int(t.get("id"))
         except (TypeError, ValueError):
             raise RuntimeError(f"tile missing numeric id: {t.get('name')!r}")
-        pos = _WANG_ID_TO_POS.get(wid)
+        std_id = _pixellab_to_standard(wid)
+        pos = _WANG_ID_TO_POS.get(std_id)
         if pos is None:
-            raise RuntimeError(f"Wang id {wid} not in Standard preset layout")
+            raise RuntimeError(f"Wang id {wid} (std={std_id}) not in Standard preset layout")
         decoded = _decode_image_entry(t.get("image"))
         if decoded is None:
             raise RuntimeError(f"failed to decode image for Wang tile id={wid}")
@@ -846,7 +855,7 @@ def _assemble_wang_atlas(
             decoded = decoded.resize((tile_w, tile_h), Image.Resampling.NEAREST)
         col, row = pos
         atlas.paste(decoded, (col * tile_w, row * tile_h), decoded)
-        seen.add(wid)
+        seen.add(std_id)
     missing = set(_WANG_ID_TO_POS) - seen
     if missing:
         raise RuntimeError(f"tileset response missing Wang IDs: {sorted(missing)}")

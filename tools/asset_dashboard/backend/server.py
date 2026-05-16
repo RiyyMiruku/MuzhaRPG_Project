@@ -797,7 +797,7 @@ def list_jobs() -> dict:
     return {"jobs": legacy + _v2_active_stages_as_jobs()}
 
 
-@app.get("/api/jobs/{job_id}")
+@app.get("/api/jobs/{job_id:path}")
 def job_detail(job_id: str) -> dict:
     info = _jobs.get(job_id)
     if info is None:
@@ -807,7 +807,7 @@ def job_detail(job_id: str) -> dict:
     return d
 
 
-@app.delete("/api/jobs/{job_id}")
+@app.delete("/api/jobs/{job_id:path}")
 def delete_job(job_id: str) -> dict:
     """Remove a finished (completed/failed) job from the registry."""
     info = _jobs.get(job_id)

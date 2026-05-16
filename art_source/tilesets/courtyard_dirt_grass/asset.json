@@ -1,44 +1,44 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:20:37",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-16T22:10:41",
   "tags": [
     "category:terrain",
     "chapter:1",
     "zone:zone_pharmacy_backyard"
   ],
-  "tileset_id": "dc197e22-0150-4ef6-b611-0034f1ccd767",
+  "tileset_id": "9e933cd8-0978-41b0-b2e9-75cce2bf3096",
   "lower": "compacted brown earth ground with small pebbles, traditional taiwanese back courtyard",
   "upper": "patchy green grass with small wildflowers and weeds",
   "tile_size": 16,
-  "topdown_path": "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_topdown.png",
+  "topdown_path": "art_source\\tilesets\\courtyard_dirt_grass\\courtyard_dirt_grass_topdown.png",
   "stages": {
     "generate_atlas": {
-      "completed_at": "2026-05-12T17:21:46",
+      "completed_at": "2026-05-16T21:46:38",
       "paths": [
-        "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_topdown.png"
+        "art_source\\tilesets\\courtyard_dirt_grass\\courtyard_dirt_grass_topdown.png"
       ]
     },
     "iso_project": {
-      "completed_at": "2026-05-12T17:21:46",
+      "completed_at": "2026-05-16T22:10:41",
       "paths": [
-        "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_iso.png"
+        "art_source\\tilesets\\courtyard_dirt_grass\\courtyard_dirt_grass_iso.png"
       ]
     },
     "verify_in_godot": {
-      "completed_at": "2026-05-12T17:21:46",
+      "completed_at": "2026-05-16T21:46:38",
       "paths": [
-        "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_iso.png"
+        "art_source\\tilesets\\courtyard_dirt_grass\\courtyard_dirt_grass_iso.png"
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:21:46",
+      "completed_at": "2026-05-16T22:10:41",
       "paths": [
-        "game/assets/textures/tilesets/courtyard_dirt_grass.png"
+        "game\\assets\\textures\\tilesets\\courtyard_dirt_grass.png"
       ]
     }
   },
-  "iso_path": "art_source/tilesets/courtyard_dirt_grass/courtyard_dirt_grass_iso.png",
-  "imported_at": "2026-05-12T17:21:46",
-  "game_png_path": "game/assets/textures/tilesets/courtyard_dirt_grass.png"
+  "iso_path": "art_source\\tilesets\\courtyard_dirt_grass\\courtyard_dirt_grass_iso.png",
+  "imported_at": "2026-05-16T22:10:41",
+  "game_png_path": "game\\assets\\textures\\tilesets\\courtyard_dirt_grass.png"
 }

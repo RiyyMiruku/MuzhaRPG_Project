@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="StoryBeat" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/StoryBeat.gd" id="1_beat_script"]
+
+[resource]
+script = ExtResource("1_beat_script")
+beat_id = "ch1_meet_lao_zhou"
+trigger_flags = { "first_time_traveled": true }
+trigger_npc_id = "lao_zhou"
+trigger_zone = ""
+trigger_event = ""
+dialogue_lines = [{
+"speaker": "narrator",
+"text": "市場入口的老人搖著摺扇，瞇眼看你。"
+}, {
+"speaker": "老周",
+"text": "後生仔，你是新搬來的？"
+}, {
+"speaker": "阿謙",
+"text": "是，我剛繼承了市場裡一間老藥行——榮昌中藥行。"
+}, {
+"speaker": "老周",
+"text": "……榮昌？"
+}, {
+"speaker": "narrator",
+"text": "(老周的扇子停了一拍。)"
+}, {
+"speaker": "老周",
+"text": "那間店啊。關了快四十年了。以前生意不錯的。"
+}, {
+"speaker": "阿謙",
+"text": "您認識以前的老闆嗎？林榮昌。"
+}, {
+"speaker": "老周",
+"text": "認識。他人很好。可惜……後來家裡出了點事，整個人就不一樣了。"
+}, {
+"speaker": "阿謙",
+"text": "什麼事？"
+}, {
+"speaker": "老周",
+"text": "唉，以前的事，講了你也不懂。改天吧，改天慢慢講。"
+}]
+choices = [{
+"text": "好，改天再來聽您講古。",
+"set_flags": { "lao_zhou_patient": true }
+}, {
+"text": "拜託您告訴我，這對我很重要。",
+"set_flags": { "lao_zhou_pressed": true }
+}]
+on_complete_flags = { "ch1_beat_meet_lao_zhou_done": true }
+on_complete_event = "ch1_met_lao_zhou"
+blocks_input = true

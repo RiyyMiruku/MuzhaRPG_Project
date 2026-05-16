@@ -1,0 +1,70 @@
+[gd_resource type="Resource" script_class="Cutscene" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/Cutscene.gd" id="1_cutscene_script"]
+
+[resource]
+script = ExtResource("1_cutscene_script")
+cutscene_id = "ch1_finale_reveal"
+blocks_input = true
+ops = Array[Dictionary]([{
+"op": "line",
+"speaker": "narrator",
+"text": "林榮昌說出了那三個字。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "阿謙僵住了。腦中像被閃電劈過。"
+}, {
+"op": "wait",
+"seconds": 1.0
+}, {
+"op": "era_switch",
+"era": "modern"
+}, {
+"op": "wait",
+"seconds": 0.5
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "他從口袋裡摸出父親的舊身分證。"
+}, {
+"op": "camera_to",
+"target_path": "YSortRoot/id_card_old",
+"zoom": [7.0, 7.0],
+"duration": 1.5
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "上面寫著「林文彥」。"
+}, {
+"op": "wait",
+"seconds": 0.8
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "林文彥。林榮華。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "是同一個人。"
+}, {
+"op": "wait",
+"seconds": 1.0
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "父親不是林榮昌的兒子——是他的弟弟。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "那個被全家抹去的人，就是自己的父親。"
+}, {
+"op": "restore_camera"
+}, {
+"op": "set_flag",
+"name": "ch1_truth_revealed",
+"value": true
+}, {
+"op": "emit_event",
+"name": "ch1_chapter_complete"
+}])

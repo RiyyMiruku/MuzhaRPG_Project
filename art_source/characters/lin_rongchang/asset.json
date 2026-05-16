@@ -1,7 +1,7 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T16:56:40",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-16T23:30:19",
   "tags": [
     "category:shopkeeper",
     "chapter:1",
@@ -45,29 +45,6 @@
       },
       "error": null
     },
-    "animate_idle": {
-      "status": "completed",
-      "queued_at": "2026-05-14T01:29:22",
-      "started_at": "2026-05-14T01:29:22",
-      "completed_at": "2026-05-14T01:31:13",
-      "result": {
-        "directions": [
-          "south",
-          "east",
-          "north",
-          "west"
-        ],
-        "frames_per_direction": [
-          4,
-          4,
-          4,
-          4
-        ],
-        "sheet_png": "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.png",
-        "sheet_json": "art_source/characters/lin_rongchang/spritesheet/lin_rongchang.json"
-      },
-      "error": null
-    },
     "animate_walk": {
       "status": "completed",
       "queued_at": "2026-05-14T02:39:58",
@@ -102,6 +79,24 @@
         "game_json": "game/assets/textures/characters/lin_rongchang.json"
       },
       "error": null
+    },
+    "animate_idle": {
+      "status": "completed",
+      "queued_at": "2026-05-16T23:05:37",
+      "started_at": "2026-05-16T23:05:37",
+      "completed_at": "2026-05-16T23:30:19",
+      "result": {
+        "directions": [
+          "south"
+        ],
+        "frames_per_direction": [
+          4
+        ],
+        "sheet_png": "art_source\\characters\\lin_rongchang\\spritesheet\\lin_rongchang.png",
+        "sheet_json": "art_source\\characters\\lin_rongchang\\spritesheet\\lin_rongchang.json",
+        "partial": true
+      },
+      "error": null
     }
   },
   "animations": {
@@ -134,5 +129,6 @@
     "walk_template_id": null,
     "preset": "player"
   },
-  "isometric": true
+  "isometric": true,
+  "retry_requests": {}
 }

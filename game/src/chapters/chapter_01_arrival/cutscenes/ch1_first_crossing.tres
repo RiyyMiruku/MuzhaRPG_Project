@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="Cutscene" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/Cutscene.gd" id="1_cutscene_script"]
+
+[resource]
+script = ExtResource("1_cutscene_script")
+cutscene_id = "ch1_first_crossing"
+blocks_input = true
+ops = Array[Dictionary]([{
+"op": "line",
+"speaker": "narrator",
+"text": "燈泡閃了一下。一陣暈眩。"
+}, {
+"op": "wait",
+"seconds": 0.6
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "再睜開眼——藥櫃是新的、貨架擺得整整齊齊。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "牆上掛著 1983 年的國泰人壽日曆。"
+}, {
+"op": "set_flag",
+"name": "first_time_traveled",
+"value": true
+}, {
+"op": "emit_event",
+"name": "ch1_first_travel_done"
+}])

@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-17T00:44:50",
+  "updated_at": "2026-05-17T00:51:30",
+  "tags": [
+    "zone:zone_market",
+    "category:decoration",
+    "chapter:1"
+  ],
+  "object_id": "d91022bf-8b7d-498a-a1de-bafb30a05240",
+  "kind": "iso_prop",
+  "description": "taiwanese blue street sign post with white chinese text, metal pole, standard municipal road sign, pointing direction arrow",
+  "size": {
+    "width": 32,
+    "height": 32
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-17T00:51:30",
+      "paths": [
+        "art_source\\objects\\road_sign_blue\\road_sign_blue.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-17T00:51:30",
+      "paths": [
+        "art_source\\objects\\road_sign_blue\\road_sign_blue.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-17T00:51:30",
+      "paths": [
+        "game\\assets\\textures\\props\\road_sign_blue.png",
+        "game\\src\\maps\\props\\road_sign_blue.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source\\objects\\road_sign_blue\\road_sign_blue.png",
+  "imported_at": "2026-05-17T00:51:30",
+  "game_png_path": "game\\assets\\textures\\props\\road_sign_blue.png",
+  "game_tscn_path": "game\\src\\maps\\props\\road_sign_blue.tscn",
+  "collision": "bottom_16x16"
+}

@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="Cutscene" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/Cutscene.gd" id="1_cutscene_script"]
+
+[resource]
+script = ExtResource("1_cutscene_script")
+cutscene_id = "ch1_ama_incense"
+blocks_input = true
+ops = Array[Dictionary]([{
+"op": "line",
+"speaker": "narrator",
+"text": "後院傳來一股線香的氣味。"
+}, {
+"op": "camera_to",
+"target_path": "YSortRoot/incense_burner_brass",
+"zoom": [5.0, 5.0],
+"duration": 1.2
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "林阿嬤跪在香爐前，嘴裡唸著什麼。聽不清楚。"
+}, {
+"op": "wait",
+"seconds": 0.8
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "她點了三炷香，插進爐裡，閉上眼睛很久很久。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "(她在拜誰？後院沒有祖先牌位啊。)"
+}, {
+"op": "restore_camera"
+}, {
+"op": "set_flag",
+"name": "saw_ama_incense",
+"value": true
+}, {
+"op": "emit_event",
+"name": "ch1_saw_ama_incense"
+}])

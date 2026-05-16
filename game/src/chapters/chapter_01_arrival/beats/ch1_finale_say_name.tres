@@ -1,0 +1,70 @@
+[gd_resource type="Resource" script_class="StoryBeat" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/StoryBeat.gd" id="1_beat_script"]
+
+[resource]
+script = ExtResource("1_beat_script")
+beat_id = "ch1_finale_say_name"
+trigger_flags = { "finale_night_ready": true }
+trigger_npc_id = "lin_rongchang"
+trigger_zone = ""
+trigger_event = ""
+dialogue_lines = [{
+"speaker": "narrator",
+"text": "夜深了。藥行打烊。林榮昌坐在櫃台後面，面前擺著那本筆記本。"
+}, {
+"speaker": "林榮昌",
+"text": "阿謙。坐。"
+}, {
+"speaker": "narrator",
+"text": "(他指了指櫃台前的凳子。)"
+}, {
+"speaker": "林榮昌",
+"text": "這本筆記本……是很久以前的東西了。"
+}, {
+"speaker": "阿謙",
+"text": "上面寫的是「榮華」。那是誰？"
+}, {
+"speaker": "林榮昌",
+"text": "……"
+}, {
+"speaker": "narrator",
+"text": "(沉默持續了很長一段時間。窗外傳來遠處野狗的叫聲。)"
+}, {
+"speaker": "林榮昌",
+"text": "那是……我弟弟。"
+}, {
+"speaker": "阿謙",
+"text": "你弟弟？"
+}, {
+"speaker": "林榮昌",
+"text": "民國六十五年出事以後，全家就不再提他了。"
+}, {
+"speaker": "林榮昌",
+"text": "阿母說不准提。我也不提。"
+}, {
+"speaker": "林榮昌",
+"text": "但我每隔幾天就去他房間打掃。十年了。"
+}, {
+"speaker": "narrator",
+"text": "(他的聲音開始發抖。)"
+}, {
+"speaker": "林榮昌",
+"text": "我弟弟他叫——"
+}, {
+"speaker": "林榮昌",
+"text": "林榮華。"
+}, {
+"speaker": "narrator",
+"text": "阿謙的心臟停了一拍。"
+}, {
+"speaker": "narrator",
+"text": "林榮華。林文彥。"
+}, {
+"speaker": "narrator",
+"text": "父親的名字在腦中炸開。"
+}]
+choices = []
+on_complete_flags = { "ch1_beat_finale_say_name_done": true }
+on_complete_event = "ch1_finale_said_brother_name"
+blocks_input = true

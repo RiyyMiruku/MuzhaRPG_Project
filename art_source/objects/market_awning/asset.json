@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at": "2026-05-16T23:49:42",
+  "updated_at": "2026-05-17T00:13:49",
+  "tags": [
+    "zone:zone_market",
+    "category:decoration",
+    "chapter:1"
+  ],
+  "object_id": "bc451f53-3fa3-4744-8f13-344fdfe5ed6c",
+  "kind": "iso_prop",
+  "description": "faded striped canvas awning canopy over market stall, metal frame, red and white stripes, taiwanese traditional market",
+  "size": {
+    "width": 64,
+    "height": 64
+  },
+  "stages": {
+    "generate_object": {
+      "completed_at": "2026-05-17T00:13:49",
+      "paths": [
+        "art_source\\objects\\market_awning\\market_awning.png"
+      ]
+    },
+    "chroma_key": {
+      "completed_at": "2026-05-17T00:13:49",
+      "paths": [
+        "art_source\\objects\\market_awning\\market_awning.png"
+      ]
+    },
+    "import_to_godot": {
+      "completed_at": "2026-05-17T00:13:49",
+      "paths": [
+        "game\\assets\\textures\\props\\market_awning.png",
+        "game\\src\\maps\\props\\market_awning.tscn"
+      ]
+    }
+  },
+  "local_path": "art_source\\objects\\market_awning\\market_awning.png",
+  "imported_at": "2026-05-17T00:13:49",
+  "game_png_path": "game\\assets\\textures\\props\\market_awning.png",
+  "game_tscn_path": "game\\src\\maps\\props\\market_awning.tscn",
+  "collision": "none"
+}
