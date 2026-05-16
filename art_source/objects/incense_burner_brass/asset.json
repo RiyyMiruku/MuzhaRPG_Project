@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:24:11",
-  "updated_at": "2026-05-12T17:25:32",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:ritual",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_apartment_muzha"
   ],
   "object_id": "848b2763-3843-424a-b79e-e6c10b06861e",
   "kind": "iso_prop",

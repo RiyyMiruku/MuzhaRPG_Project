@@ -1,15 +1,16 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:53",
-  "updated_at": "2026-05-12T17:37:30",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:building",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_market_1983",
+    "zone:zone_pharmacy_1983"
   ],
-  "object_id": "44e400c6-b134-4acf-a934-4c1e50d52d69",
-  "kind": "building",
-  "description": "traditional taiwanese two-story shophouse in busy market alley, open shopfront with raised wooden roll-up shutter showing pharmacy interior, polished red brick lower floor, freshly painted white upper floor with wooden window shutters, dark grey tile roof in good condition, bright red chinese signboard with gold characters reading rongchang chinese medicine, red paper lanterns hanging at entrance",
+  "object_id": "pixflux:pharmacy_rongchang_1983",
+  "kind": "iso_building",
+  "description": "isometric pixel art, 30-degree top-down angled view, full building with visible roof and two side walls, transparent background — traditional taiwanese two-story shophouse in busy market alley, open shopfront with raised wooden roll-up shutter showing pharmacy interior, polished red brick lower floor, freshly painted white upper floor with wooden window shutters, dark grey tile roof in good condition, bright red chinese signboard with gold characters reading rongchang chinese medicine, red paper lanterns hanging at entrance",
   "view": "high_top_down",
   "size": {
     "width": 128,
@@ -17,28 +18,28 @@
   },
   "stages": {
     "generate_object": {
-      "completed_at": "2026-05-12T17:37:30",
+      "completed_at": "2026-05-14T19:02:37",
       "paths": [
-        "art_source/objects/pharmacy_rongchang_1983/pharmacy_rongchang_1983.png"
+        "art_source\\objects\\pharmacy_rongchang_1983\\pharmacy_rongchang_1983.png"
       ]
     },
     "chroma_key": {
-      "completed_at": "2026-05-12T17:37:30",
+      "completed_at": "2026-05-14T19:02:37",
       "paths": [
-        "art_source/objects/pharmacy_rongchang_1983/pharmacy_rongchang_1983.png"
+        "art_source\\objects\\pharmacy_rongchang_1983\\pharmacy_rongchang_1983.png"
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:37:30",
+      "completed_at": "2026-05-14T19:02:37",
       "paths": [
-        "game/assets/textures/props/pharmacy_rongchang_1983.png",
-        "game/src/maps/props/pharmacy_rongchang_1983.tscn"
+        "game\\assets\\textures\\props\\pharmacy_rongchang_1983.png",
+        "game\\src\\maps\\props\\pharmacy_rongchang_1983.tscn"
       ]
     }
   },
-  "local_path": "art_source/objects/pharmacy_rongchang_1983/pharmacy_rongchang_1983.png",
-  "imported_at": "2026-05-12T17:37:30",
-  "game_png_path": "game/assets/textures/props/pharmacy_rongchang_1983.png",
-  "game_tscn_path": "game/src/maps/props/pharmacy_rongchang_1983.tscn",
+  "local_path": "art_source\\objects\\pharmacy_rongchang_1983\\pharmacy_rongchang_1983.png",
+  "imported_at": "2026-05-14T19:02:37",
+  "game_png_path": "game\\assets\\textures\\props\\pharmacy_rongchang_1983.png",
+  "game_tscn_path": "game\\src\\maps\\props\\pharmacy_rongchang_1983.tscn",
   "collision": "bottom_16x16"
 }

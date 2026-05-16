@@ -11,19 +11,31 @@
  * involved edits, export the PNG, edit in Aseprite, copy back over.
  */
 import { useEffect, useRef, useState, useCallback } from "react"
-import { X, Pipette, Pencil, Save, ZoomIn, ZoomOut, RotateCcw } from "lucide-react"
+import { X, Pipette, Pencil, Save, ZoomIn, ZoomOut, RotateCcw, Eraser } from "lucide-react"
 import { api } from "../api"
+
+interface FrameTarget {
+  /** Spritesheet path the frame belongs to. */
+  sheet_path: string
+  row: number
+  col: number
+}
 
 interface Props {
   /** URL the editor loads from (browser src). */
   imageUrl: string
-  /** Repo-relative path the editor writes back to via PUT /api/asset/file. */
+  /** Repo-relative path the editor writes back to via PUT /api/asset/file.
+   *  Ignored when `frameTarget` is set — frame edits PUT to /sheet-frame. */
   repoPath: string
+  /** When present, save writes back to a single (row, col) frame inside a
+   *  spritesheet via PUT /api/asset/sheet-frame instead of overwriting a
+   *  standalone PNG file. */
+  frameTarget?: FrameTarget
   onClose: () => void
   onSaved?: () => void
 }
 
-type Tool = "pencil" | "eyedropper"
+type Tool = "pencil" | "eyedropper" | "eraser"
 
 const MIN_ZOOM = 4
 const MAX_ZOOM = 32
@@ -44,7 +56,7 @@ function hexToRgba(hex: string): [number, number, number, number] {
   return [r, g, b, a]
 }
 
-export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
+export function PixelEditor({ imageUrl, repoPath, frameTarget, onClose, onSaved }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const [tool, setTool] = useState<Tool>("pencil")
   const [color, setColor] = useState<string>("#ff00ff")
@@ -98,15 +110,23 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
     })
   }, [])
 
-  const paintAt = useCallback((x: number, y: number) => {
+  const paintAt = useCallback((x: number, y: number, erase = false) => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    const [r, g, b, a] = hexToRgba(color)
-    const id = ctx.createImageData(1, 1)
-    id.data[0] = r; id.data[1] = g; id.data[2] = b; id.data[3] = a
-    ctx.putImageData(id, x, y)
+    if (erase) {
+      // putImageData ignores composite ops — writing rgba(0,0,0,0) directly
+      // overwrites the pixel to fully transparent (true erase, not blend).
+      const id = ctx.createImageData(1, 1)
+      id.data[0] = 0; id.data[1] = 0; id.data[2] = 0; id.data[3] = 0
+      ctx.putImageData(id, x, y)
+    } else {
+      const [r, g, b, a] = hexToRgba(color)
+      const id = ctx.createImageData(1, 1)
+      id.data[0] = r; id.data[1] = g; id.data[2] = b; id.data[3] = a
+      ctx.putImageData(id, x, y)
+    }
     setDirty(true)
   }, [color])
 
@@ -126,7 +146,7 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
     const ctx = canvas.getContext("2d")!
     undoStack.current.push(ctx.getImageData(0, 0, size.w, size.h))
     if (undoStack.current.length > 30) undoStack.current.shift()
-    paintAt(x, y)
+    paintAt(x, y, tool === "eraser")
   }
 
   const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -139,9 +159,9 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
       setHoverPx(null); return
     }
     setHoverPx({ x, y })
-    // Continuous painting while dragging with left button (pencil only).
-    if (e.buttons === 1 && tool === "pencil" && !e.altKey) {
-      paintAt(x, y)
+    // Continuous painting while dragging with left button (pencil + eraser).
+    if (e.buttons === 1 && (tool === "pencil" || tool === "eraser") && !e.altKey) {
+      paintAt(x, y, tool === "eraser")
     }
   }
 
@@ -156,11 +176,17 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
     setDirty(undoStack.current.length > 0)
   }, [])
 
-  // Keyboard: ⌘Z / Ctrl+Z = undo, Esc = close
+  // Keyboard: ⌘Z = undo, Esc = close, B/E/I = tool swap
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "z") { e.preventDefault(); undo() }
-      else if (e.key === "Escape") onClose()
+      if ((e.metaKey || e.ctrlKey) && e.key === "z") { e.preventDefault(); undo(); return }
+      if (e.key === "Escape") { onClose(); return }
+      // Tool hotkeys — skip when typing in any input/textarea.
+      const tag = (e.target as HTMLElement | null)?.tagName
+      if (tag === "INPUT" || tag === "TEXTAREA") return
+      if (e.key === "b" || e.key === "B") setTool("pencil")
+      else if (e.key === "e" || e.key === "E") setTool("eraser")
+      else if (e.key === "i" || e.key === "I") setTool("eyedropper")
     }
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
@@ -174,7 +200,13 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
       const blob: Blob = await new Promise((resolve, reject) => {
         canvas.toBlob((b) => b ? resolve(b) : reject(new Error("toBlob null")), "image/png")
       })
-      await api.writeFile(repoPath, blob)
+      if (frameTarget) {
+        await api.writeSheetFrame(
+          frameTarget.sheet_path, frameTarget.row, frameTarget.col, blob,
+        )
+      } else {
+        await api.writeFile(repoPath, blob)
+      }
       setDirty(false)
       undoStack.current = []
       onSaved?.()
@@ -193,7 +225,11 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
       <div className="flex max-h-[90vh] max-w-[90vw] flex-col rounded-lg border border-stone-700 bg-stone-900 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-stone-700 px-4 py-2">
-          <span className="font-mono text-xs text-stone-300 truncate" title={repoPath}>{repoPath}</span>
+          <span className="font-mono text-xs text-stone-300 truncate" title={frameTarget ? `${frameTarget.sheet_path} · row ${frameTarget.row} col ${frameTarget.col}` : repoPath}>
+            {frameTarget
+              ? `${frameTarget.sheet_path.split("/").pop()} · row ${frameTarget.row} col ${frameTarget.col}`
+              : repoPath}
+          </span>
           <button onClick={onClose} className="rounded p-1 hover:bg-stone-800">
             <X className="h-4 w-4" />
           </button>
@@ -202,10 +238,13 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-3 border-b border-stone-700 px-4 py-2 text-xs">
           <div className="flex gap-1">
-            <ToolBtn active={tool === "pencil"} onClick={() => setTool("pencil")} title="Pencil">
+            <ToolBtn active={tool === "pencil"} onClick={() => setTool("pencil")} title="Pencil (B)">
               <Pencil className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn active={tool === "eyedropper"} onClick={() => setTool("eyedropper")} title="Eyedropper (alt-click)">
+            <ToolBtn active={tool === "eraser"} onClick={() => setTool("eraser")} title="Eraser — paints fully transparent (E)">
+              <Eraser className="h-3.5 w-3.5" />
+            </ToolBtn>
+            <ToolBtn active={tool === "eyedropper"} onClick={() => setTool("eyedropper")} title="Eyedropper (alt-click or I)">
               <Pipette className="h-3.5 w-3.5" />
             </ToolBtn>
           </div>
@@ -273,16 +312,18 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
                 className={"pointer-events-none absolute " +
                   (tool === "eyedropper"
                     ? "border border-dashed border-white"
-                    : "border border-white/80")}
+                    : tool === "eraser"
+                      ? "border border-dashed border-red-400"
+                      : "border border-white/80")}
                 style={{
                   left: `${hoverPx.x * zoom}px`,
                   top: `${hoverPx.y * zoom}px`,
                   width: `${zoom}px`,
                   height: `${zoom}px`,
-                  backgroundColor: tool === "eyedropper"
-                    ? "transparent"
-                    : (color.length === 9 ? color.slice(0, 7) : color),
-                  opacity: tool === "eyedropper" ? 1 : 0.7,
+                  backgroundColor: tool === "pencil"
+                    ? (color.length === 9 ? color.slice(0, 7) : color)
+                    : "transparent",
+                  opacity: tool === "pencil" ? 0.7 : 1,
                   boxShadow: "0 0 0 1px rgba(0,0,0,0.6)",
                 }}
               />
@@ -296,7 +337,7 @@ export function PixelEditor({ imageUrl, repoPath, onClose, onSaved }: Props) {
             {size && `${size.w}×${size.h}px`}
             {dirty && <span className="ml-2 text-amber-400">● unsaved</span>}
           </span>
-          <span>alt-click = eyedropper · ⌘Z = undo · esc = close</span>
+          <span>B = pencil · E = eraser · I/alt-click = eyedropper · ⌘Z = undo · esc = close</span>
         </div>
         {err && <div className="border-t border-red-900/60 bg-red-900/20 px-4 py-1.5 text-xs text-red-300">{err}</div>}
       </div>

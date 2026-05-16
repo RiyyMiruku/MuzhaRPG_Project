@@ -2,9 +2,6 @@
   "status": "completed",
   "created_at": "2026-05-12T00:31:25",
   "updated_at": "2026-05-12T00:36:56",
-  "prompts": {
-    "add_idle_animation": "standing in place, head held perfectly still and facing forward in the same direction as the torso, eyes looking straight ahead, no head turning, no looking around, no rubbernecking, arms relaxed at the sides with wrists hanging naturally and motionless — no random hand or wrist movement, no finger fidgeting, gentle breathing only (shoulders rise and fall subtly), feet planted, posture consistent across all frames"
-  },
   "tags": [
     "zone:test",
     "category:npc",

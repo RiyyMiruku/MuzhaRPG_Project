@@ -2,10 +2,6 @@
   "status": "base_ready",
   "created_at": "2026-05-12T00:05:52",
   "updated_at": "2026-05-12T00:16:13",
-  "prompts": {
-    "add_idle_animation": "standing in place at her food stall, head held perfectly still and facing\nforward in the same direction as her torso, ponytail hanging straight down\nthe centerline of her back, eyes looking straight ahead, no head turning,\nno looking around, no rubbernecking, gentle breathing only — shoulders rise\nand fall subtly, arms remain at sides, feet planted, bandana knot stays\ncentered at the back of her head",
-    "add_walk_animation": "walking forward in the same direction her body is facing, head locked\nforward and aligned with torso, eyes fixed straight ahead in the walking\ndirection, ponytail swinging straight down behind her (not sideways), no\nhead turning, no looking sideways, no glancing around, natural arm swing\nopposite to leg stride, consistent gait and posture across all frames"
-  },
   "tags": [
     "zone:test",
     "category:npc",

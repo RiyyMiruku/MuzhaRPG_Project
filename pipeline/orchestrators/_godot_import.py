@@ -84,7 +84,16 @@ def _write_prop_tscn(
     interact_size = (float(w), min(float(h), 16.0))
     interact_pos = (0.0, -interact_size[1] / 2.0)
 
-    tex_uid = godot_uid("tex:" + name)
+    # 從現有 .png.import 讀真正 UID;沒有就先生個 deterministic 的(Godot 之後會覆寫)
+    import_file = png_path.with_suffix(png_path.suffix + ".import")
+    tex_uid: str | None = None
+    if import_file.exists():
+        import re as _re
+        m = _re.search(r'uid="(uid://[^"]+)"', import_file.read_text(encoding="utf-8"))
+        if m:
+            tex_uid = m.group(1)
+    if tex_uid is None:
+        tex_uid = godot_uid("tex:" + name)
     scene_uid = godot_uid("scene:" + name)
     template_uid = "uid://muzha_prop_template"
 

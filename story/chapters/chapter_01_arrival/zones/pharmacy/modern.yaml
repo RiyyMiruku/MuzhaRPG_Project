@@ -1,0 +1,58 @@
+# 榮昌中藥行(現代,鎖門狀態)— 開場、穿越觸發點、現代線蒐證
+zone: zone_pharmacy
+era: "modern"
+size: [26, 19]
+
+tilemap:
+  atlas: market_concrete_tile
+  terrain: 1
+  fill: rect
+
+props:
+  - id: iron_gate_rusted
+    anchor: south_wall
+    offset: [0, -1]
+
+  - id: shop_counter_wood
+    anchor: center
+    offset: [0, 1]
+
+  - id: medicine_cabinet_dusty
+    anchor: north_wall
+    offset: [-4, 1]
+
+  - id: medicine_cabinet_dusty
+    anchor: north_wall
+    offset: [0, 1]
+    rename: medicine_cabinet_dusty_2
+
+  - id: medicine_cabinet_dusty
+    anchor: north_wall
+    offset: [4, 1]
+    rename: medicine_cabinet_dusty_3
+
+  - id: family_photo_blacked
+    anchor: north_wall
+    offset: [-7, 1]
+
+  - id: incense_burner_brass
+    anchor: east_wall
+    offset: [-2, 0]
+
+  - id: old_map_paper
+    # 抽屜底層發現的舊地圖,擺在櫃台上做視覺示意
+    anchor: relative_to(shop_counter_wood)
+    offset: [1, 0]
+
+npcs: []
+
+transitions:
+  - target_zone: zone_market
+    entry_point: from_pharmacy
+    anchor: south_wall
+    offset: [0, 1]
+    rename: ToMarket
+
+player_spawn:
+  anchor: south_wall
+  offset: [0, 0]

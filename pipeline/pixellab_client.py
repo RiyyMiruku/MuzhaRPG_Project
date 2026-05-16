@@ -42,6 +42,7 @@ ANIMATE_CHARACTER_URL: str = f"{V2_BASE}/animate-character"
 CREATE_TOPDOWN_TILESET_URL: str = f"{V2_BASE}/create-tileset"
 CREATE_MAP_OBJECT_URL: str = f"{V2_BASE}/map-objects"
 CREATE_ISO_TILE_URL: str = f"{V2_BASE}/create-isometric-tile"
+CREATE_IMAGE_PIXFLUX_URL: str = f"{V2_BASE}/create-image-pixflux"
 CHARACTERS_URL: str = f"{V2_BASE}/characters"
 TILESETS_URL: str = f"{V2_BASE}/tilesets"
 OBJECTS_URL: str = f"{V2_BASE}/objects"
@@ -977,3 +978,68 @@ def submit_iso_tile(
             f"create-isometric-tile job 完成但無 image 可解 (top keys: {list(result.keys())})"
         )
     return tile_id, img
+
+
+# === Pixflux (general single-image generator) ===
+
+
+def submit_pixflux_image(
+    token: str,
+    description: str,
+    width: int = 128,
+    height: int = 128,
+    view: str | None = None,
+    isometric: bool = False,
+    no_background: bool = True,
+    text_guidance_scale: float = 8.0,
+    outline: str | None = "single color outline",
+    shading: str | None = "medium shading",
+    detail: str | None = None,
+) -> Image.Image:
+    """同步建單張 pixflux 圖,回傳 PIL.Image。
+
+    Pixellab /create-image-pixflux 是**真同步**端點 (200 直接回 base64,無
+    background_job 流程)。適合一次性圖像生成,主要用途:**iso 建築**(補
+    /map-objects 不支援 isometric 的缺口)。
+
+    限制:
+      - image_size 每軸 16-400 px (max 400×400)
+      - isometric 是 "weakly guiding" — 也要在 description 帶 "isometric view"
+        / "30 degree top-down angle" 等明確字眼
+      - view enum: "side" | "low_top_down" | "high_top_down"(內部值,
+        _wire_view 轉成 wire format)
+    """
+    if not (16 <= width <= 400 and 16 <= height <= 400):
+        raise ValueError(
+            f"pixflux image_size 須 16-400 per axis,收到 {width}x{height}"
+        )
+    payload: dict[str, Any] = {
+        "description": description,
+        "image_size": {"width": width, "height": height},
+        "text_guidance_scale": text_guidance_scale,
+        "isometric": isometric,
+        "no_background": no_background,
+    }
+    if view is not None:
+        payload["view"] = _wire_view(view)
+    if outline:
+        payload["outline"] = outline
+    if shading:
+        payload["shading"] = shading
+    if detail:
+        payload["detail"] = detail
+
+    r = _post_submit_with_quota_retry(
+        token, CREATE_IMAGE_PIXFLUX_URL, payload, timeout=300.0
+    )
+    if r.status_code != 200:
+        raise RuntimeError(
+            f"create-image-pixflux → HTTP {r.status_code}: {r.text[:500]}"
+        )
+    data = r.json()
+    img = _extract_single_image(data)
+    if img is None:
+        raise RuntimeError(
+            f"create-image-pixflux 200 但無 image 可解 (top keys: {list(data.keys())})"
+        )
+    return img

@@ -1,0 +1,147 @@
+[gd_scene format=3 uid="uid://btmdtest00001"]
+
+[ext_resource type="Material" uid="uid://cmbcfxlkxxnwq" path="res://addons/TileMapDual/ghost_material.tres" id="1_ghost"]
+[ext_resource type="Texture2D" uid="uid://d4cvyvta7his6" path="res://assets/textures/iso_test/iso_autotile_market_grass_asphalt.png" id="2_grass"]
+[ext_resource type="Script" uid="uid://cjk8nronimk5r" path="res://addons/TileMapDual/tile_map_dual.gd" id="3_tmd_script"]
+[ext_resource type="Script" uid="uid://b3u7ubw407v4o" path="res://tools/zone_baker_test.gd" id="4_baker"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_grass"]
+texture = ExtResource("2_grass")
+texture_region_size = Vector2i(32, 16)
+0:3/0 = 0
+0:3/0/terrain_set = 0
+0:3/0/terrain = 0
+0:3/0/terrains_peering_bit/right_corner = 0
+0:3/0/terrains_peering_bit/bottom_corner = 0
+0:3/0/terrains_peering_bit/left_corner = 0
+0:3/0/terrains_peering_bit/top_corner = 0
+3:3/0 = 0
+3:3/0/terrain_set = 0
+3:3/0/terrains_peering_bit/right_corner = 0
+3:3/0/terrains_peering_bit/bottom_corner = 0
+3:3/0/terrains_peering_bit/left_corner = 0
+3:3/0/terrains_peering_bit/top_corner = 1
+0:2/0 = 0
+0:2/0/terrain_set = 0
+0:2/0/terrains_peering_bit/right_corner = 1
+0:2/0/terrains_peering_bit/bottom_corner = 0
+0:2/0/terrains_peering_bit/left_corner = 0
+0:2/0/terrains_peering_bit/top_corner = 0
+1:2/0 = 0
+1:2/0/terrain_set = 0
+1:2/0/terrains_peering_bit/right_corner = 1
+1:2/0/terrains_peering_bit/bottom_corner = 0
+1:2/0/terrains_peering_bit/left_corner = 0
+1:2/0/terrains_peering_bit/top_corner = 1
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrains_peering_bit/right_corner = 0
+0:0/0/terrains_peering_bit/bottom_corner = 0
+0:0/0/terrains_peering_bit/left_corner = 1
+0:0/0/terrains_peering_bit/top_corner = 0
+3:2/0 = 0
+3:2/0/terrain_set = 0
+3:2/0/terrains_peering_bit/right_corner = 0
+3:2/0/terrains_peering_bit/bottom_corner = 0
+3:2/0/terrains_peering_bit/left_corner = 1
+3:2/0/terrains_peering_bit/top_corner = 1
+2:3/0 = 0
+2:3/0/terrain_set = 0
+2:3/0/terrains_peering_bit/right_corner = 1
+2:3/0/terrains_peering_bit/bottom_corner = 0
+2:3/0/terrains_peering_bit/left_corner = 1
+2:3/0/terrains_peering_bit/top_corner = 0
+3:1/0 = 0
+3:1/0/terrain_set = 0
+3:1/0/terrains_peering_bit/right_corner = 1
+3:1/0/terrains_peering_bit/bottom_corner = 0
+3:1/0/terrains_peering_bit/left_corner = 1
+3:1/0/terrains_peering_bit/top_corner = 1
+1:3/0 = 0
+1:3/0/terrain_set = 0
+1:3/0/terrains_peering_bit/right_corner = 0
+1:3/0/terrains_peering_bit/bottom_corner = 1
+1:3/0/terrains_peering_bit/left_corner = 0
+1:3/0/terrains_peering_bit/top_corner = 0
+0:1/0 = 0
+0:1/0/terrain_set = 0
+0:1/0/terrains_peering_bit/right_corner = 0
+0:1/0/terrains_peering_bit/bottom_corner = 1
+0:1/0/terrains_peering_bit/left_corner = 0
+0:1/0/terrains_peering_bit/top_corner = 1
+1:0/0 = 0
+1:0/0/terrain_set = 0
+1:0/0/terrains_peering_bit/right_corner = 1
+1:0/0/terrains_peering_bit/bottom_corner = 1
+1:0/0/terrains_peering_bit/left_corner = 0
+1:0/0/terrains_peering_bit/top_corner = 0
+2:2/0 = 0
+2:2/0/terrain_set = 0
+2:2/0/terrains_peering_bit/right_corner = 1
+2:2/0/terrains_peering_bit/bottom_corner = 1
+2:2/0/terrains_peering_bit/left_corner = 0
+2:2/0/terrains_peering_bit/top_corner = 1
+3:0/0 = 0
+3:0/0/terrain_set = 0
+3:0/0/terrains_peering_bit/right_corner = 0
+3:0/0/terrains_peering_bit/bottom_corner = 1
+3:0/0/terrains_peering_bit/left_corner = 1
+3:0/0/terrains_peering_bit/top_corner = 0
+2:0/0 = 0
+2:0/0/terrain_set = 0
+2:0/0/terrains_peering_bit/right_corner = 0
+2:0/0/terrains_peering_bit/bottom_corner = 1
+2:0/0/terrains_peering_bit/left_corner = 1
+2:0/0/terrains_peering_bit/top_corner = 1
+1:1/0 = 0
+1:1/0/terrain_set = 0
+1:1/0/terrains_peering_bit/right_corner = 1
+1:1/0/terrains_peering_bit/bottom_corner = 1
+1:1/0/terrains_peering_bit/left_corner = 1
+1:1/0/terrains_peering_bit/top_corner = 0
+2:1/0 = 0
+2:1/0/terrain_set = 0
+2:1/0/terrain = 1
+2:1/0/terrains_peering_bit/right_corner = 1
+2:1/0/terrains_peering_bit/bottom_corner = 1
+2:1/0/terrains_peering_bit/left_corner = 1
+2:1/0/terrains_peering_bit/top_corner = 1
+
+[sub_resource type="TileSet" id="TileSet_grass"]
+tile_shape = 1
+tile_size = Vector2i(32, 16)
+terrain_set_0/mode = 1
+terrain_set_0/terrain_0/name = "<any>"
+terrain_set_0/terrain_0/color = Color(0.93333334, 0.50980395, 0.93333334, 1)
+terrain_set_0/terrain_1/name = "FG -iso_autotile_market_grass_asphalt.png"
+terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_grass")
+
+[node name="ZoneTileMapDualTest" type="Node2D" unique_id=1441759259]
+script = ExtResource("4_baker")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1222053290]
+
+[node name="TileMapDual" type="TileMapLayer" parent="TileMapLayer" unique_id=745097711]
+material = ExtResource("1_ghost")
+tile_map_data = PackedByteArray(0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 0, 255, 255, 0, 0, 2, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 0, 1, 0, 0, 0)
+tile_set = SubResource("TileSet_grass")
+script = ExtResource("3_tmd_script")
+godot_4_3_compatibility = false
+metadata/_custom_type_script = "uid://cjk8nronimk5r"
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=29157281]
+zoom = Vector2(3, 3)
+
+[node name="Notes" type="Label" parent="." unique_id=509951977]
+offset_left = -240.0
+offset_top = -120.0
+offset_right = 240.0
+offset_bottom = -60.0
+theme_override_font_sizes/font_size = 11
+text = "TileMapDual @tool 程式塗驗證
+1) 選 root → Inspector 按 'Bake 5 cells'
+2) 看 5 格是否顯示 + 邊界拼接
+3) Ctrl+S 存檔
+4) 重開 .tscn 確認 tile_map_data 非空"
+horizontal_alignment = 1

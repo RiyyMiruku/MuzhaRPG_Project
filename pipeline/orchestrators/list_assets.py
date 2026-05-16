@@ -3,9 +3,9 @@
 Usage:
   uv run python pipeline/orchestrators/list_assets.py
   uv run python pipeline/orchestrators/list_assets.py --type character
-  uv run python pipeline/orchestrators/list_assets.py --zone market
+  uv run python pipeline/orchestrators/list_assets.py --zone zone_pharmacy_1983
   uv run python pipeline/orchestrators/list_assets.py --category vendor
-  uv run python pipeline/orchestrators/list_assets.py --type tileset --zone market
+  uv run python pipeline/orchestrators/list_assets.py --type tileset --zone zone_market_1983
 """
 from __future__ import annotations
 

@@ -15,51 +15,77 @@ class_name Zones
 extends RefCounted
 
 ## 起始區域（新遊戲 / save 預設）
-const STARTING: String = "zone_nccu"
+## chapter 1 故事起點:阿謙在老公寓醒來,走出去到木柵市場現代版,打開藥行鐵門
+const STARTING: String = "zone_apartment_muzha"
 
 ## 區域定義表 — single source of truth
+##
+## 章節 1 拓樸(hybrid era):
+##   apartment_muzha ↔ market ↔ {pharmacy, law_office}
+##   pharmacy ↔ pharmacy_backyard
+##
+## Era 機制:
+##   zone_pharmacy 與 zone_market 是 hybrid 場景(同一 .tscn 內含 1983 / modern
+##   兩套節點,以 group `era_1983` / `era_modern` 標記)。
+##   EraManager(autoload,未實作)透過 `get_tree().get_nodes_in_group("era_<era>")`
+##   切換 visible + tween EraTint CanvasModulate.color。
+##   ZoneManager 不參與 era 切換 — era 切換不離開 zone,是 in-place toggle。
+##
+##   單時空 zone(backyard / apartment / law_office) 沒 era group,
+##   無論當前 era 都長一樣。
 const ALL: Dictionary = {
-	"zone_nccu": {
-		"display": "政大正門",
-		"scene": "res://src/maps/zones/zone_nccu.tscn",
-		"world_pos": Vector2(250, 200),
+	"zone_apartment_muzha": {
+		"display": "木柵老公寓",
+		"scene": "res://src/maps/zones/zone_apartment_muzha.tscn",
+		"world_pos": Vector2(300, 100),
 		"entry_points": {
-			"default": Vector2(0, 50),
-			"from_market": Vector2(-200, 0),
-			"from_riverside": Vector2(200, 0),
+			"default": Vector2(-96, 48),
+			"from_market": Vector2(-96, 48),
 		},
-		"connects_to": ["zone_market", "zone_riverside"],
+		"connects_to": ["zone_market"],
 	},
 	"zone_market": {
 		"display": "木柵市場",
 		"scene": "res://src/maps/zones/zone_market.tscn",
-		"world_pos": Vector2(100, 200),
+		"world_pos": Vector2(200, 250),
 		"entry_points": {
-			"default": Vector2(0, 50),
-			"from_nccu": Vector2(200, 0),
-			"from_zhinan": Vector2(0, -100),
+			"default": Vector2(-144, 72),
+			"from_apartment": Vector2(-144, 72),
+			"from_pharmacy": Vector2(0, -80),
+			"from_law_office": Vector2(150, 0),
 		},
-		"connects_to": ["zone_nccu", "zone_zhinan"],
+		"connects_to": ["zone_apartment_muzha", "zone_pharmacy", "zone_law_office"],
 	},
-	"zone_zhinan": {
-		"display": "指南宮",
-		"scene": "res://src/maps/zones/zone_zhinan.tscn",
-		"world_pos": Vector2(100, 80),
+	"zone_pharmacy": {
+		"display": "榮昌中藥行",
+		"scene": "res://src/maps/zones/zone_pharmacy.tscn",
+		"world_pos": Vector2(180, 200),
 		"entry_points": {
-			"default": Vector2(0, 50),
-			"from_market": Vector2(0, 100),
+			"default": Vector2(-128, 64),
+			"from_market": Vector2(-128, 64),
+			"from_backyard": Vector2(150, 0),
+		},
+		"connects_to": ["zone_market", "zone_pharmacy_backyard"],
+	},
+	"zone_pharmacy_backyard": {
+		"display": "榮昌中藥行後院",
+		"scene": "res://src/maps/zones/zone_pharmacy_backyard.tscn",
+		"world_pos": Vector2(180, 150),
+		"entry_points": {
+			"default": Vector2(-160, -80),
+			"from_pharmacy": Vector2(-160, -80),
+		},
+		"connects_to": ["zone_pharmacy"],
+	},
+	"zone_law_office": {
+		"display": "律師事務所",
+		"scene": "res://src/maps/zones/zone_law_office.tscn",
+		"world_pos": Vector2(400, 250),
+		"entry_points": {
+			"default": Vector2(-96, 48),
+			"from_market": Vector2(-96, 48),
 		},
 		"connects_to": ["zone_market"],
-	},
-	"zone_riverside": {
-		"display": "道南河濱公園",
-		"scene": "res://src/maps/zones/zone_riverside.tscn",
-		"world_pos": Vector2(400, 200),
-		"entry_points": {
-			"default": Vector2(0, 50),
-			"from_nccu": Vector2(0, -100),
-		},
-		"connects_to": ["zone_nccu"],
 	},
 }
 

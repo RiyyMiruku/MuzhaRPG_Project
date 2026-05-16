@@ -1,14 +1,11 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T17:48:27",
-  "updated_at": "2026-05-14T02:02:54",
-  "prompts": {
-    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames"
-  },
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:vendor",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_market_1983"
   ],
   "character_id": "675d8baf-ab32-48a9-be95-7c14a7c4e043",
   "preset": "npc",

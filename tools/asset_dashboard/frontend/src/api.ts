@@ -30,6 +30,56 @@ export const api = {
     })
   },
 
+  /** Spec fields that can be overridden when calling remake. Any field
+   *  present is upserted into the manifest entry BEFORE the orchestrator
+   *  subprocess spawns — so kind / view / size etc. flow naturally.
+   *  Used for "edit spec & remake" flows (e.g. building → iso_building). */
+  async remakeWithOverrides(
+    assetType: AssetType,
+    name: string,
+    stage: string,
+    overrides: Partial<{
+      kind: string
+      description: string
+      view: string
+      width: number
+      height: number
+      size: number
+      collision: string
+    }>,
+    directions?: string[],
+  ): Promise<{ job_id?: string; stage: string }> {
+    const body: Record<string, unknown> = { stage, overrides }
+    if (directions && directions.length > 0) body.directions = directions
+    return jsonFetch(
+      `/api/asset/${assetType}/${encodeURIComponent(name)}/remake`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    )
+  },
+
+  /** Pull canonical state from Pixellab → local. Used when the user has
+   *  edited the character on Pixellab's website (mirror / draw / template
+   *  regen). 0 credits — only downloads existing frames. Character only. */
+  async syncFromPixellab(
+    name: string,
+    scope: "all" | "rotations" | "animations" = "all",
+  ): Promise<{
+    status: string
+    character_id: string
+    rotations?: Record<string, number>
+    animations?: { sheet_png?: string; sheet_json?: string; baked?: Record<string, string[]>; warning?: string }
+  }> {
+    return jsonFetch(`/api/asset/character/${encodeURIComponent(name)}/sync`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scope }),
+    })
+  },
+
   async remake(
     assetType: AssetType,
     name: string,
@@ -105,6 +155,35 @@ export const api = {
     const r = await fetch(url, {
       method: "PUT",
       headers: { "Content-Type": blob.type || "application/octet-stream" },
+      body: blob,
+    })
+    if (!r.ok) throw new Error(`PUT ${url} → ${r.status}: ${await r.text()}`)
+    return r.json()
+  },
+
+  /** GET URL for a single (row, col) frame from a spritesheet — used by the
+   *  per-frame pixel editor. The same URL works for PUT (paste-back). */
+  sheetFrameUrl(sheetPath: string, row: number, col: number): string {
+    return (
+      `${BASE}/api/asset/sheet-frame?p=${encodeURIComponent(sheetPath)}` +
+      `&row=${row}&col=${col}`
+    )
+  },
+
+  /** Paste edited frame PNG back into the sheet at (row, col). Body must
+   *  match frame_size exactly (server enforces). */
+  async writeSheetFrame(
+    sheetPath: string,
+    row: number,
+    col: number,
+    blob: Blob,
+  ): Promise<{ ok: boolean; size: [number, number] }> {
+    const url =
+      `${BASE}/api/asset/sheet-frame?p=${encodeURIComponent(sheetPath)}` +
+      `&row=${row}&col=${col}`
+    const r = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": blob.type || "image/png" },
       body: blob,
     })
     if (!r.ok) throw new Error(`PUT ${url} → ${r.status}: ${await r.text()}`)

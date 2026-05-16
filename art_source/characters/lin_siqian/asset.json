@@ -1,12 +1,12 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-05T18:23:35",
-  "updated_at": "2026-05-14T00:20:44",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:shared",
     "category:player",
     "category:protagonist",
-    "chapter:1"
+    "chapter:1",
+    "zone:*"
   ],
   "character_id": "98b0ff8a-043a-4ac6-ac0d-db4dfc25f62d",
   "preset": "player",

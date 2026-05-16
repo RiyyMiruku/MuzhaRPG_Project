@@ -67,6 +67,11 @@ class AssetSummary:
     asset_type: AssetType
     description: str | None
     tags: list[str]
+    # All zone:* tag values (without prefix). An asset can belong to multiple
+    # zones; "*" sentinel means cross-zone / shared.
+    zones: list[str]
+    # Legacy single-value mirror — first entry of `zones`, or None when empty.
+    # Kept so older frontend code keeps compiling during the migration.
     zone: str | None
     category: str | None
     chapter: str | None
@@ -95,6 +100,18 @@ def _parse_tag(tags: list[str], key: str) -> str | None:
         if t.startswith(prefix):
             return t[len(prefix):]
     return None
+
+
+def _parse_tags_multi(tags: list[str], key: str) -> list[str]:
+    """Return all values for repeated `key:value` tags, in order, de-duplicated."""
+    prefix = f"{key}:"
+    out: list[str] = []
+    for t in tags:
+        if t.startswith(prefix):
+            v = t[len(prefix):]
+            if v and v not in out:
+                out.append(v)
+    return out
 
 
 def load_assets(manifest_data: dict | Path) -> list[AssetSummary]:
@@ -128,12 +145,14 @@ def load_assets(manifest_data: dict | Path) -> list[AssetSummary]:
             ]
             all_stages = _stages_for(asset_type, entry)
             png_path = entry.get("game_png_path") or entry.get("local_path")
+            zone_list = _parse_tags_multi(tags, "zone")
             out.append(AssetSummary(
                 name=name,
                 asset_type=asset_type,
                 description=entry.get("description"),
                 tags=tags,
-                zone=_parse_tag(tags, "zone"),
+                zones=zone_list,
+                zone=(zone_list[0] if zone_list else None),
                 category=_parse_tag(tags, "category"),
                 chapter=_parse_tag(tags, "chapter"),
                 completed_stages=completed,

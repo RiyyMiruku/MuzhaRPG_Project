@@ -5,6 +5,9 @@ export interface AssetSummary {
   asset_type: AssetType
   description: string | null
   tags: string[]
+  /** All zone slugs this asset belongs to. "*" means cross-zone / shared. */
+  zones: string[]
+  /** Legacy single-zone mirror (= zones[0] or null). Prefer `zones`. */
   zone: string | null
   category: string | null
   chapter: string | null
@@ -33,9 +36,23 @@ export interface JobInfo {
   tail?: string
 }
 
+export interface StageFrameInfo {
+  sheet_path: string
+  row: number
+  count: number
+  start: number
+  width: number
+  height: number
+  direction: string
+  action: string
+}
+
 export interface StageImage {
   path: string
   url: string
+  /** Present on character animation row crops — lets the UI render a
+   *  per-frame grid and open the pixel editor on individual frames. */
+  frames?: StageFrameInfo
 }
 
 export interface StageDetail {
@@ -46,7 +63,7 @@ export interface StageDetail {
 }
 
 export type CharacterKind = "moving" | "static"
-export type ObjectKind = "iso_prop" | "building"
+export type ObjectKind = "iso_prop" | "building" | "iso_building"
 export type CharacterView = "high_top_down" | "low_top_down" | "side"
 export type Proportions =
   | "cartoon"
@@ -61,6 +78,9 @@ export interface CreateAssetBody {
   kind?: CharacterKind | ObjectKind
   name: string
   description?: string
+  /** Preferred: list of zone slugs (e.g. ["zone_pharmacy_1983"]). Use ["*"] for cross-zone. */
+  zones?: string[]
+  /** Legacy single-zone; backend merges with `zones`. */
   zone?: string
   category?: string
   chapter?: string
@@ -72,8 +92,6 @@ export interface CreateAssetBody {
   idle_frame_count?: number
   walk_frame_count?: number
   no_idle?: boolean
-  idle_action_description?: string
-  walk_action_description?: string
 
   // object
   size?: number

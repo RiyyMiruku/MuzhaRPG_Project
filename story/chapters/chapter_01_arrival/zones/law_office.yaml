@@ -1,0 +1,42 @@
+# 律師事務所(現代)— 繼承文件 / 揭露「祖父林榮昌」名字
+zone: zone_law_office
+label: "律師事務所 (現代)"
+size: [22, 17]
+
+tilemap:
+  atlas: market_concrete_tile
+  terrain: 1
+  fill: rect
+
+props:
+  # 律師事務所外觀(可從室外看到的招牌,當作牆面背景)
+  - id: law_office_muzha
+    anchor: north_wall
+    offset: [0, 2]
+
+  # 律師桌(用 shop_counter_wood 暫代,沒有專用辦公桌素材)
+  - id: shop_counter_wood
+    anchor: center
+    offset: [0, 0]
+
+  # 文件物件示意 — 玩家會看到「祖父林榮昌」名字的繼承文件
+  - id: notebook_leather
+    anchor: relative_to(shop_counter_wood)
+    offset: [0, -1]
+
+npcs:
+  # 老律師在桌後
+  - id: lawyer_muzha
+    anchor: relative_to(shop_counter_wood)
+    offset: [0, -2]
+
+transitions:
+  - target_zone: zone_market
+    entry_point: from_law_office
+    anchor: south_wall
+    offset: [0, 1]
+    rename: ToMarket
+
+player_spawn:
+  anchor: south_wall
+  offset: [0, -1]

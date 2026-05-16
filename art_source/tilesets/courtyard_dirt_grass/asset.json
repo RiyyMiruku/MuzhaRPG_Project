@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:20:37",
-  "updated_at": "2026-05-12T17:21:46",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:terrain",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_pharmacy_backyard"
   ],
   "tileset_id": "dc197e22-0150-4ef6-b611-0034f1ccd767",
   "lower": "compacted brown earth ground with small pebbles, traditional taiwanese back courtyard",

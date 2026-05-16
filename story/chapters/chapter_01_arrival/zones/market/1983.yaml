@@ -1,0 +1,98 @@
+# 木柵市場(1983,街景、攤販林立)— 跑腿送藥、認識阿桃姨、其他 NPC
+zone: zone_market
+era: "1983"
+label: "木柵市場"
+size: [34, 23]
+
+tilemap:
+  atlas: street_asphalt_sidewalk
+  terrain: 1
+  fill: rect
+
+props:
+  # 街景建築立面(沿北側排)
+  - id: market_shophouse_minnan
+    anchor: north_wall
+    offset: [-9, 2]
+
+  - id: pharmacy_rongchang_1983
+    anchor: north_wall
+    offset: [-2, 2]
+
+  - id: market_shophouse_concrete
+    anchor: north_wall
+    offset: [6, 2]
+
+  # 阿桃姨菜攤 — 緊鄰藥行
+  - id: vegetable_stall
+    anchor: relative_to(pharmacy_rongchang_1983)
+    offset: [5, 3]
+
+  - id: market_basket_produce
+    anchor: relative_to(vegetable_stall)
+    offset: [-1, 1]
+
+  # 其他攤位散布街上
+  - id: vegetable_stall
+    anchor: south_wall
+    offset: [-6, -1]
+    rename: vegetable_stall_2
+
+  - id: vegetable_stall
+    anchor: south_wall
+    offset: [5, -1]
+    rename: vegetable_stall_3
+
+  - id: market_basket_produce
+    anchor: south_wall
+    offset: [-3, -1]
+    rename: market_basket_produce_2
+
+  # 燈籠氣氛
+  - id: lantern_paper_red
+    anchor: north_wall
+    offset: [-12, 0]
+
+  - id: lantern_paper_red
+    anchor: north_wall
+    offset: [0, 0]
+    rename: lantern_paper_red_2
+
+  - id: lantern_paper_red
+    anchor: north_wall
+    offset: [9, 0]
+    rename: lantern_paper_red_3
+
+npcs:
+  # 阿桃姨在自己菜攤後面
+  - id: a_tao_yi
+    anchor: relative_to(vegetable_stall)
+    offset: [0, -1]
+
+  - id: vendor_market_oldman_01
+    anchor: relative_to(vegetable_stall_2)
+    offset: [0, -1]
+
+  - id: vendor_market_woman_02
+    anchor: relative_to(vegetable_stall_3)
+    offset: [0, -1]
+
+  - id: customer_pharmacy_woman
+    anchor: relative_to(pharmacy_rongchang_1983)
+    offset: [1, 4]
+
+  - id: pedestrian_market_man
+    anchor: center
+    offset: [3, 0]
+
+transitions:
+  - target_zone: zone_pharmacy
+    entry_point: from_market
+    anchor: north_wall
+    offset: [-2, 1]
+    rename: ToPharmacy
+
+player_spawn:
+  # 玩家從南側進市場
+  anchor: south_wall
+  offset: [0, -1]

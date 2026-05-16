@@ -1,0 +1,62 @@
+# 榮昌中藥行後院 + 上鎖房間 — 第一章結尾關鍵場景
+# 1983 時空,林榮華(=父親)房間
+zone: zone_pharmacy_backyard
+label: "榮昌中藥行後院 (1983)"
+size: [22, 17]
+
+tilemap:
+  atlas: courtyard_dirt_grass
+  terrain: 1
+  fill: rect
+
+props:
+  # 後院區
+  - id: incense_burner_brass
+    # 阿嬤每年燒香的地方
+    anchor: center
+    offset: [-3, 0]
+
+  - id: lantern_paper_red
+    anchor: north_wall
+    offset: [-5, 1]
+
+  - id: lantern_paper_red
+    anchor: north_wall
+    offset: [5, 1]
+    rename: lantern_paper_red_2
+
+  # 上鎖房間入口(門用 iron_gate_rusted 代用)
+  - id: iron_gate_rusted
+    anchor: east_wall
+    offset: [-2, 0]
+
+  # 林榮華遺物 — 解謎核心,擺在房間內側(東牆內側)
+  - id: notebook_leather
+    anchor: east_wall
+    offset: [-1, -1]
+
+  - id: fountain_pen_old
+    anchor: east_wall
+    offset: [-1, 0]
+
+  - id: photograph_old
+    anchor: east_wall
+    offset: [-1, 1]
+
+npcs:
+  - id: lin_ama
+    # 阿嬤在後院燒香
+    anchor: relative_to(incense_burner_brass)
+    offset: [-1, 0]
+
+transitions:
+  - target_zone: zone_pharmacy
+    entry_point: from_backyard
+    anchor: west_wall
+    offset: [0, 0]
+    rename: ToPharmacy
+
+player_spawn:
+  # 從藥行內部進來
+  anchor: west_wall
+  offset: [1, 0]

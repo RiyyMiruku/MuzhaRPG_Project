@@ -1,11 +1,12 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:43",
-  "updated_at": "2026-05-12T17:38:13",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:structure",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_pharmacy_modern",
+    "zone:zone_market_modern"
   ],
   "object_id": "ea3d9727-8555-4a5b-86e1-eced85517c18",
   "kind": "iso_prop",

@@ -1,15 +1,16 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:38:14",
-  "updated_at": "2026-05-12T17:38:45",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:building",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_market_1983",
+    "zone:zone_market_modern"
   ],
-  "object_id": "e949c9b7-0bf5-483d-8691-7f2cfba0afd7",
-  "kind": "building",
-  "description": "traditional taiwanese minnan two-story shophouse, red brick lower floor with arched doorway and wooden roll-up shutter, white plastered upper floor with wooden window shutters, dark grey tile roof with curved eaves, weathered wooden signboard, small balcony with iron railing",
+  "object_id": "pixflux:market_shophouse_minnan",
+  "kind": "iso_building",
+  "description": "isometric pixel art, 30-degree top-down angled view, full building with visible roof and two side walls, transparent background — traditional taiwanese minnan two-story shophouse, red brick lower floor with arched doorway and wooden roll-up shutter, white plastered upper floor with wooden window shutters, dark grey tile roof with curved eaves, weathered wooden signboard, small balcony with iron railing",
   "view": "high_top_down",
   "size": {
     "width": 128,
@@ -17,28 +18,28 @@
   },
   "stages": {
     "generate_object": {
-      "completed_at": "2026-05-12T17:38:45",
+      "completed_at": "2026-05-14T19:08:46",
       "paths": [
-        "art_source/objects/market_shophouse_minnan/market_shophouse_minnan.png"
+        "art_source\\objects\\market_shophouse_minnan\\market_shophouse_minnan.png"
       ]
     },
     "chroma_key": {
-      "completed_at": "2026-05-12T17:38:45",
+      "completed_at": "2026-05-14T19:08:46",
       "paths": [
-        "art_source/objects/market_shophouse_minnan/market_shophouse_minnan.png"
+        "art_source\\objects\\market_shophouse_minnan\\market_shophouse_minnan.png"
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:38:45",
+      "completed_at": "2026-05-14T19:08:46",
       "paths": [
-        "game/assets/textures/props/market_shophouse_minnan.png",
-        "game/src/maps/props/market_shophouse_minnan.tscn"
+        "game\\assets\\textures\\props\\market_shophouse_minnan.png",
+        "game\\src\\maps\\props\\market_shophouse_minnan.tscn"
       ]
     }
   },
-  "local_path": "art_source/objects/market_shophouse_minnan/market_shophouse_minnan.png",
-  "imported_at": "2026-05-12T17:38:45",
-  "game_png_path": "game/assets/textures/props/market_shophouse_minnan.png",
-  "game_tscn_path": "game/src/maps/props/market_shophouse_minnan.tscn",
+  "local_path": "art_source\\objects\\market_shophouse_minnan\\market_shophouse_minnan.png",
+  "imported_at": "2026-05-14T19:08:46",
+  "game_png_path": "game\\assets\\textures\\props\\market_shophouse_minnan.png",
+  "game_tscn_path": "game\\src\\maps\\props\\market_shophouse_minnan.tscn",
   "collision": "bottom_16x16"
 }

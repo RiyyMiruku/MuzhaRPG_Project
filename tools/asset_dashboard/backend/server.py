@@ -8,9 +8,10 @@ from __future__ import annotations
 import asyncio
 import sys
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Response
 from fastapi.responses import FileResponse
@@ -194,6 +195,19 @@ _ORCHESTRATOR_PATH: dict[str, str] = {
 }
 
 
+class RemakeOverrides(BaseModel):
+    """Spec fields the caller wants to change before re-running the stage.
+    Any field present is upserted into the manifest entry before subprocess
+    spawn — the orchestrator then reads the new spec naturally on startup."""
+    kind: str | None = None
+    description: str | None = None
+    view: str | None = None
+    width: int | None = None
+    height: int | None = None
+    size: int | None = None
+    collision: str | None = None
+
+
 class RemakeRequest(BaseModel):
     stage: str
     prompt: str | None = None
@@ -202,13 +216,20 @@ class RemakeRequest(BaseModel):
     # asked to regen only those directions; compile_spritesheet patches only
     # the matching rows. Empty list == None == regen all.
     directions: list[str] | None = None
+    # Optional spec overrides — merge into manifest entry before spawn. Used
+    # for kind change (building → iso_building), view swap, size tweaks, etc.
+    overrides: RemakeOverrides | None = None
 
 
 class CreateAssetRequest(BaseModel):
     asset_type: str           # "character" | "tileset" | "object"
-    kind: str | None = None   # character: "moving"|"static"; object: "iso_prop"|"building"
+    kind: str | None = None   # character: "moving"|"static"; object: "iso_prop"|"building"|"iso_building"
     name: str
     description: str | None = None
+    # Preferred: list of zone slugs (e.g. ["zone_pharmacy_1983", "zone_market_1983"]).
+    # Use ["*"] for cross-zone / shared assets.
+    zones: list[str] | None = None
+    # Legacy single-value field. Merged with `zones` (dedup, order-preserving).
     zone: str | None = None
     category: str | None = None
     chapter: str | None = None
@@ -219,11 +240,6 @@ class CreateAssetRequest(BaseModel):
     idle_frame_count: int | None = None
     walk_frame_count: int | None = None
     no_idle: bool | None = None           # static only
-    # Optional per-stage prompt overrides for character animations. When set,
-    # we pre-seed the manifest before the orchestrator starts so the first
-    # run uses the custom action_description instead of the default "idle"/"walk".
-    idle_action_description: str | None = None
-    walk_action_description: str | None = None
     # object
     size: int | None = None               # iso_prop
     width: int | None = None              # building
@@ -248,6 +264,38 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
         except KeyError as e:
             raise HTTPException(404, str(e)) from e
 
+    # Apply spec overrides before spawn so the orchestrator picks them up
+    # naturally when it reads the manifest on startup. Each asset_type uses
+    # a different upsert fn + supports a different field subset.
+    if body.overrides is not None:
+        ov = body.overrides.model_dump(exclude_none=True)
+        if not ov:
+            pass  # no-op: empty override
+        elif asset_type == "object":
+            fields: dict = {}
+            for k in ("kind", "description", "view", "collision"):
+                if k in ov:
+                    fields[k] = ov[k]
+            if "width" in ov or "height" in ov or "size" in ov:
+                if "size" in ov and "width" not in ov and "height" not in ov:
+                    fields["size"] = {"width": ov["size"], "height": ov["size"]}
+                else:
+                    w = ov.get("width") or ov.get("size")
+                    h = ov.get("height") or ov.get("size")
+                    fields["size"] = {"width": w, "height": h}
+            if fields:
+                pipeline_manifest.upsert_object(name=name, fields=fields)
+        elif asset_type == "character":
+            allowed = {"description", "view"}
+            fields = {k: v for k, v in ov.items() if k in allowed}
+            if fields:
+                pipeline_manifest.upsert_character(name=name, fields=fields)
+        elif asset_type == "tileset":
+            allowed = {"description"}
+            fields = {k: v for k, v in ov.items() if k in allowed}
+            if fields:
+                pipeline_manifest.upsert_tileset(name=name, fields=fields)
+
     cmd: list[str] = [
         "uv", "run", "python", "-u",
         _ORCHESTRATOR_PATH[asset_type],
@@ -260,13 +308,34 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
         cleaned = [d.strip() for d in body.directions if d and d.strip()]
         if cleaned:
             cmd += ["--only-directions", ",".join(cleaned)]
-    # prop.py requires --kind even when resuming; pull it from the manifest entry.
+    # prop.py requires --kind even when resuming; pull from manifest (which
+    # we may have just updated via overrides).
     if asset_type == "object":
         raw = _read_manifest_raw()
         entry = (raw.get("objects") or {}).get(name) or {}
         kind = entry.get("kind")
         if kind:
             cmd += ["--kind", kind]
+        # iso_building uses pixflux which needs explicit description on
+        # every generate_object run (orchestrator demands it for fresh gens).
+        # Forward from manifest so override → remake works without caller
+        # having to redundantly pass --description.
+        desc = entry.get("description")
+        if desc and body.stage == "generate_object":
+            cmd += ["--description", desc]
+        # Forward size for iso_building/building width/height
+        size = entry.get("size") or {}
+        if kind in ("building", "iso_building"):
+            w = size.get("width")
+            h = size.get("height")
+            if w:
+                cmd += ["--width", str(w)]
+            if h:
+                cmd += ["--height", str(h)]
+        elif kind == "iso_prop":
+            w = size.get("width")
+            if w:
+                cmd += ["--size", str(w)]
     # _ORCHESTRATOR_PATH points at npc_moving.py for all "character" assets, but
     # static NPCs use npc_static.py. Detect via manifest preset and swap script.
     if asset_type == "character":
@@ -279,6 +348,155 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
                 cmd += ["--directions", str(directions)]
     job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=name, stage=body.stage)
     return {"job_id": job_id, "stage": body.stage}
+
+
+# ============================================================
+# Sync — reconcile local state from Pixellab (when user edits via UI)
+# ============================================================
+
+
+class SyncRequest(BaseModel):
+    """What to pull from Pixellab. 'all' = rotations + animations."""
+    scope: str = "all"   # all | rotations | animations
+
+
+_PIXELLAB_ANIM_TYPE_TO_ACTION: dict[str, str] = {
+    "breathing-idle":   "idle",
+    "walking-6-frames": "walk",
+    "walking-4-frames": "walk",
+}
+
+
+def _latest_anim_frames_per_direction(
+    animations: list[dict],
+) -> dict[tuple[str, str], list[str]]:
+    """{(action, direction) -> [frame_url, ...]}. Later entries in the array
+    overwrite earlier — Pixellab returns animations chronologically with
+    newest last, so this naturally picks the most-recent generation."""
+    out: dict[tuple[str, str], list[str]] = {}
+    for entry in animations:
+        action = _PIXELLAB_ANIM_TYPE_TO_ACTION.get(entry.get("animation_type", ""))
+        if not action:
+            continue
+        for d in entry.get("directions", []):
+            direction = d.get("direction")
+            frames = d.get("frames") or []
+            if not direction or not frames:
+                continue
+            out[(action, direction)] = list(frames)
+    return out
+
+
+@app.post("/api/asset/{asset_type}/{name}/sync")
+def sync_from_pixellab(asset_type: str, name: str, body: SyncRequest) -> dict:
+    """Pull canonical state from Pixellab back to local, when the user has
+    edited the character on Pixellab's website (mirror / draw / template
+    regen). 0 Pixellab credits — only downloads existing frames + reconciles
+    manifest stages to 'completed'.
+
+    Currently character-only; tilesets/objects have no equivalent UI editing
+    surface on Pixellab. Future scope could extend object iso-tiles."""
+    if asset_type != "character":
+        raise HTTPException(
+            400, "sync only supported for characters (no Pixellab UI for objects/tilesets)",
+        )
+    if body.scope not in ("all", "rotations", "animations"):
+        raise HTTPException(400, "scope must be 'all' | 'rotations' | 'animations'")
+
+    entry = pipeline_manifest.get_character(name)
+    if not entry:
+        raise HTTPException(404, f"character {name!r} not found")
+    char_id = entry.get("character_id")
+    if not char_id:
+        raise HTTPException(400, f"{name} has no character_id")
+
+    # Lazy imports — keep the module import surface small for the common path.
+    import sys as _sys
+    pipeline_path = str(REPO_ROOT / "pipeline")
+    if pipeline_path not in _sys.path:
+        _sys.path.insert(0, pipeline_path)
+    import pixellab_client as plab   # noqa: E402
+    import spritesheet as ss          # noqa: E402
+    import requests as _requests      # noqa: E402
+    from PIL import Image as _Image   # noqa: E402
+    import io as _io                  # noqa: E402
+
+    token = plab.load_token()
+    meta = plab.get_character(token, char_id)
+
+    char_dir = REPO_ROOT / "art_source" / "characters" / name
+    summary: dict = {"character_id": char_id}
+
+    # Rotations: latest URL per direction → overwrite rotations/<dir>.png
+    if body.scope in ("all", "rotations"):
+        rot_dir = char_dir / "rotations"
+        rot_dir.mkdir(parents=True, exist_ok=True)
+        urls = meta.get("rotation_urls") or {}
+        pulled: dict[str, int] = {}
+        for direction, url in urls.items():
+            if not url:
+                continue
+            r = _requests.get(url, timeout=60)
+            if r.status_code != 200:
+                continue
+            fname = direction.replace("-", "_") + ".png"
+            (rot_dir / fname).write_bytes(r.content)
+            pulled[direction] = len(r.content)
+        summary["rotations"] = pulled
+
+    # Animations: latest per (action, direction) → bake into spritesheet
+    if body.scope in ("all", "animations"):
+        by_dir = _latest_anim_frames_per_direction(meta.get("animations") or [])
+        if not by_dir:
+            summary["animations"] = {"warning": "no animations found on Pixellab"}
+        else:
+            sheet, atlas = ss.load_or_init_sheet(char_dir)
+            baked: dict[str, list[str]] = {"idle": [], "walk": []}
+            for (action, direction), frame_urls in by_dir.items():
+                frames: list[_Image.Image] = []
+                for u in frame_urls:
+                    fr = _requests.get(u, timeout=60)
+                    if fr.status_code != 200:
+                        continue
+                    frames.append(_Image.open(_io.BytesIO(fr.content)).convert("RGBA"))
+                if not frames:
+                    continue
+                sheet, atlas = ss.write_animation_frames(
+                    sheet, atlas, action=action, direction=direction, frames=frames,
+                )
+                baked[action].append(direction)
+            png_path, json_path = ss.save_sheet(char_dir, sheet, atlas)
+            summary["animations"] = {
+                "sheet_png": str(png_path.relative_to(REPO_ROOT).as_posix()),
+                "sheet_json": str(json_path.relative_to(REPO_ROOT).as_posix()),
+                "baked": baked,
+            }
+            # Mark stages completed so the v2 worker doesn't try to re-trigger.
+            now = datetime.now().isoformat(timespec="seconds")
+            existing_stages = entry.get("stages") or {}
+            for action in ("idle", "walk"):
+                dirs = sorted(baked[action])
+                if not dirs:
+                    continue
+                # v2 names; v1 also recognises these as legitimate stage keys
+                stage_key = f"animate_{action}"
+                existing_stages[stage_key] = {
+                    "status": "completed",
+                    "queued_at": now,
+                    "started_at": now,
+                    "completed_at": now,
+                    "result": {
+                        "directions": dirs,
+                        "frames_per_direction": [len(by_dir[(action, d)]) for d in dirs],
+                        "sheet_png": summary["animations"]["sheet_png"],
+                        "sheet_json": summary["animations"]["sheet_json"],
+                        "source": "pixellab_sync",
+                    },
+                    "error": None,
+                }
+            pipeline_manifest.upsert_character(name, {"stages": existing_stages})
+
+    return {"status": "ok", **summary}
 
 
 # ============================================================
@@ -321,6 +539,9 @@ class CreateCharacterV2(BaseModel):
     isometric: bool = False
     idle_template_id: str | None = None  # None → registry default (breathing-idle)
     walk_template_id: str | None = None  # None → registry default (walking-6-frames)
+    # Preferred: list of zone slugs. Use ["*"] for cross-zone assets.
+    zones: list[str] | None = None
+    # Legacy single-value field. Merged with `zones` (dedup, order-preserving).
     zone: str | None = None
     category: str | None = None
     chapter: str | None = None
@@ -368,9 +589,15 @@ def v2_create_character(name: str, body: CreateCharacterV2) -> dict:
     }
     pipeline_manifest.upsert_character(name, fields)
 
-    # Tags. Same vocabulary as legacy /create.
-    tags = []
-    if body.zone:     tags.append(f"zone:{body.zone}")
+    # Tags. Same vocabulary as legacy /create. Merge zones[] + legacy zone.
+    tags: list[str] = []
+    seen_zone: set[str] = set()
+    for z in (body.zones or []):
+        if z and z not in seen_zone:
+            tags.append(f"zone:{z}")
+            seen_zone.add(z)
+    if body.zone and body.zone not in seen_zone:
+        tags.append(f"zone:{body.zone}")
     if body.category: tags.append(f"category:{body.category}")
     if body.chapter:  tags.append(f"chapter:{body.chapter}")
     if tags:
@@ -469,15 +696,18 @@ def create_asset(body: CreateAssetRequest) -> dict:
             cli_args += ["--proportions", body.proportions]
 
     elif body.asset_type == "object":
-        if body.kind not in ("iso_prop", "building"):
-            raise HTTPException(400, "object kind must be 'iso_prop' or 'building'")
+        if body.kind not in ("iso_prop", "building", "iso_building"):
+            raise HTTPException(
+                400,
+                "object kind must be 'iso_prop' | 'building' | 'iso_building'",
+            )
         script = "pipeline/orchestrators/prop.py"
         if not body.description:
             raise HTTPException(400, "object requires description")
         cli_args += ["--kind", body.kind, "--description", body.description]
         if body.kind == "iso_prop" and body.size is not None:
             cli_args += ["--size", str(body.size)]
-        if body.kind == "building":
+        if body.kind in ("building", "iso_building"):
             if body.width is not None:
                 cli_args += ["--width", str(body.width)]
             if body.height is not None:
@@ -502,34 +732,19 @@ def create_asset(body: CreateAssetRequest) -> dict:
     else:
         raise HTTPException(400, "asset_type must be character | tileset | object")
 
-    # 4. zone / category / chapter (now supported by orchestrators after Part A)
-    if body.zone:
-        cli_args += ["--zone", body.zone]
+    # 4. zone / category / chapter — pass zones as csv; orchestrator merges with
+    # any legacy --zone single value (we send neither when empty).
+    zone_slugs: list[str] = list(body.zones or [])
+    if body.zone and body.zone not in zone_slugs:
+        zone_slugs.append(body.zone)
+    if zone_slugs:
+        cli_args += ["--zones", ",".join(zone_slugs)]
     if body.category:
         cli_args += ["--category", body.category]
     if body.chapter:
         cli_args += ["--chapter", body.chapter]
 
-    # 5. pre-seed manifest with custom animation prompts (character only).
-    # The orchestrator's main() does `if not get_character(name): upsert(...)` so
-    # this entry survives. run_character_animation reads the prompt for the
-    # current stage via manifest.get_prompt — that's how this takes effect.
-    if body.asset_type == "character" and (
-        body.idle_action_description or body.walk_action_description
-    ):
-        pipeline_manifest.upsert_character(name=body.name, fields={"status": "init"})
-        if body.idle_action_description:
-            pipeline_manifest.set_prompt(
-                "character", body.name, "add_idle_animation",
-                body.idle_action_description,
-            )
-        if body.walk_action_description:
-            pipeline_manifest.set_prompt(
-                "character", body.name, "add_walk_animation",
-                body.walk_action_description,
-            )
-
-    # 6. spawn subprocess
+    # 5. spawn subprocess
     cmd = ["uv", "run", "python", "-u", script] + cli_args
     job_id = _jobs.start(cmd, cwd=REPO_ROOT, asset_name=body.name, stage="create")
     return {"job_id": job_id, "asset_name": body.name, "asset_type": body.asset_type}
@@ -680,6 +895,11 @@ def stage_detail(asset_type: str, name: str, stage: str) -> dict:
             except (OSError, ValueError):
                 atlas = {}
             sheet_norm = sheet_path.replace("\\", "/")
+            fs = atlas.get("frame_size") or [92, 92]
+            try:
+                fw, fh = int(fs[0]), int(fs[1])
+            except (TypeError, ValueError):
+                fw, fh = 92, 92
             for key, anim in (atlas.get("animations") or {}).items():
                 if not key.startswith(f"{action_filter}_"):
                     continue
@@ -687,12 +907,26 @@ def stage_detail(asset_type: str, name: str, stage: str) -> dict:
                 row = anim.get("row")
                 if not isinstance(row, int):
                     continue
+                start = int(anim.get("start", 0))
+                end = int(anim.get("end", start))
                 images.append({
                     "path": f"{sheet_norm}#{key}",
                     "url": (
                         f"/api/asset/sheet-row?p={urllib.parse.quote(sheet_norm, safe='')}"
                         f"&row={row}"
                     ),
+                    # Per-frame metadata so the frontend can render a
+                    # frame-grid and open the per-frame pixel editor.
+                    "frames": {
+                        "sheet_path": sheet_norm,
+                        "row": row,
+                        "count": max(0, end - start),
+                        "start": start,
+                        "width": fw,
+                        "height": fh,
+                        "direction": direction,
+                        "action": action_filter,
+                    },
                 })
             # Always append the raw sheet+json links at the end for power use.
             for p in raw_paths:
@@ -719,35 +953,46 @@ def stage_detail(asset_type: str, name: str, stage: str) -> dict:
     }
 
 
-@app.get("/api/asset/sheet-row")
-def sheet_row_crop(p: str, row: int) -> Response:
-    """Return the Nth row of a character spritesheet as a standalone PNG.
-    Row height comes from the sister `<name>.json`'s frame_size."""
+def _resolve_sheet_path(p: str) -> Path:
+    """Validate <p> points at a sheet PNG under allowed roots; return abs Path.
+    Raises HTTPException on any violation."""
     try:
         sheet_abs = (REPO_ROOT / p).resolve()
     except (OSError, ValueError):
         raise HTTPException(400, "invalid path")
     repo_root_abs = REPO_ROOT.resolve()
-    allowed = False
     for r in _ALLOWED_FILE_ROOTS:
         try:
             sheet_abs.relative_to((repo_root_abs / r).resolve())
-            allowed = True
             break
         except ValueError:
             continue
-    if not allowed:
+    else:
         raise HTTPException(403, "path outside allowed roots")
     if not sheet_abs.is_file() or sheet_abs.suffix.lower() != ".png":
         raise HTTPException(404, "sheet not found")
+    return sheet_abs
+
+
+def _read_frame_size(sheet_abs: Path) -> tuple[int, int]:
+    """Read frame_size [w, h] from sister .json; default 92×92."""
     json_path = sheet_abs.with_suffix(".json")
-    fh = 92
-    if json_path.is_file():
-        try:
-            atlas = _json.loads(json_path.read_text(encoding="utf-8"))
-            fh = int((atlas.get("frame_size") or [92, 92])[1])
-        except (OSError, ValueError):
-            pass
+    if not json_path.is_file():
+        return 92, 92
+    try:
+        atlas = _json.loads(json_path.read_text(encoding="utf-8"))
+        fs = atlas.get("frame_size") or [92, 92]
+        return int(fs[0]), int(fs[1])
+    except (OSError, ValueError):
+        return 92, 92
+
+
+@app.get("/api/asset/sheet-row")
+def sheet_row_crop(p: str, row: int) -> Response:
+    """Return the Nth row of a character spritesheet as a standalone PNG.
+    Row height comes from the sister `<name>.json`'s frame_size."""
+    sheet_abs = _resolve_sheet_path(p)
+    _fw, fh = _read_frame_size(sheet_abs)
     from PIL import Image
     import io
     with Image.open(sheet_abs) as img:
@@ -760,6 +1005,89 @@ def sheet_row_crop(p: str, row: int) -> Response:
         buf = io.BytesIO()
         crop.save(buf, "PNG", compress_level=6)
     return Response(content=buf.getvalue(), media_type="image/png")
+
+
+@app.get("/api/asset/sheet-frame")
+def sheet_frame_crop(p: str, row: int, col: int) -> Response:
+    """Return a single (row, col) frame from a spritesheet as a standalone PNG.
+
+    Pairs with PUT /api/asset/sheet-frame for per-frame pixel editing —
+    GET fetches a frame_w × frame_h crop, edit in browser, PUT pastes back.
+    """
+    sheet_abs = _resolve_sheet_path(p)
+    fw, fh = _read_frame_size(sheet_abs)
+    from PIL import Image
+    import io
+    with Image.open(sheet_abs) as img:
+        w, h = img.size
+        x0, y0 = col * fw, row * fh
+        x1, y1 = x0 + fw, y0 + fh
+        if x0 < 0 or x1 > w or y0 < 0 or y1 > h:
+            raise HTTPException(
+                416,
+                f"frame ({row},{col}) out of bounds (sheet {w}×{h}, frame {fw}×{fh})",
+            )
+        crop = img.crop((x0, y0, x1, y1))
+        buf = io.BytesIO()
+        crop.save(buf, "PNG", compress_level=6)
+    return Response(
+        content=buf.getvalue(),
+        media_type="image/png",
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
+@app.put("/api/asset/sheet-frame")
+async def write_sheet_frame(
+    p: str,
+    row: int,
+    col: int,
+    body: bytes = Body(..., media_type="image/png"),
+) -> dict:
+    """Paste edited PNG bytes back into the sheet at the (row, col) frame slot.
+
+    Body must be a PNG sized exactly frame_w × frame_h (from sister .json).
+    Atomic write: load sheet → paste → tmp-write → replace.
+    """
+    sheet_abs = _resolve_sheet_path(p)
+    fw, fh = _read_frame_size(sheet_abs)
+    if not body:
+        raise HTTPException(400, "empty body")
+    if len(body) > 8 * 1024 * 1024:
+        raise HTTPException(413, "frame body too large")
+
+    from PIL import Image
+    import io
+    try:
+        frame_img = Image.open(io.BytesIO(body))
+        frame_img.load()
+    except Exception as e:
+        raise HTTPException(400, f"body is not a decodable PNG: {e}") from e
+    if frame_img.size != (fw, fh):
+        raise HTTPException(
+            400,
+            f"frame size {frame_img.size} != expected {(fw, fh)}",
+        )
+    if frame_img.mode != "RGBA":
+        frame_img = frame_img.convert("RGBA")
+
+    with Image.open(sheet_abs) as sheet:
+        sheet.load()
+        sheet_w, sheet_h = sheet.size
+        x0, y0 = col * fw, row * fh
+        if x0 < 0 or x0 + fw > sheet_w or y0 < 0 or y0 + fh > sheet_h:
+            raise HTTPException(
+                416,
+                f"frame ({row},{col}) out of bounds (sheet {sheet_w}×{sheet_h})",
+            )
+        out = sheet.convert("RGBA") if sheet.mode != "RGBA" else sheet.copy()
+
+    # Paste with alpha — clear-then-paste so transparent edits actually erase.
+    out.paste(frame_img, (x0, y0))
+    tmp = sheet_abs.with_suffix(sheet_abs.suffix + ".tmp")
+    out.save(tmp, "PNG", compress_level=6)
+    tmp.replace(sheet_abs)
+    return {"ok": True, "path": p, "row": row, "col": col, "size": [fw, fh]}
 
 
 @app.get("/api/asset/file")
@@ -794,9 +1122,6 @@ def serve_asset_file(p: str) -> FileResponse:
         media_type=mime or "application/octet-stream",
         headers={"Cache-Control": "no-cache"},
     )
-
-
-from fastapi import Request  # noqa: E402
 
 
 @app.put("/api/asset/file")

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c37bwxqi3ss0vn"]
 
 [ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
-[ext_resource type="Texture2D" uid="uid://cyt25qxxtltiop" path="res://assets/textures/props/wooden_stool_old.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://bjtxlxpg7cmve" path="res://assets/textures/props/wooden_stool_old.png" id="3_tex"]
 
 [sub_resource type="RectangleShape2D" id="1_rect"]
 size = Vector2(16.0, 16.0)

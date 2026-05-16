@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:35:17",
-  "updated_at": "2026-05-12T17:35:46",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:vendor_stall",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_market_1983"
   ],
   "object_id": "c4eab65c-fba1-426a-ad41-d0304c6d1294",
   "kind": "iso_prop",

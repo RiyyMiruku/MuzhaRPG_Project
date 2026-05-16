@@ -1,4 +1,5 @@
-import { ArrowLeft, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { ArrowLeft, Trash2, RefreshCw } from "lucide-react"
 import type { AssetSummary } from "../types"
 import { api } from "../api"
 import { AssetPreview } from "./AssetPreview"
@@ -12,6 +13,40 @@ interface Props {
 
 export function AssetDetail({ asset, onBack, onDeleted }: Props) {
   const completed = new Set(asset.completed_stages)
+  // Bumped whenever a pixel edit saves — propagates to AssetPreview (which
+  // re-fetches the sheet PNG/atlas) and to each StageSection (which re-fetches
+  // its stage detail so new frame thumbs are cache-busted).
+  const [refreshKey, setRefreshKey] = useState(0)
+  const bumpRefresh = () => setRefreshKey((k) => k + 1)
+  const [syncing, setSyncing] = useState(false)
+
+  const onSyncFromPixellab = async () => {
+    if (!window.confirm(
+      `Sync "${asset.name}" from Pixellab?\n\n` +
+      `Pulls latest rotations + animations from Pixellab → overwrites local. ` +
+      `0 Pixellab credits (only downloads existing frames).\n\n` +
+      `Use this when you've edited the character on pixellab.ai's website ` +
+      `(mirror direction / draw / template regen) and want to reconcile back.`
+    )) return
+    setSyncing(true)
+    try {
+      const result = await api.syncFromPixellab(asset.name, "all")
+      const rotCount = Object.keys(result.rotations || {}).length
+      const baked = result.animations?.baked || {}
+      const animSummary = Object.entries(baked)
+        .map(([action, dirs]) => `${action}=${(dirs as string[]).length}`).join(", ")
+      window.alert(
+        `Synced "${asset.name}" from Pixellab:\n\n` +
+        `  rotations: ${rotCount} directions\n` +
+        `  animations: ${animSummary || "(none)"}`
+      )
+      bumpRefresh()
+    } catch (e) {
+      window.alert(`Sync failed: ${(e as Error).message}`)
+    } finally {
+      setSyncing(false)
+    }
+  }
 
   return (
     <div>
@@ -24,41 +59,55 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
           <ArrowLeft className="h-4 w-4" />
           Back to grid
         </button>
-        <button
-          type="button"
-          onClick={async () => {
-            if (!window.confirm(
-              `Delete "${asset.name}"?\n\n` +
-              `This removes the manifest entry AND deletes local files:\n` +
-              `  • art_source/<bucket>/${asset.name}/ (rotations, spritesheet, etc.)\n` +
-              `  • game/assets/textures/... imported copies (PNG/JSON/tscn + .import sidecars)\n\n` +
-              `This cannot be undone. Continue?`
-            )) return
-            try {
-              const result = await api.deleteAsset(asset.asset_type, asset.name)
-              if (result.file_errors && result.file_errors.length > 0) {
-                window.alert(
-                  `Deleted "${asset.name}" with some file errors:\n\n` +
-                  result.file_errors.join("\n")
-                )
+        <div className="flex gap-2">
+          {asset.asset_type === "character" && (
+            <button
+              type="button"
+              onClick={onSyncFromPixellab}
+              disabled={syncing}
+              className="flex items-center gap-1 rounded bg-sky-900/40 px-3 py-1.5 text-sm text-sky-200 hover:bg-sky-900/60 disabled:opacity-50"
+              title="Pull latest rotations + animations from pixellab.ai (0 credits)"
+            >
+              <RefreshCw className={"h-4 w-4 " + (syncing ? "animate-spin" : "")} />
+              {syncing ? "Syncing…" : "Sync from Pixellab"}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={async () => {
+              if (!window.confirm(
+                `Delete "${asset.name}"?\n\n` +
+                `This removes the manifest entry AND deletes local files:\n` +
+                `  • art_source/<bucket>/${asset.name}/ (rotations, spritesheet, etc.)\n` +
+                `  • game/assets/textures/... imported copies (PNG/JSON/tscn + .import sidecars)\n\n` +
+                `This cannot be undone. Continue?`
+              )) return
+              try {
+                const result = await api.deleteAsset(asset.asset_type, asset.name)
+                if (result.file_errors && result.file_errors.length > 0) {
+                  window.alert(
+                    `Deleted "${asset.name}" with some file errors:\n\n` +
+                    result.file_errors.join("\n")
+                  )
+                }
+                onDeleted?.()
+                onBack()
+              } catch (e) {
+                window.alert(`Delete failed: ${(e as Error).message}`)
               }
-              onDeleted?.()
-              onBack()
-            } catch (e) {
-              window.alert(`Delete failed: ${(e as Error).message}`)
-            }
-          }}
-          className="flex items-center gap-1 rounded bg-red-900/40 px-3 py-1.5 text-sm text-red-200 hover:bg-red-900/60"
-        >
-          <Trash2 className="h-4 w-4" />
-          Delete
-        </button>
+            }}
+            className="flex items-center gap-1 rounded bg-red-900/40 px-3 py-1.5 text-sm text-red-200 hover:bg-red-900/60"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete
+          </button>
+        </div>
       </div>
 
       {/* Big zoomable preview — first thing on the page. Animated for characters
           with a spritesheet, static for everything else. */}
       <section className="mb-6">
-        <AssetPreview asset={asset} />
+        <AssetPreview asset={asset} refreshKey={refreshKey} />
       </section>
 
       <div className="mb-6 rounded-lg border border-stone-800 bg-stone-900 p-6">
@@ -94,6 +143,8 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
               asset={asset}
               stage={stage}
               realized={completed.has(stage)}
+              refreshKey={refreshKey}
+              onPixelSaved={bumpRefresh}
             />
           ))}
         </div>

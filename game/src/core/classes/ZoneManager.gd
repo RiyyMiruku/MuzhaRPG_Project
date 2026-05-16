@@ -106,6 +106,9 @@ func transition_to_zone(zone_id: String, entry_point: String = "default") -> voi
 	if _player:
 		_player.global_position = Zones.entry_position(zone_id, entry_point)
 
+	# 5.5 套用當前 era 的可見性 + tint(hybrid zone 才有效果)
+	EraManager.apply_to_current_zone()
+
 	# 6. 淡入
 	if screen_transition:
 		screen_transition.fade_in()
@@ -128,8 +131,12 @@ func _find_player() -> Player:
 	return null
 
 func _get_zone_id_from_node(node: Node) -> String:
-	var node_name: String = node.name.to_lower()
+	# 比對策略:把 zone_id 跟 node name 都正規化(去底線、小寫)後 substring match。
+	# 例:zone_id="zone_apartment_muzha" → "apartmentmuzha";
+	#     node name "ZoneApartmentMuzha" → "zoneapartmentmuzha" ← 包含上者。
+	var node_norm: String = node.name.to_lower().replace("_", "")
 	for zone_id: String in Zones.all_ids():
-		if node_name.contains(zone_id.replace("zone_", "")):
+		var key: String = zone_id.replace("zone_", "").replace("_", "")
+		if node_norm.contains(key):
 			return zone_id
 	return ""

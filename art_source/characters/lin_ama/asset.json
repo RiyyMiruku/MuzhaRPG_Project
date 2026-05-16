@@ -1,15 +1,12 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T17:20:50",
-  "updated_at": "2026-05-14T01:34:19",
-  "prompts": {
-    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
-    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
-  },
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:elder_family",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_pharmacy_1983",
+    "zone:zone_pharmacy_backyard"
   ],
   "character_id": "373b529a-723b-4c8f-b1f1-3e8873f87742",
   "preset": "player",

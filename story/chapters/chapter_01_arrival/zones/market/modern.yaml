@@ -1,0 +1,62 @@
+# 木柵市場(現代)— 跟老周問話、現代線探查
+zone: zone_market
+era: "modern"
+size: [34, 23]
+
+tilemap:
+  atlas: street_asphalt_sidewalk
+  terrain: 1
+  fill: rect
+
+props:
+  # 現代藥行(封門狀態)做焦點
+  - id: pharmacy_rongchang_modern
+    anchor: north_wall
+    offset: [-2, 2]
+
+  - id: market_shophouse_concrete
+    anchor: north_wall
+    offset: [6, 2]
+
+  - id: market_shophouse_minnan
+    anchor: north_wall
+    offset: [-9, 2]
+
+  # 藥行門口封死的鐵門(地面標示)
+  - id: iron_gate_rusted
+    anchor: relative_to(pharmacy_rongchang_modern)
+    offset: [0, 2]
+
+  # 現代攤位稀疏(只剩 1-2 個)
+  - id: vegetable_stall
+    anchor: south_wall
+    offset: [3, -1]
+
+npcs:
+  # 老周在市場入口擺龍門陣
+  - id: lao_zhou
+    anchor: south_wall
+    offset: [-4, -2]
+
+transitions:
+  - target_zone: zone_apartment_muzha
+    entry_point: from_market
+    anchor: south_wall
+    offset: [-12, 0]
+    rename: ToApartment
+
+  - target_zone: zone_pharmacy
+    entry_point: from_market
+    anchor: north_wall
+    offset: [-2, 1]
+    rename: ToPharmacy
+
+  - target_zone: zone_law_office
+    entry_point: from_market
+    anchor: south_wall
+    offset: [12, 0]
+    rename: ToLawOffice
+
+player_spawn:
+  anchor: south_wall
+  offset: [0, -1]

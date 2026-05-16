@@ -162,6 +162,7 @@ func save_game(slot: int = 1) -> void:
 		"story": StoryManager.serialize(),
 		"quests": QuestManager.serialize(),
 		"chapter": ChapterManager.serialize(),
+		"era": EraManager.serialize(),
 		"time_played_sec": _time_played_sec,
 	}
 
@@ -199,6 +200,8 @@ func load_game(slot: int = 1) -> void:
 		QuestManager.deserialize(data["quests"])
 	if data.has("chapter"):
 		ChapterManager.deserialize(data["chapter"])
+	if data.has("era"):
+		EraManager.deserialize(data["era"])
 
 	# 還原遊戲時間
 	if data.has("time_played_sec"):
@@ -218,10 +221,11 @@ func load_game(slot: int = 1) -> void:
 
 ## 回主選單：重置 autoload 狀態 + reload 主場景（MainMenu 會自動重新 push）
 func return_to_main_menu() -> void:
-	# 重置故事 / 任務 / 章節 狀態（傳空 dict 讓 deserialize 套預設值）
+	# 重置故事 / 任務 / 章節 / 時空 狀態（傳空 dict 讓 deserialize 套預設值）
 	StoryManager.deserialize({})
 	QuestManager.deserialize({})
 	ChapterManager.deserialize({})
+	EraManager.deserialize({})
 	_time_played_sec = 0.0
 	# 中止任何 in-flight AI 請求
 	AIClient.abort_current_request()

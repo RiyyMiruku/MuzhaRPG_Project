@@ -1,0 +1,295 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/zone_baker.gd" id="1_baker"]
+[ext_resource type="Script" uid="uid://cjk8nronimk5r" path="res://addons/TileMapDual/tile_map_dual.gd" id="2_tmd_script"]
+[ext_resource type="Material" uid="uid://cmbcfxlkxxnwq" path="res://addons/TileMapDual/ghost_material.tres" id="3_ghost_mat"]
+[ext_resource type="PackedScene" path="res://src/entities/player/Player.tscn" id="4_player"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="5_pcam_script"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_pcam_host_script"]
+[ext_resource type="Texture2D" uid="uid://b2ccd6twaxt0" path="res://assets/textures/tilesets/market_concrete_tile.png" id="7_atlas_market_concret"]
+[ext_resource type="PackedScene" path="res://src/entities/npcs/BaseNPC.tscn" id="8_base_npc"]
+[ext_resource type="PackedScene" path="res://src/core/components/ZoneTransitionArea.tscn" id="9_zone_transition_area"]
+[ext_resource type="PackedScene" uid="uid://cnr9783abxysbd" path="res://src/maps/props/shop_counter_wood.tscn" id="10_prop_shop_counter_wo"]
+[ext_resource type="PackedScene" uid="uid://cjbntxoy1nny1o" path="res://src/maps/props/medicine_cabinet_new.tscn" id="11_prop_medicine_cabine"]
+[ext_resource type="PackedScene" uid="uid://cj9zirjzzst2wb" path="res://src/maps/props/cathay_calendar_1983.tscn" id="12_prop_cathay_calendar"]
+[ext_resource type="PackedScene" uid="uid://c9cerg6qg9fkui" path="res://src/maps/props/family_photo_blacked.tscn" id="13_prop_family_photo_bl"]
+[ext_resource type="PackedScene" uid="uid://c37bwxqi3ss0vn" path="res://src/maps/props/wooden_stool_old.tscn" id="14_prop_wooden_stool_ol"]
+[ext_resource type="PackedScene" uid="uid://ck6yfr2v6v172l" path="res://src/maps/props/lantern_paper_red.tscn" id="15_prop_lantern_paper_r"]
+[ext_resource type="PackedScene" uid="uid://cik1km30v6lifb" path="res://src/maps/props/incense_burner_brass.tscn" id="16_prop_incense_burner_"]
+[ext_resource type="PackedScene" uid="uid://cldq26h2aby5gf" path="res://src/maps/props/iron_gate_rusted.tscn" id="17_prop_iron_gate_ruste"]
+[ext_resource type="PackedScene" uid="uid://cchb8v63rs4z5g" path="res://src/maps/props/medicine_cabinet_dusty.tscn" id="18_prop_medicine_cabine"]
+[ext_resource type="PackedScene" uid="uid://cxk3olwqlt7zpd" path="res://src/maps/props/old_map_paper.tscn" id="19_prop_old_map_paper"]
+[ext_resource type="Resource" path="res://src/chapters/chapter_01_arrival/npcs/lin_rongchang.tres" id="20_npccfg_lin_rongchang"]
+[ext_resource type="Resource" path="res://src/chapters/chapter_01_arrival/npcs/chen_xiuqin.tres" id="21_npccfg_chen_xiuqin"]
+[ext_resource type="Resource" path="res://src/chapters/chapter_01_arrival/npcs/lin_ama.tres" id="22_npccfg_lin_ama"]
+[ext_resource type="Resource" path="res://src/chapters/chapter_01_arrival/npcs/lin_xiaowei.tres" id="23_npccfg_lin_xiaowei"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_market_concrete_tile"]
+texture = ExtResource("7_atlas_market_concret")
+texture_region_size = Vector2i(32, 16)
+0:3/0 = 0
+0:3/0/terrain_set = 0
+0:3/0/terrain = 0
+0:3/0/terrains_peering_bit/right_corner = 0
+0:3/0/terrains_peering_bit/bottom_corner = 0
+0:3/0/terrains_peering_bit/left_corner = 0
+0:3/0/terrains_peering_bit/top_corner = 0
+3:3/0 = 0
+3:3/0/terrain_set = 0
+3:3/0/terrains_peering_bit/right_corner = 0
+3:3/0/terrains_peering_bit/bottom_corner = 0
+3:3/0/terrains_peering_bit/left_corner = 0
+3:3/0/terrains_peering_bit/top_corner = 1
+0:2/0 = 0
+0:2/0/terrain_set = 0
+0:2/0/terrains_peering_bit/right_corner = 1
+0:2/0/terrains_peering_bit/bottom_corner = 0
+0:2/0/terrains_peering_bit/left_corner = 0
+0:2/0/terrains_peering_bit/top_corner = 0
+1:2/0 = 0
+1:2/0/terrain_set = 0
+1:2/0/terrains_peering_bit/right_corner = 1
+1:2/0/terrains_peering_bit/bottom_corner = 0
+1:2/0/terrains_peering_bit/left_corner = 0
+1:2/0/terrains_peering_bit/top_corner = 1
+0:0/0 = 0
+0:0/0/terrain_set = 0
+0:0/0/terrains_peering_bit/right_corner = 0
+0:0/0/terrains_peering_bit/bottom_corner = 0
+0:0/0/terrains_peering_bit/left_corner = 1
+0:0/0/terrains_peering_bit/top_corner = 0
+3:2/0 = 0
+3:2/0/terrain_set = 0
+3:2/0/terrains_peering_bit/right_corner = 0
+3:2/0/terrains_peering_bit/bottom_corner = 0
+3:2/0/terrains_peering_bit/left_corner = 1
+3:2/0/terrains_peering_bit/top_corner = 1
+2:3/0 = 0
+2:3/0/terrain_set = 0
+2:3/0/terrains_peering_bit/right_corner = 1
+2:3/0/terrains_peering_bit/bottom_corner = 0
+2:3/0/terrains_peering_bit/left_corner = 1
+2:3/0/terrains_peering_bit/top_corner = 0
+3:1/0 = 0
+3:1/0/terrain_set = 0
+3:1/0/terrains_peering_bit/right_corner = 1
+3:1/0/terrains_peering_bit/bottom_corner = 0
+3:1/0/terrains_peering_bit/left_corner = 1
+3:1/0/terrains_peering_bit/top_corner = 1
+1:3/0 = 0
+1:3/0/terrain_set = 0
+1:3/0/terrains_peering_bit/right_corner = 0
+1:3/0/terrains_peering_bit/bottom_corner = 1
+1:3/0/terrains_peering_bit/left_corner = 0
+1:3/0/terrains_peering_bit/top_corner = 0
+0:1/0 = 0
+0:1/0/terrain_set = 0
+0:1/0/terrains_peering_bit/right_corner = 0
+0:1/0/terrains_peering_bit/bottom_corner = 1
+0:1/0/terrains_peering_bit/left_corner = 0
+0:1/0/terrains_peering_bit/top_corner = 1
+1:0/0 = 0
+1:0/0/terrain_set = 0
+1:0/0/terrains_peering_bit/right_corner = 1
+1:0/0/terrains_peering_bit/bottom_corner = 1
+1:0/0/terrains_peering_bit/left_corner = 0
+1:0/0/terrains_peering_bit/top_corner = 0
+2:2/0 = 0
+2:2/0/terrain_set = 0
+2:2/0/terrains_peering_bit/right_corner = 1
+2:2/0/terrains_peering_bit/bottom_corner = 1
+2:2/0/terrains_peering_bit/left_corner = 0
+2:2/0/terrains_peering_bit/top_corner = 1
+3:0/0 = 0
+3:0/0/terrain_set = 0
+3:0/0/terrains_peering_bit/right_corner = 0
+3:0/0/terrains_peering_bit/bottom_corner = 1
+3:0/0/terrains_peering_bit/left_corner = 1
+3:0/0/terrains_peering_bit/top_corner = 0
+2:0/0 = 0
+2:0/0/terrain_set = 0
+2:0/0/terrains_peering_bit/right_corner = 0
+2:0/0/terrains_peering_bit/bottom_corner = 1
+2:0/0/terrains_peering_bit/left_corner = 1
+2:0/0/terrains_peering_bit/top_corner = 1
+1:1/0 = 0
+1:1/0/terrain_set = 0
+1:1/0/terrains_peering_bit/right_corner = 1
+1:1/0/terrains_peering_bit/bottom_corner = 1
+1:1/0/terrains_peering_bit/left_corner = 1
+1:1/0/terrains_peering_bit/top_corner = 0
+2:1/0 = 0
+2:1/0/terrain_set = 0
+2:1/0/terrain = 1
+2:1/0/terrains_peering_bit/right_corner = 1
+2:1/0/terrains_peering_bit/bottom_corner = 1
+2:1/0/terrains_peering_bit/left_corner = 1
+2:1/0/terrains_peering_bit/top_corner = 1
+
+[sub_resource type="TileSet" id="TileSet_market_concrete_tile"]
+tile_shape = 1
+tile_size = Vector2i(32, 16)
+terrain_set_0/mode = 1
+terrain_set_0/terrain_0/name = "<any>"
+terrain_set_0/terrain_0/color = Color(0.93333334, 0.50980395, 0.93333334, 1)
+terrain_set_0/terrain_1/name = "FG -market_concrete_tile.png"
+terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_market_concrete_tile")
+
+[node name="ZonePharmacy" type="Node2D"]
+script = ExtResource("1_baker")
+terrain_cells = Array[Vector2i]([Vector2i(-13, -9), Vector2i(-13, -8), Vector2i(-13, -7), Vector2i(-13, -6), Vector2i(-13, -5), Vector2i(-13, -4), Vector2i(-13, -3), Vector2i(-13, -2), Vector2i(-13, -1), Vector2i(-13, 0), Vector2i(-13, 1), Vector2i(-13, 2), Vector2i(-13, 3), Vector2i(-13, 4), Vector2i(-13, 5), Vector2i(-13, 6), Vector2i(-13, 7), Vector2i(-13, 8), Vector2i(-13, 9), Vector2i(-12, -9), Vector2i(-12, -8), Vector2i(-12, -7), Vector2i(-12, -6), Vector2i(-12, -5), Vector2i(-12, -4), Vector2i(-12, -3), Vector2i(-12, -2), Vector2i(-12, -1), Vector2i(-12, 0), Vector2i(-12, 1), Vector2i(-12, 2), Vector2i(-12, 3), Vector2i(-12, 4), Vector2i(-12, 5), Vector2i(-12, 6), Vector2i(-12, 7), Vector2i(-12, 8), Vector2i(-12, 9), Vector2i(-11, -9), Vector2i(-11, -8), Vector2i(-11, -7), Vector2i(-11, -6), Vector2i(-11, -5), Vector2i(-11, -4), Vector2i(-11, -3), Vector2i(-11, -2), Vector2i(-11, -1), Vector2i(-11, 0), Vector2i(-11, 1), Vector2i(-11, 2), Vector2i(-11, 3), Vector2i(-11, 4), Vector2i(-11, 5), Vector2i(-11, 6), Vector2i(-11, 7), Vector2i(-11, 8), Vector2i(-11, 9), Vector2i(-10, -9), Vector2i(-10, -8), Vector2i(-10, -7), Vector2i(-10, -6), Vector2i(-10, -5), Vector2i(-10, -4), Vector2i(-10, -3), Vector2i(-10, -2), Vector2i(-10, -1), Vector2i(-10, 0), Vector2i(-10, 1), Vector2i(-10, 2), Vector2i(-10, 3), Vector2i(-10, 4), Vector2i(-10, 5), Vector2i(-10, 6), Vector2i(-10, 7), Vector2i(-10, 8), Vector2i(-10, 9), Vector2i(-9, -9), Vector2i(-9, -8), Vector2i(-9, -7), Vector2i(-9, -6), Vector2i(-9, -5), Vector2i(-9, -4), Vector2i(-9, -3), Vector2i(-9, -2), Vector2i(-9, -1), Vector2i(-9, 0), Vector2i(-9, 1), Vector2i(-9, 2), Vector2i(-9, 3), Vector2i(-9, 4), Vector2i(-9, 5), Vector2i(-9, 6), Vector2i(-9, 7), Vector2i(-9, 8), Vector2i(-9, 9), Vector2i(-8, -9), Vector2i(-8, -8), Vector2i(-8, -7), Vector2i(-8, -6), Vector2i(-8, -5), Vector2i(-8, -4), Vector2i(-8, -3), Vector2i(-8, -2), Vector2i(-8, -1), Vector2i(-8, 0), Vector2i(-8, 1), Vector2i(-8, 2), Vector2i(-8, 3), Vector2i(-8, 4), Vector2i(-8, 5), Vector2i(-8, 6), Vector2i(-8, 7), Vector2i(-8, 8), Vector2i(-8, 9), Vector2i(-7, -9), Vector2i(-7, -8), Vector2i(-7, -7), Vector2i(-7, -6), Vector2i(-7, -5), Vector2i(-7, -4), Vector2i(-7, -3), Vector2i(-7, -2), Vector2i(-7, -1), Vector2i(-7, 0), Vector2i(-7, 1), Vector2i(-7, 2), Vector2i(-7, 3), Vector2i(-7, 4), Vector2i(-7, 5), Vector2i(-7, 6), Vector2i(-7, 7), Vector2i(-7, 8), Vector2i(-7, 9), Vector2i(-6, -9), Vector2i(-6, -8), Vector2i(-6, -7), Vector2i(-6, -6), Vector2i(-6, -5), Vector2i(-6, -4), Vector2i(-6, -3), Vector2i(-6, -2), Vector2i(-6, -1), Vector2i(-6, 0), Vector2i(-6, 1), Vector2i(-6, 2), Vector2i(-6, 3), Vector2i(-6, 4), Vector2i(-6, 5), Vector2i(-6, 6), Vector2i(-6, 7), Vector2i(-6, 8), Vector2i(-6, 9), Vector2i(-5, -9), Vector2i(-5, -8), Vector2i(-5, -7), Vector2i(-5, -6), Vector2i(-5, -5), Vector2i(-5, -4), Vector2i(-5, -3), Vector2i(-5, -2), Vector2i(-5, -1), Vector2i(-5, 0), Vector2i(-5, 1), Vector2i(-5, 2), Vector2i(-5, 3), Vector2i(-5, 4), Vector2i(-5, 5), Vector2i(-5, 6), Vector2i(-5, 7), Vector2i(-5, 8), Vector2i(-5, 9), Vector2i(-4, -9), Vector2i(-4, -8), Vector2i(-4, -7), Vector2i(-4, -6), Vector2i(-4, -5), Vector2i(-4, -4), Vector2i(-4, -3), Vector2i(-4, -2), Vector2i(-4, -1), Vector2i(-4, 0), Vector2i(-4, 1), Vector2i(-4, 2), Vector2i(-4, 3), Vector2i(-4, 4), Vector2i(-4, 5), Vector2i(-4, 6), Vector2i(-4, 7), Vector2i(-4, 8), Vector2i(-4, 9), Vector2i(-3, -9), Vector2i(-3, -8), Vector2i(-3, -7), Vector2i(-3, -6), Vector2i(-3, -5), Vector2i(-3, -4), Vector2i(-3, -3), Vector2i(-3, -2), Vector2i(-3, -1), Vector2i(-3, 0), Vector2i(-3, 1), Vector2i(-3, 2), Vector2i(-3, 3), Vector2i(-3, 4), Vector2i(-3, 5), Vector2i(-3, 6), Vector2i(-3, 7), Vector2i(-3, 8), Vector2i(-3, 9), Vector2i(-2, -9), Vector2i(-2, -8), Vector2i(-2, -7), Vector2i(-2, -6), Vector2i(-2, -5), Vector2i(-2, -4), Vector2i(-2, -3), Vector2i(-2, -2), Vector2i(-2, -1), Vector2i(-2, 0), Vector2i(-2, 1), Vector2i(-2, 2), Vector2i(-2, 3), Vector2i(-2, 4), Vector2i(-2, 5), Vector2i(-2, 6), Vector2i(-2, 7), Vector2i(-2, 8), Vector2i(-2, 9), Vector2i(-1, -9), Vector2i(-1, -8), Vector2i(-1, -7), Vector2i(-1, -6), Vector2i(-1, -5), Vector2i(-1, -4), Vector2i(-1, -3), Vector2i(-1, -2), Vector2i(-1, -1), Vector2i(-1, 0), Vector2i(-1, 1), Vector2i(-1, 2), Vector2i(-1, 3), Vector2i(-1, 4), Vector2i(-1, 5), Vector2i(-1, 6), Vector2i(-1, 7), Vector2i(-1, 8), Vector2i(-1, 9), Vector2i(0, -9), Vector2i(0, -8), Vector2i(0, -7), Vector2i(0, -6), Vector2i(0, -5), Vector2i(0, -4), Vector2i(0, -3), Vector2i(0, -2), Vector2i(0, -1), Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2), Vector2i(0, 3), Vector2i(0, 4), Vector2i(0, 5), Vector2i(0, 6), Vector2i(0, 7), Vector2i(0, 8), Vector2i(0, 9), Vector2i(1, -9), Vector2i(1, -8), Vector2i(1, -7), Vector2i(1, -6), Vector2i(1, -5), Vector2i(1, -4), Vector2i(1, -3), Vector2i(1, -2), Vector2i(1, -1), Vector2i(1, 0), Vector2i(1, 1), Vector2i(1, 2), Vector2i(1, 3), Vector2i(1, 4), Vector2i(1, 5), Vector2i(1, 6), Vector2i(1, 7), Vector2i(1, 8), Vector2i(1, 9), Vector2i(2, -9), Vector2i(2, -8), Vector2i(2, -7), Vector2i(2, -6), Vector2i(2, -5), Vector2i(2, -4), Vector2i(2, -3), Vector2i(2, -2), Vector2i(2, -1), Vector2i(2, 0), Vector2i(2, 1), Vector2i(2, 2), Vector2i(2, 3), Vector2i(2, 4), Vector2i(2, 5), Vector2i(2, 6), Vector2i(2, 7), Vector2i(2, 8), Vector2i(2, 9), Vector2i(3, -9), Vector2i(3, -8), Vector2i(3, -7), Vector2i(3, -6), Vector2i(3, -5), Vector2i(3, -4), Vector2i(3, -3), Vector2i(3, -2), Vector2i(3, -1), Vector2i(3, 0), Vector2i(3, 1), Vector2i(3, 2), Vector2i(3, 3), Vector2i(3, 4), Vector2i(3, 5), Vector2i(3, 6), Vector2i(3, 7), Vector2i(3, 8), Vector2i(3, 9), Vector2i(4, -9), Vector2i(4, -8), Vector2i(4, -7), Vector2i(4, -6), Vector2i(4, -5), Vector2i(4, -4), Vector2i(4, -3), Vector2i(4, -2), Vector2i(4, -1), Vector2i(4, 0), Vector2i(4, 1), Vector2i(4, 2), Vector2i(4, 3), Vector2i(4, 4), Vector2i(4, 5), Vector2i(4, 6), Vector2i(4, 7), Vector2i(4, 8), Vector2i(4, 9), Vector2i(5, -9), Vector2i(5, -8), Vector2i(5, -7), Vector2i(5, -6), Vector2i(5, -5), Vector2i(5, -4), Vector2i(5, -3), Vector2i(5, -2), Vector2i(5, -1), Vector2i(5, 0), Vector2i(5, 1), Vector2i(5, 2), Vector2i(5, 3), Vector2i(5, 4), Vector2i(5, 5), Vector2i(5, 6), Vector2i(5, 7), Vector2i(5, 8), Vector2i(5, 9), Vector2i(6, -9), Vector2i(6, -8), Vector2i(6, -7), Vector2i(6, -6), Vector2i(6, -5), Vector2i(6, -4), Vector2i(6, -3), Vector2i(6, -2), Vector2i(6, -1), Vector2i(6, 0), Vector2i(6, 1), Vector2i(6, 2), Vector2i(6, 3), Vector2i(6, 4), Vector2i(6, 5), Vector2i(6, 6), Vector2i(6, 7), Vector2i(6, 8), Vector2i(6, 9), Vector2i(7, -9), Vector2i(7, -8), Vector2i(7, -7), Vector2i(7, -6), Vector2i(7, -5), Vector2i(7, -4), Vector2i(7, -3), Vector2i(7, -2), Vector2i(7, -1), Vector2i(7, 0), Vector2i(7, 1), Vector2i(7, 2), Vector2i(7, 3), Vector2i(7, 4), Vector2i(7, 5), Vector2i(7, 6), Vector2i(7, 7), Vector2i(7, 8), Vector2i(7, 9), Vector2i(8, -9), Vector2i(8, -8), Vector2i(8, -7), Vector2i(8, -6), Vector2i(8, -5), Vector2i(8, -4), Vector2i(8, -3), Vector2i(8, -2), Vector2i(8, -1), Vector2i(8, 0), Vector2i(8, 1), Vector2i(8, 2), Vector2i(8, 3), Vector2i(8, 4), Vector2i(8, 5), Vector2i(8, 6), Vector2i(8, 7), Vector2i(8, 8), Vector2i(8, 9), Vector2i(9, -9), Vector2i(9, -8), Vector2i(9, -7), Vector2i(9, -6), Vector2i(9, -5), Vector2i(9, -4), Vector2i(9, -3), Vector2i(9, -2), Vector2i(9, -1), Vector2i(9, 0), Vector2i(9, 1), Vector2i(9, 2), Vector2i(9, 3), Vector2i(9, 4), Vector2i(9, 5), Vector2i(9, 6), Vector2i(9, 7), Vector2i(9, 8), Vector2i(9, 9), Vector2i(10, -9), Vector2i(10, -8), Vector2i(10, -7), Vector2i(10, -6), Vector2i(10, -5), Vector2i(10, -4), Vector2i(10, -3), Vector2i(10, -2), Vector2i(10, -1), Vector2i(10, 0), Vector2i(10, 1), Vector2i(10, 2), Vector2i(10, 3), Vector2i(10, 4), Vector2i(10, 5), Vector2i(10, 6), Vector2i(10, 7), Vector2i(10, 8), Vector2i(10, 9), Vector2i(11, -9), Vector2i(11, -8), Vector2i(11, -7), Vector2i(11, -6), Vector2i(11, -5), Vector2i(11, -4), Vector2i(11, -3), Vector2i(11, -2), Vector2i(11, -1), Vector2i(11, 0), Vector2i(11, 1), Vector2i(11, 2), Vector2i(11, 3), Vector2i(11, 4), Vector2i(11, 5), Vector2i(11, 6), Vector2i(11, 7), Vector2i(11, 8), Vector2i(11, 9), Vector2i(12, -9), Vector2i(12, -8), Vector2i(12, -7), Vector2i(12, -6), Vector2i(12, -5), Vector2i(12, -4), Vector2i(12, -3), Vector2i(12, -2), Vector2i(12, -1), Vector2i(12, 0), Vector2i(12, 1), Vector2i(12, 2), Vector2i(12, 3), Vector2i(12, 4), Vector2i(12, 5), Vector2i(12, 6), Vector2i(12, 7), Vector2i(12, 8), Vector2i(12, 9)])
+terrain_id = 1
+yaml_paths = Array[String](["story/chapters/chapter_01_arrival/zones/pharmacy/1983.yaml", "story/chapters/chapter_01_arrival/zones/pharmacy/modern.yaml"])
+
+[node name="ZoneLabel" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0.5)
+offset_left = -120.0
+offset_top = -180.0
+offset_right = 120.0
+offset_bottom = -160.0
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+text = "榮昌中藥行"
+
+[node name="EraTint" type="CanvasModulate" parent="."]
+# EraManager 控制此節點的 color。預設 identity(白色不偏色)。
+color = Color(1, 1, 1, 1)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+
+[node name="TileMapDual" type="TileMapLayer" parent="TileMapLayer"]
+material = ExtResource("3_ghost_mat")
+tile_set = SubResource("TileSet_market_concrete_tile")
+script = ExtResource("2_tmd_script")
+godot_4_3_compatibility = false
+metadata/_custom_type_script = "uid://cjk8nronimk5r"
+
+[node name="YSortRoot" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Player" parent="YSortRoot" instance=ExtResource("4_player")]
+position = Vector2(-112, 56)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+position_smoothing_enabled = false
+zoom = Vector2(3, 3)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera2D"]
+script = ExtResource("6_pcam_host_script")
+
+[node name="DefaultCam" type="Node2D" parent="." node_paths=PackedStringArray("follow_target")]
+script = ExtResource("5_pcam_script")
+priority = 0
+follow_mode = 1
+follow_target = NodePath("../YSortRoot/Player")
+zoom = Vector2(3, 3)
+tween_on_load = false
+
+[node name="shop_counter_wood_1983" parent="YSortRoot" instance=ExtResource("10_prop_shop_counter_wo") groups=["era_1983"]]
+position = Vector2(-16, 8)
+visible = false
+
+[node name="medicine_cabinet_new_1983" parent="YSortRoot" instance=ExtResource("11_prop_medicine_cabine") groups=["era_1983"]]
+position = Vector2(80, -88)
+visible = false
+
+[node name="medicine_cabinet_new_2_1983" parent="YSortRoot" instance=ExtResource("11_prop_medicine_cabine") groups=["era_1983"]]
+position = Vector2(128, -64)
+visible = false
+
+[node name="medicine_cabinet_new_3_1983" parent="YSortRoot" instance=ExtResource("11_prop_medicine_cabine") groups=["era_1983"]]
+position = Vector2(176, -40)
+visible = false
+
+[node name="cathay_calendar_1983_1983" parent="YSortRoot" instance=ExtResource("12_prop_cathay_calendar") groups=["era_1983"]]
+position = Vector2(32, -112)
+visible = false
+
+[node name="family_photo_blacked_1983" parent="YSortRoot" instance=ExtResource("13_prop_family_photo_bl") groups=["era_1983"]]
+position = Vector2(224, -16)
+visible = false
+
+[node name="wooden_stool_old_1983" parent="YSortRoot" instance=ExtResource("14_prop_wooden_stool_ol") groups=["era_1983"]]
+position = Vector2(-64, 0)
+visible = false
+
+[node name="wooden_stool_old_2_1983" parent="YSortRoot" instance=ExtResource("14_prop_wooden_stool_ol") groups=["era_1983"]]
+position = Vector2(0, 32)
+visible = false
+
+[node name="lantern_paper_red_1983" parent="YSortRoot" instance=ExtResource("15_prop_lantern_paper_r") groups=["era_1983"]]
+position = Vector2(-176, 24)
+visible = false
+
+[node name="lantern_paper_red_2_1983" parent="YSortRoot" instance=ExtResource("15_prop_lantern_paper_r") groups=["era_1983"]]
+position = Vector2(-48, 88)
+visible = false
+
+[node name="incense_burner_brass_1983" parent="YSortRoot" instance=ExtResource("16_prop_incense_burner_") groups=["era_1983"]]
+position = Vector2(176, 88)
+visible = false
+
+[node name="iron_gate_rusted_modern" parent="YSortRoot" instance=ExtResource("17_prop_iron_gate_ruste") groups=["era_modern"]]
+position = Vector2(-112, 56)
+
+[node name="shop_counter_wood_modern" parent="YSortRoot" instance=ExtResource("10_prop_shop_counter_wo") groups=["era_modern"]]
+position = Vector2(-16, 8)
+
+[node name="medicine_cabinet_dusty_modern" parent="YSortRoot" instance=ExtResource("18_prop_medicine_cabine") groups=["era_modern"]]
+position = Vector2(64, -96)
+
+[node name="medicine_cabinet_dusty_2_modern" parent="YSortRoot" instance=ExtResource("18_prop_medicine_cabine") groups=["era_modern"]]
+position = Vector2(128, -64)
+
+[node name="medicine_cabinet_dusty_3_modern" parent="YSortRoot" instance=ExtResource("18_prop_medicine_cabine") groups=["era_modern"]]
+position = Vector2(192, -32)
+
+[node name="family_photo_blacked_modern" parent="YSortRoot" instance=ExtResource("13_prop_family_photo_bl") groups=["era_modern"]]
+position = Vector2(16, -120)
+
+[node name="incense_burner_brass_modern" parent="YSortRoot" instance=ExtResource("16_prop_incense_burner_") groups=["era_modern"]]
+position = Vector2(160, 80)
+
+[node name="old_map_paper_modern" parent="YSortRoot" instance=ExtResource("19_prop_old_map_paper") groups=["era_modern"]]
+position = Vector2(0, 16)
+
+[node name="Transitions" type="Node2D" parent="."]
+
+[node name="ToMarket_1983" parent="Transitions" instance=ExtResource("9_zone_transition_area") groups=["era_1983"]]
+position = Vector2(-144, 72)
+target_zone = "zone_market"
+entry_point = "from_pharmacy"
+visible = false
+
+[node name="ToBackyard_1983" parent="Transitions" instance=ExtResource("9_zone_transition_area") groups=["era_1983"]]
+position = Vector2(192, 96)
+target_zone = "zone_pharmacy_backyard"
+entry_point = "from_pharmacy"
+visible = false
+
+[node name="ToMarket_modern" parent="Transitions" instance=ExtResource("9_zone_transition_area") groups=["era_modern"]]
+position = Vector2(-144, 72)
+target_zone = "zone_market"
+entry_point = "from_pharmacy"
+
+[node name="LinRongchang_1983" parent="YSortRoot" instance=ExtResource("8_base_npc") groups=["era_1983"]]
+position = Vector2(0, 0)
+npc_config = ExtResource("20_npccfg_lin_rongchang")
+visible = false
+
+[node name="ChenXiuqin_1983" parent="YSortRoot" instance=ExtResource("8_base_npc") groups=["era_1983"]]
+position = Vector2(-32, -16)
+npc_config = ExtResource("21_npccfg_chen_xiuqin")
+visible = false
+
+[node name="LinAma_1983" parent="YSortRoot" instance=ExtResource("8_base_npc") groups=["era_1983"]]
+position = Vector2(128, 96)
+npc_config = ExtResource("22_npccfg_lin_ama")
+visible = false
+
+[node name="LinXiaowei_1983" parent="YSortRoot" instance=ExtResource("8_base_npc") groups=["era_1983"]]
+position = Vector2(-160, 48)
+npc_config = ExtResource("23_npccfg_lin_xiaowei")
+visible = false

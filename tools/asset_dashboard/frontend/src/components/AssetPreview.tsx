@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { ImageOff } from "lucide-react"
+import {
+  ImageOff,
+  ArrowUp, ArrowDown, ArrowLeft, ArrowRight,
+  ArrowUpLeft, ArrowUpRight, ArrowDownLeft, ArrowDownRight,
+} from "lucide-react"
 import type { AssetSummary } from "../types"
 import { api } from "../api"
 
@@ -33,12 +37,15 @@ const DIRECTION_ORDER = [
 
 interface Props {
   asset: AssetSummary
+  /** Bumped by parent (AssetDetail) on pixel-editor save — forces re-fetch
+   *  of the sheet PNG/atlas so the preview reflects the edit immediately. */
+  refreshKey?: number
 }
 
 /** Top-of-detail preview. For characters that have a compiled spritesheet,
  *  shows an animated canvas player. For everything else (and for characters
  *  pre-spritesheet), shows the static thumbnail. Both support a zoom slider. */
-export function AssetPreview({ asset }: Props) {
+export function AssetPreview({ asset, refreshKey }: Props) {
   // Show the animated preview as soon as any animation stage has completed
   // (the sheet starts existing then, even before compile_spritesheet /
   // import_to_godot). The sheet is read straight from art_source/ so users
@@ -54,9 +61,9 @@ export function AssetPreview({ asset }: Props) {
       asset.completed_stages.includes("animate_walk"))
 
   return hasAnyAnimation ? (
-    <AnimatedPreview characterName={asset.name} />
+    <AnimatedPreview characterName={asset.name} refreshKey={refreshKey} />
   ) : (
-    <StaticPreview asset={asset} />
+    <StaticPreview asset={asset} refreshKey={refreshKey} />
   )
 }
 
@@ -95,11 +102,12 @@ function ZoomBar({ zoom, setZoom, extras }: ZoomBarProps) {
 // Static (non-animated) preview — for props, autotiles, or characters pre-spritesheet
 // ─────────────────────────────────────────────────────────────────────────────
 
-function StaticPreview({ asset }: { asset: AssetSummary }) {
+function StaticPreview({ asset, refreshKey = 0 }: { asset: AssetSummary; refreshKey?: number }) {
   const [zoom, setZoom] = useState(4)
   const [broken, setBroken] = useState(false)
   const [naturalSize, setNaturalSize] = useState<{ w: number; h: number } | null>(null)
-  const url = api.thumbnailUrl(asset.asset_type, asset.name)
+  // Append refreshKey as cache-buster so pixel-edit saves are reflected.
+  const url = `${api.thumbnailUrl(asset.asset_type, asset.name)}?_=${refreshKey}`
 
   return (
     <div className="rounded-lg border border-stone-800 bg-stone-900 p-4">
@@ -146,7 +154,7 @@ function StaticPreview({ asset }: { asset: AssetSummary }) {
 // Animated preview — for characters with a spritesheet
 // ─────────────────────────────────────────────────────────────────────────────
 
-function AnimatedPreview({ characterName }: { characterName: string }) {
+function AnimatedPreview({ characterName, refreshKey = 0 }: { characterName: string; refreshKey?: number }) {
   const [atlas, setAtlas] = useState<Atlas | null>(null)
   const [image, setImage] = useState<HTMLImageElement | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -200,7 +208,7 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
     return () => {
       cancelled = true
     }
-  }, [characterName])
+  }, [characterName, refreshKey])
 
   // Which animation types the atlas actually contains (some characters
   // — 4-dir static NPCs — have idle but not walk).
@@ -313,44 +321,147 @@ function AnimatedPreview({ characterName }: { characterName: string }) {
                 })}
               </select>
             </label>
-            <label className="flex items-center gap-2">
-              <span className="text-stone-400">Direction:</span>
-              <select
-                className="rounded bg-stone-800 px-2 py-1"
-                value={direction}
-                onChange={(e) => setDirection(e.target.value)}
-                disabled={availableDirections.length === 0}
-              >
-                {availableDirections.map((d) => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
-            </label>
-            {availableDirections.length === 0 && atlas && (
-              <span className="text-xs text-stone-500">
-                No {animationType} animations for this character yet.
-              </span>
-            )}
+            <span className="font-mono text-xs text-stone-500">
+              {availableDirections.length > 0 ? `dir: ${direction}` : `No ${animationType} animations yet`}
+            </span>
           </>
         }
       />
-      <div className="flex max-h-[60vh] items-start justify-center overflow-auto bg-stone-950 p-4">
+      <div className="flex max-h-[60vh] items-center justify-center overflow-auto bg-stone-950 p-4">
         {atlas && image ? (
-          <canvas
-            ref={canvasRef}
-            style={{
-              imageRendering: "pixelated",
-              // Explicit CSS dimensions match the drawing buffer so flex
-              // can't stretch us beyond the intended pixel-art scale.
-              width: `${atlas.frame_size[0] * zoom}px`,
-              height: `${atlas.frame_size[1] * zoom}px`,
-            }}
-            className="shrink-0 border border-stone-800"
-          />
+          <DirectionPad
+            current={direction}
+            available={new Set(availableDirections)}
+            onPick={setDirection}
+            frameSize={atlas.frame_size}
+            zoom={zoom}
+          >
+            <canvas
+              ref={canvasRef}
+              style={{
+                imageRendering: "pixelated",
+                width: `${atlas.frame_size[0] * zoom}px`,
+                height: `${atlas.frame_size[1] * zoom}px`,
+              }}
+              className="shrink-0 border border-stone-800"
+            />
+          </DirectionPad>
         ) : (
           <p className="text-sm text-stone-500">Loading sprite…</p>
         )}
       </div>
     </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3×3 directional pad — character in center, arrow buttons around the edge.
+// Replaces a dropdown. Disabled slots dim out for animations missing that dir
+// (e.g. idle has only 4 cardinals). Also responds to arrow keys.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DIR_BTN_LAYOUT: Array<{ dir: string; Icon: typeof ArrowUp }> = [
+  { dir: "north-west", Icon: ArrowUpLeft },
+  { dir: "north",      Icon: ArrowUp },
+  { dir: "north-east", Icon: ArrowUpRight },
+  { dir: "west",       Icon: ArrowLeft },
+  // center — empty (the canvas goes here)
+  { dir: "east",       Icon: ArrowRight },
+  { dir: "south-west", Icon: ArrowDownLeft },
+  { dir: "south",      Icon: ArrowDown },
+  { dir: "south-east", Icon: ArrowDownRight },
+]
+
+// Arrow-key → direction. Plain arrows = cardinals; Shift+arrow = diagonals.
+const KEY_DIR_MAP: Record<string, { plain: string; shift: string }> = {
+  ArrowUp:    { plain: "north", shift: "north" },
+  ArrowDown:  { plain: "south", shift: "south" },
+  ArrowLeft:  { plain: "west",  shift: "west" },
+  ArrowRight: { plain: "east",  shift: "east" },
+}
+
+function DirectionPad({
+  current, available, onPick, frameSize, zoom, children,
+}: {
+  current: string
+  available: Set<string>
+  onPick: (d: string) => void
+  frameSize: [number, number]
+  zoom: number
+  children: React.ReactNode
+}) {
+  const [fw, fh] = frameSize
+  // Buttons sit ~36px outside the canvas; cell size matches button hit area
+  const cellSize = 36
+
+  // Keyboard arrow-key support — only when the pad is mounted.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Don't hijack when typing in a form field.
+      const tag = (e.target as HTMLElement | null)?.tagName
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return
+      const m = KEY_DIR_MAP[e.key]
+      if (!m) return
+      const want = m.plain
+      if (available.has(want)) {
+        e.preventDefault()
+        onPick(want)
+      }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [available, onPick])
+
+  // CSS grid: 3×3, center cell is the canvas (any size, drives row/col size).
+  return (
+    <div
+      className="grid items-center justify-items-center gap-1.5"
+      style={{
+        gridTemplateColumns: `${cellSize}px ${fw * zoom}px ${cellSize}px`,
+        gridTemplateRows: `${cellSize}px ${fh * zoom}px ${cellSize}px`,
+      }}
+    >
+      {/* Row 0: NW, N, NE */}
+      {DIR_BTN_LAYOUT.slice(0, 3).map((b) => (
+        <DirBtn key={b.dir} active={current === b.dir} enabled={available.has(b.dir)} onClick={() => onPick(b.dir)} Icon={b.Icon} label={b.dir} />
+      ))}
+      {/* Row 1: W, [canvas], E */}
+      <DirBtn active={current === "west"} enabled={available.has("west")} onClick={() => onPick("west")} Icon={ArrowLeft} label="west" />
+      <div className="flex h-full w-full items-center justify-center">{children}</div>
+      <DirBtn active={current === "east"} enabled={available.has("east")} onClick={() => onPick("east")} Icon={ArrowRight} label="east" />
+      {/* Row 2: SW, S, SE */}
+      {DIR_BTN_LAYOUT.slice(5).map((b) => (
+        <DirBtn key={b.dir} active={current === b.dir} enabled={available.has(b.dir)} onClick={() => onPick(b.dir)} Icon={b.Icon} label={b.dir} />
+      ))}
+    </div>
+  )
+}
+
+function DirBtn({
+  active, enabled, onClick, Icon, label,
+}: {
+  active: boolean
+  enabled: boolean
+  onClick: () => void
+  Icon: typeof ArrowUp
+  label: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={enabled ? onClick : undefined}
+      disabled={!enabled}
+      title={enabled ? label : `${label} (not available for this animation)`}
+      className={
+        "flex h-9 w-9 items-center justify-center rounded border transition-colors " +
+        (active
+          ? "border-emerald-500 bg-emerald-700 text-emerald-50"
+          : enabled
+            ? "border-stone-700 bg-stone-800 text-stone-300 hover:border-stone-500 hover:text-stone-100"
+            : "border-stone-800 bg-stone-900 text-stone-700 cursor-not-allowed")
+      }
+    >
+      <Icon className="h-4 w-4" />
+    </button>
   )
 }

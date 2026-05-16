@@ -27,6 +27,8 @@ signal prop_interact_unavailable(prop: Node)
 signal hud_message_requested(text: String, duration: float)
 signal screen_transition_started()
 signal screen_transition_finished()
+## Cutscene 觸發:把 .tres 路徑 emit 出來,CutsceneDirector 接手
+signal cutscene_requested(cutscene_path: String)
 
 # ── UI 面板協調 ────────────────────────────────────────────────────────────
 ## 任何面板開啟時發射，其他面板收到後自動關閉

@@ -1,15 +1,16 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:47",
-  "updated_at": "2026-05-12T17:37:30",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:building",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_market_modern",
+    "zone:zone_pharmacy_modern"
   ],
-  "object_id": "9af3c089-25d7-4fd1-989e-ff70fd2283a7",
-  "kind": "building",
-  "description": "traditional taiwanese two-story shophouse in deep market alley, lower floor sealed by rusted dark green roller iron gate with heavy chain padlock, weathered white plastered upper floor with peeling paint, dark grey tile roof with moss patches, faded chinese signboard reading rongchang chinese medicine almost illegible, abandoned forty years",
+  "object_id": "pixflux:pharmacy_rongchang_modern",
+  "kind": "iso_building",
+  "description": "isometric pixel art, 30-degree top-down angled view, full building with visible roof and two side walls, transparent background — traditional taiwanese two-story shophouse in deep market alley, lower floor sealed by rusted dark green roller iron gate with heavy chain padlock, weathered white plastered upper floor with peeling paint, dark grey tile roof with moss patches, faded chinese signboard reading rongchang chinese medicine almost illegible, abandoned forty years",
   "view": "high_top_down",
   "size": {
     "width": 128,
@@ -17,28 +18,28 @@
   },
   "stages": {
     "generate_object": {
-      "completed_at": "2026-05-12T17:37:30",
+      "completed_at": "2026-05-14T19:08:16",
       "paths": [
-        "art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png"
+        "art_source\\objects\\pharmacy_rongchang_modern\\pharmacy_rongchang_modern.png"
       ]
     },
     "chroma_key": {
-      "completed_at": "2026-05-12T17:37:30",
+      "completed_at": "2026-05-14T19:08:16",
       "paths": [
-        "art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png"
+        "art_source\\objects\\pharmacy_rongchang_modern\\pharmacy_rongchang_modern.png"
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:37:30",
+      "completed_at": "2026-05-14T19:08:16",
       "paths": [
-        "game/assets/textures/props/pharmacy_rongchang_modern.png",
-        "game/src/maps/props/pharmacy_rongchang_modern.tscn"
+        "game\\assets\\textures\\props\\pharmacy_rongchang_modern.png",
+        "game\\src\\maps\\props\\pharmacy_rongchang_modern.tscn"
       ]
     }
   },
-  "local_path": "art_source/objects/pharmacy_rongchang_modern/pharmacy_rongchang_modern.png",
-  "imported_at": "2026-05-12T17:37:30",
-  "game_png_path": "game/assets/textures/props/pharmacy_rongchang_modern.png",
-  "game_tscn_path": "game/src/maps/props/pharmacy_rongchang_modern.tscn",
+  "local_path": "art_source\\objects\\pharmacy_rongchang_modern\\pharmacy_rongchang_modern.png",
+  "imported_at": "2026-05-14T19:08:16",
+  "game_png_path": "game\\assets\\textures\\props\\pharmacy_rongchang_modern.png",
+  "game_tscn_path": "game\\src\\maps\\props\\pharmacy_rongchang_modern.tscn",
   "collision": "bottom_16x16"
 }

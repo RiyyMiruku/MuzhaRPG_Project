@@ -8,77 +8,84 @@
     "idle_south": {
       "row": 0,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "idle_east": {
       "row": 1,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "idle_north": {
       "row": 2,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "idle_west": {
       "row": 3,
       "start": 0,
-      "end": 5,
+      "end": 4,
       "fps": 6.0,
       "loop": true
     },
     "walk_south": {
       "row": 4,
       "start": 0,
-      "end": 9,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     },
     "walk_south-east": {
       "row": 5,
       "start": 0,
-      "end": 9,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     },
     "walk_east": {
       "row": 6,
       "start": 0,
-      "end": 9,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     },
     "walk_north-east": {
       "row": 7,
       "start": 0,
-      "end": 9,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     },
     "walk_north": {
       "row": 8,
       "start": 0,
-      "end": 9,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     },
     "walk_north-west": {
       "row": 9,
       "start": 0,
-      "end": 9,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     },
     "walk_west": {
       "row": 10,
       "start": 0,
-      "end": 9,
+      "end": 6,
+      "fps": 6.0,
+      "loop": true
+    },
+    "walk_south-west": {
+      "row": 11,
+      "start": 0,
+      "end": 6,
       "fps": 6.0,
       "loop": true
     }

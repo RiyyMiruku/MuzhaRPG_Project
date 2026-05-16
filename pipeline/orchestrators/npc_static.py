@@ -48,8 +48,11 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
+    p.add_argument("--zones", default=None,
+                   help="逗號分隔的 zone slug list；每個寫成一個 zone:<slug> tag。"
+                        "詞彙表是 story/chapters/<slug>/zones.json。'*' 代表跨場景。")
     p.add_argument("--zone", default=None,
-                   help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
+                   help="[deprecated] 單一 zone（保留向下相容；新代碼用 --zones）")
     p.add_argument("--category", default=None,
                    help="自由形 category tag (e.g. 'vendor', 'student')")
     p.add_argument("--chapter", default=None,
@@ -194,15 +197,12 @@ def main() -> None:
     plab.setup_console()
     args = parse_args()
     manifest.validate_asset_name(args.name)
-    zones.validate_zone(args.zone)
     ctx = make_context("character", args, STAGES)
 
     if not manifest.get_character(ctx.name):
         manifest.upsert_character(name=ctx.name, fields={"status": "init"})
 
-    tags: list[str] = []
-    if args.zone:
-        tags.append(f"zone:{args.zone}")
+    tags: list[str] = zones.resolve_zone_tags(args.zones, args.zone)
     if args.category:
         tags.append(f"category:{args.category}")
     if args.chapter:

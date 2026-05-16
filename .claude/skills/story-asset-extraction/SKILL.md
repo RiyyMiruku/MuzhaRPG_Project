@@ -5,47 +5,121 @@ description: Use when the user provides chapter text, scene description, story d
 
 # 從劇情文本抽取美術資產規格
 
-把章節劇本 / 場景描述轉成一份**可直接餵 art-pipeline 的資產清單**：每個資產附 type / name / zone / category / Pixellab-ready description（必要時加 idle/walk override）。
+把章節劇本轉成兩份檔案，作為**素材歸屬的單一事實來源**：
+
+1. `zones.json` —— 該章所有發生場景（zone slug + 中文標題 + 時期）
+2. `assets.json` —— 每個素材附 `zones[]`（具體哪些場景會用到）+ type / name / category / Pixellab-ready description
+
+下游 (`art-pipeline` + sync 腳本) 會把 `zones[]` 寫進 `art_source/<asset>/asset.json` 的 tags，Dashboard / Godot 都從那邊讀。**改場景配置只動本 skill 產出的兩份檔案。**
 
 **你的位置**：
 
 ```
-story/chapters/*.md  劇本草稿
+story/chapters/<slug>/draft.md  劇本草稿
       │
       ▼
-  [story-asset-extraction] ← 本 skill
+  [story-asset-extraction] ← 本 skill（SSOT 起點）
       │
-      ▼
-  資產清單 (JSON / Markdown)
+      ├─→ zones.json   (場景清單)
+      └─→ assets.json  (素材 ↔ zones[] 對應)
       │
       ▼
   [art-pipeline] ← 下游 skill
       │
       ▼
-  Pixellab API (Dashboard job API 批次或 CLI)
+  art_source/<asset>/asset.json (tags 含 zone:zone_xxx)
+      │
+      ▼
+  Pixellab API + Dashboard 過濾
 ```
 
-## 三階段流程
+## 四階段流程
 
 ```
-1. Inventory   — 通讀文本，列出所有出現的視覺實體（不分類，先全收）
-2. Classify    — 每個實體決定 asset type（見下方 classification table）
-3. Promptify   — 每個資產寫成 Pixellab-ready prompt（規格見後）
+0. Scenes & Cast      — 通讀劇本，先列場景 + 跨場景主角（top-down）
+1. Per-scene inventory — 逐場景列出該場景需要的素材（可 fan out subagents）
+2. Classify            — 每個素材決定 asset type
+3. Promptify           — 每個素材寫成 Pixellab-ready prompt
 ```
 
-完成後輸出**結構化清單**給使用者確認，使用者點頭再丟給 art-pipeline skill。**不要直接呼叫 Pixellab 或 dashboard API** —— 那是 art-pipeline 的職責。
+完成後輸出 `zones.json` + `assets.json` + `assets.md`，使用者點頭再丟給 art-pipeline。**不要直接呼叫 Pixellab 或 dashboard API**。
 
-## Stage 1 — Inventory（抽視覺實體）
+## Stage 0 — Scenes & Cast（場景與主角推演）
 
-掃文本，列每個**會出現在畫面上**的東西。包含但不限於：
+**先 top-down 一次過**，把章節骨架定下來。其餘階段都依賴這個結果。
 
-- 具名角色（會有對話的）
-- 路人 / 背景人物（會出現但沒台詞的）
-- 場景元素：建築、攤車、桌椅、燈籠、招牌、樹、信箱、石頭…
-- 地面 / 地形：草地、水泥路、河岸、磁磚、木地板…
+### 0a. 列場景（zones）
+
+讀完 `draft.md` + 章節 README/notes，列出本章**所有玩家會進入的場景**。每個場景一個 slug：
+
+- 命名：`zone_<地點>_<時期或狀態>`，全小寫底線。例：
+  - `zone_pharmacy_1983` (1983 年中藥行內部)
+  - `zone_pharmacy_modern` (現代廢棄藥行)
+  - `zone_market_1983` (1983 木柵市場街景)
+  - `zone_apartment_muzha` (現代老公寓)
+- 同一地點不同時期 → **不同 zone**（玩家會跨時空切換，素材氛圍不同）
+- 室內 / 室外切割 → **不同 zone**（gameplay 上是不同 tscn）
+
+寫進 `story/chapters/<slug>/zones.json`：
+
+```json
+{
+  "chapter": "1",
+  "chapter_slug": "chapter_01_arrival",
+  "zones": [
+    {
+      "slug": "zone_pharmacy_1983",
+      "title": "榮昌中藥行（1983 內部）",
+      "period": "1983",
+      "notes": "主要劇情舞台、配藥教學、與祖父互動"
+    },
+    {
+      "slug": "zone_pharmacy_modern",
+      "title": "榮昌中藥行（現代、廢棄）",
+      "period": "modern",
+      "notes": "開場、穿越觸發點、現代線蒐證"
+    }
+  ]
+}
+```
+
+### 0b. 列主要角色（cast）
+
+跨場景出現的核心 NPC + 玩家：
+
+- 玩家控制角色（protagonist）
+- 跨多個 zone 的具名 NPC（主要家族、關鍵 NPC）
+
+這些角色的 `zones: ["*"]`（sentinel：任何 zone 都算）。**不要列全 zone slug**，否則新增 zone 還要回頭補。
+
+場景專屬 NPC（只在某 zone 出現的攤販、路人、客人）留到 Stage 1 處理。
+
+## Stage 1 — Per-scene inventory（逐場景列素材）
+
+對 Stage 0 的每個 zone，列出**該場景畫面上會出現的東西**：
+
+- 場景專屬 NPC（攤販、客人、路人）
+- 場景元素：建築、攤車、桌椅、燈籠、招牌、樹、信箱、石頭...
+- 地面 / 地形：草地、水泥路、河岸、磁磚、木地板...
 - 動物（也走 character pipeline）
 
-**不要過度推論**——文本沒提到的別自己腦補。但同質物件可以合併（「市場攤位 ×3」當一筆，後續決定是 1 個 prop 出 3 次擺、還是 3 個 variant）。
+**不要過度推論**——文本沒提到的別腦補。但同質物件可以合併（「市場攤位 ×3」當一筆）。
+
+### 可用 subagent 並行（場景多時）
+
+如果章節有 5+ 個 zone，**用 superpowers:dispatching-parallel-agents skill** 對每個 zone 發一個 agent：
+
+- 輸入：draft.md 全文 + 該 zone 的 slug/title/notes + Stage 0 已決定的主角清單
+- 任務：「只列**這個 zone** 會出現的素材（含場景專屬 NPC、props、tileset），用結構化清單回」
+- 主流程收齊各 zone 回覆 → merge
+
+**Merge 規則**：同一素材在多個 zone 出現 → **合併成一筆**，`zones` 陣列列出所有出現的 zone slug。例：
+- `medicine_cabinet_dusty` 出現在 zone_pharmacy_1983 + zone_pharmacy_modern（雖然氛圍不同，但同一個 prop instance 重用） → `zones: ["zone_pharmacy_1983", "zone_pharmacy_modern"]`
+- 反例：1983 跟現代用的是**不同的 prop**（廢棄版有蜘蛛網、生鏽）→ 拆成 `medicine_cabinet_new` + `medicine_cabinet_dusty` 兩筆
+
+### 場景數少（≤4）直接做
+
+不用發 subagent，主流程逐場景列即可。
 
 ## Stage 2 — Classify（決定 asset type）
 
@@ -70,18 +144,18 @@ Moving NPC（8-dir + walk template）成本是 static NPC（4-dir + idle templat
 | 不確定會不會走動但**有可能**未來章節升 moving | **static NPC** | `npc_static.py --directions 8` | 留 8 向 base，將來只補 walk animation 不重生 base |
 | 路人 / 群眾（無具名） | **static NPC** | `npc_static.py --directions 4` | 一個泛用 NPC 多次擺放 |
 | 單一場景物件（燈籠、攤車、桌、信箱） | **iso prop** | `prop.py --kind=iso_prop --size 32` | 視大小調 size |
-| 建築（店、廟、宿舍） | **building** | `prop.py --kind=building` | 用 high_top_down 視角，不投影 |
+| 建築（店、廟、宿舍） | **iso building** | `prop.py --kind=iso_building` | isometric 視角，與街景一致 |
 | 地形（草、磚、水、沙） | **autotile** | `autotile.py` | Wang 4×4，要 lower + upper 兩種地形 |
 
 **Edge case 判斷**：
 - 「會跟玩家對話一次後消失」→ static NPC 即可（省 credit）
 - 「主線角色但本章不走動」→ static NPC `--directions 8`（未來升 moving 不用整支重生）
 - 「敘事中提到背影」→ 還是 8-dir base（rotation 系統設計如此）
-- 「大型建築需要走進去」→ building 是外殼；室內另開 zone
+- 「大型建築需要走進去」→ building 是外殼，室內另開 zone（兩個 zone 都掛這 building 的 zones[]，因為街景跟室內入口都會看到外觀）
 
 ### Moving 抽過頭的代價
 
-Chapter 1 第一輪抽取把家族 + 市場核心 6 個都標 moving，事後檢視只有 `lin_siqian`(A) + `lin_xiaowei`(B) 真的需要；`lin_ama` / `a_tao_yi` / `lin_rongchang` / `chen_xiuqin` 4 個都是「好像會動所以給 walk」的腦補，浪費 ~30 Pixellab generations。事後改用方案：在 game 端讓他們自由 patrol（C 條件）變成「補救合理化」而不是「原生需求」。**新章節抽取避免重蹈**。
+Chapter 1 第一輪抽取把家族 + 市場核心 6 個都標 moving，事後檢視只有 `lin_siqian`(A) + `lin_xiaowei`(B) 真的需要；`lin_ama` / `a_tao_yi` / `lin_rongchang` / `chen_xiuqin` 4 個都是「好像會動所以給 walk」的腦補，浪費 ~30 Pixellab generations。**新章節抽取避免重蹈**。
 
 ## Stage 3 — Promptify（寫 Pixellab prompt）
 
@@ -90,23 +164,28 @@ Chapter 1 第一輪抽取把家族 + 市場核心 6 個都標 moving，事後檢
 - 具名 NPC：`chen_ayi`、`lin_zhiwei` —— 拼音 + 底線
 - 泛用 NPC：`vendor_market_01`、`student_nccu_03` —— 帶角色屬性 + 編號
 - Tileset：`market_grass_asphalt`、`riverside_water_sand`
-- Building：`nccu_dormitory`、`market_shophouse_01`
+- Building：`pharmacy_rongchang_1983`、`market_shophouse_minnan`
 - Iso prop：`lantern_red`、`cart_fruit`
-- **不要**在 name 裡放 zone（會走 `--zone` tag）
+- **不要**在 name 裡放 zone（已有 `zones[]` 欄位）
 
-### Zone / Category / Chapter tag
-- `zone`：`market` | `nccu` | `riverside` | `zhinan` | `shared` | `test` —— 地理空間，從劇本所在章節推斷
-- `category`：自由形 —— `vendor`, `student`, `monk`, `building`, `decoration`, `terrain`, ...
-- `chapter`：劇情時序，**必填**。從 `draft.md` 所在資料夾名取（例：`chapter_01_arrival` → `chapter: "1"`）。下游 art-pipeline 會把它寫進 manifest 成 `chapter:1` tag，將來查「哪些素材是第幾章生的」就靠它
-- `zone` 跟 `chapter` 正交（前者是空間、後者是時序），別擇一省略
-- 不確定 zone 就先用 `shared`（共用素材）
+### Zones / Category / Chapter 欄位
+
+- **`zones`**: 陣列，列出該素材出現的**所有 zone slug**（Stage 0 列舉的）
+  - 場景專屬：`["zone_pharmacy_1983"]`
+  - 多場景共用：`["zone_pharmacy_1983", "zone_pharmacy_modern"]`
+  - 跨章節 / 跨全部 zone（主角、UI 元素）：`["*"]` sentinel
+  - **每個 slug 必須在 zones.json 中存在**（除了 `*`）
+- **`category`**: 自由形 —— `vendor`, `student`, `monk`, `building`, `decoration`, `terrain`, ...
+- **`chapter`**: 劇情時序，**必填**（top-level，不在每筆素材重複）。從 `draft.md` 所在資料夾名取（例：`chapter_01_arrival` → `chapter: "1"`）
+
+**Tag 同步方向（單向）**：本 skill 寫的 `assets.json` → sync 腳本 → `art_source/<asset>/asset.json` 的 `tags`（每個 zone 一個 `zone:zone_xxx` tag）。**反向不同步**。
 
 ### Prompt 寫作慣例（Pixellab v2）
 
 **Character description**：
 - **語言**：英文（Pixellab 是英文訓練）
 - **排序**：年齡 → 性別 / 族裔 → 體型 → 上衣 → 下身 → 鞋 → 髮型 → 表情 → 配件 → **arms relaxed at sides**（與 idle/walk 預設姿態 default prompt 一致）
-- **避免**：copyrighted IP 名（皮卡丘、初音）、品牌 logo、暴力 / 血腥、不對稱裝飾（會放大 head-turn 問題）
+- **避免**：copyrighted IP 名、品牌 logo、暴力 / 血腥、不對稱裝飾（會放大 head-turn 問題）
 - **族裔**：本作背景台北木柵，預設 `taiwanese`，例外角色才換
 - **範例**：
   ```
@@ -118,85 +197,69 @@ Chapter 1 第一輪抽取把家族 + 市場核心 6 個都標 moving，事後檢
 **Iso prop / building description**：
 - 直接描述物件特徵與材質
 - 建築指明風格（`traditional taiwanese`, `post-war concrete`, `japanese colonial`）
+- iso building 描述記得帶 isometric / 30-degree 提示（Pixellab `/create-image-pixflux` `isometric` flag 是 weakly guiding）
 - **範例**：
   ```
-  traditional taiwanese two-story shophouse, red brick lower floor,
-  white plastered upper floor, dark tile roof, faded chinese signboard,
-  small balcony with iron railing
+  isometric view of a traditional taiwanese two-story shophouse, red
+  brick lower floor, white plastered upper floor, dark tile roof, faded
+  chinese signboard, small balcony with iron railing, 30-degree angle
   ```
 
 **Tileset**：兩個欄位
 - `lower`：基礎 / 較常見的地面
 - `upper`：覆蓋 / 較稀有的地面
 - 可選 `transition_description`：兩者交界的過渡材質
-- **範例**：
-  ```
-  lower: weathered grey concrete sidewalk
-  upper: green grass with small wildflowers
-  transition: grey concrete curb edge
-  ```
 
 ### Idle / walk prompt override（character 才有）
 
-預設用 art-pipeline 已包好的 default prompt（head-lock + 手腕不亂甩）。**只有當角色姿態需要明顯不同**才客製，例如：
-- 抱嬰兒 → idle prompt 改成「arms cradling baby at chest」
-- 推手推車 → walk prompt 改成「both hands gripping cart handle in front」
-- 拐杖老人 → walk prompt 改成「leaning slightly on a wooden cane held in right hand」
+預設用 art-pipeline 已包好的 default prompt。**只有當角色姿態需要明顯不同**才客製：
+- 抱嬰兒 → idle prompt 改「arms cradling baby at chest」
+- 推手推車 → walk prompt 改「both hands gripping cart handle in front」
+- 拐杖老人 → walk prompt 改「leaning slightly on a wooden cane held in right hand」
 
-沒這類特殊姿態就**完全省略**這兩個欄位，讓 backend 用預設值。
+沒這類特殊姿態就**完全省略**這兩個欄位。
 
-## Output location（重要 — 一律寫進 story/ 對應章節資料夾）
-
-抽完的清單**不要只貼在對話**，要落地成檔案：
+## Output location（一律寫進 story/ 對應章節資料夾）
 
 ```
 story/chapters/<chapter_slug>/
 ├── draft.md       ← 來源（你讀的）
-├── assets.json    ← 你寫這個（machine-readable，給 art-pipeline 餵）
-└── assets.md      ← 也寫這個（人類版鏡像，給使用者 review）
+├── zones.json     ← Stage 0a 產出，本章 zone 清單
+├── assets.json    ← Stage 1-3 產出（machine-readable，給 art-pipeline 餵）
+└── assets.md      ← assets.json 的人類版鏡像
 ```
 
-`<chapter_slug>` 跟 `game/src/chapters/<slug>/` 對齊（例：`chapter_01_arrival`）。從 `draft.md` 所在的資料夾名直接取即可。
+`<chapter_slug>` 跟 `game/src/chapters/<slug>/` 對齊（例：`chapter_01_arrival`）。
 
-如果使用者沒指定章節，先問清楚：「這份劇本對應到哪個章節 slug？要建新的還是寫進現有的？」**不要自己猜或亂建**。
+如果使用者沒指定章節，先問：「這份劇本對應到哪個章節 slug？要建新的還是寫進現有的？」**不要自己猜或亂建**。
 
-寫入後再把摘要貼回對話（前 5–10 項即可）讓使用者審，**並提示檔案路徑**，例：
+寫入後把摘要 + 檔案路徑貼回對話讓使用者審：
 
-> 已寫入 `story/chapters/chapter_01_arrival/assets.{json,md}`，共 N 項（M 個 NPC、K 個 prop…）。確認後可叫 art-pipeline skill 餵 Dashboard。
+> 已寫入 `story/chapters/chapter_01_arrival/{zones,assets}.json` + `assets.md`。
+> 場景 N 個：zone_pharmacy_1983 / zone_market_1983 / ...
+> 素材 M 個（X moving NPC、Y static NPC、Z props、W buildings、V tilesets）。
+> 確認後可叫 art-pipeline skill 餵 Dashboard。
 
-## Output schema（給使用者看的）
+## Output schema
 
-用 markdown 表格 + JSON code block 雙呈現（人類看表、AI / 腳本讀 JSON）：
+### `zones.json`
 
-````markdown
-## 第一章資產清單（共 X 個）
+```json
+{
+  "chapter": "1",
+  "chapter_slug": "chapter_01_arrival",
+  "zones": [
+    {
+      "slug": "zone_pharmacy_1983",
+      "title": "榮昌中藥行（1983 內部）",
+      "period": "1983",
+      "notes": "主要劇情舞台"
+    }
+  ]
+}
+```
 
-### Moving NPCs
-| name | description (摘要) | zone | category |
-|---|---|---|---|
-| chen_ayi | 中年市場攤販女性，紅花襯衫 | market | vendor |
-
-### Static NPCs
-| name | description (摘要) | directions | zone |
-|---|---|---|---|
-| vendor_market_01 | 老年水果商，草帽 | 4 | market |
-
-### Iso props
-| name | description (摘要) | size |
-|---|---|---|
-| lantern_red | 紅紙燈籠金穗 | 32 |
-
-### Buildings
-| name | description (摘要) | size |
-|---|---|---|
-| nccu_library | 政大圖書館外觀 | 128×128 |
-
-### Tilesets
-| name | lower | upper | transition |
-|---|---|---|---|
-| market_grass_asphalt | green grass | dark asphalt road | grey concrete curb |
-
----
+### `assets.json`
 
 ```json
 {
@@ -204,94 +267,178 @@ story/chapters/<chapter_slug>/
   "chapter_slug": "chapter_01_arrival",
   "moving_npcs": [
     {
-      "name": "chen_ayi",
-      "description": "middle-aged taiwanese market vendor woman, ...",
-      "zone": "market",
-      "category": "vendor"
+      "name": "lin_siqian",
+      "description": "young taiwanese man, ...",
+      "zones": ["*"],
+      "category": "protagonist"
     }
   ],
-  "static_npcs": [...],
-  "iso_props": [...],
-  "buildings": [...],
-  "tilesets": [...]
+  "static_npcs": [
+    {
+      "name": "lao_zhou",
+      "directions": 4,
+      "description": "elderly taiwanese man, ...",
+      "zones": ["zone_market_modern"],
+      "category": "elder"
+    }
+  ],
+  "iso_props": [
+    {
+      "name": "medicine_cabinet_dusty",
+      "size": 64,
+      "description": "...",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "furniture"
+    }
+  ],
+  "buildings": [
+    {
+      "name": "pharmacy_rongchang_1983",
+      "kind": "iso_building",
+      "description": "isometric view of ...",
+      "zones": ["zone_pharmacy_1983", "zone_market_1983"],
+      "category": "building"
+    }
+  ],
+  "tilesets": [
+    {
+      "name": "market_concrete_tile",
+      "lower": "...",
+      "upper": "...",
+      "zones": ["zone_market_1983", "zone_market_modern"],
+      "category": "terrain"
+    }
+  ]
 }
 ```
 
-**Top-level 欄位**：
-- `chapter`：必填，art-pipeline 批次跑時會套到每筆 POST body，**不需要每個 asset 重複寫**
-- `chapter_slug`：給人類對齊 `story/chapters/<slug>/` 資料夾用，dashboard 不會讀
-````
+**Top-level**：
+- `chapter`: 必填，art-pipeline 批次跑時套到每筆 POST，不在每個 asset 重複
+- `chapter_slug`: 給人類對齊資料夾用
+
+**每筆 asset 的 `zones`**：必填陣列，至少一個元素。值必須是 `zones.json` 中列舉的 slug，或 sentinel `"*"`。
+
+### `assets.md`（人類版鏡像）
+
+```markdown
+## 第一章資產清單
+
+### Scenes (zones)
+| slug | 中文 | 時期 |
+|---|---|---|
+| zone_pharmacy_1983 | 榮昌中藥行（1983） | 1983 |
+| zone_pharmacy_modern | 榮昌中藥行（現代） | modern |
+
+### Moving NPCs
+| name | description | zones | category |
+|---|---|---|---|
+| lin_siqian | 主角 | * | protagonist |
+
+### Static NPCs / Iso props / Buildings / Tilesets
+(同樣格式，含 zones 欄)
+```
 
 ## Handoff 到 art-pipeline skill
 
-使用者點頭後，下一步**不是直接生**，而是切換到 [art-pipeline skill](../art-pipeline/SKILL.md)，由它判斷：
+使用者點頭後，下一步**不是直接生**，而是切換到 [art-pipeline skill](../art-pipeline/SKILL.md)。
 
-- Dashboard 在跑嗎？ → 用 job API 批次 queue
-- Dashboard 沒跑？ → 退而求其次 CLI for-loop
+art-pipeline 會：
+1. 餵 Dashboard job API（或 CLI for-loop）依 `assets.json` 批次生
+2. 把 `zones[]` 寫進每個素材的 `art_source/<asset>/asset.json` `tags`（每個 zone 一個 `zone:zone_xxx` tag；`*` 也照 `zone:*` 寫，dashboard filter 端會特判）
+3. 把 top-level `chapter` 寫進 `chapter:<n>` tag
 
-把上面的 JSON 餵進 art-pipeline 的批次範本（見 art-pipeline SKILL.md「Dashboard job API 批次模式」段落）即可。
-
-**批次腳本記得帶 top-level `chapter` 到每筆 POST**（dashboard backend 接受 `chapter` 欄位 → 轉成 orchestrator 的 `--chapter` flag → 寫進 manifest 成 `chapter:<n>` tag）。漏帶的話 manifest 就少了章節溯源，後續清理 / 重生會很痛。
+漏帶 `chapter` 或 `zones` 的話 manifest 會少了溯源 / 過濾欄位，後續清理 / 重生會很痛。
 
 ## 不要做的事
 
 - ❌ 直接呼叫 Pixellab API（art-pipeline 的責任）
 - ❌ 自己腦補文本沒提到的角色或物件
 - ❌ 用中文寫 description（Pixellab 是英文訓練）
-- ❌ 在 name 裡塞 zone / category 資訊（已有 tag 欄位）
+- ❌ 在 name 裡塞 zone / category 資訊（已有獨立欄位）
+- ❌ `zones` 寫不在 `zones.json` 列舉中的 slug
+- ❌ 主角 / 跨章節元素列全 zone slug（用 `["*"]`）
 - ❌ 替每個 character 都寫 idle/walk override（只有特殊姿態才寫）
 - ❌ 用真實品牌 logo 或版權 IP 名稱
+- ❌ 反向同步（從 `art_source/asset.json` 改回 `story/.../assets.json`）
 
-## 範例（短篇）
+## 範例（短篇 — 兩個場景）
 
 **輸入文本**：
-> 阿姨站在木柵市場的水果攤後，身穿紅花襯衫戴著草帽，攤位掛著紅色紙燈籠。對面是傳統閩南式紅磚二樓街屋，地面是水泥地與雜草交界。阿姨身後跟著一隻黃色虎斑貓。
+> 玩家阿謙站在 1983 年的榮昌中藥行內，祖父林榮昌在櫃台後配藥，藥櫃靠後牆三排。穿到現代後同一個藥行佈滿灰塵，櫃台還在但藥櫃積了厚厚一層灰，牆上有塗黑的全家福。
 
-**輸出**（簡版示範重點）：
+**輸出**（簡版）：
 
+`zones.json`:
 ```json
 {
-  "static_npcs": [
-    {
-      "name": "vendor_market_ayi_01",
-      "directions": 4,
-      "description": "middle-aged taiwanese market vendor woman, plump build, red floral shirt with rolled sleeves, beige apron, dark slim trousers, black canvas shoes, short permed black hair, warm smile, straw conical hat, arms relaxed at sides",
-      "zone": "market", "category": "vendor"
-    },
-    {
-      "name": "cat_tabby_yellow",
-      "directions": 4,
-      "description": "small yellow tabby cat, fluffy fur, green eyes, sitting calmly, neutral expression",
-      "zone": "market", "category": "animal"
-    }
-  ],
-  "iso_props": [
-    {
-      "name": "lantern_red_market",
-      "size": 32,
-      "description": "red paper lantern with gold tassel, hung from wooden frame",
-      "zone": "market", "category": "decoration"
-    }
-  ],
-  "buildings": [
-    {
-      "name": "market_shophouse_redbrick",
-      "width": 128, "height": 128,
-      "description": "traditional taiwanese minnan two-story shophouse, red brick lower floor with arched doorway, white plastered upper floor with wooden window shutters, dark grey tile roof, weathered wooden signboard",
-      "zone": "market", "category": "building"
-    }
-  ],
-  "tilesets": [
-    {
-      "name": "market_grass_concrete",
-      "lower": "weathered grey concrete pavement",
-      "upper": "patchy green grass with small wildflowers",
-      "transition_size": 0.25,
-      "transition_description": "broken concrete edge mixed with soil",
-      "zone": "market", "category": "terrain"
-    }
+  "chapter": "1",
+  "chapter_slug": "chapter_01_arrival",
+  "zones": [
+    {"slug": "zone_pharmacy_1983", "title": "榮昌中藥行（1983）", "period": "1983"},
+    {"slug": "zone_pharmacy_modern", "title": "榮昌中藥行（現代廢棄）", "period": "modern"}
   ]
 }
 ```
 
-把這份 JSON 連同使用者的確認交給 art-pipeline skill 就能批次跑了。
+`assets.json`:
+```json
+{
+  "chapter": "1",
+  "chapter_slug": "chapter_01_arrival",
+  "moving_npcs": [
+    {
+      "name": "lin_siqian",
+      "description": "young taiwanese man in his late twenties, ...",
+      "zones": ["*"],
+      "category": "protagonist"
+    }
+  ],
+  "static_npcs": [
+    {
+      "name": "lin_rongchang",
+      "directions": 4,
+      "description": "middle-aged taiwanese man, beige apron, ...",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "shopkeeper"
+    }
+  ],
+  "iso_props": [
+    {
+      "name": "medicine_cabinet_new",
+      "size": 64,
+      "description": "wooden chinese medicine cabinet with many small drawers",
+      "zones": ["zone_pharmacy_1983"],
+      "category": "furniture"
+    },
+    {
+      "name": "medicine_cabinet_dusty",
+      "size": 64,
+      "description": "abandoned wooden medicine cabinet covered in dust and cobwebs",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "furniture"
+    },
+    {
+      "name": "shop_counter_wood",
+      "size": 48,
+      "description": "long wooden shop counter with traditional carvings",
+      "zones": ["zone_pharmacy_1983", "zone_pharmacy_modern"],
+      "category": "furniture"
+    },
+    {
+      "name": "family_photo_blacked",
+      "size": 24,
+      "description": "framed family photograph with faces blacked out, hung on wall",
+      "zones": ["zone_pharmacy_modern"],
+      "category": "decoration"
+    }
+  ],
+  "buildings": [],
+  "tilesets": []
+}
+```
+
+注意：
+- `lin_siqian` 主角 → `zones: ["*"]`
+- `shop_counter_wood` 兩個時期共用同一個 prop → `zones: [..., ...]`
+- `medicine_cabinet` 兩個版本拆開（氛圍差太多） → 各自 `zones: [...]`
+- `family_photo_blacked` 只在現代版出現 → 單一 zone

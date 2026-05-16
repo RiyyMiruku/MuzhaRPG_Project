@@ -1,13 +1,20 @@
-﻿"""Pipeline 2: Prop orchestrator(building 大建築 + iso_prop 小單格)。
+﻿"""Pipeline 2: Prop orchestrator(building / iso_building 大物件 + iso_prop 小單格)。
 
 Stages:
-  1. generate_object  — building → create-map-object;iso_prop → create-isometric-tile
+  1. generate_object  —
+       building      → create-map-object      (top-down 立面;沒有 iso 參數)
+       iso_building  → create-image-pixflux   (sync,isometric:true 弱引導;需在
+                        description 帶 "isometric view, 30-degree angle" 字眼)
+       iso_prop      → create-isometric-tile  (專屬 iso 端點;max 64×64)
   2. chroma_key       — PIL 去背(若 API 有殘留底色)
+  3. import_to_godot  — 複製 PNG + 生成 .tscn + 更新 manifest
 
 CLI:
   uv run python pipeline/orchestrators/prop.py \
-      --name muzha_shophouse --kind building \
-      --description "traditional taiwanese shophouse, red brick" \
+      --name muzha_shophouse --kind iso_building \
+      --description "isometric pixel art, 30-degree top-down angled view, full \
+building visible with roof and two side walls — traditional taiwanese \
+shophouse, red brick" \
       --width 128 --height 128 [--review-mode stage]
 
   uv run python pipeline/orchestrators/prop.py \
@@ -40,19 +47,29 @@ STAGES: list[str] = ["generate_object", "chroma_key", "import_to_godot"]
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("--name", required=True)
-    p.add_argument("--kind", choices=["building", "iso_prop"], required=True)
+    p.add_argument(
+        "--kind",
+        choices=["building", "iso_building", "iso_prop"],
+        required=True,
+    )
     p.add_argument("--description", default=None)
-    p.add_argument("--width", type=int, default=96)
-    p.add_argument("--height", type=int, default=96)
+    p.add_argument("--width", type=int, default=96,
+                   help="building / iso_building 用 (16-400 for iso_building)")
+    p.add_argument("--height", type=int, default=96,
+                   help="building / iso_building 用 (16-400 for iso_building)")
     p.add_argument("--size", type=int, default=32, help="iso_prop 用")
-    p.add_argument("--view", default="high_top_down", help="building 用")
+    p.add_argument("--view", default="high_top_down",
+                   help="building / iso_building 用 (iso_building 預設一律 high_top_down)")
     p.add_argument(
         "--review-mode", choices=["none", "stage"], default="stage"
     )
     p.add_argument("--resume-from", default=None)
     p.add_argument("--force-restart-stage", action="append", default=[])
+    p.add_argument("--zones", default=None,
+                   help="逗號分隔的 zone slug list；每個寫成一個 zone:<slug> tag。"
+                        "詞彙表是 story/chapters/<slug>/zones.json。'*' 代表跨場景。")
     p.add_argument("--zone", default=None,
-                   help=f"所屬 zone (寫入 manifest tags)。valid: {zones.ZONES}")
+                   help="[deprecated] 單一 zone（保留向下相容；新代碼用 --zones）")
     p.add_argument("--category", default=None,
                    help="自由形 category tag (e.g. 'vendor', 'decoration')")
     p.add_argument("--chapter", default=None,
@@ -89,6 +106,29 @@ def generate_object(ctx: StageContext) -> list[str]:
             fields={
                 "object_id": object_id,
                 "kind": "building",
+                "description": args.description,
+                "view": args.view,
+                "size": {"width": args.width, "height": args.height},
+                "status": "pending",
+            },
+        )
+    elif args.kind == "iso_building":
+        # pixflux is sync (no background job, no object_id from Pixellab side).
+        # Synthesize a local id so manifest stays uniform across kinds.
+        img = plab.submit_pixflux_image(
+            token=token,
+            description=args.description,
+            width=args.width,
+            height=args.height,
+            view=args.view,
+            isometric=True,
+            no_background=True,
+        )
+        manifest.upsert_object(
+            name=ctx.name,
+            fields={
+                "object_id": f"pixflux:{ctx.name}",
+                "kind": "iso_building",
                 "description": args.description,
                 "view": args.view,
                 "size": {"width": args.width, "height": args.height},
@@ -159,15 +199,12 @@ def main() -> None:
     plab.setup_console()
     args = parse_args()
     manifest.validate_asset_name(args.name)
-    zones.validate_zone(args.zone)
     ctx = make_context("object", args, STAGES)
 
     if not manifest.get_object(ctx.name):
         manifest.upsert_object(name=ctx.name, fields={"status": "init"})
 
-    tags: list[str] = []
-    if args.zone:
-        tags.append(f"zone:{args.zone}")
+    tags: list[str] = zones.resolve_zone_tags(args.zones, args.zone)
     if args.category:
         tags.append(f"category:{args.category}")
     if args.chapter:

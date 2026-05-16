@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:34:01",
-  "updated_at": "2026-05-12T17:34:59",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:furniture",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_pharmacy_1983"
   ],
   "object_id": "884c129d-3629-4360-ac3a-c1a2cc322c14",
   "kind": "iso_prop",

@@ -1,0 +1,48 @@
+{
+  "chapter": "1",
+  "chapter_slug": "chapter_01_arrival",
+  "zones": [
+    {
+      "slug": "zone_pharmacy_modern",
+      "title": "榮昌中藥行（現代、廢棄）",
+      "period": "modern",
+      "notes": "開場、穿越觸發點、現代線蒐證；鎖門、灰塵、塗黑全家福"
+    },
+    {
+      "slug": "zone_pharmacy_1983",
+      "title": "榮昌中藥行（1983 內部）",
+      "period": "1983",
+      "notes": "主要劇情舞台、配藥教學、與祖父互動"
+    },
+    {
+      "slug": "zone_pharmacy_backyard",
+      "title": "藥行後院 + 上鎖房間",
+      "period": "1983",
+      "notes": "第一章結尾關鍵場景"
+    },
+    {
+      "slug": "zone_market_1983",
+      "title": "木柵市場（1983 街景）",
+      "period": "1983",
+      "notes": "跑腿送藥、認識阿桃姨、其他 NPC"
+    },
+    {
+      "slug": "zone_market_modern",
+      "title": "木柵市場（現代）",
+      "period": "modern",
+      "notes": "跟老周問話、現代線探查"
+    },
+    {
+      "slug": "zone_apartment_muzha",
+      "title": "老公寓（阿謙住處 / 父親遺物）",
+      "period": "modern",
+      "notes": "現代線蒐證"
+    },
+    {
+      "slug": "zone_law_office",
+      "title": "律師事務所",
+      "period": "modern",
+      "notes": "繼承文件、「祖父林榮昌」名字揭露"
+    }
+  ]
+}

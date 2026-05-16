@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:35:31",
-  "updated_at": "2026-05-12T17:36:03",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:decoration",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_market_1983"
   ],
   "object_id": "a655dd76-1ff5-48dc-a26e-9f8d92b10cdd",
   "kind": "iso_prop",

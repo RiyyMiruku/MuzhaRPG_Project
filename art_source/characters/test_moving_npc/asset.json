@@ -75,10 +75,6 @@
       "west"
     ]
   },
-  "prompts": {
-    "add_idle_animation": "standing in place, head held perfectly still and facing the camera-relative\nforward direction the same as the body, eyes looking straight ahead,\nno head turning, no looking around, no rubbernecking, gentle breathing only\n— shoulders rise and fall subtly, arms remain at sides, feet planted",
-    "add_walk_animation": "walking forward in the same direction the body is facing, head locked\nforward and aligned with torso, eyes fixed straight ahead in the walking\ndirection, no head turning, no looking sideways, no glancing around,\nnatural arm swing opposite to leg stride, consistent gait across all frames"
-  },
   "imported_at": "2026-05-11T23:27:46",
   "game_png_path": "game\\assets\\textures\\characters\\test_moving_npc.png",
   "game_json_path": "game\\assets\\textures\\characters\\test_moving_npc.json"

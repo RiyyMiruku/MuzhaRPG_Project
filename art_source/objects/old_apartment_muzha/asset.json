@@ -1,15 +1,15 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:37:30",
-  "updated_at": "2026-05-12T17:38:19",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:building",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_apartment_muzha"
   ],
-  "object_id": "fc13dbce-62a1-4497-8a2c-8c3349e325a3",
-  "kind": "building",
-  "description": "post-war four-story taiwanese walk-up apartment building, weathered exposed concrete facade with faded yellow paint, small balconies with rusty iron railings and hanging laundry, window-mounted air conditioner units, narrow side stairway, ground-floor metal door with small mailbox cluster",
+  "object_id": "pixflux:old_apartment_muzha",
+  "kind": "iso_building",
+  "description": "isometric pixel art, 30-degree top-down angled view, full building with visible roof and two side walls, transparent background — post-war four-story taiwanese walk-up apartment building, weathered exposed concrete facade with faded yellow paint, small balconies with rusty iron railings and hanging laundry, window-mounted air conditioner units, narrow side stairway, ground-floor metal door with small mailbox cluster",
   "view": "high_top_down",
   "size": {
     "width": 96,
@@ -17,28 +17,28 @@
   },
   "stages": {
     "generate_object": {
-      "completed_at": "2026-05-12T17:38:19",
+      "completed_at": "2026-05-14T21:50:49",
       "paths": [
-        "art_source/objects/old_apartment_muzha/old_apartment_muzha.png"
+        "art_source\\objects\\old_apartment_muzha\\old_apartment_muzha.png"
       ]
     },
     "chroma_key": {
-      "completed_at": "2026-05-12T17:38:19",
+      "completed_at": "2026-05-14T21:50:49",
       "paths": [
-        "art_source/objects/old_apartment_muzha/old_apartment_muzha.png"
+        "art_source\\objects\\old_apartment_muzha\\old_apartment_muzha.png"
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:38:19",
+      "completed_at": "2026-05-14T21:50:49",
       "paths": [
-        "game/assets/textures/props/old_apartment_muzha.png",
-        "game/src/maps/props/old_apartment_muzha.tscn"
+        "game\\assets\\textures\\props\\old_apartment_muzha.png",
+        "game\\src\\maps\\props\\old_apartment_muzha.tscn"
       ]
     }
   },
-  "local_path": "art_source/objects/old_apartment_muzha/old_apartment_muzha.png",
-  "imported_at": "2026-05-12T17:38:19",
-  "game_png_path": "game/assets/textures/props/old_apartment_muzha.png",
-  "game_tscn_path": "game/src/maps/props/old_apartment_muzha.tscn",
+  "local_path": "art_source\\objects\\old_apartment_muzha\\old_apartment_muzha.png",
+  "imported_at": "2026-05-14T21:50:49",
+  "game_png_path": "game\\assets\\textures\\props\\old_apartment_muzha.png",
+  "game_tscn_path": "game\\src\\maps\\props\\old_apartment_muzha.tscn",
   "collision": "bottom_16x16"
 }

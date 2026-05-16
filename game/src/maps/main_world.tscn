@@ -1,8 +1,9 @@
 [gd_scene load_steps=9 format=3 uid="uid://muzha_main_world"]
 
-[ext_resource type="PackedScene" path="res://src/maps/zones/zone_nccu.tscn" id="1_zone_nccu"]
+[ext_resource type="PackedScene" path="res://src/maps/zones/zone_apartment_muzha.tscn" id="1_starting_zone"]
 [ext_resource type="PackedScene" path="res://src/ui/dialogue/DialogueUI.tscn" id="2_dialogue_ui"]
 [ext_resource type="Script" path="res://src/core/classes/ZoneManager.gd" id="3_zone_manager"]
+[ext_resource type="Script" path="res://src/core/cutscene/CutsceneDirector.gd" id="11_cutscene"]
 [ext_resource type="PackedScene" path="res://src/ui/ScreenTransition.tscn" id="4_screen_transition"]
 [ext_resource type="PackedScene" path="res://src/ui/menus/PauseMenu.tscn" id="5_pause_menu"]
 [ext_resource type="PackedScene" path="res://src/ui/menus/HUD.tscn" id="6_hud"]
@@ -14,10 +15,13 @@
 
 [node name="ZoneContainer" type="Node2D" parent="."]
 
-[node name="ZoneNCCU" parent="ZoneContainer" instance=ExtResource("1_zone_nccu")]
+[node name="ZoneApartmentMuzha" parent="ZoneContainer" instance=ExtResource("1_starting_zone")]
 
 [node name="ZoneManager" type="Node" parent="."]
 script = ExtResource("3_zone_manager")
+
+[node name="CutsceneDirector" type="Node" parent="."]
+script = ExtResource("11_cutscene")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 20

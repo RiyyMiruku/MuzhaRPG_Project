@@ -1,0 +1,70 @@
+[gd_resource type="Resource" script_class="Cutscene" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/core/classes/Cutscene.gd" id="1_cutscene_script"]
+
+[resource]
+script = ExtResource("1_cutscene_script")
+cutscene_id = "ch1_open_iron_door"
+blocks_input = true
+ops = Array[Dictionary]([{
+"op": "line",
+"speaker": "narrator",
+"text": "鐵門吱呀地打開。藥行裡積了四十年的灰。藥櫃還在,櫃台還在,牆上的全家福還在 ——"
+}, {
+"op": "camera_to",
+"target_path": "YSortRoot/family_photo_blacked_modern",
+"zoom": [6.0, 6.0],
+"duration": 1.2
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "但全家福裡有一張臉,被人用墨水塗黑了。"
+}, {
+"op": "set_flag",
+"name": "saw_blacked_photo",
+"value": true
+}, {
+"op": "wait",
+"seconds": 0.4
+}, {
+"op": "camera_to",
+"target_path": "YSortRoot/old_map_paper_modern",
+"zoom": [6.0, 6.0],
+"duration": 1.0
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "在櫃台抽屜的最底層,他翻出一張摺得整整齊齊的舊地圖。"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "地圖背面有一行毛筆字 ——「見證者,請聽他們說完。」"
+}, {
+"op": "line",
+"speaker": "narrator",
+"text": "當他的指尖無意間劃過地圖上的某個紅點 ——"
+}, {
+"op": "era_switch",
+"era": "1983"
+}, {
+"op": "camera_to",
+"target_path": "YSortRoot/LinRongchang_1983",
+"zoom": [5.0, 5.0],
+"duration": 1.0
+}, {
+"op": "wait",
+"seconds": 0.3
+}, {
+"op": "line",
+"speaker": "林榮昌",
+"text": "你誰啊?怎麼進來的?"
+}, {
+"op": "restore_camera"
+}, {
+"op": "set_flag",
+"name": "first_time_traveled",
+"value": true
+}, {
+"op": "emit_event",
+"name": "ch1_first_travel_done"
+}])

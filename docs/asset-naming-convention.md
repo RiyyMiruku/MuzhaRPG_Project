@@ -34,13 +34,16 @@ Invalid examples: `Chen_ayi`, `_leading`, `trailing_`, `double__under`, `ab`,
 - `<zone>_<lower>_<upper>`
   - `market_grass_asphalt`, `riverside_water_sand`
 
-### Buildings (`prop.py --kind=building`)
+### Buildings (`prop.py --kind=iso_building` 或 `--kind=building`)
 
 - `<zone>_<type>[_NN]`
   - `nccu_dormitory`, `market_shophouse_01`
   - Note: zone prefix here is descriptive — the `--zone` tag is the canonical
     filter, not the name prefix. (e.g. `muzha_shophouse_01` is fine as a name
     even though the zone tag is `market`.)
+- 兩種 kind 的 naming 規則一樣；差別在生成 pipeline：
+  - `iso_building` → pixflux + `isometric:true` (sync, 適合 iso 街景)
+  - `building` → `/map-objects` (top-down/立面, 無 iso 參數)
 
 ### Iso props (`prop.py --kind=iso_prop`)
 

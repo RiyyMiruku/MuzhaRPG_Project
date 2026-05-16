@@ -50,26 +50,24 @@
 
 6 棟建築（藥行 ×2、公寓、律師事務所、店屋 ×2）的 `asset.json` 標記 `"view": "high_top_down"`，但實際圖是**正面或半立面立繪**，跟 iso 街景擺一起會穿幫。
 
-**根因**：當初走 Pixellab `/objects` 端點生成（卡通建築立繪），該端點**沒有 iso 參數**。`/create-image-pixflux` 才有專屬 `isometric: true`（見 memory: [pixellab_isometric_options_for_buildings](../.claude/projects/-Users-JustinCheng-Documents-GitHub-MuzhaRPG-Project/memory/pixellab_isometric_options_for_buildings.md)）。
+**根因**：當初走 Pixellab `/map-objects` 端點生成（卡通建築立繪），該端點**沒有 iso 參數**。經 2026-05-14 查 OpenAPI 確認：`/create-image-pixflux` 才有 `isometric: true` flag（"weakly guiding",需在 description 同時帶 "isometric view / 30-degree" 字眼才穩定）。
 
-### 兩條解法
+### 解法（2026-05-14 已落實）
 
-**方案 1：重生成 iso 版本**
-- 修改 [pipeline/orchestrators/prop.py](../pipeline/orchestrators/prop.py)，`kind=iso_building` 時切到 pixflux 端點 + `isometric: true`
-- 跑 6 棟批次重生，舊 PNG 直接覆蓋，.tscn 不動
-- 估時：改 orchestrator 30 分鐘 + 跑批次 + 審圖 1 小時
+`pipeline/orchestrators/prop.py` 新增 `--kind=iso_building`,呼叫新 wrapper `pixellab_client.submit_pixflux_image(isometric=True, ...)`。Dashboard Create modal 也加了對應選項。
 
-**方案 2：外觀立面 + 進門切內部 zone**
-- 保留現有立面建築作為「外觀招牌」貼在街景對應牆面位置
-- 玩家走到門口觸發 zone transition，進入內部 iso 場景
-- 內部 iso 比外觀好做（地板 + 牆 + 家具，iso 友好）
-- 劇本大半時間在藥行內部，外觀只是 establishing shot，影響有限
+**全 6 棟一律 iso（2026-05-14 已落實）**：
 
-### 建議
+| 建築 | 狀態 |
+|---|---|
+| pharmacy_rongchang_1983 | ✅ iso_building 重生完成 |
+| pharmacy_rongchang_modern | ✅ iso_building 重生完成（但「廢棄/封門」氛圍未充分,description 可再調 + remake） |
+| market_shophouse_minnan | ✅ iso_building 重生完成 |
+| market_shophouse_concrete | ✅ iso_building 重生完成 |
+| law_office_muzha | ✅ iso_building 重生完成 |
+| old_apartment_muzha | ✅ iso_building 重生完成 |
 
-**1 + 2 混用**：
-- **藥行 1983 外觀**：用方案 1 重生 iso 版本（玩家第一次穿越的 establishing shot 必須對得起整章氛圍）
-- **律師事務所、老公寓**：劇情份量低，保留現有立面（方案 2）
+**仍需做的事**：律師事務所跟公寓劇情會切進室內 zone（zone_law_office / zone_apartment_muzha）—— zone transition 是 gameplay 邏輯,跟 iso 立體外觀並存,玩家在街景按互動鍵即觸發 fade 進室內。
 
 ---
 
@@ -227,6 +225,7 @@ npcs:
 | Iso Y-sort 深度錯亂 | 中 | 中 | 截圖人工檢查；必要時 layout 加 `z_priority` 欄位 |
 | 視覺風格不統一（重生 iso 建築跟舊 props 風格差異） | 低 | 中 | Pixellab 參數固定 + 跑一致性檢查 |
 | 第一章資產清單[assets.json](../story/chapters/chapter_01_arrival/assets.json) 跟 manifest 不同步 | 低 | 中 | builder 啟動時跑 cross-check，缺資產立即報錯 |
+| Autotile PNG 16-cell 順序錯亂（Pixellab 隨機性）→ terrain 邊界拼接破洞 | 低 | 中 | 短期人工檢查；之後可在 `verify_in_godot` 階段加 PIL validator 檢查 (2,1) alpha~100% / (0,3) alpha~0%。zone_iso_test 三張 PNG 已實證 Pixellab 對 `/create-isometric-tile` 端點是穩定的 |
 
 ---
 

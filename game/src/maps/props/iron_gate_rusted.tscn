@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cldq26h2aby5gf"]
 
 [ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
-[ext_resource type="Texture2D" uid="uid://cfxpzvo2isdm5n" path="res://assets/textures/props/iron_gate_rusted.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://bksfwya5nsel5" path="res://assets/textures/props/iron_gate_rusted.png" id="3_tex"]
 
 [sub_resource type="RectangleShape2D" id="1_rect"]
 size = Vector2(16.0, 16.0)

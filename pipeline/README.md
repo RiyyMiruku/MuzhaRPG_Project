@@ -32,12 +32,23 @@
 
 兩者存取同一份 `art_source/manifest.json`，狀態完全一致。
 
+### Spec / State / Sync
+
+Asset 拆三層：**Spec**（意圖：kind / description / view / size）+ **State**（產物：PNG / spritesheet / .tscn）+ **Pixellab 上游**（rotation_urls / animations）。
+
+| 動作 | API | CLI 等價 |
+|---|---|---|
+| 新建 | `POST /api/asset/create` | `orchestrator.py --name X --description ...` |
+| 跑 stage | `POST /<type>/<name>/remake {stage}` | `orchestrator.py --name X --resume-from <stage>` |
+| 改 spec + 跑 | `POST /<type>/<name>/remake {stage, overrides: {kind: "iso_building"}}` | `orchestrator.py --name X --kind iso_building --description ...` |
+| 拉 Pixellab UI 編輯回本地 | `POST /character/<name>/sync {scope: "all"}` | （無 CLI 等價，0 credit） |
+
 ## Orchestrator 列表
 
 | 檔案 | Pipeline | Stages |
 |---|---|---|
 | `orchestrators/autotile.py` | iso 地形 autotile | `generate_atlas` → `iso_project` → `verify_in_godot` → `import_to_godot` |
-| `orchestrators/prop.py` | 大建築 + iso 小 prop | `generate_object` → `chroma_key` → `import_to_godot`（`--kind=building\|iso_prop`） |
+| `orchestrators/prop.py` | iso 建築 / 立面建築 / iso 小 prop | `generate_object` → `chroma_key` → `import_to_godot`（`--kind=iso_building\|building\|iso_prop`） |
 | `orchestrators/npc_static.py` | 劇情靜態 NPC（4 向 idle） | `generate_4dir_base` → `add_idle_animation` → `compile_spritesheet` → `import_to_godot`（`--directions 4\|8`） |
 | `orchestrators/npc_moving.py` | 移動 NPC / player（8 向 walk + 4 向 idle） | `generate_8dir_base` → `add_idle_animation` → `add_walk_animation` → `compile_spritesheet` → `import_to_godot` |
 
@@ -110,7 +121,7 @@ game/assets/textures/                    # import_to_godot 自動複製目的地
 
 | 限制 | 影響 |
 | --- | --- |
-| Pixellab 沒有原生 isometric view | 用 `high_top_down`（~30°）+ PIL 投影 (autotile) 達近似效果 |
+| Pixellab `/map-objects` 端點不支援 iso | 大建築改用 `--kind=iso_building`（走 `/create-image-pixflux` + `isometric:true`）；`/create-tileset` 仍需 PIL 投影才有 iso autotile |
 | Mannequin template 強制角色 92×92 | size 參數是 hint 不是契約；下游 spritesheet 系統要適配 |
 | Async 不可預測 | 標稱 ETA 180s 實測可能 30+ 分鐘；orchestrator 在每個 stage 結束後 exit(0) |
 | API 回應 schema 部分欄位需試錯 | tileset / object 的 image_url 欄位可能變動 |

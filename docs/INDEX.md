@@ -25,6 +25,7 @@
 |---|---|---|---|
 | [README.md](../README.md) | 322 | 所有人 | 專案總覽、安裝、啟動、鍵位、開發進度 |
 | [docs/architecture.md](architecture.md) | 144 | 程式 | 系統架構、autoload 職責、目錄樹、資料流 |
+| [docs/godot-modules.md](godot-modules.md) | — | 程式 | **Godot 端模組追蹤表**:autoload / class / scene / UI / addon 清單,含檔案連結 + 實作狀況 |
 | **docs/INDEX.md**（本檔） | — | 所有人 | 文檔導覽 |
 
 ### 場景與美術
@@ -45,6 +46,7 @@
 |---|---|---|---|
 | [docs/dialogue-architecture.md](dialogue-architecture.md) | 272 | 程式 / 章節作者 | 對話混合架構（D 方案）— 三層流程、Schema、Phase 1–3 任務 |
 | [docs/chapter-development.md](chapter-development.md) | 286 | 章節作者 | 章節資料夾結構（敘事側 + 程式側）、ChapterConfig、events.gd、新章節步驟 |
+| [docs/chapter-development-manual.md](chapter-development-manual.md) | — | 章節作者 | **操作手冊** — 11 階段流程速查 + 每階段人工介入點 + 修改 cheat sheet |
 | [story/chapters/README.md](../story/chapters/README.md) | 49 | 章節作者 | **敘事側工作區**：draft.md 草稿 + assets.{json,md} 資產清單 |
 | [game/src/chapters/chapter_template/README.md](../game/src/chapters/chapter_template/README.md) | 53 | 章節作者 | 程式側範本資料夾速查 |
 | [game/src/chapters/chapter_01_arrival/README.md](../game/src/chapters/chapter_01_arrival/README.md) | 23 | 章節作者 | 範例章節（程式側） |

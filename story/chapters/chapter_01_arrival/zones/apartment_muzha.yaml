@@ -1,0 +1,41 @@
+# 老公寓(現代,阿謙住處 / 父親遺物)— 現代線蒐證
+zone: zone_apartment_muzha
+label: "木柵老公寓 (現代)"
+size: [22, 17]
+
+tilemap:
+  atlas: market_concrete_tile
+  terrain: 1
+  fill: rect
+
+props:
+  # 父親遺物 — 翻找出來擺在地上 / 桌面示意
+  - id: id_card_old
+    # 舊身分證 — 第一章結尾的關鍵物件
+    anchor: center
+    offset: [0, 0]
+
+  - id: photograph_old
+    anchor: center
+    offset: [1, 0]
+
+  - id: notebook_leather
+    anchor: center
+    offset: [-1, 0]
+
+  - id: fountain_pen_old
+    anchor: center
+    offset: [0, 1]
+
+npcs: []
+
+transitions:
+  - target_zone: zone_market
+    entry_point: from_apartment
+    anchor: south_wall
+    offset: [0, 1]
+    rename: ToMarket
+
+player_spawn:
+  anchor: south_wall
+  offset: [0, -1]

@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:35:46",
-  "updated_at": "2026-05-12T17:36:17",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:shared",
     "category:key_item",
-    "chapter:1"
+    "chapter:1",
+    "zone:*"
   ],
   "object_id": "3102e7c2-e0e0-42bc-94ec-b427d5d40ed9",
   "kind": "iso_prop",

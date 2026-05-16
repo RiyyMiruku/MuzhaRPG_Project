@@ -1,0 +1,103 @@
+# 榮昌中藥行 1983 內部 — 主要劇情舞台
+# build with: python scripts/build_zone.py pharmacy (merge 同資料夾全部 era)
+zone: zone_pharmacy
+era: "1983"
+label: "榮昌中藥行"
+
+# Zone 尺寸(iso 格)。座標原點 (0,0) 在中心。
+size: [26, 19]
+
+tilemap:
+  atlas: market_concrete_tile   # 對應 game/assets/textures/tilesets/<atlas>.png
+  terrain: 1                    # TileSet 中的 terrain index(0 = empty, 1 = FG)
+  fill: rect                    # 目前只支援 rect:整個 size 填滿
+
+# Anchor 關鍵字 (builder 解析後 → cell 座標):
+#   center / north_wall / south_wall / east_wall / west_wall
+#   entrance (== south_wall)
+#   relative_to(X) — 相對於另一個已放置 prop/npc 的 cell 位置
+#   或直接 cell: [x, y]
+# offset 永遠是 cell 單位,不是 pixel。
+props:
+  - id: shop_counter_wood
+    anchor: center
+    offset: [0, 1]
+
+  - id: medicine_cabinet_new
+    anchor: north_wall
+    offset: [-3, 1]
+
+  - id: medicine_cabinet_new
+    anchor: north_wall
+    offset: [0, 1]
+    rename: medicine_cabinet_new_2
+
+  - id: medicine_cabinet_new
+    anchor: north_wall
+    offset: [3, 1]
+    rename: medicine_cabinet_new_3
+
+  - id: cathay_calendar_1983
+    anchor: north_wall
+    offset: [-6, 1]
+
+  - id: family_photo_blacked
+    anchor: north_wall
+    offset: [6, 1]
+
+  - id: wooden_stool_old
+    anchor: relative_to(shop_counter_wood)
+    offset: [-2, 1]
+
+  - id: wooden_stool_old
+    anchor: relative_to(shop_counter_wood)
+    offset: [2, 1]
+    rename: wooden_stool_old_2
+
+  - id: lantern_paper_red
+    anchor: south_wall
+    offset: [-4, -1]
+
+  - id: lantern_paper_red
+    anchor: south_wall
+    offset: [4, -1]
+    rename: lantern_paper_red_2
+
+  - id: incense_burner_brass
+    anchor: east_wall
+    offset: [-1, 0]
+
+npcs:
+  - id: lin_rongchang
+    anchor: relative_to(shop_counter_wood)
+    offset: [0, -1]
+
+  - id: chen_xiuqin
+    anchor: relative_to(shop_counter_wood)
+    offset: [-2, -1]
+
+  - id: lin_ama
+    anchor: east_wall
+    offset: [-2, 2]
+
+  - id: lin_xiaowei
+    anchor: south_wall
+    offset: [-2, 0]
+
+transitions:
+  - target_zone: zone_market
+    entry_point: from_pharmacy
+    anchor: south_wall
+    offset: [0, 1]
+    rename: ToMarket
+
+  - target_zone: zone_pharmacy_backyard
+    entry_point: from_pharmacy
+    anchor: east_wall
+    offset: [0, 0]
+    rename: ToBackyard
+
+# Player 起點(進 zone 時的位置,通常設在 entrance)
+player_spawn:
+  anchor: south_wall
+  offset: [0, -1]

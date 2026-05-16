@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:34:56",
-  "updated_at": "2026-05-12T17:35:33",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:decoration",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_pharmacy_1983"
   ],
   "object_id": "cb5eb094-fa02-4bda-92c7-756ce1e7f575",
   "kind": "iso_prop",

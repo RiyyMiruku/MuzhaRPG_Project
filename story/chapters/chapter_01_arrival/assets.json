@@ -5,37 +5,37 @@
     {
       "name": "lin_siqian",
       "description": "young taiwanese man in his late twenties, slim build, plain charcoal grey t-shirt, fitted dark indigo jeans, white low-top sneakers, short tidy black hair with side part, calm focused expression, simple silver wristwatch, small canvas messenger bag strap across chest, arms relaxed at sides",
-      "zone": "shared",
+      "zones": ["*"],
       "category": "protagonist"
     },
     {
       "name": "lin_rongchang",
       "description": "middle-aged taiwanese man in his mid-forties, lean upright build, off-white short-sleeved button-up shirt with rolled sleeves, beige cotton apron from chest down, dark brown trousers, black cloth shoes, short combed-back black hair with grey at temples, calm reserved expression, reading glasses tucked in chest pocket, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983"],
       "category": "shopkeeper"
     },
     {
       "name": "lin_ama",
       "description": "elderly taiwanese woman in her early seventies, small slender build slightly stooped, dark navy traditional minnan blouse with mandarin collar, loose black trousers, black cloth slip-on shoes, silver-grey hair pulled back in a small bun, stern weathered expression with deep wrinkles, jade bangle on left wrist, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983", "zone_pharmacy_backyard"],
       "category": "elder_family"
     },
     {
       "name": "chen_xiuqin",
       "description": "middle-aged taiwanese woman in her early forties, average build, pale pink short-sleeved blouse with small floral pattern, beige cotton apron, dark grey trousers, brown flat sandals, shoulder-length permed black hair tied back, practical warm expression, small gold stud earrings, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983"],
       "category": "shopkeeper_family"
     },
     {
       "name": "lin_xiaowei",
       "description": "taiwanese teenage boy around sixteen, lanky build, faded blue short-sleeved school polo shirt untucked, dark navy school trousers, white canvas sneakers slightly worn, short messy black hair with overgrown fringe, mildly sullen expression, simple plastic digital wristwatch, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983", "zone_market_1983"],
       "category": "teen_family"
     },
     {
       "name": "a_tao_yi",
       "description": "middle-aged taiwanese market vendor woman in her mid-fifties, plump sturdy build, faded red floral short-sleeved shirt with rolled sleeves, dark green canvas vendor apron, loose dark trousers, black rubber market boots, short permed black hair under straw conical hat, gossipy warm expression, small jade pendant necklace, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_market_1983"],
       "category": "vendor"
     }
   ],
@@ -44,42 +44,42 @@
       "name": "lao_zhou",
       "directions": 4,
       "description": "elderly taiwanese man in his early eighties, thin frail build slightly hunched, light beige short-sleeved button-up shirt, loose grey trousers held by cloth belt, brown cloth slip-on shoes, sparse white hair and a thin white beard, weathered contemplative expression, a folded paper fan in one hand, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_market_modern"],
       "category": "elder"
     },
     {
       "name": "lawyer_muzha",
       "directions": 4,
       "description": "elderly taiwanese man in his late sixties, average build, dark grey two-piece business suit slightly old-fashioned, white shirt with dark red tie, polished black leather shoes, neatly combed grey hair, round wire-rimmed reading glasses, formal reserved expression, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_law_office"],
       "category": "professional"
     },
     {
       "name": "vendor_market_oldman_01",
       "directions": 4,
       "description": "elderly taiwanese male vendor in his late sixties, thin build, faded blue cotton short-sleeved shirt, dark trousers with canvas belt, brown cloth shoes, sparse grey hair under faded baseball cap, weathered patient expression, towel draped over shoulder, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_market_1983"],
       "category": "vendor"
     },
     {
       "name": "vendor_market_woman_02",
       "directions": 4,
       "description": "middle-aged taiwanese female vendor in her late forties, sturdy build, light blue checkered short-sleeved shirt, brown canvas apron, dark trousers, black rubber boots, short permed hair, brisk neutral expression, sleeve guards on both forearms, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_market_1983"],
       "category": "vendor"
     },
     {
       "name": "customer_pharmacy_woman",
       "directions": 4,
       "description": "middle-aged taiwanese woman in her early fifties, average build, simple cream short-sleeved blouse, dark grey skirt below knee, beige flat shoes, shoulder-length straight black hair with light streaks of grey, mild concerned expression, small handbag held in front, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983"],
       "category": "customer"
     },
     {
       "name": "pedestrian_market_man",
       "directions": 4,
       "description": "young taiwanese man in his late twenties, average build, plain light grey t-shirt, faded blue jeans, white canvas sneakers, short black hair, casual neutral expression, small shoulder bag, arms relaxed at sides",
-      "zone": "market",
+      "zones": ["zone_market_modern"],
       "category": "pedestrian"
     }
   ],
@@ -88,162 +88,168 @@
       "name": "medicine_cabinet_dusty",
       "size": 64,
       "description": "tall traditional chinese pharmacy wooden herb cabinet with many small square drawers, dark stained wood faded by time, thick layer of grey dust on every surface, cobwebs in corners, brass drawer handles tarnished and dull, abandoned forty years",
-      "zone": "market",
+      "zones": ["zone_pharmacy_modern"],
       "category": "furniture"
     },
     {
       "name": "medicine_cabinet_new",
       "size": 64,
       "description": "tall traditional chinese pharmacy wooden herb cabinet with many small square drawers, polished dark stained wood with warm sheen, brass drawer handles bright and clean, handwritten paper labels neatly pasted on each drawer, well-kept operational shop fixture",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983"],
       "category": "furniture"
     },
     {
       "name": "shop_counter_wood",
       "size": 48,
       "description": "long wooden chinese pharmacy counter with worn smooth surface, dark stained wood, small brass weighing scale on top, abacus on side, paper prescription pad and ink brush stand, traditional taiwanese shop style",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983", "zone_pharmacy_modern"],
       "category": "furniture"
     },
     {
       "name": "family_photo_blacked",
       "size": 24,
       "description": "framed sepia-toned taiwanese family photograph from the 1970s, wooden frame slightly weathered, six figures arranged in two rows, one face on the back row completely blacked out with dark ink, glass slightly dusty",
-      "zone": "market",
+      "zones": ["zone_pharmacy_modern"],
       "category": "key_item"
     },
     {
       "name": "old_map_paper",
       "size": 24,
       "description": "old folded paper map of muzha market area yellowed with age, hand-drawn lines and small red dots marking locations, brush-written chinese characters on the back, edges slightly frayed, mysterious aged artifact",
-      "zone": "market",
+      "zones": ["*"],
       "category": "key_item"
     },
     {
       "name": "cathay_calendar_1983",
       "size": 32,
       "description": "traditional taiwanese wall calendar from 1983 with cathay life insurance branding at top, large red year numbers, monthly grid with lunar dates, small colour photograph in upper portion, paper slightly faded",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983"],
       "category": "decoration"
     },
     {
       "name": "incense_burner_brass",
       "size": 24,
       "description": "small round brass incense burner with three short legs, traditional taiwanese ancestral worship style, three thin red incense sticks standing in grey ash, faint wisp of smoke",
-      "zone": "market",
+      "zones": ["zone_apartment_muzha"],
       "category": "ritual"
     },
     {
       "name": "lantern_paper_red",
       "size": 32,
       "description": "traditional taiwanese round red paper lantern with gold tassel hanging below, simple bamboo frame, soft warm glow from within, suspended from wooden beam",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983", "zone_market_1983"],
       "category": "decoration"
     },
     {
       "name": "vegetable_stall",
       "size": 64,
       "description": "traditional taiwanese open-air market vegetable stall, wooden plank counter on trestles, woven bamboo baskets piled with leafy greens cabbage and root vegetables, hand-written paper price tags, simple canvas awning above in faded green",
-      "zone": "market",
+      "zones": ["zone_market_1983"],
       "category": "vendor_stall"
     },
     {
       "name": "market_basket_produce",
       "size": 24,
       "description": "woven bamboo market basket filled with assorted taiwanese produce, sweet potatoes scallions and bok choy spilling out, well-used worn rim",
-      "zone": "market",
+      "zones": ["zone_market_1983"],
       "category": "decoration"
     },
     {
       "name": "wooden_stool_old",
       "size": 16,
       "description": "small low wooden taiwanese market stool, dark stained wood worn smooth, four simple legs, the kind elders sit on to chat at market entrances",
-      "zone": "market",
+      "zones": ["zone_pharmacy_1983", "zone_market_1983"],
       "category": "furniture"
     },
     {
       "name": "id_card_old",
       "size": 16,
       "description": "old taiwanese paper identification card from the early 1980s, yellowed white background, small black-and-white portrait photo, handwritten chinese name field, official red seal, slightly creased from years in wallet",
-      "zone": "shared",
+      "zones": ["*"],
       "category": "key_item"
     },
     {
       "name": "notebook_leather",
       "size": 24,
       "description": "small worn dark brown leather pocket notebook, cover slightly cracked, elastic band closure, yellowed pages peeking, the kind a young man would keep private thoughts in",
-      "zone": "market",
+      "zones": ["*"],
       "category": "key_item"
     },
     {
       "name": "fountain_pen_old",
       "size": 16,
       "description": "old black resin fountain pen with tarnished silver clip, slightly scratched, cap on, classic late-1970s taiwanese style",
-      "zone": "market",
+      "zones": ["*"],
       "category": "key_item"
     },
     {
       "name": "photograph_old",
       "size": 16,
       "description": "small unframed black-and-white photograph from the 1970s, slightly curled at corners, faded greyscale tones, portrait of a young man not visible from this angle",
-      "zone": "market",
+      "zones": ["*"],
       "category": "key_item"
     },
     {
       "name": "iron_gate_rusted",
       "size": 64,
       "description": "old vertical roller iron security gate of a taiwanese shopfront, painted dark green with heavy rust streaks, large brass padlock and chain at bottom, faded chinese signboard above partially visible, abandoned for decades",
-      "zone": "market",
+      "zones": ["zone_pharmacy_modern", "zone_market_modern"],
       "category": "structure"
     }
   ],
   "buildings": [
     {
       "name": "pharmacy_rongchang_modern",
+      "kind": "iso_building",
       "width": 128,
       "height": 128,
       "description": "traditional taiwanese two-story shophouse in deep market alley, lower floor sealed by rusted dark green roller iron gate with heavy chain padlock, weathered white plastered upper floor with peeling paint, dark grey tile roof with moss patches, faded chinese signboard reading rongchang chinese medicine almost illegible, abandoned forty years",
-      "zone": "market",
+      "zones": ["zone_market_modern", "zone_pharmacy_modern"],
       "category": "building"
     },
     {
       "name": "pharmacy_rongchang_1983",
+      "kind": "iso_building",
       "width": 128,
       "height": 128,
       "description": "traditional taiwanese two-story shophouse in busy market alley, open shopfront with raised wooden roll-up shutter showing pharmacy interior, polished red brick lower floor, freshly painted white upper floor with wooden window shutters, dark grey tile roof in good condition, bright red chinese signboard with gold characters reading rongchang chinese medicine, red paper lanterns hanging at entrance",
-      "zone": "market",
+      "zones": ["zone_market_1983", "zone_pharmacy_1983"],
       "category": "building"
     },
     {
       "name": "old_apartment_muzha",
+      "kind": "iso_building",
       "width": 96,
       "height": 128,
       "description": "post-war four-story taiwanese walk-up apartment building, weathered exposed concrete facade with faded yellow paint, small balconies with rusty iron railings and hanging laundry, window-mounted air conditioner units, narrow side stairway, ground-floor metal door with small mailbox cluster",
-      "zone": "market",
+      "zones": ["zone_apartment_muzha"],
       "category": "building"
     },
     {
       "name": "law_office_muzha",
+      "kind": "iso_building",
       "width": 96,
       "height": 96,
       "description": "modest taiwanese street-level law office in an older concrete building, large window with frosted lower half and gold chinese characters reading law office, dark wooden entry door with brass handle, small plant pot beside entrance, faded vertical signboard on wall",
-      "zone": "market",
+      "zones": ["zone_law_office"],
       "category": "building"
     },
     {
       "name": "market_shophouse_minnan",
+      "kind": "iso_building",
       "width": 128,
       "height": 128,
       "description": "traditional taiwanese minnan two-story shophouse, red brick lower floor with arched doorway and wooden roll-up shutter, white plastered upper floor with wooden window shutters, dark grey tile roof with curved eaves, weathered wooden signboard, small balcony with iron railing",
-      "zone": "market",
+      "zones": ["zone_market_1983", "zone_market_modern"],
       "category": "building"
     },
     {
       "name": "market_shophouse_concrete",
+      "kind": "iso_building",
       "width": 128,
       "height": 128,
       "description": "post-war taiwanese two-story concrete shophouse, light grey exposed concrete facade slightly weathered, metal roll-up shutter on ground floor, simple rectangular windows on upper floor with aluminum frames, flat concrete roof with utility pipes, faded plastic signboard",
-      "zone": "market",
+      "zones": ["zone_market_1983", "zone_market_modern"],
       "category": "building"
     }
   ],
@@ -254,7 +260,7 @@
       "upper": "small red square ceramic floor tiles laid in grid pattern, traditional taiwanese market walkway",
       "transition_size": 0.25,
       "transition_description": "broken concrete edge meeting tile grout line",
-      "zone": "market",
+      "zones": ["zone_market_1983", "zone_market_modern"],
       "category": "terrain"
     },
     {
@@ -263,7 +269,7 @@
       "upper": "patchy green grass with small wildflowers and weeds",
       "transition_size": 0.25,
       "transition_description": "loose dirt mixed with sparse grass tufts",
-      "zone": "market",
+      "zones": ["zone_pharmacy_backyard"],
       "category": "terrain"
     },
     {
@@ -272,7 +278,7 @@
       "upper": "light grey concrete sidewalk slab with expansion joint lines",
       "transition_size": 0.25,
       "transition_description": "raised concrete curb edge",
-      "zone": "market",
+      "zones": ["zone_market_modern", "zone_apartment_muzha", "zone_law_office"],
       "category": "terrain"
     }
   ]

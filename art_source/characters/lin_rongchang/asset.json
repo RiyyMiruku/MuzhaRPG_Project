@@ -1,15 +1,11 @@
 {
   "status": "base_ready",
   "created_at": "2026-05-12T16:56:40",
-  "updated_at": "2026-05-14T02:53:32",
-  "prompts": {
-    "add_idle_animation": "standing in place, head perfectly still and facing forward, eyes straight ahead, no head turning, arms relaxed at sides with wrists hanging naturally and motionless, no random hand or wrist movement, gentle breathing only, posture consistent across all frames",
-    "add_walk_animation": "walking forward in the direction the body is facing, head locked forward and aligned with torso, eyes fixed straight ahead, no head turning, no looking sideways, natural arm swing opposite to leg stride, consistent gait across all frames"
-  },
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:shopkeeper",
-    "chapter:1"
+    "chapter:1",
+    "zone:zone_pharmacy_1983"
   ],
   "character_id": "2a3efa0d-d25d-4d0b-8c78-8749949761c8",
   "preset": "player",

@@ -1,11 +1,11 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:18",
-  "updated_at": "2026-05-12T17:36:43",
+  "updated_at": "2026-05-16T16:32:55",
   "tags": [
-    "zone:market",
     "category:key_item",
-    "chapter:1"
+    "chapter:1",
+    "zone:*"
   ],
   "object_id": "ca7cd909-d125-4163-b76a-783050007961",
   "kind": "iso_prop",
