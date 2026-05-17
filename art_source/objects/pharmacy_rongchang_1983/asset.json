@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:53",
-  "updated_at": "2026-05-17T14:24:21",
+  "updated_at": "2026-05-17T14:47:18",
   "tags": [
     "category:building",
     "chapter:1",
@@ -30,7 +30,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-17T14:24:21",
+      "completed_at": "2026-05-17T14:47:18",
       "paths": [
         "game\\assets\\textures\\props\\pharmacy_rongchang_1983.png",
         "game\\src\\maps\\props\\pharmacy_rongchang_1983.tscn"
@@ -38,7 +38,7 @@
     }
   },
   "local_path": "art_source\\objects\\pharmacy_rongchang_1983\\pharmacy_rongchang_1983.png",
-  "imported_at": "2026-05-17T14:24:21",
+  "imported_at": "2026-05-17T14:47:18",
   "game_png_path": "game\\assets\\textures\\props\\pharmacy_rongchang_1983.png",
   "game_tscn_path": "game\\src\\maps\\props\\pharmacy_rongchang_1983.tscn",
   "collision": "bottom_16x16"

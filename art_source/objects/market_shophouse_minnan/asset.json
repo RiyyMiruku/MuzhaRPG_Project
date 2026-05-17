@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:38:14",
-  "updated_at": "2026-05-17T14:24:19",
+  "updated_at": "2026-05-17T14:47:18",
   "tags": [
     "category:building",
     "chapter:1",
@@ -30,7 +30,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-17T14:24:19",
+      "completed_at": "2026-05-17T14:47:18",
       "paths": [
         "game\\assets\\textures\\props\\market_shophouse_minnan.png",
         "game\\src\\maps\\props\\market_shophouse_minnan.tscn"
@@ -38,7 +38,7 @@
     }
   },
   "local_path": "art_source\\objects\\market_shophouse_minnan\\market_shophouse_minnan.png",
-  "imported_at": "2026-05-17T14:24:19",
+  "imported_at": "2026-05-17T14:47:18",
   "game_png_path": "game\\assets\\textures\\props\\market_shophouse_minnan.png",
   "game_tscn_path": "game\\src\\maps\\props\\market_shophouse_minnan.tscn",
   "collision": "bottom_16x16"
