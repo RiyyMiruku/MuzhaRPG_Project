@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:18",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:21",
   "tags": [
     "category:key_item",
     "chapter:1",
@@ -28,16 +28,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:36:43",
+      "completed_at": "2026-05-17T14:24:21",
       "paths": [
-        "game/assets/textures/props/photograph_old.png",
-        "game/src/maps/props/photograph_old.tscn"
+        "game\\assets\\textures\\props\\photograph_old.png",
+        "game\\src\\maps\\props\\photograph_old.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/photograph_old/photograph_old.png",
-  "imported_at": "2026-05-12T17:36:43",
-  "game_png_path": "game/assets/textures/props/photograph_old.png",
-  "game_tscn_path": "game/src/maps/props/photograph_old.tscn",
+  "imported_at": "2026-05-17T14:24:21",
+  "game_png_path": "game\\assets\\textures\\props\\photograph_old.png",
+  "game_tscn_path": "game\\src\\maps\\props\\photograph_old.tscn",
   "collision": "bottom_16x16"
 }

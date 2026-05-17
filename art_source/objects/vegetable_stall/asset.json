@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:35:17",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:23",
   "tags": [
     "category:vendor_stall",
     "chapter:1",
@@ -28,16 +28,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:35:46",
+      "completed_at": "2026-05-17T14:24:23",
       "paths": [
-        "game/assets/textures/props/vegetable_stall.png",
-        "game/src/maps/props/vegetable_stall.tscn"
+        "game\\assets\\textures\\props\\vegetable_stall.png",
+        "game\\src\\maps\\props\\vegetable_stall.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/vegetable_stall/vegetable_stall.png",
-  "imported_at": "2026-05-12T17:35:46",
-  "game_png_path": "game/assets/textures/props/vegetable_stall.png",
-  "game_tscn_path": "game/src/maps/props/vegetable_stall.tscn",
+  "imported_at": "2026-05-17T14:24:23",
+  "game_png_path": "game\\assets\\textures\\props\\vegetable_stall.png",
+  "game_tscn_path": "game\\src\\maps\\props\\vegetable_stall.tscn",
   "collision": "bottom_16x16"
 }

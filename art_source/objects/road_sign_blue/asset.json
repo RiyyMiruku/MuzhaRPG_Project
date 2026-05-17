@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-17T00:44:50",
-  "updated_at": "2026-05-17T00:51:30",
+  "updated_at": "2026-05-17T14:45:06",
   "tags": [
     "zone:zone_market",
     "category:decoration",
@@ -28,7 +28,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-17T00:51:30",
+      "completed_at": "2026-05-17T14:45:06",
       "paths": [
         "game\\assets\\textures\\props\\road_sign_blue.png",
         "game\\src\\maps\\props\\road_sign_blue.tscn"
@@ -36,7 +36,7 @@
     }
   },
   "local_path": "art_source\\objects\\road_sign_blue\\road_sign_blue.png",
-  "imported_at": "2026-05-17T00:51:30",
+  "imported_at": "2026-05-17T14:45:06",
   "game_png_path": "game\\assets\\textures\\props\\road_sign_blue.png",
   "game_tscn_path": "game\\src\\maps\\props\\road_sign_blue.tscn",
   "collision": "bottom_16x16"

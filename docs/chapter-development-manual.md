@@ -445,9 +445,69 @@ game/src/chapters/<slug>/
 
 ---
 
+## 為什麼分章節
+
+把「會復用的素材」與「章節獨有的內容」分開:
+
+```
+全域資源池(永遠存在)            章節資料夾(差異層)
+─────────────────────────────────────────────────────────
+角色 sprite / 立繪                章節故事腳本(StoryBeat .tres)
+Tileset / autotile / props        章節獨有任務 / cutscene
+Zone .tscn(共用地理)              章節 NPC 對話差異(npc_overlays)
+NPCConfig 基底人設(共用 NPC)      章節限定 NPCProfile(此章專屬 NPC)
+```
+
+→ 改一張 NPC 圖只動一個地方;改第 5 章該 NPC 對話傾向只動 `chapter_05/npcs/*.tres` 或 `chapter.tres.npc_overlays`。
+
+---
+
+## 設計原則(實作時的紀律)
+
+- **角色基底永遠不變** — `chen_ayi.tres` 不為任何章節改動
+- **章節差異用 overlay 注入** — 不複製整份 NPCConfig
+- **狀態 = 章節 × 玩家行為** — ChapterConfig 提供章節背景,StoryManager 提供具體狀態
+- **章節腳本要對稱 register / unregister** — 避免章節切換後殘留 signal 連接
+- **完成條件用 event 不用 flag 名** — 不要硬編 quest 名,讓多種方式都能觸發章節推進
+- **Beat 完成必設 flag**(防重觸發,BeatRunner 自動寫 `beat_done_<id>`)
+- **forbidden_until_flag 是硬規則** — prompt 約束 + post-processing 兩道防線
+
+---
+
+## 程式端 API 速查
+
+```gdscript
+# ── 章節 ──
+var chapter: ChapterConfig = ChapterManager.current()
+ChapterManager.start_chapter("ch02_market")
+ChapterManager.complete_current()             # 自動進下一章
+ChapterManager.is_npc_active("chen_ayi")
+ChapterManager.get_npc_overlay("chen_ayi")    # AIClient 自動用
+ChapterManager.find_active_beat(npc_id)       # 給 BaseNPC 互動時查
+
+# ── 故事狀態 ──
+StoryManager.set_flag("found_map", true)
+StoryManager.get_flag("found_map", false)
+StoryManager.record_event("ch1_first_travel_done")
+StoryManager.npc_relationships["lin_rongchang"] = 35   # 信任值
+StoryManager.build_ai_context(npc_id)         # 送 AIClient 用
+
+# ── 時空 ──
+EraManager.travel_to("1983")                  # async,await 結束
+EraManager.current_era                         # "modern" / "1983"
+
+# ── Cutscene ──
+EventBus.cutscene_requested.emit("res://.../<id>.tres")
+
+# ── Zone ──
+EventBus.zone_transition_requested.emit("zone_market", "from_apartment")
+```
+
+---
+
 ## 相關文件
 
-- [docs/dialogue-architecture.md](dialogue-architecture.md) — 對話系統內部設計(TrustGate / BeatRunner / 三層架構)
+- [docs/dialogue-architecture.md](dialogue-architecture.md) — 對話系統內部設計(TrustGate / BeatRunner / 三層架構的完整 schema)
 - [docs/chapter-01-scene-automation-plan.md](chapter-01-scene-automation-plan.md) — chapter 1 場景擺位策略
 - [docs/godot-modules.md](godot-modules.md) — Godot 端模組追蹤表
 - [art-pipeline skill](../.claude/skills/art-pipeline/SKILL.md) — 美術 pipeline 細節

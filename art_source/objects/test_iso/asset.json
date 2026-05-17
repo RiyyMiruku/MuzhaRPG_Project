@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-11T19:59:06",
-  "updated_at": "2026-05-11T19:59:54",
+  "updated_at": "2026-05-17T14:24:22",
   "object_id": "8a8108e7-bb12-473c-b190-3b82797841f3",
   "kind": "iso_prop",
   "description": "a small wooden box",
@@ -23,7 +23,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-11T19:59:54",
+      "completed_at": "2026-05-17T14:24:22",
       "paths": [
         "game\\assets\\textures\\props\\test_iso.png",
         "game\\src\\maps\\props\\test_iso.tscn"
@@ -31,7 +31,7 @@
     }
   },
   "local_path": "art_source\\objects\\test_iso\\test_iso.png",
-  "imported_at": "2026-05-11T19:59:54",
+  "imported_at": "2026-05-17T14:24:22",
   "game_png_path": "game\\assets\\textures\\props\\test_iso.png",
   "game_tscn_path": "game\\src\\maps\\props\\test_iso.tscn",
   "collision": "bottom_16x16"

@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:43",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:18",
   "tags": [
     "category:structure",
     "chapter:1",
@@ -29,16 +29,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:38:13",
+      "completed_at": "2026-05-17T14:24:18",
       "paths": [
-        "game/assets/textures/props/iron_gate_rusted.png",
-        "game/src/maps/props/iron_gate_rusted.tscn"
+        "game\\assets\\textures\\props\\iron_gate_rusted.png",
+        "game\\src\\maps\\props\\iron_gate_rusted.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/iron_gate_rusted/iron_gate_rusted.png",
-  "imported_at": "2026-05-12T17:38:13",
-  "game_png_path": "game/assets/textures/props/iron_gate_rusted.png",
-  "game_tscn_path": "game/src/maps/props/iron_gate_rusted.tscn",
+  "imported_at": "2026-05-17T14:24:18",
+  "game_png_path": "game\\assets\\textures\\props\\iron_gate_rusted.png",
+  "game_tscn_path": "game\\src\\maps\\props\\iron_gate_rusted.tscn",
   "collision": "bottom_16x16"
 }

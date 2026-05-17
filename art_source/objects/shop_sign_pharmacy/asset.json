@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-16T23:49:40",
-  "updated_at": "2026-05-17T00:06:19",
+  "updated_at": "2026-05-17T14:45:06",
   "tags": [
     "zone:zone_market",
     "category:decoration",
@@ -28,7 +28,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-17T00:06:19",
+      "completed_at": "2026-05-17T14:45:06",
       "paths": [
         "game\\assets\\textures\\props\\shop_sign_pharmacy.png",
         "game\\src\\maps\\props\\shop_sign_pharmacy.tscn"
@@ -36,8 +36,8 @@
     }
   },
   "local_path": "art_source\\objects\\shop_sign_pharmacy\\shop_sign_pharmacy.png",
-  "imported_at": "2026-05-17T00:06:19",
+  "imported_at": "2026-05-17T14:45:06",
   "game_png_path": "game\\assets\\textures\\props\\shop_sign_pharmacy.png",
   "game_tscn_path": "game\\src\\maps\\props\\shop_sign_pharmacy.tscn",
-  "collision": "none"
+  "collision": "bottom_16x16"
 }

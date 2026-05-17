@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:24:11",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:18",
   "tags": [
     "category:ritual",
     "chapter:1",
@@ -28,16 +28,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:25:32",
+      "completed_at": "2026-05-17T14:24:18",
       "paths": [
-        "game/assets/textures/props/incense_burner_brass.png",
-        "game/src/maps/props/incense_burner_brass.tscn"
+        "game\\assets\\textures\\props\\incense_burner_brass.png",
+        "game\\src\\maps\\props\\incense_burner_brass.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/incense_burner_brass/incense_burner_brass.png",
-  "imported_at": "2026-05-12T17:25:32",
-  "game_png_path": "game/assets/textures/props/incense_burner_brass.png",
-  "game_tscn_path": "game/src/maps/props/incense_burner_brass.tscn",
+  "imported_at": "2026-05-17T14:24:18",
+  "game_png_path": "game\\assets\\textures\\props\\incense_burner_brass.png",
+  "game_tscn_path": "game\\src\\maps\\props\\incense_burner_brass.tscn",
   "collision": "bottom_16x16"
 }

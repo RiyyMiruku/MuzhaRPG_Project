@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T14:55:01",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:17",
   "tags": [
     "category:key_item",
     "chapter:1",
@@ -28,16 +28,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T14:55:44",
+      "completed_at": "2026-05-17T14:24:17",
       "paths": [
-        "game/assets/textures/props/family_photo_blacked.png",
-        "game/src/maps/props/family_photo_blacked.tscn"
+        "game\\assets\\textures\\props\\family_photo_blacked.png",
+        "game\\src\\maps\\props\\family_photo_blacked.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/family_photo_blacked/family_photo_blacked.png",
-  "imported_at": "2026-05-12T14:55:44",
-  "game_png_path": "game/assets/textures/props/family_photo_blacked.png",
-  "game_tscn_path": "game/src/maps/props/family_photo_blacked.tscn",
+  "imported_at": "2026-05-17T14:24:17",
+  "game_png_path": "game\\assets\\textures\\props\\family_photo_blacked.png",
+  "game_tscn_path": "game\\src\\maps\\props\\family_photo_blacked.tscn",
   "collision": "bottom_16x16"
 }

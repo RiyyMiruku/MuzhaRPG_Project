@@ -115,7 +115,15 @@ def _write_prop_tscn(
     )
 
     parts.append(f'[node name="{name}" instance=ExtResource("4_tmpl")]\nhas_collision = {has_coll}\n')
-    parts.append('[node name="Sprite2D" parent="." index="0"]\ntexture = ExtResource("3_tex")\n')
+    # Bake foot-anchor offset into the .tscn so editor view matches runtime.
+    # Prop.gd's _ready() will re-apply the same value when foot_anchor is on;
+    # we just need this here so the editor sees the correct layout without
+    # requiring the script to be @tool-mode.
+    parts.append(
+        f'[node name="Sprite2D" parent="." index="0"]\n'
+        f'texture = ExtResource("3_tex")\n'
+        f'offset = Vector2(0, {-h / 2.0})\n'
+    )
     if coll is not None:
         size, pos = coll
         parts.append(

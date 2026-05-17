@@ -1,16 +1,24 @@
-[gd_scene format=3 uid="uid://2t1vvc22hgi4"]
+[gd_scene load_steps=5 format=3 uid="uid://cztmw18e4mcgph"]
 
 [ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
-[ext_resource type="Texture2D" uid="uid://cv1q21a8l4dczp" path="res://assets/textures/props/shop_sign_pharmacy.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://dlyrc6rjpw0xe" path="res://assets/textures/props/shop_sign_pharmacy.png" id="3_tex"]
+
+[sub_resource type="RectangleShape2D" id="1_rect"]
+size = Vector2(16.0, 16.0)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
 size = Vector2(32.0, 16.0)
 
 [node name="shop_sign_pharmacy" instance=ExtResource("4_tmpl")]
-has_collision = false
+has_collision = true
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
+offset = Vector2(0, -16.0)
+
+[node name="CollisionShape2D" parent="StaticBody2D" index="0"]
+position = Vector2(0.0, -8.0)
+shape = SubResource("1_rect")
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
 position = Vector2(0.0, -8.0)

@@ -135,19 +135,7 @@ bit 1=TL、2=TR、4=BL、8=BR；數值是 atlas 對應的 terrain index（atlas_
 
 ---
 
-## 7. 跟舊工作流的差異
-
-| | 舊（手動 peering bits + scaffold_zone.py） | 新（TileMapDual） |
-|---|---|---|
-| 場景 layer | 1 個 TileMapLayer_Ground | 1 個 TileMapDual |
-| TileSet 配置位置 | 外部 `<zone>_terrain.tres` | 內嵌 zone 場景的 sub_resource |
-| 設定 peering bits | 16 tile × 4 角手點，或 scaffold_zone.py 模板 | zhinan 範本一鍵複製 |
-| 視覺品質 | 看 peering bits 標得多細 | 一律完美無縫 |
-| 已刪除檔案 | `scripts/scaffold_zone.py` + `game/src/maps/tilesets/*_terrain.tres` | — |
-
----
-
-## 8. 參考資料
+## 7. 參考資料
 
 - 套件官方：[TileMapDual GitHub](https://github.com/GilaPixel/TileMapDual)
 - Pixellab autotile 規格：[1-asset-creation.md](../game/assets/textures/environment/1-asset-creation.md)

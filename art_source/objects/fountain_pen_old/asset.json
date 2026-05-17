@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:36:03",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:17",
   "tags": [
     "category:key_item",
     "chapter:1",
@@ -28,16 +28,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:36:53",
+      "completed_at": "2026-05-17T14:24:17",
       "paths": [
-        "game/assets/textures/props/fountain_pen_old.png",
-        "game/src/maps/props/fountain_pen_old.tscn"
+        "game\\assets\\textures\\props\\fountain_pen_old.png",
+        "game\\src\\maps\\props\\fountain_pen_old.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/fountain_pen_old/fountain_pen_old.png",
-  "imported_at": "2026-05-12T17:36:53",
-  "game_png_path": "game/assets/textures/props/fountain_pen_old.png",
-  "game_tscn_path": "game/src/maps/props/fountain_pen_old.tscn",
+  "imported_at": "2026-05-17T14:24:17",
+  "game_png_path": "game\\assets\\textures\\props\\fountain_pen_old.png",
+  "game_tscn_path": "game\\src\\maps\\props\\fountain_pen_old.tscn",
   "collision": "bottom_16x16"
 }

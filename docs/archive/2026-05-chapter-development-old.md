@@ -1,7 +1,13 @@
-# 章節開發指南
+# [RETIRED 2026-05-15] 章節開發指南
 
-> 文檔導覽：[INDEX](INDEX.md) — **對象**：章節作者 / 程式。**用途**：章節資料夾結構 + ChapterConfig 欄位 + 新章節流程。
-> 對話寫法見 [dialogue-architecture.md](dialogue-architecture.md)。
+> **此檔已歸檔**。被 [chapter-development-manual.md](../chapter-development-manual.md)(操作手冊)取代。
+> 獨有的「設計原則」+「API 速查」+「為什麼分章節」三段已合併進 manual。
+> §5 NPC 章節差異流程的完整 prompt 組裝細節見 [dialogue-architecture.md](../dialogue-architecture.md)。
+> 此檔保留作歷史紀錄,**日常開發不用看**。
+
+---
+
+(原始內容如下)
 
 《MuzhaRPG》以章節制推進故事。本文說明章節系統架構、新增章節流程、以及如何在章節中改變 NPC 行為。
 

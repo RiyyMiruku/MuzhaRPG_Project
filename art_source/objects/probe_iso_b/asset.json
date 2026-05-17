@@ -9,7 +9,7 @@
   },
   "status": "completed",
   "created_at": "2026-05-14T19:04:03",
-  "updated_at": "2026-05-14T19:04:04",
+  "updated_at": "2026-05-17T14:24:22",
   "stages": {
     "generate_object": {
       "completed_at": "2026-05-14T19:04:03",
@@ -24,7 +24,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-14T19:04:04",
+      "completed_at": "2026-05-17T14:24:22",
       "paths": [
         "game\\assets\\textures\\props\\probe_iso_b.png",
         "game\\src\\maps\\props\\probe_iso_b.tscn"
@@ -32,7 +32,7 @@
     }
   },
   "local_path": "art_source\\objects\\probe_iso_b\\probe_iso_b.png",
-  "imported_at": "2026-05-14T19:04:04",
+  "imported_at": "2026-05-17T14:24:22",
   "game_png_path": "game\\assets\\textures\\props\\probe_iso_b.png",
   "game_tscn_path": "game\\src\\maps\\props\\probe_iso_b.tscn",
   "collision": "bottom_16x16"

@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:34:56",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:17",
   "tags": [
     "category:decoration",
     "chapter:1",
@@ -28,16 +28,16 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-12T17:35:33",
+      "completed_at": "2026-05-17T14:24:17",
       "paths": [
-        "game/assets/textures/props/cathay_calendar_1983.png",
-        "game/src/maps/props/cathay_calendar_1983.tscn"
+        "game\\assets\\textures\\props\\cathay_calendar_1983.png",
+        "game\\src\\maps\\props\\cathay_calendar_1983.tscn"
       ]
     }
   },
   "local_path": "art_source/objects/cathay_calendar_1983/cathay_calendar_1983.png",
-  "imported_at": "2026-05-12T17:35:33",
-  "game_png_path": "game/assets/textures/props/cathay_calendar_1983.png",
-  "game_tscn_path": "game/src/maps/props/cathay_calendar_1983.tscn",
+  "imported_at": "2026-05-17T14:24:17",
+  "game_png_path": "game\\assets\\textures\\props\\cathay_calendar_1983.png",
+  "game_tscn_path": "game\\src\\maps\\props\\cathay_calendar_1983.tscn",
   "collision": "bottom_16x16"
 }

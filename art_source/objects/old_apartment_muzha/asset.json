@@ -1,7 +1,7 @@
 {
   "status": "completed",
   "created_at": "2026-05-12T17:37:30",
-  "updated_at": "2026-05-16T16:32:55",
+  "updated_at": "2026-05-17T14:24:20",
   "tags": [
     "category:building",
     "chapter:1",
@@ -29,7 +29,7 @@
       ]
     },
     "import_to_godot": {
-      "completed_at": "2026-05-14T21:50:49",
+      "completed_at": "2026-05-17T14:24:20",
       "paths": [
         "game\\assets\\textures\\props\\old_apartment_muzha.png",
         "game\\src\\maps\\props\\old_apartment_muzha.tscn"
@@ -37,7 +37,7 @@
     }
   },
   "local_path": "art_source\\objects\\old_apartment_muzha\\old_apartment_muzha.png",
-  "imported_at": "2026-05-14T21:50:49",
+  "imported_at": "2026-05-17T14:24:20",
   "game_png_path": "game\\assets\\textures\\props\\old_apartment_muzha.png",
   "game_tscn_path": "game\\src\\maps\\props\\old_apartment_muzha.tscn",
   "collision": "bottom_16x16"

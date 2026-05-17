@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bimvl3dib8pof"]
+[gd_scene load_steps=5 format=3 uid="uid://ckssbe7qjl97tp"]
 
 [ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
-[ext_resource type="Texture2D" uid="uid://cii3alm7wk8gif" path="res://assets/textures/props/road_sign_blue.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://d1lq3kpud0a07" path="res://assets/textures/props/road_sign_blue.png" id="3_tex"]
 
 [sub_resource type="RectangleShape2D" id="1_rect"]
 size = Vector2(16.0, 16.0)
@@ -14,6 +14,7 @@ has_collision = true
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
+offset = Vector2(0, -16.0)
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
 position = Vector2(0.0, -8.0)
