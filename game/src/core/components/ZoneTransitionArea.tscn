@@ -1,20 +1,22 @@
-[gd_scene format=3 uid="uid://muzha_zone_transition"]
+[gd_scene format=3 uid="uid://cu5f7uuu238si"]
 
-[ext_resource type="Script" path="res://src/core/components/ZoneTransitionArea.gd" id="1_zone_transition"]
+[ext_resource type="Script" uid="uid://epjmnu5n2tjw" path="res://src/core/components/ZoneTransitionArea.gd" id="1_zone_transition"]
 
 [sub_resource type="RectangleShape2D" id="trigger_shape"]
 size = Vector2(40, 20)
 
-[node name="ZoneTransitionArea" type="Area2D"]
-script = ExtResource("1_zone_transition")
+[node name="ZoneTransitionArea" type="Area2D" unique_id=166770874]
 collision_layer = 0
-collision_mask = 1
+script = ExtResource("1_zone_transition")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=636705032]
 shape = SubResource("trigger_shape")
 
-[node name="Label" type="Label" parent="."]
-position = Vector2(-30, -24)
-text = "→ ???"
+[node name="Label" type="Label" parent="." unique_id=547117108]
+modulate = Color(0.5, 1, 0.5, 0.7)
+offset_left = -30.0
+offset_top = -24.0
+offset_right = -30.0
+offset_bottom = -24.0
 theme_override_font_sizes/font_size = 10
-modulate = Color(0.5, 1.0, 0.5, 0.7)
+text = "→"

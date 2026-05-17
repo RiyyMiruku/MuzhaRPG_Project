@@ -1,25 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://ckxfnt292c78cl"]
+[gd_scene format=3 uid="uid://bm881xv016p6b"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://cpark7ak202ts" path="res://assets/textures/props/vegetable_stall.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_l15ka"]
+points = PackedVector2Array(0, 25, 32, 10, 0, -5, -32, 9)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(64.0, 16.0)
+size = Vector2(75, 68)
 
-[node name="vegetable_stall" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="vegetable_stall" unique_id=1750775355 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -32.0)
+offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+position = Vector2(0, -8)
+shape = SubResource("ConvexPolygonShape2D_l15ka")
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
+position = Vector2(0, -17)
 shape = SubResource("2_irect")

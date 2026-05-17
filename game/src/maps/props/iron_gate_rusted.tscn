@@ -1,25 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://cldq26h2aby5gf"]
+[gd_scene format=3 uid="uid://b2loedn70xna4"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://bksfwya5nsel5" path="res://assets/textures/props/iron_gate_rusted.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_3256o"]
+points = PackedVector2Array(0, 25, 32, 10, 32, -22, 0, -40, -32, -23, -32, 9)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(64.0, 16.0)
+size = Vector2(72.125, 69.6875)
 
-[node name="iron_gate_rusted" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="iron_gate_rusted" unique_id=244402020 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -32.0)
+offset = Vector2(0, -16)
+
+[node name="StaticBody2D" parent="." index="1"]
+visible = false
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+position = Vector2(0, -8)
+shape = SubResource("ConvexPolygonShape2D_3256o")
+
+[node name="InteractArea" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
+position = Vector2(-0.0625, -15.84375)
 shape = SubResource("2_irect")

@@ -1,25 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://c0x1tpmyyflcjb"]
+[gd_scene format=3 uid="uid://68xkawwuqccx"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://cklnk7hgxx8jq" path="res://assets/textures/props/pharmacy_rongchang_1983.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_five3"]
+points = PackedVector2Array(42, -28, 0, -45, -42, -29, 0, -6)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(128.0, 16.0)
+size = Vector2(44, 62)
 
-[node name="pharmacy_rongchang_1983" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="pharmacy_rongchang_1983" unique_id=2062072102 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -64.0)
+offset = Vector2(0, -64)
+
+[node name="StaticBody2D" parent="." index="1"]
+visible = false
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+position = Vector2(0, -8)
+shape = SubResource("ConvexPolygonShape2D_five3")
+
+[node name="InteractArea" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
+position = Vector2(-21, -47)
 shape = SubResource("2_irect")

@@ -1,25 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbxkx8pzmbsg1o"]
+[gd_scene format=3 uid="uid://d8bmpg245pew"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://ddnbvhi6fnob3" path="res://assets/textures/props/market_shophouse_concrete.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_x240k"]
+points = PackedVector2Array(0, -5, 39, -23, 1, -38, -34, -22)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(128.0, 16.0)
+size = Vector2(40, 85)
 
-[node name="market_shophouse_concrete" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="market_shophouse_concrete" unique_id=98979065 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -64.0)
+offset = Vector2(0, -64)
+
+[node name="StaticBody2D" parent="." index="1"]
+visible = false
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+position = Vector2(0, -8)
+shape = SubResource("ConvexPolygonShape2D_x240k")
+
+[node name="InteractArea" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
+position = Vector2(20, -56.5)
 shape = SubResource("2_irect")

@@ -1,25 +1,27 @@
-[gd_scene load_steps=5 format=3 uid="uid://cche72l9qhcuop"]
+[gd_scene format=3 uid="uid://v2kglp7bo31x"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://c8hmce6bn1m3h" path="res://assets/textures/props/market_basket_produce.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_225pf"]
+points = PackedVector2Array(0, 2, 12, 7, 0, 13, -12, 8)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(24.0, 16.0)
+size = Vector2(28, 26)
 
-[node name="market_basket_produce" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="market_basket_produce" unique_id=1330108422 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -12.0)
+
+[node name="StaticBody2D" parent="." index="1"]
+visible = false
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+shape = SubResource("ConvexPolygonShape2D_225pf")
+
+[node name="InteractArea" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
 shape = SubResource("2_irect")

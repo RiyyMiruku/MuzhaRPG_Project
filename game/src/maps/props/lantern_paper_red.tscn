@@ -1,25 +1,28 @@
-[gd_scene load_steps=5 format=3 uid="uid://ck6yfr2v6v172l"]
+[gd_scene format=3 uid="uid://bvs0yxi5l0pwb"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://dsxiktwm6de3m" path="res://assets/textures/props/lantern_paper_red.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_l5pdh"]
+points = PackedVector2Array(0, 17, 16, 7, 16, -8, 0, -17, -16, -8, -16, 8)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(32.0, 16.0)
+size = Vector2(39, 21)
 
-[node name="lantern_paper_red" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="lantern_paper_red" unique_id=1588622674 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -16.0)
+
+[node name="StaticBody2D" parent="." index="1"]
+visible = false
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+shape = SubResource("ConvexPolygonShape2D_l5pdh")
+
+[node name="InteractArea" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
+position = Vector2(0, 7)
 shape = SubResource("2_irect")

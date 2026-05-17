@@ -1,25 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://cqty8rqsc2ugkm"]
+[gd_scene format=3 uid="uid://dofyekh17l2nk"]
 
-[ext_resource type="PackedScene" uid="uid://muzha_prop_template" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 [ext_resource type="Texture2D" uid="uid://daotq6x2ovpj" path="res://assets/textures/props/market_awning.png" id="3_tex"]
+[ext_resource type="PackedScene" path="res://src/maps/props/PropTemplate.tscn" id="4_tmpl"]
 
-[sub_resource type="RectangleShape2D" id="1_rect"]
-size = Vector2(16.0, 16.0)
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_qlexx"]
+points = PackedVector2Array(0, 25, 32, 10, 0, -6, -31, 9)
 
 [sub_resource type="RectangleShape2D" id="2_irect"]
-size = Vector2(64.0, 16.0)
+size = Vector2(76, 36)
 
-[node name="market_awning" instance=ExtResource("4_tmpl")]
-has_collision = true
+[node name="market_awning" unique_id=1970786988 instance=ExtResource("4_tmpl")]
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("3_tex")
-offset = Vector2(0, -32.0)
+offset = Vector2(0, -16)
+
+[node name="StaticBody2D" parent="." index="1"]
+visible = false
 
 [node name="CollisionShape2D" parent="StaticBody2D" index="0"]
-position = Vector2(0.0, -8.0)
-shape = SubResource("1_rect")
+position = Vector2(0, -8)
+shape = SubResource("ConvexPolygonShape2D_qlexx")
+
+[node name="InteractArea" parent="." index="2"]
+visible = false
 
 [node name="CollisionShape2D" parent="InteractArea" index="0"]
-position = Vector2(0.0, -8.0)
+position = Vector2(0, 1)
 shape = SubResource("2_irect")
