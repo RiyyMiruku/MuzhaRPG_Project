@@ -187,6 +187,7 @@ y_sort_enabled = true
 [node name="Player" parent="YSortRoot" unique_id=1265905023 instance=ExtResource("4_player")]
 
 [node name="1983_pharmacy_rongchang" parent="YSortRoot" unique_id=871580648 groups=["era_1983"] instance=ExtResource("15_peqgg")]
+visible = false
 position = Vector2(213, -172)
 
 [node name="1983_shophouse_concrete" parent="YSortRoot" unique_id=544377171 groups=["era_1983"] instance=ExtResource("10_mxx5g")]
