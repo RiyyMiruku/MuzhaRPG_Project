@@ -177,28 +177,28 @@ y_sort_enabled = true
 [node name="Player" parent="YSortRoot" unique_id=1009445678 instance=ExtResource("4_player")]
 position = Vector2(-160, -80)
 
-[node name="incense_burner_brass" parent="YSortRoot" unique_id=1133691475 instance=ExtResource("10_prop_incense_burner_")]
+[node name="incense_burner_brass" parent="YSortRoot" unique_id=1133691475 groups=["era_1983"] instance=ExtResource("10_prop_incense_burner_")]
 position = Vector2(-48, -24)
 
-[node name="lantern_paper_red" parent="YSortRoot" unique_id=1473569705 instance=ExtResource("11_prop_lantern_paper_r")]
+[node name="lantern_paper_red" parent="YSortRoot" unique_id=1473569705 groups=["era_1983"] instance=ExtResource("11_prop_lantern_paper_r")]
 position = Vector2(32, -96)
 
-[node name="lantern_paper_red_2" parent="YSortRoot" unique_id=663992841 instance=ExtResource("11_prop_lantern_paper_r")]
+[node name="lantern_paper_red_2" parent="YSortRoot" unique_id=663992841 groups=["era_1983"] instance=ExtResource("11_prop_lantern_paper_r")]
 position = Vector2(192, -16)
 
-[node name="iron_gate_rusted" parent="YSortRoot" unique_id=2057549111 instance=ExtResource("12_prop_iron_gate_ruste")]
+[node name="iron_gate_rusted" parent="YSortRoot" unique_id=2057549111 groups=["era_1983"] instance=ExtResource("12_prop_iron_gate_ruste")]
 position = Vector2(128, 64)
 
-[node name="notebook_leather" parent="YSortRoot" unique_id=1219695962 instance=ExtResource("13_prop_notebook_leathe")]
+[node name="notebook_leather" parent="YSortRoot" unique_id=1219695962 groups=["era_1983"] instance=ExtResource("13_prop_notebook_leathe")]
 position = Vector2(160, 64)
 
-[node name="fountain_pen_old" parent="YSortRoot" unique_id=909829730 instance=ExtResource("14_prop_fountain_pen_ol")]
+[node name="fountain_pen_old" parent="YSortRoot" unique_id=909829730 groups=["era_1983"] instance=ExtResource("14_prop_fountain_pen_ol")]
 position = Vector2(144, 72)
 
-[node name="photograph_old" parent="YSortRoot" unique_id=1276937087 instance=ExtResource("15_prop_photograph_old")]
+[node name="photograph_old" parent="YSortRoot" unique_id=1276937087 groups=["era_1983"] instance=ExtResource("15_prop_photograph_old")]
 position = Vector2(128, 80)
 
-[node name="LinAma" parent="YSortRoot" unique_id=348446973 instance=ExtResource("8_base_npc")]
+[node name="LinAma" parent="YSortRoot" unique_id=348446973 groups=["era_1983"] instance=ExtResource("8_base_npc")]
 position = Vector2(-64, -32)
 npc_config = ExtResource("16_npccfg_lin_ama")
 

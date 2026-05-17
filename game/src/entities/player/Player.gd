@@ -1,4 +1,4 @@
-## Player — 玩家角色
+ ## Player — 玩家角色
 ## WASD / 方向鍵移動，E 鍵與最近的 NPC/物件互動。
 class_name Player
 extends BaseCharacter
