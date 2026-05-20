@@ -163,6 +163,7 @@ def load_assets(manifest_data: dict | Path) -> list[AssetSummary]:
                     "character_id": entry.get("character_id"),
                     "directions": entry.get("directions"),
                     "kind": entry.get("kind"),
+                    "flip_h": bool(entry.get("flip_h", False)),
                 },
             ))
     return out

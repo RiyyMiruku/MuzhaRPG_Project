@@ -71,6 +71,7 @@ def test_asset_summary_serializes_to_dict():
         asset_type="character",
         description="x",
         tags=["zone:a", "chapter:2"],
+        zones=["a"],
         zone="a",
         category=None,
         chapter="2",
@@ -83,3 +84,30 @@ def test_asset_summary_serializes_to_dict():
     assert d["name"] == "alice"
     assert d["chapter"] == "2"
     assert d["progress"] == "1/2"
+
+
+def test_load_assets_surfaces_flip_h(tmp_path):
+    mpath = tmp_path / "manifest.json"
+    mpath.write_text(json.dumps({
+        "characters": {},
+        "tilesets": {},
+        "objects": {
+            "lantern": {
+                "description": "red lantern",
+                "tags": ["zone:zone_market_1983"],
+                "stages": {},
+                "kind": "iso_prop",
+                "flip_h": True,
+            },
+            "stool": {
+                "description": "wooden stool",
+                "tags": [],
+                "stages": {},
+                "kind": "iso_prop",
+                # no flip_h field at all
+            },
+        },
+    }), encoding="utf-8")
+    assets = {a.name: a for a in load_assets(mpath)}
+    assert assets["lantern"].extra["flip_h"] is True
+    assert assets["stool"].extra["flip_h"] is False
