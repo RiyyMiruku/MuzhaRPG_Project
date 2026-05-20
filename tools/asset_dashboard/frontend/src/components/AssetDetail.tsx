@@ -19,6 +19,7 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
   const [refreshKey, setRefreshKey] = useState(0)
   const bumpRefresh = () => setRefreshKey((k) => k + 1)
   const [syncing, setSyncing] = useState(false)
+  const [flipping, setFlipping] = useState(false)
 
   const onSyncFromPixellab = async () => {
     if (!window.confirm(
@@ -77,16 +78,20 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
               type="button"
               onClick={async () => {
                 const newVal = !asset.extra.flip_h
+                setFlipping(true)
                 try {
                   await api.remakeWithOverrides(asset.asset_type, asset.name, "import_to_godot", { flip_h: newVal })
                 } catch (e) {
                   window.alert(`Flip failed: ${(e as Error).message}`)
+                } finally {
+                  setFlipping(false)
                 }
               }}
-              className="rounded bg-stone-700 px-3 py-1.5 text-sm hover:bg-stone-600"
+              disabled={flipping}
+              className="rounded bg-stone-700 px-3 py-1.5 text-sm hover:bg-stone-600 disabled:opacity-50"
               title="Toggle Sprite2D.flip_h — re-runs import_to_godot stage (no Pixellab credits)"
             >
-              {asset.extra.flip_h ? "Unflip horizontal" : "Flip horizontal"}
+              {flipping ? "Flipping…" : asset.extra.flip_h ? "Unflip horizontal" : "Flip horizontal"}
             </button>
           )}
           <button
