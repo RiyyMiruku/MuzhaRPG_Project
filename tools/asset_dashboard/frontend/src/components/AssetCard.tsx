@@ -45,7 +45,10 @@ export function AssetCard({ asset, onSelect }: Props) {
               alt={asset.name}
               className="max-h-full max-w-full object-contain"
               onError={() => setThumbBroken(true)}
-              style={{ imageRendering: "pixelated" }}
+              style={{
+                imageRendering: "pixelated",
+                transform: asset.extra.flip_h ? "scaleX(-1)" : undefined,
+              }}
             />
             {/* Animated overlay — keep mounted across hover toggles so the
                 first lazy-load is shared with later hovers. Transparent

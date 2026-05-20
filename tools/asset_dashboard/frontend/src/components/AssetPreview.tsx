@@ -136,6 +136,7 @@ function StaticPreview({ asset, refreshKey = 0 }: { asset: AssetSummary; refresh
               imageRendering: "pixelated",
               width: naturalSize ? `${naturalSize.w * zoom}px` : "auto",
               height: naturalSize ? `${naturalSize.h * zoom}px` : "auto",
+              transform: asset.extra.flip_h ? "scaleX(-1)" : undefined,
             }}
             onError={() => setBroken(true)}
             onLoad={(e) => {
