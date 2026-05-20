@@ -55,7 +55,7 @@ def _collision_rect(png_w: int, png_h: int, spec: str) -> tuple[tuple[float, flo
 
 def import_prop(
     src_png: Path, name: str, collision: str, has_collision: bool,
-    *, root: Path | None = None,
+    *, root: Path | None = None, flip_h: bool = False,
 ) -> tuple[Path, Path]:
     """Copy prop PNG into Godot tree and generate a .tscn from PropTemplate.
 
@@ -68,13 +68,16 @@ def import_prop(
     tscn_dest.parent.mkdir(parents=True, exist_ok=True)
 
     shutil.copyfile(src_png, png_dest)
-    _write_prop_tscn(tscn_dest, png_dest, name, collision, has_collision, root=root)
+    _write_prop_tscn(
+        tscn_dest, png_dest, name, collision, has_collision,
+        flip_h=flip_h, root=root,
+    )
     return png_dest, tscn_dest
 
 
 def _write_prop_tscn(
     tscn_path: Path, png_path: Path, name: str, collision: str, has_collision: bool,
-    *, root: Path,
+    *, root: Path, flip_h: bool = False,
 ) -> None:
     with Image.open(png_path) as im:
         w, h = im.size
@@ -119,11 +122,14 @@ def _write_prop_tscn(
     # Prop.gd's _ready() will re-apply the same value when foot_anchor is on;
     # we just need this here so the editor sees the correct layout without
     # requiring the script to be @tool-mode.
-    parts.append(
-        f'[node name="Sprite2D" parent="." index="0"]\n'
-        f'texture = ExtResource("3_tex")\n'
-        f'offset = Vector2(0, {-h / 2.0})\n'
-    )
+    sprite_lines = [
+        '[node name="Sprite2D" parent="." index="0"]',
+        'texture = ExtResource("3_tex")',
+        f'offset = Vector2(0, {-h / 2.0})',
+    ]
+    if flip_h:
+        sprite_lines.append('flip_h = true')
+    parts.append("\n".join(sprite_lines) + "\n")
     if coll is not None:
         size, pos = coll
         parts.append(

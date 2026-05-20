@@ -117,3 +117,43 @@ def test_import_character_spritesheet(tmp_path):
     assert json_dest == tmp_path / "game/assets/textures/characters/player.json"
     assert png_dest.exists()
     assert json_dest.exists()
+
+
+from PIL import Image
+from orchestrators._godot_import import _write_prop_tscn
+
+
+def test_write_prop_tscn_no_flip(tmp_path):
+    png_dir = tmp_path / "game" / "assets" / "textures" / "props"
+    png_dir.mkdir(parents=True)
+    png = png_dir / "x.png"
+    Image.new("RGBA", (32, 32), (255, 0, 0, 255)).save(png)
+    tscn = tmp_path / "x.tscn"
+    _write_prop_tscn(
+        tscn, png, "x",
+        collision="bottom_16x16", has_collision=True,
+        flip_h=False,
+        root=tmp_path,
+    )
+    text = tscn.read_text(encoding="utf-8")
+    assert "flip_h" not in text  # default off → omit the line entirely
+
+
+def test_write_prop_tscn_with_flip(tmp_path):
+    png_dir = tmp_path / "game" / "assets" / "textures" / "props"
+    png_dir.mkdir(parents=True)
+    png = png_dir / "y.png"
+    Image.new("RGBA", (32, 32), (255, 0, 0, 255)).save(png)
+    tscn = tmp_path / "y.tscn"
+    _write_prop_tscn(
+        tscn, png, "y",
+        collision="bottom_16x16", has_collision=True,
+        flip_h=True,
+        root=tmp_path,
+    )
+    text = tscn.read_text(encoding="utf-8")
+    assert "flip_h = true" in text
+    sprite_block_start = text.index('[node name="Sprite2D"')
+    next_node_start = text.index("[node", sprite_block_start + 1)
+    sprite_block = text[sprite_block_start:next_node_start]
+    assert "flip_h = true" in sprite_block
