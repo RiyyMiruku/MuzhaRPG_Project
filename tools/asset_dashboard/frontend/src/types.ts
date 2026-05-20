@@ -16,7 +16,13 @@ export interface AssetSummary {
   prompts: Record<string, string>
   png_path: string | null
   progress: string
-  extra: Record<string, unknown>
+  extra: {
+    character_id?: string | null
+    directions?: number | null
+    kind?: string | null
+    flip_h?: boolean
+    [k: string]: unknown
+  }
 }
 
 export interface ManifestResponse {
@@ -84,6 +90,7 @@ export interface CreateAssetBody {
   zone?: string
   category?: string
   chapter?: string
+  flip_h?: boolean
 
   // character
   directions?: 4 | 8
@@ -105,4 +112,22 @@ export interface CreateAssetBody {
   upper?: string
   transition_size?: number
   transition_description?: string
+}
+
+export interface RemakeOverrides {
+  kind?: string
+  description?: string
+  view?: string
+  width?: number
+  height?: number
+  size?: number
+  collision?: string
+  flip_h?: boolean
+}
+
+export interface RemakeBody {
+  stage: string
+  prompt?: string
+  directions?: string[]
+  overrides?: RemakeOverrides
 }
