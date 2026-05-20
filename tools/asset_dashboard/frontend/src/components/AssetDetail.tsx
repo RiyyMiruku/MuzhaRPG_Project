@@ -72,6 +72,23 @@ export function AssetDetail({ asset, onBack, onDeleted }: Props) {
               {syncing ? "Syncing…" : "Sync from Pixellab"}
             </button>
           )}
+          {asset.asset_type === "object" && (
+            <button
+              type="button"
+              onClick={async () => {
+                const newVal = !asset.extra.flip_h
+                try {
+                  await api.remakeWithOverrides(asset.asset_type, asset.name, "import_to_godot", { flip_h: newVal })
+                } catch (e) {
+                  window.alert(`Flip failed: ${(e as Error).message}`)
+                }
+              }}
+              className="rounded bg-stone-700 px-3 py-1.5 text-sm hover:bg-stone-600"
+              title="Toggle Sprite2D.flip_h — re-runs import_to_godot stage (no Pixellab credits)"
+            >
+              {asset.extra.flip_h ? "Unflip horizontal" : "Flip horizontal"}
+            </button>
+          )}
           <button
             type="button"
             onClick={async () => {
