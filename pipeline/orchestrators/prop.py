@@ -78,6 +78,12 @@ def parse_args() -> argparse.Namespace:
                    help='碰撞範圍: none|bottom_16x8|bottom_16x16|full|"WxH"')
     p.add_argument("--no-collision", action="store_true",
                    help="不生成 StaticBody collision (覆蓋 --collision)")
+    p.add_argument(
+        "--flip-h",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="水平翻轉 Sprite2D（解光照方向不一致）；不指定 = 沿用 manifest 既有值",
+    )
     return p.parse_args()
 
 
@@ -174,12 +180,15 @@ def import_to_godot(ctx: StageContext) -> list[str]:
     args = ctx.args
     assert args is not None
     src = manifest.object_dir(ctx.name) / f"{ctx.name}.png"
+    entry = manifest.get_object(ctx.name) or {}
+    flip_h = bool(entry.get("flip_h", False))
     has_coll = not args.no_collision
     png_dest, tscn_dest = gimport.import_prop(
         src_png=src,
         name=ctx.name,
         collision=args.collision,
         has_collision=has_coll,
+        flip_h=flip_h,
     )
     rel_root = plab.project_root()
     manifest.mark_imported(
@@ -203,6 +212,12 @@ def main() -> None:
 
     if not manifest.get_object(ctx.name):
         manifest.upsert_object(name=ctx.name, fields={"status": "init"})
+
+    # Persist explicit flip_h into manifest (None = caller didn't specify; leave entry alone).
+    if args.flip_h is not None:
+        if manifest.get_object(ctx.name) is None:
+            manifest.upsert_object(name=ctx.name, fields={"status": "init"})
+        manifest.upsert_object(name=ctx.name, fields={"flip_h": bool(args.flip_h)})
 
     tags: list[str] = zones.resolve_zone_tags(args.zones, args.zone)
     if args.category:
