@@ -1,4 +1,4 @@
-import type { AssetType, CreateAssetBody, JobInfo, ManifestResponse, StageDetail } from "./types"
+import type { AssetType, CreateAssetBody, JobInfo, ManifestResponse, RemakeOverrides, StageDetail } from "./types"
 
 const BASE = ""
 
@@ -38,15 +38,7 @@ export const api = {
     assetType: AssetType,
     name: string,
     stage: string,
-    overrides: Partial<{
-      kind: string
-      description: string
-      view: string
-      width: number
-      height: number
-      size: number
-      collision: string
-    }>,
+    overrides: RemakeOverrides,
     directions?: string[],
   ): Promise<{ job_id?: string; stage: string }> {
     const body: Record<string, unknown> = { stage, overrides }
