@@ -206,6 +206,7 @@ class RemakeOverrides(BaseModel):
     height: int | None = None
     size: int | None = None
     collision: str | None = None
+    flip_h: bool | None = None
 
 
 class RemakeRequest(BaseModel):
@@ -233,6 +234,7 @@ class CreateAssetRequest(BaseModel):
     zone: str | None = None
     category: str | None = None
     chapter: str | None = None
+    flip_h: bool | None = None
     # character
     directions: int | None = None         # static only (4 or 8)
     view: str | None = None
@@ -273,7 +275,7 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
             pass  # no-op: empty override
         elif asset_type == "object":
             fields: dict = {}
-            for k in ("kind", "description", "view", "collision"):
+            for k in ("kind", "description", "view", "collision", "flip_h"):
                 if k in ov:
                     fields[k] = ov[k]
             if "width" in ov or "height" in ov or "size" in ov:
@@ -336,6 +338,9 @@ def remake(asset_type: str, name: str, body: RemakeRequest) -> dict:
             w = size.get("width")
             if w:
                 cmd += ["--size", str(w)]
+        flip_h_val = entry.get("flip_h")
+        if isinstance(flip_h_val, bool):
+            cmd += ["--flip-h" if flip_h_val else "--no-flip-h"]
     # _ORCHESTRATOR_PATH points at npc_moving.py for all "character" assets, but
     # static NPCs use npc_static.py. Detect via manifest preset and swap script.
     if asset_type == "character":
@@ -743,6 +748,8 @@ def create_asset(body: CreateAssetRequest) -> dict:
         cli_args += ["--category", body.category]
     if body.chapter:
         cli_args += ["--chapter", body.chapter]
+    if body.flip_h is not None:
+        cli_args += ["--flip-h" if body.flip_h else "--no-flip-h"]
 
     # 5. spawn subprocess
     cmd = ["uv", "run", "python", "-u", script] + cli_args

@@ -335,3 +335,18 @@ def test_delete_asset_404_for_missing(client):
 def test_delete_asset_invalid_type(client):
     r = client.delete("/api/asset/widget/alice")
     assert r.status_code == 400
+
+
+def test_remake_overrides_accepts_flip_h():
+    from tools.asset_dashboard.backend.server import RemakeOverrides
+    ov = RemakeOverrides(flip_h=True)
+    assert ov.flip_h is True
+
+
+def test_create_request_accepts_flip_h():
+    from tools.asset_dashboard.backend.server import CreateAssetRequest
+    body = CreateAssetRequest(
+        asset_type="object", kind="iso_prop", name="x",
+        description="a thing", flip_h=True,
+    )
+    assert body.flip_h is True
